@@ -1,0 +1,195 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\ProductResource\Pages;
+use App\Models\Product;
+use App\Models\ProductAttribute;
+use App\Models\ProductAttributeValue;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Brand;
+use App\Models\Supplier;
+use Filament\Forms;
+use Filament\Forms\Form; 
+use Filament\Resources\Resource;
+use Filament\Tables\Table;
+use Filament\Tables;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Shelf;
+
+class ProductResource extends Resource
+{
+    protected static ?string $model = Product::class;
+    protected static ?string $navigationIcon = 'heroicon-s-cube';
+    protected static ?string $navigationGroup = 'Products';
+
+    // Hanya user selain admin yang bisa akses
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->role !== 'Admin';
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->label('Product Name'),
+
+                Forms\Components\TextInput::make('barcode')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->label('Barcode'),
+
+                Forms\Components\Select::make('category_id')
+                    ->label('Category')
+                    ->options(Category::all()->pluck('name', 'id'))
+                    ->reactive()
+                    ->required(),
+
+                Forms\Components\Select::make('sub_category_id')
+                    ->label('Sub Category')
+                    ->options(fn ($get) => SubCategory::where('category_id', $get('category_id'))->pluck('name', 'id'))
+                    ->required(),
+
+                Forms\Components\Select::make('brand_id')
+                    ->label('Brand')
+                    ->options(Brand::all()->pluck('name', 'id'))
+                    ->required(),
+
+                Forms\Components\TextInput::make('modal')
+                    ->label('Modal')
+                    ->required(),
+
+                Forms\Components\TextInput::make('jual')
+                    ->label('Selling Price')
+                    ->required(),
+
+                Forms\Components\TextInput::make('minimal_stok')
+                    ->label('Minimal Stok')
+                    ->numeric()
+                    ->required(),
+
+                Forms\Components\Select::make('supplier_id')
+                    ->label('Supplier')
+                    ->options(Supplier::all()->pluck('name', 'id')),
+
+                Forms\Components\Select::make('shelves_id')
+                    ->label('Shelf')
+                    ->options(function () {
+                        $outletId = Auth::user()->outlet_id ?? null;
+                        return Shelf::where('outlet_id', $outletId)->pluck('name', 'id');
+                    })
+                    ->required(),
+
+                Forms\Components\Hidden::make('outlet_id')
+                    ->default(fn() => Auth::user()->outlet_id),
+
+                Forms\Components\Repeater::make('productAttributeValues')
+                    ->label('Product Attributes')
+                    ->relationship('productAttributeValues')
+                    ->schema([
+                        Forms\Components\Select::make('product_attribute_id')
+                            ->label('Attribute')
+                            ->options(fn () => ProductAttribute::pluck('name', 'id'))
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('attribute_type', ProductAttribute::find($state)?->data_type);
+                            })
+                            ->required(),
+
+                        Forms\Components\Hidden::make('attribute_type')
+                            ->reactive()
+                            ->afterStateHydrated(function ($state, callable $set, $record) {
+                                $set('attribute_type', $record?->productAttribute?->data_type ?? null);
+                            }),
+
+                        Forms\Components\TextInput::make('value_string')
+                            ->label('Value')
+                            ->visible(fn ($get) => in_array($get('attribute_type'), ['text', 'string']))
+                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                                $set('value_string', $get('attribute_value'))
+                            ),
+
+                        Forms\Components\TextInput::make('value_integer')
+                            ->label('Value')
+                            ->numeric()
+                            ->visible(fn ($get) => in_array($get('attribute_type'), ['number', 'integer']))
+                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                                $set('value_integer', $get('attribute_value'))
+                            ),
+
+                        Forms\Components\DatePicker::make('value_date')
+                            ->label('Value')
+                            ->visible(fn ($get) => in_array($get('attribute_type'), ['date', 'datetime']))
+                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                                $set('value_date', $get('attribute_value'))
+                            ),
+
+                        Forms\Components\Hidden::make('attribute_value')
+                            ->dehydrateStateUsing(function ($get) {
+                                $type = $get('attribute_type');
+                                return match ($type) {
+                                    'text', 'string' => $get('value_string'),
+                                    'number', 'integer' => $get('value_integer'),
+                                    'date', 'datetime' => $get('value_date'),
+                                    default => null,
+                                };
+                            }), 
+
+                        Forms\Components\TextInput::make('stok')
+                            ->numeric()
+                            ->label('Stok')
+                            ->required(),
+
+                        Forms\Components\Hidden::make('last_restock_date')
+                            ->default(fn () => now()->toDateString())
+                            ->dehydrated(),
+
+                        Forms\Components\Hidden::make('last_sale_date')
+                            ->default(null)
+                            ->dehydrated(),
+
+                        Forms\Components\Hidden::make('outlet_id')
+                            ->default(fn () => Auth::user()?->outlet_id)
+                            ->dehydrated(),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->createItemButtonLabel('Tambah Attribute'),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('id')->label('No')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Product Name')->searchable(),
+                Tables\Columns\TextColumn::make('barcode')->label('Barcode')->searchable(),
+                Tables\Columns\TextColumn::make('brand.name')->label('Brand'),
+                Tables\Columns\TextColumn::make('category.name')->label('Category'),
+                Tables\Columns\TextColumn::make('subCategory.name')->label('Sub Category'),
+                Tables\Columns\TextColumn::make('minimal_stok')->label('Minimal Stok'),
+            ])
+            ->filters([])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
+        ];
+    }
+}
