@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PosController;
@@ -6,6 +7,7 @@ use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\PembukuanController;
 use App\Http\Controllers\InventoryHistoryController;
 use App\Http\Controllers\StokBarangController;
+use App\Http\Controllers\BarangMasukController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -44,4 +46,11 @@ Route::middleware([
 
     Route::get('/stokbarang', [StokBarangController::class, 'index'])->name('stokbarang');
     Route::get('/stok-barang/data', [StokBarangController::class, 'getData'])->name('stok.data');
+
+    Route::get('/barangmasuk', [BarangMasukController::class, 'index'])->name('barangmasuk');
+    Route::get('/api/suppliers', [BarangMasukController::class, 'searchSupplier']);
+    Route::get('/api/products', [BarangMasukController::class, 'searchProduct']);
+    Route::get('/api/attribute-values/{productId}', [BarangMasukController::class, 'getAttributeValues']);
+    Route::get('/api/harga-values/{productId}', [BarangMasukController::class, 'getHargaValues']);
+    Route::post('/barangmasuk/submit', [BarangMasukController::class, 'store'])->name('barangmasuk.store');
 });

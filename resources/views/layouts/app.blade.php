@@ -161,7 +161,7 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
                 </a>
 
                 <!-- BARANG MASUK -->
-                <a href="#"
+                <a href="{{ route('barangmasuk') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                     <x-heroicon-o-arrow-down-tray class="w-5 h-5" />
                     <span>Barang Masuk</span>
