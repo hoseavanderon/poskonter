@@ -47,57 +47,115 @@
             <aside
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 flex flex-col min-w-0 overflow-hidden space-y-5">
 
-                <!-- CARD SALDO (tanpa garis tipis) -->
+                <!-- CARD SALDO -->
                 <div class="bg-[#1f2531] dark:bg-gray-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                     <h3 class="text-sm font-semibold text-gray-200">Sisa Saldo</h3>
 
                     <div class="mt-2">
-                        <p class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Rp 100.000</p>
+                        <p class="text-3xl sm:text-4xl font-bold text-white tracking-tight"
+                            x-text="formatCurrency(totalSaldo)"></p>
                     </div>
 
                     <p class="text-xs text-gray-400 mt-3">
                         Terakhir Di Update :
-                        <span class="text-gray-300 font-medium">22 Oct 2025 18:01</span>
+                        <span class="text-gray-300 font-medium" x-text="lastUpdated"></span>
                     </p>
                 </div>
 
                 <!-- ACTION BUTTONS -->
-                <div class="grid grid-cols-4 gap-3 mt-5 text-center select-none">
-
-                    <!-- 🔹 MASUK -->
+                <div class="grid grid-cols-2 gap-4 mt-5 text-center select-none">
+                    <!-- MASUK -->
                     <div>
-                        <button
-                            class="w-full h-12 flex items-center justify-center bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-arrow-down-tray class="w-5 h-5 text-gray-200" />
+                        <button @click="openModal('IN')"
+                            class="w-full h-14 flex flex-col items-center justify-center bg-gray-700 hover:bg-gray-600 active:bg-gray-500 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-sm hover:shadow-md">
+                            <x-heroicon-o-arrow-down-tray class="w-6 h-6 text-gray-200" />
+                            <span class="mt-1 text-[12px] font-medium text-gray-300">Masuk</span>
                         </button>
-                        <p class="mt-2.5 text-[11px] font-medium text-gray-300">Masuk</p>
                     </div>
 
-                    <!-- 🔸 KELUAR -->
+                    <!-- KELUAR -->
                     <div>
-                        <button
-                            class="w-full h-12 flex items-center justify-center bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-arrow-up-tray class="w-5 h-5 text-gray-200" />
+                        <button @click="openModal('OUT')"
+                            class="w-full h-14 flex flex-col items-center justify-center bg-gray-700 hover:bg-gray-600 active:bg-gray-500 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-sm hover:shadow-md">
+                            <x-heroicon-o-arrow-up-tray class="w-6 h-6 text-gray-200" />
+                            <span class="mt-1 text-[12px] font-medium text-gray-300">Keluar</span>
                         </button>
-                        <p class="mt-2.5 text-[11px] font-medium text-gray-300">Keluar</p>
                     </div>
+                </div>
 
-                    <!-- 🟣 SWAP -->
-                    <div>
-                        <button
-                            class="w-full h-12 flex items-center justify-center bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-arrow-path class="w-5 h-5 text-gray-200" />
-                        </button>
-                        <p class="mt-2.5 text-[11px] font-medium text-gray-300">Swap</p>
-                    </div>
+                <!-- ✅ MODAL INPUT PEMBUKUAN -->
+                <div x-show="showModal"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-90"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-90"
+                    class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
 
-                    <!-- 🟢 TAMBAH -->
-                    <div>
-                        <button
-                            class="w-full h-12 flex items-center justify-center bg-gray-700 hover:bg-gray-600 rounded-xl transition-all duration-300 hover:scale-[1.04] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-plus class="w-5 h-5 text-gray-200" />
+                    <div class="bg-gray-800 rounded-2xl shadow-2xl w-[90%] max-w-md p-6 relative border border-gray-700">
+
+                        <!-- CLOSE BUTTON -->
+                        <button @click="closeModal"
+                            class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 transition">
+                            <x-heroicon-o-x-mark class="w-5 h-5" />
                         </button>
-                        <p class="mt-2.5 text-[11px] font-medium text-gray-300">Tambah</p>
+
+                        <!-- HEADER -->
+                        <div class="mb-5 text-center">
+                            <h2 class="text-xl font-bold"
+                                :class="modalType === 'IN' ? 'text-blue-400' : 'text-purple-400'"
+                                x-text="modalType === 'IN' ? 'Tambah Pemasukan' : 'Tambah Pengeluaran'"></h2>
+                            <p class="text-sm text-gray-400 mt-1">
+                                Lengkapi detail pembukuan di bawah ini
+                            </p>
+                        </div>
+
+                        <!-- FORM -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm text-gray-300">Deskripsi</label>
+                                <input type="text" x-model="form.deskripsi"
+                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
+                                    placeholder="Contoh: Penjualan Pulsa, Bayar Listrik, dll" />
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-gray-300">Nominal</label>
+                                <input type="text"
+                                    x-model="form.nominalDisplay"
+                                    @input="formatNominal"
+                                    inputmode="numeric"
+                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
+                                    placeholder="Rp Masukkan jumlah uang" />
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-gray-300">Wallet</label>
+                                <select x-model="form.cashbook_wallet_id"
+                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100">
+                                    <template x-for="w in wallets.filter(w => w.id !== 0)" :key="w.id">
+                                        <option :value="w.id" x-text="w.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+
+                       <!-- ACTION BUTTONS -->
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button @click="closeModal"
+                                class="px-4 py-2.5 text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-200">
+                                Batal
+                            </button>
+
+                            <button @click="submitTransaction"
+                                :class="[
+                                    modalType === 'IN' ? 'bg-blue-600 hover:bg-blue-500' : 'bg-purple-600 hover:bg-purple-500',
+                                    'px-5 py-2.5 text-sm font-medium text-white rounded-lg shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.97]'
+                                ]">
+                                Simpan
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -165,29 +223,7 @@
             <!-- RIGHT: Transactions -->
             <section
                 class="relative bg-[#1f2937] dark:bg-gray-800 rounded-2xl shadow-md p-7 flex flex-col min-w-0 overflow-hidden"
-                style="height: 640px;" {{-- fixed tinggi --}} x-data="{
-                    showSearch: false,
-                    showDropdown: false,
-                    selectedMonth: 'latest',
-                    selectedDate: new Date().getDate(),
-                    selectedYear: new Date().getFullYear(),
-                    activeTransaction: null,
-                    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    days: Array.from({ length: 30 }, (_, i) => i + 1),
-                    transactions: [
-                        { id: 1, title: 'Saldo Awal', note: 'asdasdasd', amount: 123.123, date: '2025-10-22', balance: 100.000, created_at: '22 Oktober 2025 18:01:34' },
-                        { id: 2, title: 'Top Up', note: 'Isi saldo utama', amount: 500.000, date: '2025-10-21', balance: 600.000, created_at: '21 Oktober 2025 12:05:14' },
-                        { id: 3, title: 'Pembelian', note: 'Voucher Game', amount: -100.000, date: '2025-10-20', balance: 500.000, created_at: '20 Oktober 2025 11:22:40' },
-                    ],
-                    toggleSearch() { this.showSearch = !this.showSearch },
-                    toggleDropdown() { this.showDropdown = !this.showDropdown },
-                    selectMonth(m) {
-                        this.selectedMonth = m;
-                        this.showDropdown = false
-                    },
-                    toggleTransaction(id) { this.activeTransaction = this.activeTransaction === id ? null : id },
-                    formatCurrency(v) { return 'Rp ' + v.toLocaleString('id-ID', { minimumFractionDigits: 3 }); }
-                }">
+                style="height: 640px;">
 
                 <style>
                     .no-scrollbar::-webkit-scrollbar {
@@ -225,15 +261,17 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
                     class="my-3">
-                    <input type="text" placeholder="Cari transaksi..."
+                    <input type="search" 
+                        x-model="filter"
+                        placeholder="Cari transaksi..."
                         class="w-full rounded-lg p-2 border border-gray-600 bg-gray-700 text-gray-200 focus:ring focus:ring-blue-400 text-sm placeholder-gray-400" />
                 </div>
 
-                <!-- WRAPPER KONTEN SCROLLABLE -->
-                <div class="relative flex-1 overflow-hidden">
-                    <!-- SCROLLABLE AREA -->
-                    <div class="absolute inset-0 flex flex-col overflow-y-auto no-scrollbar pr-1 pb-2 smooth-scroll">
+                <!-- WRAPPER UTAMA -->
+                <div class="flex-1 flex flex-col overflow-hidden">
 
+                    <!-- HEADER BULAN & TANGGAL (tetap statis) -->
+                    <div class="flex-shrink-0 relative">
                         <!-- SELECT MONTH -->
                         <div class="pb-4 border-b border-gray-700">
                             <div class="flex items-center justify-between mb-2">
@@ -249,23 +287,45 @@
                                 </button>
                             </div>
 
+                            <!-- DROPDOWN YEAR -->
+                            <div x-show="showDropdown"
+                                x-transition:enter="transition ease-out duration-400"
+                                x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-300"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute top-[100%] left-0 right-0 mt-2 bg-gray-800 rounded-xl p-5 border border-gray-700 space-y-4 shadow-lg z-40 max-h-[380px] overflow-y-auto no-scrollbar">
+                                
+                                <template x-for="year in years" :key="year">
+                                    <div>
+                                        <p class="text-xl font-bold text-gray-100 mb-3" x-text="year"></p>
+                                        <div class="grid grid-cols-4 gap-3">
+                                            <template x-for="m in months" :key="m.index">
+                                                <button
+                                                    @click="selectYear(year); selectMonth(m.index)"
+                                                    class="h-10 rounded-lg text-sm font-medium transition-all duration-300"
+                                                    :class="isMonthActive(m.index, year)
+                                                        ? 'bg-blue-600 text-white scale-105 shadow'
+                                                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                                    <span x-text="m.name"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
                             <!-- SLIDER MONTH -->
                             <div class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll pb-1">
-                                <button @click="selectMonth('latest')"
-                                    class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-out"
-                                    :class="selectedMonth === 'latest'
-                                        ?
-                                        'bg-blue-600 text-white scale-105 shadow-md' :
-                                        'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                    Latest
-                                </button>
-                                <template x-for="m in months" :key="m">
-                                    <button @click="selectMonth(m)"
+                                <template x-for="m in months" :key="m.index">
+                                    <button 
+                                        @click="selectMonth(m.index)" 
                                         class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-out"
-                                        :class="selectedMonth === m ?
-                                            'bg-blue-600 text-white scale-105 shadow-md' :
-                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                        <span x-text="m"></span>
+                                        :class="selectedMonthIndex === m.index && selectedYear === currentYear
+                                            ? 'bg-blue-600 text-white scale-105 shadow-md'
+                                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                        <span x-text="m.name"></span>
                                     </button>
                                 </template>
                             </div>
@@ -274,266 +334,582 @@
                         <!-- DATE SLIDER -->
                         <div class="py-4 border-b border-gray-700">
                             <div x-ref="dateContainer" class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll px-1">
-                                <template x-for="day in days" :key="day"> <button @click="selectedDate = day"
+                                <template x-for="day in days" :key="day">
+                                    <button 
+                                        @click="selectDay(day)"
+                                        :data-day="day"
                                         class="min-w-[48px] h-9 flex items-center justify-center rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ease-out"
-                                        :class="selectedDate === day ? 'bg-blue-600 text-white scale-105 shadow-md' :
-                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                        <span x-text="day + '/10'"></span> </button> </template>
+                                        :class="selectedDate === day ? 'bg-blue-600 text-white scale-105 shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                        <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
+                                    </button>
+                                </template>
                             </div>
                         </div>
+                    </div>
 
+                    <!-- LIST TRANSAKSI (ini aja yang scrollable) -->
+                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll">
+                        <div class="flex flex-col gap-4">
+                            <template x-if="filteredTransactions.length > 0">
+                                <template x-for="t in filteredTransactions" :key="t.id">
+                                    <div
+                                        class="bg-gray-700/90 rounded-xl p-3 transition-all duration-300 ease-out hover:scale-[1.01] hover:shadow-lg hover:bg-gray-700/95">
 
-                        <!-- TRANSACTION LIST -->
-                        <div class="flex flex-col gap-4 mt-2 pb-3">
-                            <template x-for="t in transactions" :key="t.id">
-                                <div
-                                    class="bg-gray-700/90 rounded-xl p-3 transition-all duration-300 ease-out hover:scale-[1.01] hover:shadow-lg hover:bg-gray-700/95">
-                                    <button @click="toggleTransaction(t.id)"
-                                        class="w-full flex items-center justify-between text-left transition-all duration-300">
-                                        <div>
-                                            <p class="font-medium text-gray-100">
-                                                <span x-text="t.date.substring(8,10) + '/' + t.date.substring(5,7)"></span>
-                                                -
-                                                <span x-text="t.title"></span>
-                                            </p>
-                                            <p class="text-xs text-gray-400" x-text="t.note"></p>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <p class="text-sm font-semibold"
-                                                :class="t.amount > 0 ? 'text-green-400' : 'text-red-400'"
-                                                x-text="formatCurrency(t.amount)"></p>
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="w-5 h-5 transform transition-transform duration-300"
-                                                :class="activeTransaction === t.id ? 'rotate-180 text-blue-400' :
-                                                    'rotate-0 text-gray-400'"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </button>
+                                        <!-- HEADER -->
+                                        <button @click="toggleTransaction(t.id)"
+                                            class="w-full flex items-center justify-between text-left transition-all duration-300">
+                                            <div>
+                                                <p class="font-medium text-gray-100">
+                                                    <span
+                                                        x-text="new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' })"></span>
+                                                    -
+                                                    <span x-text="t.deskripsi"></span>
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                <p class="text-sm font-semibold"
+                                                    :class="t.type === 'IN' ? 'text-green-400' : 'text-red-400'"
+                                                    x-text="formatCurrency(t.nominal)"></p>
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-5 h-5 transform transition-transform duration-300"
+                                                    :class="activeTransaction === t.id ? 'rotate-180 text-blue-400' :
+                                                        'rotate-0 text-gray-400'"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </button>
 
-                                    <!-- DETAIL DROPDOWN -->
-                                    <div x-show="activeTransaction === t.id"
-                                        x-transition:enter="transition ease-out duration-400"
-                                        x-transition:enter-start="opacity-0 translate-y-2"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        x-transition:leave="transition ease-in duration-300"
-                                        x-transition:leave-start="opacity-100 translate-y-0"
-                                        x-transition:leave-end="opacity-0 translate-y-2"
-                                        class="mt-3 bg-gray-800 rounded-xl p-4 border border-gray-700 text-sm space-y-2">
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-400">Created</span>
-                                            <span class="font-medium text-gray-100" x-text="t.created_at"></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-400">Nominal</span>
-                                            <span class="font-medium text-gray-100"
-                                                x-text="formatCurrency(t.amount)"></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-400">Saldo Saat Itu</span>
-                                            <span class="font-medium text-gray-100"
-                                                x-text="formatCurrency(t.balance)"></span>
-                                        </div>
-                                        <div class="pt-2">
-                                            <button
-                                                class="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all duration-300 ease-out hover:scale-[1.02]">
-                                                <x-heroicon-o-trash class="w-4 h-4" /> Hapus
-                                            </button>
+                                        <!-- DETAIL (DROPDOWN) -->
+                                        <div x-show="activeTransaction === t.id"
+                                            x-transition:enter="transition ease-out duration-400"
+                                            x-transition:enter-start="opacity-0 translate-y-2"
+                                            x-transition:enter-end="opacity-100 translate-y-0"
+                                            x-transition:leave="transition ease-in duration-300"
+                                            x-transition:leave-start="opacity-100 translate-y-0"
+                                            x-transition:leave-end="opacity-0 translate-y-2"
+                                            class="mt-3 bg-gray-800 rounded-xl p-4 border border-gray-700 text-sm space-y-2">
+
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">Created</span>
+                                                <span class="font-medium text-gray-100" x-text="t.created_at"></span>
+                                            </div>
+
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">Nominal</span>
+                                                <span class="font-medium text-gray-100"
+                                                    x-text="formatCurrency(t.nominal)"></span>
+                                            </div>
+
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">Tipe</span>
+                                                <span class="font-medium text-gray-100"
+                                                    x-text="t.type === 'IN' ? 'Pemasukan' : 'Pengeluaran'"></span>
+                                            </div>
+
+                                            <div class="pt-3 border-t border-gray-700 flex justify-end">
+                                                <button @click="requestDelete(t.id)"
+                                                    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 text-sm font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                                    Hapus Transaksi
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
+                                </template>
+                            </template>
+
+                            <!-- Jika tidak ada transaksi -->
+                            <template x-if="filteredTransactions.length === 0">
+                                <div
+                                    class="text-center text-gray-400 text-sm mt-8 border border-gray-700 rounded-xl py-6 bg-gray-800/60">
+                                    Tidak ada pembukuan di tanggal ini.
                                 </div>
                             </template>
                         </div>
                     </div>
-
-                    <!-- DROPDOWN YEAR OVERLAY -->
-                    <div x-show="showDropdown" x-transition:enter="transition ease-out duration-400"
-                        x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
-                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-300"
-                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                        class="absolute top-[80px] left-0 right-0 bg-gray-800 rounded-xl p-5 border border-gray-700 space-y-4 shadow-lg z-20 max-h-[380px] overflow-y-auto no-scrollbar">
-                        <template x-for="year in [2025,2024]" :key="year">
-                            <div>
-                                <p class="text-xl font-bold text-gray-100 mb-3" x-text="year"></p>
-                                <div class="grid grid-cols-4 gap-3">
-                                    <template x-for="m in months" :key="m">
-                                        <button @click="selectMonth(m)"
-                                            class="h-10 rounded-lg text-sm font-medium transition-all duration-300"
-                                            :class="selectedMonth === m ?
-                                                'bg-blue-600 text-white scale-105 shadow' :
-                                                'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                            <span x-text="m"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
                 </div>
             </section>
+
+            <!-- MODAL KONFIRMASI -->
+            <div x-show="showConfirmModal"
+                x-transition.opacity.duration.300ms
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+                x-cloak>
+                
+                <div @click.away="cancelDelete()"
+                    class="bg-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-lg border border-gray-700 transform transition-all duration-300"
+                    x-transition.scale.duration.250ms>
+                    
+                    <h2 class="text-lg font-semibold text-white mb-2">
+                        Konfirmasi Hapus
+                    </h2>
+                    <p class="text-gray-400 text-sm mb-5">
+                        Apakah kamu yakin ingin menghapus transaksi ini? <br>
+                        Tindakan ini tidak bisa dibatalkan.
+                    </p>
+
+                    <div class="flex justify-end gap-3">
+                        <button @click="cancelDelete()"
+                            class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-200 text-sm font-medium transition-all duration-200">
+                            Batal
+                        </button>
+                        <button @click="confirmDelete()"
+                            class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium transition-all duration-200 shadow-md">
+                            Ya, Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
 
     <script>
-        function ledgerApp() {
-            return {
-                showSearch: false,
-                filter: '',
-                selectedWallet: null,
-                selectedDate: new Date().getDate(),
-                selectedMonthIndex: new Date().getMonth(),
-                selectedYear: new Date().getFullYear(),
-                days: Array.from({
-                    length: 30
-                }, (_, i) => i + 1),
-                wallets: [{
-                        id: 0,
-                        name: 'All Wallets',
-                        icon: '💼',
-                        balance: 4494.50,
-                        note: 'Semua dana',
-                        type: 'Multi',
-                        color: '#6b7280'
-                    },
-                    {
-                        id: 1,
-                        name: 'Main Wallet',
-                        icon: '💳',
-                        balance: 3200.00,
-                        note: 'Utama',
-                        type: 'Cash',
-                        color: '#10b981'
-                    },
-                    {
-                        id: 2,
-                        name: 'Cash',
-                        icon: '💵',
-                        balance: 800.25,
-                        note: 'Dompet tunai',
-                        type: 'Cash',
-                        color: '#3b82f6'
-                    },
-                    {
-                        id: 3,
-                        name: 'Bank Account',
-                        icon: '🏦',
-                        balance: 494.25,
-                        note: 'BCA ****',
-                        type: 'Bank',
-                        color: '#7c3aed'
-                    },
-                ],
-                transactions: [{
-                        id: 1,
-                        title: 'Restaurant',
-                        note: 'Makan malam team',
-                        tag: 'Food',
-                        amount: -60.00,
-                        date: '2025-10-19',
-                        detail: 'Bayar makan 3 orang',
-                        last_balance: 4434.50,
-                        open: false
-                    },
-                    {
-                        id: 2,
-                        title: 'Coffee & Snacks',
-                        note: 'Cemilan meeting',
-                        tag: 'Food',
-                        amount: -45.00,
-                        date: '2025-10-12',
-                        detail: 'Snack meeting jam 10',
-                        last_balance: 4494.50,
-                        open: false
-                    },
-                    {
-                        id: 3,
-                        title: 'Cash Withdrawal',
-                        note: 'Ambil tunai',
-                        tag: 'Transfer',
-                        amount: 200.00,
-                        date: '2025-10-05',
-                        detail: 'Tarik dari ATM',
-                        last_balance: 4534.50,
-                        open: false
-                    }
-                ],
-                lastUpdated: new Date().toLocaleString(),
+    function ledgerApp() {
+        return {
+            // === STATE ===
+            showSearch: false,
+            showDropdown: false,
+            filter: '',
+            selectedWallet: 0, // default: Semua Wallet
+            selectedDate: new Date().getDate(),
+            selectedMonthIndex: new Date().getMonth(),
+            selectedYear: new Date().getFullYear(),
+            currentYear: new Date().getFullYear(),
+            days: [],
+            wallets: @json($wallets),
+            transactions: @json($transactions),
+            years: @json($years),
+            totalSaldo: {{ $totalSaldo ?? 0 }},
+            lastUpdated: '{{ $lastUpdate ? $lastUpdate->format('d M Y H:i') : '-' }}',
+            activeTransaction: null,
 
-                get displayMonth() {
-                    return new Intl.DateTimeFormat('id-ID', {
-                        month: 'long'
-                    }).format(new Date(this.selectedYear, this.selectedMonthIndex));
-                },
-                get displayMonthNumber() {
-                    return this.selectedMonthIndex + 1;
-                },
-                init() {
-                    this.selectedWallet = this.wallets[0].id;
-                    this.$nextTick(() => this.scrollSelectedDayIntoView());
-                },
-                formatCurrency(v) {
-                    const sign = v < 0 ? '-' : '';
-                    return sign + '$' + Math.abs(v).toFixed(2);
-                },
-                selectWallet(id) {
-                    this.selectedWallet = id
-                },
-                toggleSearch() {
-                    this.showSearch = !this.showSearch;
-                    if (!this.showSearch) this.filter = '';
-                    else this.$nextTick(() => document.querySelector('input[type=search]')?.focus());
-                },
-                closeSearch() {
-                    this.showSearch = false;
-                    this.filter = '';
-                },
-                prevMonth() {
-                    if (this.selectedMonthIndex === 0) {
-                        this.selectedMonthIndex = 11;
-                        this.selectedYear--;
-                    } else this.selectedMonthIndex--;
-                },
-                nextMonth() {
-                    if (this.selectedMonthIndex === 11) {
-                        this.selectedMonthIndex = 0;
-                        this.selectedYear++;
-                    } else this.selectedMonthIndex++;
-                },
-                selectDay(day) {
-                    this.selectedDate = day;
-                    this.$nextTick(() => {
-                        const el = this.$refs.dateContainer?.querySelector(`[data-day='${day}']`);
-                        if (el) el.scrollIntoView({
-                            behavior: 'smooth',
-                            inline: 'center',
-                            block: 'nearest'
+            // === LIST BULAN ===
+            months: [
+                { name: 'Jan', index: 0 },
+                { name: 'Feb', index: 1 },
+                { name: 'Mar', index: 2 },
+                { name: 'Apr', index: 3 },
+                { name: 'May', index: 4 },
+                { name: 'Jun', index: 5 },
+                { name: 'Jul', index: 6 },
+                { name: 'Aug', index: 7 },
+                { name: 'Sep', index: 8 },
+                { name: 'Oct', index: 9 },
+                { name: 'Nov', index: 10 },
+                { name: 'Dec', index: 11 },
+            ],
+            showModal: false,
+            modalType: null,
+            form: {
+                deskripsi: '',
+                nominalRaw: 0,
+                nominalDisplay: '',
+                cashbook_wallet_id: '',
+            },
+            showConfirmModal: false,
+            deleteTargetId: null,
+
+            // === INIT ===
+            init() {
+                // set days sesuai bulan dan tahun saat ini
+                this.updateDaysInMonth();
+
+                // pastikan selectedDate default valid (jika hari > jumlah hari di bulan, set ke last day)
+                const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
+                if (this.selectedDate > daysInMonth) this.selectedDate = daysInMonth;
+
+                // tunggu Alpine render, lalu gunakan kombinasi observer + retry fallback
+                this.$nextTick(() => {
+                    // 1) MutationObserver: trigger saat DOM berubah sehingga dateContainer muncul
+                    let observer;
+                    try {
+                        observer = new MutationObserver(() => {
+                            const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
+                            if (el) {
+                                // scroll sekali elemen ada
+                                this.scrollSelectedDayIntoView();
+                                observer.disconnect();
+                                if (retryTimer) clearInterval(retryTimer);
+                            }
                         });
-                    });
-                },
-                scrollSelectedDayIntoView() {
-                    const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
-                    if (el) el.scrollIntoView({
+                        observer.observe(this.$el, { childList: true, subtree: true });
+                    } catch (e) {
+                        // ignore if MutationObserver unsupported
+                    }
+
+                    // 2) Fallback retry: jika observer gagal/terlambat, coba berkali2 selama max 2s
+                    const start = Date.now();
+                    const retryTimer = setInterval(() => {
+                        const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
+                        if (el) {
+                            this.scrollSelectedDayIntoView();
+                            clearInterval(retryTimer);
+                            if (observer) observer.disconnect();
+                        } else if (Date.now() - start > 2000) { // timeout 2 detik
+                            clearInterval(retryTimer);
+                            if (observer) observer.disconnect();
+                        }
+                    }, 80); // cek tiap 80ms
+
+                    // 3) as last resort, jalankan sekali lagi setelah 300ms untuk keamanan
+                    setTimeout(() => {
+                        const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
+                        if (el) this.scrollSelectedDayIntoView();
+                    }, 300);
+                });
+            },
+
+            // === UPDATE JUMLAH HARI ===
+            updateDaysInMonth() {
+                const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
+                this.days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+            },
+
+            // === FORMAT RUPIAH ===
+            formatCurrency(v) {
+                if (!v || isNaN(v)) v = 0;
+                return 'Rp ' + Number(v).toLocaleString('id-ID');
+            },
+
+            // === TAMPILKAN / SEMBUNYIKAN DETAIL TRANSAKSI ===
+            toggleTransaction(id) {
+                this.activeTransaction = this.activeTransaction === id ? null : id;
+            },
+
+            openModal(type) {
+                this.modalType = type;
+                this.showModal = true;
+                this.form = { deskripsi: '', nominal: '', cashbook_wallet_id: this.wallets[1]?.id || '' };
+            },
+
+            closeModal() {
+                this.showModal = false;
+            },
+
+            formatNominal(e) {
+                // Ambil angka murni
+                let raw = e.target.value.replace(/\D/g, '');
+                if (raw === '') raw = '0';
+
+                // Simpan nilai numeriknya
+                this.form.nominal = parseInt(raw);
+
+                // Format tampilan Rp 100.000
+                this.form.nominalDisplay = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.form.nominal);
+            },  
+
+            // === FILTER TRANSAKSI ===
+            get filteredTransactions() {
+                let filtered = this.transactions;
+
+                // Filter berdasarkan wallet
+                if (this.selectedWallet !== 0) {
+                    filtered = filtered.filter(t => t.cashbook_wallet_id === this.selectedWallet);
+                }
+
+                // Filter berdasarkan tahun & bulan
+                filtered = filtered.filter(t => {
+                    const d = new Date(t.created_at);
+                    return d.getFullYear() === this.selectedYear && d.getMonth() === this.selectedMonthIndex;
+                });
+
+                // Filter berdasarkan tanggal
+                filtered = filtered.filter(t => {
+                    const d = new Date(t.created_at);
+                    return d.getDate() === this.selectedDate;
+                });
+
+                // Filter berdasarkan keyword pencarian
+                if (this.filter) {
+                    const q = this.filter.toLowerCase();
+                    filtered = filtered.filter(t =>
+                        (t.deskripsi?.toLowerCase().includes(q) || '') ||
+                        t.nominal?.toString().includes(q)
+                    );
+                }
+
+                return filtered;
+            },
+
+            // === EVENT HANDLER FILTER ===
+            selectWallet(id) {
+                this.selectedWallet = id;
+            },
+            selectYear(year) {
+                this.selectedYear = year;
+                this.updateDaysInMonth();
+                this.showDropdown = false;
+                this.scrollSelectedDayIntoView();
+            },
+            selectMonth(index) {
+                this.selectedMonthIndex = index;
+                this.updateDaysInMonth();
+                this.showDropdown = false;
+                this.scrollSelectedDayIntoView();
+            },
+            selectDay(day) {
+                this.selectedDate = day;
+                this.scrollSelectedDayIntoView();
+            },
+
+            // === DROPDOWN & SEARCH ===
+            toggleSearch() {
+                this.showSearch = !this.showSearch;
+                if (!this.showSearch) this.filter = '';
+                else this.$nextTick(() => document.querySelector('input[type=search]')?.focus());
+            },
+            toggleDropdown() {
+                this.showDropdown = !this.showDropdown;
+            },
+
+            // === AUTO SCROLL KE TANGGAL AKTIF ===
+            scrollSelectedDayIntoView() {
+                // extra $nextTick supaya Alpine benar-benar menyelesaikan binding
+                this.$nextTick(() => {
+                    const container = this.$refs.dateContainer;
+                    if (!container) return;
+
+                    const el = container.querySelector(`[data-day='${this.selectedDate}']`);
+                    if (!el) return;
+
+                    // scroll - gunakan smooth
+                    el.scrollIntoView({
                         behavior: 'smooth',
                         inline: 'center',
                         block: 'nearest'
                     });
-                },
-                toggleDetail(i) {
-                    this.transactions[i].open = !this.transactions[i].open;
-                },
-                get filteredTransactions() {
-                    if (!this.filter) return this.transactions;
-                    const q = this.filter.toLowerCase();
-                    return this.transactions.filter(t =>
-                        t.title.toLowerCase().includes(q) || t.note.toLowerCase().includes(q) || t.amount.toString()
-                        .includes(q)
-                    );
-                },
-            }
-        }
+
+                    // opsional: beri highlight sementara agar visual terlihat
+                    el.classList.add('ring-2', 'ring-blue-400', 'ring-offset-2');
+                    setTimeout(() => {
+                        el.classList.remove('ring-2', 'ring-blue-400', 'ring-offset-2');
+                    }, 700);
+                });
+            },
+
+            async submitTransaction() {
+                if (!this.form.deskripsi || !this.form.nominal) {
+                    this.showToast('Harap isi semua field.', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('{{ route('cashbook.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            deskripsi: this.form.deskripsi,
+                            nominal: this.form.nominal,
+                            cashbook_wallet_id: this.form.cashbook_wallet_id,
+                            type: this.modalType,
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const newData = await response.json(); // 🆕 Ambil data baru dari response
+
+                        // 🆕 Tambahkan ke daftar transaksi
+                        this.transactions.unshift({
+                            id: newData.id,
+                            deskripsi: newData.deskripsi,
+                            nominal: parseFloat(newData.nominal),
+                            type: newData.type,
+                            cashbook_wallet_id: parseInt(newData.cashbook_wallet_id),
+                            created_at: newData.created_at,
+                        });
+
+                        // 🆕 Update saldo total
+                        if (newData.type === 'IN') {
+                            this.totalSaldo += parseFloat(newData.nominal);
+                        } else {
+                            this.totalSaldo -= parseFloat(newData.nominal);
+                        }
+
+                        // 🆕 Update saldo wallet yang bersangkutan
+                        const targetWallet = this.wallets.find(w => w.id == newData.cashbook_wallet_id);
+                        if (targetWallet) {
+                            const currentBalance = parseFloat(targetWallet.balance) || 0;
+                            const amount = parseFloat(newData.nominal) || 0;
+
+                            // Update saldo wallet spesifik
+                            if (newData.type === 'IN') {
+                                targetWallet.balance = currentBalance + amount;
+                            } else {
+                                targetWallet.balance = currentBalance - amount;
+                            }
+
+                            targetWallet.note = 'Aktif';
+                        }
+
+                        // 🆕 Update saldo wallet "Semua Wallet" (gabungan)
+                        const mainWallet = this.wallets.find(w => w.id === 0);
+                        if (mainWallet) {
+                            const mainBalance = parseFloat(mainWallet.balance) || 0;
+                            const amount = parseFloat(newData.nominal) || 0;
+                            if (newData.type === 'IN') {
+                                mainWallet.balance = mainBalance + amount;
+                            } else {
+                                mainWallet.balance = mainBalance - amount;
+                            }
+                        }
+
+                        // 🆕 Update total saldo global
+                        const totalInWallets = this.wallets
+                            .filter(w => w.id !== 0)
+                            .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
+
+                        this.totalSaldo = totalInWallets;
+                        this.lastUpdated = new Date().toLocaleString('id-ID', {
+                            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+
+                        this.showToast('Transaksi berhasil disimpan!', 'success');
+                        this.closeModal();
+                        this.form = { deskripsi: '', nominal: '', cashbook_wallet_id: '' };
+                    } else {
+                        this.showToast('Gagal menyimpan transaksi.', 'error');
+                    }
+                } catch (e) {
+                    console.error('Error:', e);
+                    this.showToast('Terjadi kesalahan koneksi.', 'error');
+                }
+            },
+
+            // Step 1: Tampilkan modal
+            requestDelete(id) {
+                this.deleteTargetId = id;
+                this.showConfirmModal = true;
+            },
+
+            // Step 2: Batalkan
+            cancelDelete() {
+                this.showConfirmModal = false;
+                this.deleteTargetId = null;
+            },
+
+            // Step 3: Konfirmasi dan eksekusi delete
+            async confirmDelete() {
+                const id = this.deleteTargetId;
+                if (!id) return;
+
+                this.showConfirmModal = false;
+
+                try {
+                    const response = await fetch(`{{ url('cashbook') }}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                    });
+
+                    if (response.ok) {
+                        // Efek fade-out + hapus data
+                        const card = document.querySelector(`[data-transaction-id="${id}"]`);
+                        if (card) {
+                            card.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
+                            setTimeout(() => {
+                                this.transactions = this.transactions.filter(t => t.id !== id);
+                                this.recalculateWallets();
+                            }, 250);
+                        } else {
+                            this.transactions = this.transactions.filter(t => t.id !== id);
+                            this.recalculateWallets();
+                        }
+
+                        this.showToast('Transaksi berhasil dihapus!', 'success');
+                    } else {
+                        this.showToast('Gagal menghapus transaksi.', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.showToast('Terjadi kesalahan koneksi.', 'error');
+                } finally {
+                    this.deleteTargetId = null;
+                }
+            },
+
+            recalculateWallets() {
+                // Reset saldo semua wallet (kecuali gabungan)
+                this.wallets.forEach(w => {
+                    if (w.id !== 0) w.balance = 0;
+                });
+
+                // Hitung ulang berdasarkan transaksi yang tersisa
+                this.transactions.forEach(t => {
+                    const wallet = this.wallets.find(w => w.id === t.cashbook_wallet_id);
+                    if (wallet) {
+                        const nominal = parseFloat(t.nominal) || 0;
+                        wallet.balance += (t.type === 'IN' ? nominal : -nominal);
+                    }
+                });
+
+                // 🔹 Hitung total semua wallet aktif (bukan gabungan)
+                const total = this.wallets
+                    .filter(w => w.id !== 0)
+                    .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
+
+                // 🔹 Update totalSaldo global
+                this.totalSaldo = total;
+
+                // 🔹 Update wallet gabungan (id: 0)
+                const mainWallet = this.wallets.find(w => w.id === 0);
+                if (mainWallet) {
+                    mainWallet.balance = total;
+                }
+
+                // 🔹 Update waktu terakhir
+                this.lastUpdated = new Date().toLocaleString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            },
+
+            showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.className = `
+                    fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-sm font-medium
+                    text-white z-50 transition-all duration-500 transform
+                    ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}
+                    translate-y-5 opacity-0
+                `;
+
+                document.body.appendChild(toast);
+
+                // animasi masuk
+                requestAnimationFrame(() => {
+                    toast.classList.remove('translate-y-5', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+                });
+
+                // animasi keluar
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-5', 'opacity-0');
+                    setTimeout(() => toast.remove(), 500);
+                }, 2500);
+            },
+
+            // === UTILITAS ===
+            isMonthActive(monthIndex, year) {
+                return this.selectedMonthIndex === monthIndex && this.selectedYear === year;
+            },
+            get displayMonth() {
+                return new Intl.DateTimeFormat('id-ID', { month: 'long' })
+                    .format(new Date(this.selectedYear, this.selectedMonthIndex));
+            },
+        };
+    }
     </script>
+
 @endsection

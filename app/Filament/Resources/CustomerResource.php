@@ -55,18 +55,25 @@ class CustomerResource extends Resource
                 ->maxLength(255),
 
             Forms\Components\Repeater::make('attributes')
-                ->relationship('attributes') // sesuaikan dengan relasi model
+                ->relationship('attributes')
                 ->label('Attributes')
                 ->schema([
                     Forms\Components\TextInput::make('attribute')
+                        ->label('Nama Attribute')
                         ->required()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('attribute_value')
+                        ->label('Nilai')
                         ->required()
                         ->maxLength(255),
                     Forms\Components\Textarea::make('attribute_notes')
+                        ->label('Catatan')
                         ->maxLength(65535),
                 ])
+                ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                    $data['outlet_id'] = Auth::user()->outlet_id ?? null;
+                    return $data;
+                })
                 ->collapsible()
                 ->createItemButtonLabel('Tambah Attribute'),
         ]);

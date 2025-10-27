@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('customer_attributes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('outlet_id')->constrained()->cascadeOnDelete();
             $table->string('attribute');
             $table->string('attribute_value');
             $table->string('attribute_notes')->nullable();

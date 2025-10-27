@@ -11,6 +11,7 @@ class CustomerAttribute extends Model
 
     protected $fillable = [
         'customer_id',
+        'outlet_id',
         'attribute',
         'attribute_value',
         'attribute_notes',

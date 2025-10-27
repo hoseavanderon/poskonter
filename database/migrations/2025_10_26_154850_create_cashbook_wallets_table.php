@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('cashbook_wallets', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('outlet_id')->constrained()->cascadeOnDelete();
+            $table->string('cashbook_wallet'); // Nama dompet, misalnya 'Main Wallet', 'Cash', dll
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('cashbook_wallets');
     }
 };

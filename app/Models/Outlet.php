@@ -9,6 +9,9 @@ class Outlet extends Model
 {
     use HasFactory;
 
+    /**
+     * Kolom yang boleh diisi (mass assignable)
+     */
     protected $fillable = [
         'name',
         'address',
@@ -16,45 +19,30 @@ class Outlet extends Model
         'owner_id',
     ];
 
-    // 🔗 Relasi ke owner (User)
+    /**
+     * Relasi ke User (pemilik outlet)
+     * Setiap outlet dimiliki oleh satu user.
+     */
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    // 🔗 Semua user (kasir/admin) yang bekerja di outlet ini
-    public function users()
+    /**
+     * Relasi ke Customer
+     * Satu outlet memiliki banyak pelanggan.
+     */
+    public function customers()
     {
-        return $this->hasMany(User::class, 'outlet_id');
+        return $this->hasMany(Customer::class);
     }
 
-    // 🔗 Produk-produk outlet
-    public function products()
+    /**
+     * Relasi ke CustomerAttribute (jika masih digunakan)
+     * Satu outlet bisa memiliki banyak atribut pelanggan (optional).
+     */
+    public function customerAttributes()
     {
-        return $this->hasMany(Product::class);
-    }
-
-    // 🔗 Transaksi outlet
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
-    // 🔗 Rak barang
-    public function shelves()
-    {
-        return $this->hasMany(Shelf::class);
-    }
-
-    // 🔗 Karyawan outlet
-    public function employees()
-    {
-        return $this->hasMany(Employee::class);
-    }
-
-    // 🔗 Buku kas outlet
-    public function cashbooks()
-    {
-        return $this->hasMany(Cashbook::class);
+        return $this->hasMany(CustomerAttribute::class);
     }
 }

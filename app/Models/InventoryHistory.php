@@ -24,10 +24,9 @@ class InventoryHistory extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Relasi ke product attribute value
-    public function attributeValue()
+    public function productAttributeValue()
     {
-        return $this->belongsTo(ProductAttributeValue::class, 'product_attribute_value_id');
+        return $this->belongsTo(\App\Models\ProductAttributeValue::class, 'product_attribute_value_id');
     }
 
     // Relasi ke outlet

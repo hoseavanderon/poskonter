@@ -11,6 +11,7 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
+        'outlet_id',
     ];
 
     public function attributes()

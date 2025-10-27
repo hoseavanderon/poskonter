@@ -27,6 +27,8 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'POS App' }}</title> {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    @stack('head')
+
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -152,7 +154,7 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
                 </a>
 
                 <!-- HISTORY STOK BARANG -->
-                <a href="#"
+                <a href="{{ route('history_inventory') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                     <x-heroicon-o-archive-box class="w-5 h-5" />
                     <span>History Stok Barang</span>
@@ -166,14 +168,14 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
                 </a>
 
                 <!-- STOK BARANG -->
-                <a href="#"
+                <a href="{{ route('stokbarang') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                     <x-heroicon-o-cube class="w-5 h-5" />
                     <span>Stok Barang</span>
                 </a>
 
                 <!-- LANGGANAN -->
-                <a href="#"
+                <a href="{{ route('customer') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                     <x-heroicon-o-user-group class="w-5 h-5" />
                     <span>Langganan</span>
