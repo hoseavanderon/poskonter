@@ -17,37 +17,48 @@ class PosController extends Controller
 {
     public function index()
     {
-        $productsRaw = Product::with(['category', 'attributeValues'])->get();
+        $productsRaw = Product::with([
+            'category:id,kode_category,name',
+            'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
+        ])->get();
 
         $products = $productsRaw->map(function ($p) {
-            $rawPrice = $p->price ?? $p->jual ?? $p->harga_jual ?? $p->harga ?? null;
+            $rawPrice = $p->jual ?? $p->price ?? $p->harga_jual ?? $p->harga ?? null;
+            $price = 0;
 
-            if (is_null($rawPrice)) {
-                $price = 0;
-            } else {
+            if (!is_null($rawPrice)) {
                 $clean = preg_replace('/[^\d]/', '', (string) $rawPrice);
                 $price = $clean === '' ? 0 : (int) $clean;
             }
 
             return [
                 'id' => $p->id,
-                'name' => $p->name ?? $p->title ?? $p->nama ?? '',
-                'code' => $p->code ?? $p->barcode ?? $p->kode ?? '',
+                'name' => $p->name ?? '(Tanpa Nama)',
+                'code' => $p->barcode ?? '-',
                 'price' => $price,
                 'stock' => (int) ($p->attributeValues->sum('stok') ?? 0),
-                'category_id' => $p->category_id ?? $p->category?->id ?? null,
-                'category_name' => $p->category?->name ?? null,
+                'category_id' => $p->category_id,
+                'category_name' => $p->category?->name ?? '(Tanpa Kategori)',
+                'category_code' => $p->category?->kode_category ?? '',
+                'attribute_values' => $p->attributeValues->map(fn($attr) => [
+                    'id' => $attr->id,
+                    'product_attribute_id' => $attr->product_attribute_id,
+                    'attribute_value' => $attr->attribute_value ?? '(Tidak ada)',
+                    'stok' => (int) $attr->stok,
+                ])->values(),
             ];
         })->values();
 
-        // ✅ ubah pluck jadi get() agar kirim id + name
         $categories = Category::orderBy('name')
             ->get(['id', 'name'])
-            ->map(fn($c) => ['id' => $c->id, 'name' => $c->name])
+            ->map(fn($c) => [
+                'id' => $c->id,
+                'name' => $c->name ?? '(Tanpa Nama)',
+            ])
             ->toArray();
 
         $customers = class_exists(Customer::class)
-            ? Customer::orderBy('name')->get()
+            ? Customer::orderBy('name')->get(['id', 'name'])
             : collect([]);
 
         return view('pos.index', [
@@ -111,23 +122,30 @@ class PosController extends Controller
                 'subtotal' => $item['price'] * $item['qty'],
             ]);
 
-            $product = \App\Models\Product::with('attributeValues')->find($item['id']);
+            $product = \App\Models\Product::find($item['id']);
 
-            if ($product && $product->attributeValues()->exists()) {
-                $detail = $product->attributeValues()->first();
-                $detail->decrement('stok', $item['qty']);
-                $detail->update(['last_sale_date' => now()]);
+            // 🧩 Jika produk punya varian yang dipilih
+            if (!empty($item['variant_id'])) {
+                $variant = \App\Models\ProductAttributeValue::find($item['variant_id']);
+                if ($variant) {
+                    $variant->decrement('stok', $item['qty']);
+                    $variant->update(['last_sale_date' => now()]);
 
-                \App\Models\InventoryHistory::create([
-                    'product_id' => $product->id,
-                    'product_attribute_value_id' => $detail->id,
-                    'type' => 'OUT',
-                    'pcs' => $item['qty'],
-                    'keterangan' => 'Penjualan Tanggal ' . now()->translatedFormat('d F Y'),
-                    'outlet_id' => \Illuminate\Support\Facades\Auth::user()->outlet_id ?? 1,
-                ]);
-            } elseif ($product && isset($product->stok)) {
-                $product->decrement('stok', $item['qty']);
+                    // Catat history
+                    \App\Models\InventoryHistory::create([
+                        'product_id' => $product->id,
+                        'product_attribute_value_id' => $variant->id,
+                        'type' => 'OUT',
+                        'pcs' => $item['qty'],
+                        'keterangan' => 'Penjualan ' . now()->translatedFormat('d F Y'),
+                        'outlet_id' => Auth::user()->outlet_id ?? 1,
+                    ]);
+                }
+            } else {
+                // Produk tanpa varian
+                if ($product && isset($product->stok)) {
+                    $product->decrement('stok', $item['qty']);
+                }
             }
         }
 

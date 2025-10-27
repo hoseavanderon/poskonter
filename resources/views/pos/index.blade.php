@@ -42,6 +42,8 @@
             /* Firefox */
             scrollbar-color: #9ca3af transparent;
         }
+
+        [x-cloak] { display: none !important; }
     </style>
 
     <main>
@@ -67,7 +69,7 @@
                 </button>
             </div>
 
-            {{-- ============================= --}}
+           {{-- ============================= --}}
             {{-- TAB: PRODUK FISIK --}}
             {{-- ============================= --}}
             <div x-show="activeTab === 'physical'" x-transition:enter="transition ease-out duration-300"
@@ -77,7 +79,7 @@
 
                 {{-- Sidebar kategori --}}
                 <aside
-                    class="md:w-1/5 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 hidden md:block">
+                    class="md:w-52 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 hidden md:block">
                     <h2 class="text-lg font-semibold mb-3">Kategori Barang</h2>
                     <ul class="space-y-2">
                         <li>
@@ -108,87 +110,145 @@
 
                 {{-- Produk --}}
                 <div class="flex-1 relative">
-                    {{-- Form scan barcode --}}
+
+                    {{-- 🧾 Form Scan Barcode --}}
                     <div class="relative mb-4">
-                        <input type="text" placeholder="Scan barcode..." @change="handleBarcodeInput($event)"
-                            class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <input type="text"
+                            placeholder="Scan barcode..."
+                            @change="handleBarcodeInput($event)"
+                            class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
+                                focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                         <div class="absolute left-4 top-2.5 text-blue-600 dark:text-blue-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            {{-- Heroicon barcode --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 7v10M8 7v10M12 7v10M16 7v10M20 7v10" />
                             </svg>
                         </div>
                     </div>
 
+                    {{-- Judul kategori aktif --}}
                     <h2 class="text-xl font-semibold mb-3">
-                        <span x-text="selectedCategory ? selectedCategory.name : 'Semua Produk'"></span>
+                        <span x-text="selectedCategoryPhysical ? selectedCategoryPhysical.name : 'Semua Produk'"></span>
                     </h2>
 
-                    {{-- Produk grid --}}
-                    <div class="relative min-h-[200px]">
-                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" x-show="!transitioning"
+                    {{-- Grid produk --}}
+                    <div class="relative">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+                            x-show="!transitioning"
                             x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0">
 
                             <template x-for="product in filteredProducts" :key="product.id">
-                                <div @click="product.stock > 0 && addToCart(product); 
-                                    toastMsg = product.name + ' ditambahkan!'; 
-                                    showToast = true; 
-                                    setTimeout(() => showToast = false, 2000);"
-                                    :class="{
-                                        'opacity-50 cursor-not-allowed pointer-events-none grayscale': product.stock <=
-                                            0
-                                    }"
-                                    class="cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                                rounded-xl overflow-hidden flex flex-col h-full hover:shadow-md 
-                                hover:-translate-y-1 transform transition-all duration-200">
+                                <div @click="openProductOptions(product)"
+                                    :class="{ 'opacity-60 pointer-events-none grayscale': product.stock <= 0 }"
+                                    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
+                                        rounded-xl shadow-sm hover:shadow-md transition-all duration-200 
+                                        cursor-pointer flex flex-col p-5">
 
-                                    {{-- Inisial Produk --}}
-                                    <div
-                                        class="bg-blue-600 dark:bg-blue-700 text-white flex items-center justify-center 
-                                        font-bold text-lg tracking-wide h-12 shadow-sm">
-                                        <span x-text="product.name.substring(0,2).toUpperCase()"></span>
+                                    {{-- Header (ikon + nama produk + stok) --}}
+                                    <div class="flex items-start justify-between mb-4">
+                                        {{-- Kiri: Icon + Nama + Kategori --}}
+                                        <div class="flex items-start gap-3">
+                                            {{-- Cube icon --}}
+                                            <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.6" stroke="currentColor"
+                                                    class="w-6 h-6 text-gray-500 dark:text-gray-300">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.3 7.25l8.7 4.88 8.7-4.88M12 12v8" />
+                                                </svg>
+                                            </div>
+
+                                            {{-- Nama & Kategori --}}
+                                            <div class="flex flex-col">
+                                                <h3 class="text-gray-800 dark:text-gray-100 font-semibold text-sm leading-tight line-clamp-1"
+                                                    x-text="product.name"></h3>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400"
+                                                    x-text="product.category_name"></p>
+                                            </div>
+                                        </div>
+
+                                        {{-- Kanan: Stock Label (dengan satuan pcs) --}}
+                                        <template x-if="product.stock > 10">
+                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                        bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                                x-text="product.stock"></span>
+                                        </template>
+                                        <template x-if="product.stock <= 10 && product.stock > 0">
+                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                        bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                                                x-text="product.stock"></span>
+                                        </template>
+                                        <template x-if="product.stock <= 0">
+                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                        bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+                                                0 pcs
+                                            </span>
+                                        </template>
                                     </div>
 
-                                    {{-- Detail Produk --}}
-                                    <div class="p-4 flex flex-col flex-1 justify-between">
-                                        {{-- Nama Produk --}}
-                                        <div class="font-semibold text-gray-900 dark:text-gray-100 mb-1 text-left leading-tight line-clamp-2"
-                                            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.8rem;"
-                                            :title="product.name" x-text="product.name">
-                                        </div>
+                                    {{-- Harga --}}
+                                    <div class="mb-2">
+                                        <p class="text-lg font-bold text-blue-600 dark:text-blue-400"
+                                            x-text="'Rp ' + Number(product.price).toLocaleString()"></p>
+                                    </div>
 
-                                        {{-- Harga Produk --}}
-                                        <div class="text-blue-600 dark:text-blue-300 font-bold text-left mb-1 text-sm"
-                                            x-text="'Rp ' + Number(product.price).toLocaleString()">
-                                        </div>
+                                    {{-- Barcode --}}
+                                    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 5v14M7 5v14m4-14v14m4-14v14m4-14v14" />
+                                        </svg>
+                                        <span x-text="product.code"></span>
+                                    </div>
 
-                                        {{-- Barcode --}}
-                                        <div class="text-gray-500 dark:text-gray-400 text-xs text-center tracking-wider mt-auto"
-                                            x-text="product.code">
-                                        </div>
+                                    {{-- Multiple Options Button --}}
+                                    <div class="mt-auto flex items-start justify-start">
+                                        <template x-if="(product.attribute_values?.length || 0) > 1">
+                                            <button @click.stop="openProductOptions(product)"
+                                                class="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 
+                                                    bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/50
+                                                    py-1 px-3 rounded-md transition text-left w-fit">
+                                                Multiple Options
+                                            </button>
+                                        </template>
 
-                                        {{-- Stok Habis --}}
-                                        <div x-show="product.stock <= 0"
-                                            class="text-xs text-red-600 dark:text-red-400 mt-2 font-bold text-left animate-pulse">
-                                            ⚠️ STOK HABIS
-                                        </div>
+                                        {{-- Kalau tidak ada tombol, beri ruang agar konten bawah turun sedikit --}}
+                                        <template x-if="(product.attribute_values?.length || 0) <= 1">
+                                            <div class="h-5"></div>
+                                        </template>
                                     </div>
                                 </div>
                             </template>
                         </div>
 
+                        {{-- Jika kosong --}}
                         <template x-if="filteredProducts.length === 0">
-                            <div class="text-center text-gray-500 py-10">Tidak ada produk untuk kategori ini.</div>
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-10">
+                                Tidak ada produk untuk kategori ini.
+                            </div>
                         </template>
+                    </div>
+                </div>
 
-                        {{-- Toast Notification --}}
-                        <div x-show="showToast" x-transition.duration.300ms
-                            class="fixed top-6 right-6 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold z-50">
-                            <span x-text="toastMsg"></span>
-                        </div>
+                <!-- TOAST GLOBAL (paste setelah header) -->
+                <div 
+                    x-show="showToast"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2"
+                    class="fixed right-6 z-[9999] pointer-events-auto"
+                    style="top: calc(64px + 0.75rem);"
+                >
+                    <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold">
+                        <span x-text="toastMsg"></span>
                     </div>
                 </div>
 
@@ -224,7 +284,7 @@
                             </div>
                         </template>
 
-                        <template x-for="(item, index) in cart" :key="item.id">
+                        <template x-for="(item, index) in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
                             <div
                                 class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
                                 <div>
@@ -285,7 +345,6 @@
                             </div>
 
                             <div class="flex gap-3 mt-4">
-                                {{-- Tombol Riwayat Hari Ini --}}
                                 <button @click="loadTodayTransactions()"
                                     class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
                                 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 
@@ -294,7 +353,6 @@
                                     <span>Riwayat</span>
                                 </button>
 
-                                {{-- Tombol Bayar --}}
                                 <button @click="openReviewModal()"
                                     class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
                                 text-white py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm">
@@ -305,6 +363,61 @@
                         </div>
                     </div>
                 </aside>
+            </div>
+
+            {{-- ============================= --}}
+            {{-- MODAL: PILIH VARIAN PRODUK --}}
+            {{-- ============================= --}}
+            <div 
+                x-show="showOptionModal"
+                x-transition
+                @keydown.window.escape="showOptionModal = false"
+                @click.self="showOptionModal = false"
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            >
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl mx-4 p-8 relative">
+                    {{-- Tombol Close --}}
+                    <button 
+                        @click="showOptionModal = false" 
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
+                    >
+                        <i class="fa-solid fa-xmark text-3xl"></i>
+                    </button>
+
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100" x-text="selectedProduct?.name"></h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400" x-text="selectedProduct?.code"></p>
+                    </div>
+
+                    <div class="mb-4 text-blue-700 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-300 rounded-lg p-3 text-sm">
+                        Produk ini memiliki beberapa varian. Silakan pilih salah satu:
+                    </div>
+
+                    {{-- Grid varian lebih besar --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <template x-for="opt in selectedProductOptions" :key="opt.id">
+                            <button 
+                                @click="opt.stok > 0 && chooseOption(opt)"
+                                :disabled="opt.stok <= 0"
+                                :class="opt.stok > 0 
+                                    ? 'border-2 rounded-xl p-4 text-left hover:bg-blue-50 dark:hover:bg-blue-800 transition flex flex-col justify-between min-h-[110px]' 
+                                    : 'border-2 rounded-xl p-4 text-left bg-gray-100 dark:bg-gray-700 opacity-60 cursor-not-allowed flex flex-col justify-between min-h-[110px]'">
+                                <div class="font-semibold text-gray-900 dark:text-gray-100 text-lg" 
+                                    x-text="opt.attribute_value"></div>
+                                <div class="text-sm" 
+                                    :class="opt.stok > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                                    x-text="opt.stok > 0 ? ('Stok: ' + opt.stok) : 'Stok Habis'"></div>
+                                <div class="text-base font-bold text-blue-600"
+                                    x-text="'Rp ' + Number(selectedProduct.price).toLocaleString()"></div>
+                            </button>
+                        </template>
+                    </div>
+
+                    <div class="text-xs text-gray-500 mt-6 border-t pt-4 text-center">
+                        Klik varian untuk menambah ke keranjang.<br>
+                        <span class="block text-gray-400 mt-1">Tekan <strong>ESC</strong> atau klik di luar area untuk menutup.</span>
+                    </div>
+                </div>
             </div>
 
             {{-- ============================= --}}
@@ -1002,37 +1115,74 @@
                 </div>
             </div>
 
-            {{-- Modal Review --}}
-            <div x-show="showReview" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" x-transition>
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 w-[90%] md:w-[400px] shadow-xl">
-                    <h2 class="text-xl font-bold mb-4">Konfirmasi Transaksi</h2>
-                    <div class="text-sm mb-4 space-y-1">
-                        <template x-for="item in cart">
-                            <div class="flex justify-between">
-                                <span x-text="item.name"></span>
-                                <span x-text="item.qty + ' × Rp ' + item.price.toLocaleString()"></span>
+            {{-- 🧾 Modal Konfirmasi Transaksi --}}
+            <div x-show="showReview"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+                x-transition>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden">
+
+                    {{-- Judul --}}
+                    <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
+                            Konfirmasi Transaksi
+                        </h2>
+                    </div>
+
+                    {{-- Daftar Produk --}}
+                    <div class="text-sm md:text-base space-y-3 max-h-[50vh] overflow-y-auto pr-2 pb-2">
+                        <template x-for="item in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <div class="font-semibold text-gray-900 dark:text-gray-100" x-text="item.name"></div>
+                                    <div class="font-semibold text-gray-800 dark:text-gray-100"
+                                        x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+                                    x-text="item.qty + ' × Rp ' + item.price.toLocaleString()"></div>
                             </div>
                         </template>
-                        <hr class="my-2">
-                        <div class="flex justify-between font-semibold">
-                            <span>Total:</span>
-                            <span x-text="'Rp ' + total().toLocaleString()"></span>
+                    </div>
+
+                    {{-- Total & Info Pembayaran --}}
+                    <div class="mt-5 pt-4 border-t border-gray-300 dark:border-gray-700 space-y-3 text-base">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <span>💰</span> Total:
+                            </span>
+                            <span class="font-bold text-gray-900 dark:text-white"
+                                x-text="'Rp ' + total().toLocaleString()"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Dibayar:</span>
-                            <span x-text="'Rp ' + paid.toLocaleString()"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <span>💵</span> Dibayar:
+                            </span>
+                            <span class="text-gray-900 dark:text-white"
+                                x-text="'Rp ' + paid.toLocaleString()"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Kembalian:</span>
-                            <span x-text="'Rp ' + change().toLocaleString()"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <span>🔄</span> Kembalian:
+                            </span>
+                            <span class="text-blue-600 dark:text-blue-400 font-semibold"
+                                x-text="'Rp ' + change().toLocaleString()"></span>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-2">
-                        <button @click="showReview=false"
-                            class="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded-lg">Batalkan</button>
+
+                    {{-- Tombol --}}
+                    <div class="flex justify-end gap-3 mt-6 pt-4">
+                        <button @click="showReview = false"
+                            class="px-5 py-2.5 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium hover:bg-gray-400 dark:hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-times mr-1"></i> Batalkan
+                        </button>
                         <button @click="confirmCheckout()"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold">Konfirmasi</button>
+                            class="px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold shadow">
+                            <i class="fa-solid fa-check mr-1"></i> Konfirmasi
+                        </button>
                     </div>
+
                 </div>
             </div>
 
@@ -1626,6 +1776,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1695,6 +1846,9 @@
                 showDeleteConfirmDigital: false,
                 digitalToDelete: null,
                 digitalSummary: null,
+                showOptionModal: false,
+                selectedProduct: null,
+                selectedProductOptions: [],
 
                 // ======== INIT UTAMA ========
                 async init() {
@@ -1711,6 +1865,9 @@
                         price: Number(String(p.price ?? '0').replace(/[^\d]/g, '')),
                         stock: Number(p.stock ?? 0),
                         category_id: p.category_id,
+                        category_name: p.category_name ?? 'Tanpa Kategori', // 🆕 tambahkan ini
+                        category_code: p.category_code ?? '',               // 🆕 dan ini
+                        attribute_values: p.attribute_values ?? [],
                     }));
 
                     // Produk digital
@@ -1902,7 +2059,8 @@
                             cart: this.cart.map(i => ({
                                 id: i.id,
                                 qty: i.qty,
-                                price: i.price
+                                price: i.price,
+                                variant_id: i.variant_id ?? null, // 🆕 kirim id varian jika ada
                             })),
                             subtotal: this.total(),
                             dibayar: this.paid,
@@ -1910,41 +2068,19 @@
                             customer_id: this.selectedCustomer || null,
                         };
 
-                        console.log("%c🚀 Sending Physical Checkout Payload:", "color:#2563eb;font-weight:bold",
-                            payload);
-
                         const res = await fetch("{{ route('pos.checkout') }}", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                                 "Accept": "application/json",
-                                "X-Requested-With": "XMLHttpRequest", // <- penting agar Laravel tidak redirect
                                 "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
                             },
                             body: JSON.stringify(payload),
                         });
 
-                        console.log("%c🔁 Response status:", "color:#f59e0b;font-weight:bold", res.status, res
-                            .statusText);
+                        const result = await res.json();
 
-                        // Baca raw text dulu untuk debugging (jika bukan JSON)
-                        const raw = await res.text();
-                        // coba parse JSON dengan try/catch
-                        let result = null;
-                        try {
-                            result = JSON.parse(raw);
-                        } catch (e) {
-                            console.warn("%c⚠️ Response is not JSON (raw):", "color:#ef4444;font-weight:bold", raw);
-                            // tampilkan isi raw agar kita tahu apa server balikin (HTML error / login page / stacktrace)
-                            alert("Server tidak mengembalikan JSON. Lihat console (raw response).");
-                            console.log("📄 Raw response:", raw);
-                            // stop processing further
-                            return;
-                        }
-
-                        console.log("%c📡 Parsed JSON Response:", "color:#10b981;font-weight:bold", result);
-
-                        if (res.ok && result && result.success) {
+                        if (res.ok && result.success) {
                             this.showReview = false;
                             this.showSuccess = true;
                             this.lastTransaction = {
@@ -1952,51 +2088,16 @@
                                 dibayar: payload.dibayar,
                                 kembalian: payload.kembalian
                             };
-
-                            // 🔁 Reset keranjang & pembayaran
                             this.clearCart();
                             this.paid = 0;
                         } else {
-                            // jika server balikan 4xx/5xx namun JSON (mis. validation), tunjukkan pesan
-                            const msg = (result && (result.message || JSON.stringify(result))) ||
-                                "Gagal menyimpan transaksi.";
-                            console.error("%c❌ Server responded with error JSON:", "color:#ef4444;font-weight:bold",
-                                result);
-                            alert(msg);
+                            alert(result.message || "Gagal menyimpan transaksi.");
                         }
 
                     } catch (err) {
-                        console.error("%c🔥 Error confirmCheckout:", "color:#ef4444;font-weight:bold", err);
+                        console.error("🔥 Error confirmCheckout:", err);
                         alert("Kesalahan saat memproses transaksi. Cek console untuk detail.");
                     }
-                },
-
-                // ======== BARCODE SCANNER ========
-                handleBarcodeInput(e) {
-                    const code = e.target.value.trim();
-                    if (!code) return e.target.value = '';
-                    const found = this.products.find(p => String(p.code) === String(code));
-                    if (!found) {
-                        this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
-                        this.showToast = true;
-                        setTimeout(() => this.showToast = false, 2000);
-                        e.target.value = '';
-                        return;
-                    }
-                    const existing = this.cart.find(i => i.id === found.id);
-                    const qtyInCart = existing ? existing.qty : 0;
-                    if (found.stock <= qtyInCart) {
-                        this.toastMsg = `Stok ${found.name} tidak cukup (tersisa ${found.stock}).`;
-                        this.showToast = true;
-                        setTimeout(() => this.showToast = false, 2500);
-                        e.target.value = '';
-                        return;
-                    }
-                    this.addToCart(found);
-                    this.toastMsg = `${found.name} ditambahkan!`;
-                    this.showToast = true;
-                    setTimeout(() => this.showToast = false, 2000);
-                    e.target.value = '';
                 },
 
                 // ======== RIWAYAT TRANSAKSI HARI INI ========
@@ -2140,24 +2241,46 @@
                             // Tutup modal konfirmasi
                             this.showDeleteConfirm = false;
 
-                            // Hapus transaksi dari daftar (frontend refresh)
+                            // ✅ Hapus transaksi dari daftar
                             this.transactionsToday = this.transactionsToday.filter(t => t.id !== trx.id);
 
-                            // Munculkan notifikasi sukses versi template kamu
-                            this.toastMessage = result.message || 'Transaksi berhasil dihapus.';
-                            this.toastType = 'success';
+                            // ✅ Update summary dasar
+                            this.summary.jumlah_transaksi = this.transactionsToday.length;
+                            this.summary.total_penjualan = this.transactionsToday.reduce((sum, t) => sum + (t.subtotal || 0), 0);
+                            this.summary.total_produk_terjual = this.transactionsToday.reduce(
+                                (sum, t) => sum + (t.details?.reduce((a, d) => a + (d.qty || 0), 0) || 0),
+                                0
+                            );
+
+                            // ✅ Rehitung kategori terjual
+                            const categoryMap = {};
+                            this.transactionsToday.forEach(t => {
+                                (t.details || []).forEach(d => {
+                                    const catName = d.category_name || 'Lainnya';
+                                    categoryMap[catName] = (categoryMap[catName] || 0) + (d.qty || 0);
+                                });
+                            });
+
+                            this.summary.categories = Object.entries(categoryMap).map(([name, pcs]) => ({
+                                name,
+                                pcs,
+                            }));
+
+                            // ✅ Toast
+                            this.toastMsg = result.message || 'Transaksi berhasil dihapus.';
                             this.showToast = true;
+                            setTimeout(() => this.showToast = false, 2000);
                         } else {
-                            this.toastMessage = result.message || 'Gagal menghapus transaksi.';
-                            this.toastType = 'error';
+                            this.toastMsg = result.message || 'Gagal menghapus transaksi.';
                             this.showToast = true;
+                            setTimeout(() => this.showToast = false, 2000);
                         }
 
                     } catch (err) {
                         console.error("🔥 Error saat hapus:", err);
-                        this.toastMessage = 'Terjadi kesalahan saat menghapus transaksi.';
-                        this.toastType = 'error';
+                        this.toastMsg = 'Terjadi kesalahan saat menghapus transaksi.';
                         this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2000);
                     }
                 },
 
@@ -2207,6 +2330,193 @@
                         this.toastType = "error";
                         this.showToast = true;
                     }
+                },
+
+                openProductOptions(product) {
+                    const attrs = product.attribute_values || [];
+
+                    // 🚀 Kalau tidak ada varian → langsung masuk keranjang + tampilkan toast
+                    if (attrs.length === 0) {
+                        this.addToCart(product);
+                        this.toastMsg = `${product.name} ditambahkan!`;
+                        this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2000);
+                        return;
+                    }
+
+                    // 🚀 Kalau cuma 1 varian → langsung tambah ke keranjang juga
+                    if (attrs.length === 1) {
+                        const opt = attrs[0];
+                        const itemName = `${product.name} - ${opt.attribute_value}`;
+                        const masterStock = opt.stok ?? 0;
+
+                        const existing = this.cart.find(i => i.id === product.id && i.variant === opt.attribute_value);
+                        if (existing) {
+                            if (existing.qty + 1 > masterStock) {
+                                this.toastMsg = `Stok ${itemName} tidak cukup (tersisa ${masterStock}).`;
+                                this.showToast = true;
+                                setTimeout(() => this.showToast = false, 2500);
+                                return;
+                            }
+                            existing.qty++;
+                        } else {
+                            if (masterStock <= 0) {
+                                this.toastMsg = `⚠️ Stok ${itemName} habis.`;
+                                this.showToast = true;
+                                setTimeout(() => this.showToast = false, 2500);
+                                return;
+                            }
+                            this.cart.push({
+                                id: product.id,
+                                name: itemName,
+                                price: product.price,
+                                qty: 1,
+                                variant: opt.attribute_value
+                            });
+                        }
+
+                        this.saveCart();
+                        this.toastMsg = `${itemName} ditambahkan!`;
+                        this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2000);
+                        return;
+                    }
+
+                    // 🧩 Kalau varian lebih dari 1 → tampilkan modal
+                    this.selectedProduct = product;
+                    this.selectedProductOptions = attrs;
+                    this.showOptionModal = true;
+                },
+
+                // Pilih salah satu varian di modal
+                chooseOption(opt) {
+                    if (!this.selectedProduct) return;
+
+                    const itemName = `${this.selectedProduct.name} - ${opt.attribute_value}`;
+                    const masterStock = opt.stok ?? 0;
+
+                    // Cek stok
+                    if (masterStock <= 0) {
+                        this.toastMsg = `⚠️ Stok ${itemName} habis.`;
+                        this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2500);
+                        return;
+                    }
+
+                    // Cek apakah item sudah ada di keranjang
+                    const existing = this.cart.find(i =>
+                        i.id === this.selectedProduct.id && i.variant_id === opt.id
+                    );
+
+                    if (existing) {
+                        if (existing.qty + 1 > masterStock) {
+                            this.toastMsg = `Stok ${itemName} tidak cukup (tersisa ${masterStock}).`;
+                            this.showToast = true;
+                            setTimeout(() => this.showToast = false, 2500);
+                            return;
+                        }
+                        existing.qty++;
+                    } else {
+                        this.cart.push({
+                            id: this.selectedProduct.id,
+                            name: itemName,
+                            price: this.selectedProduct.price,
+                            qty: 1,
+                            variant: opt.attribute_value,
+                            variant_id: opt.id, // simpan id varian
+                        });
+                    }
+
+                    // 🔄 Update stok UI sementara (bukan database)
+                    const attrIndex = this.selectedProductOptions.findIndex(a => a.id === opt.id);
+                    if (attrIndex !== -1 && this.selectedProductOptions[attrIndex].stok > 0) {
+                        this.selectedProductOptions[attrIndex].stok -= 1;
+                    }
+
+                    const prodIndex = this.products.findIndex(p => p.id === this.selectedProduct.id);
+                    if (prodIndex !== -1 && this.products[prodIndex].stock > 0) {
+                        this.products[prodIndex].stock -= 1;
+                    }
+
+                    this.saveCart();
+
+                    // ✅ Tutup modal langsung setelah pilih
+                    this.showOptionModal = false;
+                    this.selectedProduct = null;
+                    this.selectedProductOptions = [];
+
+                    // ✅ Tampilkan notifikasi
+                    this.toastMsg = `${itemName} ditambahkan!`;
+                    this.showToast = true;
+                    setTimeout(() => this.showToast = false, 2000);
+                },
+
+                // Update scanner agar mendeteksi produk bervarian
+                handleBarcodeInput(e) {
+                    const code = e.target.value.trim();
+                    if (!code) return e.target.value = '';
+                    const found = this.products.find(p => String(p.code) === String(code));
+                    if (!found) {
+                        this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
+                        this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2000);
+                        e.target.value = '';
+                        return;
+                    }
+
+                    const attrs = found.attribute_values || [];
+
+                    // Jika produk punya varian
+                    if (attrs.length > 0) {
+                        // Jika cuma 1 varian -> otomatis pilih varian tersebut (sama seperti chooseOption)
+                        if (attrs.length === 1) {
+                            const opt = attrs[0];
+
+                            // cek stok varian
+                            const masterStock = opt.stok ?? 0;
+                            if (masterStock <= 0) {
+                                this.toastMsg = `⚠️ Stok ${found.name} - ${opt.attribute_value} habis.`;
+                                this.showToast = true;
+                                setTimeout(() => this.showToast = false, 2500);
+                                e.target.value = '';
+                                return;
+                            }
+
+                            // siapkan selectedProduct agar chooseOption berfungsi konsisten
+                            this.selectedProduct = found;
+                            this.selectedProductOptions = attrs;
+
+                            // langsung pilih opt (chooseOption akan menutup modal, update cart, dsb)
+                            this.chooseOption(opt);
+
+                            e.target.value = '';
+                            return;
+                        }
+
+                        // Kalau varian lebih dari 1 -> buka modal pilihan
+                        this.selectedProduct = found;
+                        this.selectedProductOptions = attrs;
+                        this.showOptionModal = true;
+                        e.target.value = '';
+                        return;
+                    }
+
+                    // Kalau tidak ada varian, langsung tambahkan ke keranjang
+                    const existing = this.cart.find(i => i.id === found.id);
+                    const qtyInCart = existing ? existing.qty : 0;
+                    if (found.stock <= qtyInCart) {
+                        this.toastMsg = `Stok ${found.name} tidak cukup (tersisa ${found.stock}).`;
+                        this.showToast = true;
+                        setTimeout(() => this.showToast = false, 2500);
+                        e.target.value = '';
+                        return;
+                    }
+
+                    this.addToCart(found);
+                    this.toastMsg = `${found.name} ditambahkan!`;
+                    this.showToast = true;
+                    setTimeout(() => this.showToast = false, 2000);
+                    e.target.value = '';
                 },
             }
         }

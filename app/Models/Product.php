@@ -27,7 +27,7 @@ class Product extends Model
     // Relations
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function subCategory()
@@ -52,7 +52,7 @@ class Product extends Model
 
     public function attributeValues()
     {
-        return $this->hasMany(ProductAttributeValue::class);
+        return $this->hasMany(ProductAttributeValue::class, 'product_id');
     }
 
     public function inventoryHistories()
