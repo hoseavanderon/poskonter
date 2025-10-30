@@ -39,13 +39,8 @@ class DigitalProductResource extends Resource
                 ->searchable()
                 ->preload(),
 
-            Forms\Components\TextInput::make('type')
-                ->label('Tipe Produk')
-                ->required()
-                ->maxLength(50),
-
             Forms\Components\TextInput::make('base_price')
-                ->label('Harga Dasar')
+                ->label('Harga')
                 ->required()
                 ->maxLength(50),
 

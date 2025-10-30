@@ -19,6 +19,32 @@
     }
     </style>
 
+    <style>
+        /* 🔧 Hilangkan scrollbar bawaan browser secara global */
+        html, body {
+            overflow-x: hidden !important;
+            overflow-y: auto; /* ubah ke hidden kalau kamu ingin full tanpa scroll */
+            height: 100%;
+            background-color: #0f172a; /* warna dasar agar tidak ada flicker putih */
+        }
+
+        /* 🔹 Hilangkan scrollbar horizontal di container utama */
+        [x-data="transactionHistory()"] {
+            overflow-x: hidden !important;
+        }
+
+        /* 🔸 Pastikan area utama tidak menyebabkan scroll tambahan */
+        .p-5, .p-6 {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* 🩵 Kalau mau hilangkan scroll seluruh halaman */
+        body.no-scroll {
+            overflow: hidden !important;
+        }
+    </style>
+
     <div x-data="transactionHistory()" x-init="init()" class="p-5 sm:p-6 w-full h-full overflow-x-hidden relative">
 
         <!-- HEADER -->
@@ -178,22 +204,22 @@
 
                 <!-- TOTAL SUMMARY -->
                 <div class="space-y-1">
-                    <div class="flex justify-between">
-                        <span>Total</span>
-                        <span class="font-medium" x-text="formatCurrency(total)"></span>
+                    
+                    <!-- Total Penjualan Semua (Barang + Digital) -->
+                    <div class="flex justify-between font-semibold text-gray-200">
+                        <span>Total Penjualan</span>
+                        <span x-text="formatCurrency(totalPenjualan)"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Lebih</span>
-                        <span class="font-medium" x-text="formatCurrency(extra)"></span>
-                    </div>
-                    <div class="flex justify-between">
+
+                    <!-- Grand Total (setelah dikurangi utang) -->
+                    <div class="flex justify-between font-semibold text-blue-400">
                         <span>Grand Total</span>
-                        <span class="font-semibold text-blue-400" x-text="formatCurrency(grandTotal)"></span>
+                        <span x-text="formatCurrency(grandTotal)"></span>
                     </div>
 
                     <hr class="border-gray-700 my-2">
-                    
-                    <!-- TOTAL TRANSFER (hanya tampil jika > 0) -->
+
+                    <!-- TOTAL TRANSFER -->
                     <template x-if="totalTransfer > 0">
                         <div class="pt-3 flex justify-between">
                             <span>Total Transfer :</span>
@@ -201,7 +227,7 @@
                         </div>
                     </template>
 
-                    <!-- TOTAL TARIK (hanya tampil jika > 0) -->
+                    <!-- TOTAL TARIK -->
                     <template x-if="totalTarik > 0">
                         <div class="pt-1 flex justify-between">
                             <span>Total Tarik :</span>
@@ -215,9 +241,12 @@
             <div class="flex flex-col gap-5">
                 <!-- CATEGORY SUMMARY -->
                 <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                    <template x-if="!emptyData">
+                    <h3 class="text-sm font-semibold text-gray-200 mb-3">Ringkasan Kategori Produk</h3>
+
+                    <!-- Kalau ada data -->
+                    <template x-if="categories.length > 0">
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                            <template x-for="c in categories" :key="c.name">
+                            <template x-for="(c, index) in categories" :key="c.name + index">
                                 <div class="bg-gray-700/60 rounded-xl py-3 transition hover:bg-gray-700/90">
                                     <p class="text-sm font-semibold text-gray-100" x-text="c.name"></p>
                                     <p class="text-sm text-gray-400" x-text="c.total_pcs + ' pcs'"></p>
@@ -226,11 +255,24 @@
                         </div>
                     </template>
 
-                    <template x-if="emptyData">
+                    <!-- Kalau kosong -->
+                    <template x-if="categories.length === 0">
                         <div class="text-center text-gray-400 py-10">
-                            <p>📭 Tidak ada data pada tanggal 
-                                <span x-text="selectedDate + '/' + selectedMonthNumber + '/' + selectedYear"></span>.
-                            </p>
+                            <template x-if="!isRangeActive">
+                                <p>
+                                    📭 Tidak ada data pada tanggal
+                                    <span x-text="formatTanggal(selectedDate, selectedMonthNumber, selectedYear)"></span>.
+                                </p>
+                            </template>
+
+                            <template x-if="isRangeActive">
+                                <p>
+                                    📭 Tidak ada data dari tanggal
+                                    <span x-text="formatIndo(fromDate)"></span>
+                                    sampai
+                                    <span x-text="formatIndo(toDate)"></span>.
+                                </p>
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -277,13 +319,17 @@
 
                         <template x-if="groupedDigitalTransactions.length > 0">
                             <div class="space-y-3">
-                                <template x-for="app in groupedDigitalTransactions" :key="app.name">
+                                <template x-for="(app, appIndex) in groupedDigitalTransactions" :key="app.name + appIndex">
                                     <div class="bg-gray-700/60 rounded-xl p-3">
                                         <!-- HEADER APP -->
                                         <button 
                                             @click="app.open = !app.open"
                                             class="w-full flex justify-between items-center px-2 py-1 text-left text-sm font-semibold text-gray-100 hover:text-blue-400 transition">
-                                            <span x-text="app.name"></span>
+                                            <div class="flex items-center gap-2">
+                                                <span x-text="app.name"></span>
+                                                <!-- 🔹 Tambahan: jumlah transaksi -->
+                                                <span class="text-xs text-gray-400 font-normal" x-text="'( ' + app.transactions.length + ' Trx )'"></span>
+                                            </div>
                                             <div class="flex items-center gap-2">
                                                 <span class="text-blue-400 font-medium text-xs" x-text="formatCurrency(app.total)"></span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform transition-transform"
@@ -294,13 +340,19 @@
                                         </button>
 
                                         <!-- DETAIL PRODUK PER APP -->
-                                        <div x-show="app.open" x-collapse class="mt-2 space-y-1">
-                                            <template x-for="t in app.transactions" :key="t.name">
-                                                <div class="flex flex-col border-b border-gray-700/40 pb-1 last:border-none last:pb-0">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-gray-200 text-sm" x-text="t.name"></span>
-                                                        <span class="text-blue-400 text-sm font-medium" x-text="formatCurrency(t.amount)"></span>
+                                        <div x-show="app.open" x-collapse class="mt-3 space-y-2">
+                                            <template x-for="(t, index) in app.transactions" :key="app.name + '-' + index">
+                                                <div class="bg-gray-800/60 border border-gray-700 rounded-lg p-3 flex justify-between items-center hover:bg-gray-700 transition">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-gray-100 text-sm font-semibold" x-text="t.name"></span>
+                                                        <div class="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.5a.75.75 0 00.75.75h3a.75.75 0 000-1.5H10.75v-3.75z" clip-rule="evenodd" />
+                                                            </svg>
+                                                            <span x-text="t.datetime"></span>
+                                                        </div>
                                                     </div>
+                                                    <span class="text-blue-400 text-sm font-semibold" x-text="formatCurrency(t.amount)"></span>
                                                 </div>
                                             </template>
                                         </div>
@@ -313,13 +365,12 @@
                             <p class="text-gray-400 text-center py-8">📭 Tidak ada transaksi digital pada tanggal ini.</p>
                         </template>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
-    <<script>
+    <script>
 function transactionHistory() {
     return {
         fromDate: null,
@@ -352,7 +403,17 @@ function transactionHistory() {
 
         isRangeActive: false,
 
-        get grandTotal() { return this.total + this.extra; },
+        get totalPenjualan() {
+            // Hitung total barang + semua digital apps
+            const totalDigital = this.digitalPerApp.reduce((sum, d) => sum + Number(d.total || 0), 0);
+            return Number(this.barangTotal || 0) + totalDigital;
+        },
+
+        get grandTotal() {
+            // Total - semua utang
+            const totalUtang = this.utangList.reduce((sum, u) => sum + Number(u.subtotal || 0), 0);
+            return this.totalPenjualan - totalUtang;
+        },
 
         toggleDropdown() { this.showDropdown = !this.showDropdown; },
 

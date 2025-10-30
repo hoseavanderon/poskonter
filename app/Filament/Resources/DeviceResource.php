@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\MultiSelect;
+use Illuminate\Database\Eloquent\Builder;
 
 class DeviceResource extends Resource
 {
@@ -75,6 +76,12 @@ class DeviceResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('outlet_id', Auth::user()->outlet_id);
     }
 
     // Batasi akses: Admin tidak bisa lihat / create / edit / delete

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div x-data="barangMasuk()" class="w-full mx-auto py-10 px-8 text-gray-100">
         <!-- 🏷️ Header -->
         <div class="mb-8">
@@ -169,9 +170,18 @@
         </div>
 
         <!-- 🔍 Supplier Modal -->
-        <div x-show="showSupplierModal"
-            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
-            <div class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]">
+        <div 
+            x-show="showSupplierModal" 
+            x-transition 
+            @keydown.escape.window="showSupplierModal = false"
+            @click.self="showSupplierModal = false"
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+        >
+            <div 
+                class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]" 
+                x-trap.inert.noscroll="showSupplierModal"
+                @click.stop
+            >
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-200">Select Supplier</h3>
                     <button @click="showSupplierModal = false" class="text-gray-400 hover:text-gray-200">✖</button>
@@ -183,7 +193,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z" />
                     </svg>
-                    <input type="text" placeholder="Search suppliers..." x-model="supplierSearch"
+                    <input type="text" placeholder="Search suppliers..." 
+                        x-model="supplierSearch"
+                        x-ref="supplierInput"
                         @input.debounce.400ms="searchSuppliers"
                         class="w-full border border-[#2A3242] rounded-lg px-10 py-2 bg-[#222B3A] text-gray-100 focus:border-blue-400 focus:ring-blue-400" />
                 </div>
@@ -203,9 +215,18 @@
         </div>
 
         <!-- 🔍 Product Modal -->
-        <div x-show="showProductModal"
-            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
-            <div class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]">
+        <div 
+            x-show="showProductModal" 
+            x-transition 
+            @keydown.escape.window="showProductModal = false"
+            @click.self="showProductModal = false"
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+        >
+            <div 
+                class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]"
+                x-trap.inert.noscroll="showProductModal"
+                @click.stop
+            >
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-200">Select Product</h3>
                     <button @click="showProductModal = false" class="text-gray-400 hover:text-gray-200">✖</button>
@@ -217,7 +238,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z" />
                     </svg>
-                    <input type="text" placeholder="Search products..." x-model="productSearch"
+                    <input type="text" placeholder="Search products..." 
+                        x-model="productSearch"
+                        x-ref="productInput"
                         @input.debounce.400ms="searchProducts"
                         class="w-full border border-[#2A3242] rounded-lg px-10 py-2 bg-[#222B3A] text-gray-100 focus:border-blue-400 focus:ring-blue-400" />
                 </div>
@@ -242,8 +265,6 @@
             class="fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg text-sm z-50">
         </div>
     </div>
-
-
 
     <script>
         function barangMasuk() {
@@ -276,6 +297,22 @@
                     show: false,
                     message: '',
                     type: 'success'
+                },
+
+                init() {
+                    // 🔹 Ketika modal supplier dibuka → fokus input
+                    this.$watch('showSupplierModal', (value) => {
+                        if (value) {
+                            this.$nextTick(() => this.$refs.supplierInput?.focus());
+                        }
+                    });
+
+                    // 🔹 Ketika modal product dibuka → fokus input
+                    this.$watch('showProductModal', (value) => {
+                        if (value) {
+                            this.$nextTick(() => this.$refs.productInput?.focus());
+                        }
+                    });
                 },
 
                 formatRupiah(value) {
@@ -344,7 +381,7 @@
                     if (this.activeProductIndex !== null) {
                         const target = this.products[this.activeProductIndex];
 
-                        // Reset data sebelumnya agar tidak bercampur
+                        // Reset data sebelumnya
                         target.product_id = product.id;
                         target.product_name = product.name;
                         target.product_attribute = product.attribute_name ?? '-';
@@ -353,36 +390,34 @@
                         target.pcs = 0;
                         target.showDropdown = false;
                         target.showHargaDropdown = false;
-
-                        // Siapkan fetch parallel untuk efisiensi
-                        try {
-                            const [attrRes, hargaRes] = await Promise.all([
-                                fetch(`/api/attribute-values/${product.id}`),
-                                fetch(`/api/harga-values/${product.id}`)
-                            ]);
-
-                            // ✅ Tangani attribute value
-                            if (attrRes.ok) {
-                                this.attributeValues[product.id] = await attrRes.json();
-                            } else {
-                                this.attributeValues[product.id] = [];
-                            }
-
-                            // ✅ Tangani harga lama
-                            if (hargaRes.ok) {
-                                this.hargaValues[product.id] = await hargaRes.json();
-                            } else {
-                                this.hargaValues[product.id] = [];
-                            }
-                        } catch (error) {
-                            console.error('Gagal mengambil data product:', error);
-                            this.attributeValues[product.id] = [];
-                            this.hargaValues[product.id] = [];
-                        }
                     }
 
-                    // Tutup modal setelah pemilihan selesai
+                    // 🚀 Tutup modal langsung dulu
                     this.showProductModal = false;
+
+                    // Lanjutkan ambil data di background
+                    try {
+                        const [attrRes, hargaRes] = await Promise.all([
+                            fetch(`/api/attribute-values/${product.id}`),
+                            fetch(`/api/harga-values/${product.id}`)
+                        ]);
+
+                        if (attrRes.ok) {
+                            this.attributeValues[product.id] = await attrRes.json();
+                        } else {
+                            this.attributeValues[product.id] = [];
+                        }
+
+                        if (hargaRes.ok) {
+                            this.hargaValues[product.id] = await hargaRes.json();
+                        } else {
+                            this.hargaValues[product.id] = [];
+                        }
+                    } catch (error) {
+                        console.error('Gagal mengambil data product:', error);
+                        this.attributeValues[product.id] = [];
+                        this.hargaValues[product.id] = [];
+                    }
                 },
 
                 // 📋 UTILS
@@ -487,5 +522,50 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+/* 🧩 Cegah overflow dari elemen fixed/modal Alpine */
+body {
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ✅ Scroll hanya pada konten utama (main) */
+main {
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+}
+
+/* 🚀 Fix tambahan: pastikan modal & toast tidak menambah tinggi halaman */
+.fixed,
+[ x-show ] {
+    overscroll-behavior: contain !important;
+}
+
+/* 🧭 Pastikan tidak ada padding global dari html/body */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    scrollbar-gutter: stable both-edges;
+}
+
+/* 🌙 Scrollbar custom theme */
+main::-webkit-scrollbar {
+    width: 10px;
+}
+main::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+main::-webkit-scrollbar-thumb {
+    background-color: #334155;
+    border-radius: 10px;
+    border: 2px solid #0f172a;
+}
+main::-webkit-scrollbar-thumb:hover {
+    background-color: #475569;
+}
+main {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 #0f172a;
+}
     </style>
 @endsection

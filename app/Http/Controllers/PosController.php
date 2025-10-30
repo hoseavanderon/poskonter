@@ -12,6 +12,9 @@ use App\Models\App;
 use App\Models\DigitalCategory;
 use App\Models\DigitalProduct;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Cashbook;
 
 class PosController extends Controller
 {
@@ -72,6 +75,10 @@ class PosController extends Controller
     {
         $data = $request->validate([
             'cart' => 'required|array',
+            'cart.*.id' => 'required|exists:products,id',
+            'cart.*.qty' => 'required|numeric|min:1',
+            'cart.*.price' => 'required|numeric|min:0',
+            'cart.*.product_attribute_value_id' => 'nullable|exists:product_attribute_values,id',
             'subtotal' => 'required|numeric',
             'dibayar' => 'required|numeric',
             'kembalian' => 'required|numeric',
@@ -114,6 +121,7 @@ class PosController extends Controller
         // Simpan detail transaksi & kurangi stok
         // ===============================
         foreach ($data['cart'] as $item) {
+            \Log::info('🧾 Cart Item:', $item);
             \App\Models\DetailTransaction::create([
                 'transaction_id' => $transaction->id,
                 'product_id' => $item['id'],
@@ -124,28 +132,43 @@ class PosController extends Controller
 
             $product = \App\Models\Product::find($item['id']);
 
-            // 🧩 Jika produk punya varian yang dipilih
-            if (!empty($item['variant_id'])) {
-                $variant = \App\Models\ProductAttributeValue::find($item['variant_id']);
+            // 🧩 Cek apakah produk punya varian (product_attribute_value_id)
+            if (!empty($item['product_attribute_value_id'])) {
+                $variant = \App\Models\ProductAttributeValue::find($item['product_attribute_value_id']);
+
                 if ($variant) {
-                    $variant->decrement('stok', $item['qty']);
+                    $stokAwal = $variant->stok;
+                    $qtyKeluar = $item['qty'];
+
+                    // ✅ Kurangi stok varian
+                    $variant->decrement('stok', $qtyKeluar);
                     $variant->update(['last_sale_date' => now()]);
 
-                    // Catat history
+                    // ✅ Catat history stok keluar
                     \App\Models\InventoryHistory::create([
                         'product_id' => $product->id,
                         'product_attribute_value_id' => $variant->id,
                         'type' => 'OUT',
-                        'pcs' => $item['qty'],
-                        'keterangan' => 'Penjualan ' . now()->translatedFormat('d F Y'),
-                        'outlet_id' => Auth::user()->outlet_id ?? 1,
+                        'pcs' => $qtyKeluar,
+                        'keterangan' => 'Penjualan tanggal ' . now()->translatedFormat('d F Y'),
+                        'outlet_id' => $outletId,
                     ]);
+
+                    \Log::info('✅ Kurangi stok varian', [
+                        'variant_id' => $variant->id,
+                        'stok_awal' => $stokAwal,
+                        'qty_keluar' => $qtyKeluar,
+                        'stok_akhir' => $variant->fresh()->stok,
+                    ]);
+                } else {
+                    \Log::warning('⚠️ Varian tidak ditemukan', ['id' => $item['product_attribute_value_id']]);
                 }
             } else {
-                // Produk tanpa varian
-                if ($product && isset($product->stok)) {
-                    $product->decrement('stok', $item['qty']);
-                }
+                // ⚠️ Jika tidak ada varian, log saja agar tahu
+                \Log::warning('Produk tanpa varian tidak dikurangi stok', [
+                    'product_id' => $item['id'],
+                    'product_name' => $product->name ?? '(Tanpa Nama)',
+                ]);
             }
         }
 
@@ -254,7 +277,6 @@ class PosController extends Controller
                     'digital_category_id',
                     'name',
                     'code',
-                    'type',
                     'base_price',
                     'is_fixed',
                     'app_id'
@@ -488,4 +510,150 @@ class PosController extends Controller
             ], 500);
         }
     }
+
+   public function getCloseBookData()
+    {
+        $today = now()->toDateString();
+
+        try {
+            // === Barang (produk fisik)
+            $barangTotal = DB::table('detail_transaction')
+                ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+                ->whereDate('transactions.created_at', $today)
+                ->sum('detail_transaction.subtotal');
+
+            // === Digital per App (tanpa tarik & transfer)
+            $digitalPerApp = DB::table('digital_transactions')
+                ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+                ->whereDate('digital_transactions.created_at', $today)
+                ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+                ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
+                ->groupBy('apps.name')
+                ->get();
+
+            // === Total Transfer (digital_product_id = 6)
+            $totalTransfer = DB::table('digital_transactions')
+                ->where('digital_product_id', 6)
+                ->whereDate('created_at', $today)
+                ->sum('subtotal');
+
+            // === Total Tarik (digital_product_id = 5)
+            $totalTarik = DB::table('digital_transactions')
+                ->where('digital_product_id', 5)
+                ->whereDate('created_at', $today)
+                ->sum('subtotal');
+
+            // === Utang dari transaksi fisik
+            $utangFisik = DB::table('transactions')
+                ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+                ->whereDate('transactions.created_at', $today)
+                ->whereNotNull('transactions.customer_id')
+                ->whereNull('transactions.paid_at')
+                ->select('customers.name', 'transactions.subtotal')
+                ->get();
+
+            // === Utang dari transaksi digital
+            $utangDigital = DB::table('digital_transactions')
+                ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+                ->whereDate('digital_transactions.created_at', $today)
+                ->whereNotNull('digital_transactions.customer_id')
+                ->whereNull('digital_transactions.paid_at')
+                ->select('customers.name', 'digital_transactions.subtotal')
+                ->get();
+
+            // === Gabungkan utang fisik + digital
+            $utangList = $utangFisik->merge($utangDigital)
+                ->groupBy('name')
+                ->map(fn($items) => [
+                    'name' => $items->first()->name,
+                    'subtotal' => $items->sum('subtotal'),
+                ])
+                ->values();
+
+            // === Hitung total penjualan dan total akhir
+            $totalDigital = $digitalPerApp->sum('total');
+            $totalPenjualan = $barangTotal + $totalDigital;
+            $totalUtang = $utangList->sum('subtotal');
+            $totalSetelahUtang = max(0, $totalPenjualan - $totalUtang);
+
+            // 💡 Grand total = totalSetelahUtang (tidak termasuk transfer)
+            $grandTotal = $totalSetelahUtang;
+
+            return response()->json([
+                'tanggal' => now()->translatedFormat('d F Y'),
+                'barangTotal' => $barangTotal,
+                'digitalPerApp' => $digitalPerApp,
+                'utangList' => $utangList,
+                'totalPenjualan' => $totalPenjualan,
+                'totalUtang' => $totalUtang,
+                'totalSetelahUtang' => $totalSetelahUtang,
+                'grandTotal' => $grandTotal,
+                'totalTransfer' => $totalTransfer,
+                'totalTarik' => $totalTarik,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data tutup buku',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function pembukuanStore(Request $request)
+    {
+        try {
+            // 🧭 Log awal saat request diterima
+            \Log::info('📘 [PembukuanStore] Request diterima', [
+                'raw_body' => $request->getContent(),
+            ]);
+
+            // pastikan JSON body dikonversi ke array request
+            $request->merge(json_decode($request->getContent(), true));
+
+            \Log::info('📘 [PembukuanStore] Setelah decode JSON', [
+                'merged_request' => $request->all(),
+            ]);
+
+            // 🧾 Validasi data
+            $validated = $request->validate([
+                'deskripsi' => 'required|string|max:255',
+                'type' => 'required|string|in:IN,OUT',
+                'nominal' => 'required|numeric|min:0',
+                'cashbook_category_id' => 'required|integer',
+                'cashbook_wallet_id' => 'required|integer',
+                'outlet_id' => 'required|integer',
+            ]);
+
+            \Log::info('📘 [PembukuanStore] Data validasi berhasil', $validated);
+
+            // 💾 Simpan data ke tabel cashbook
+            $cashbook = \App\Models\Cashbook::create($validated);
+
+            \Log::info('✅ [PembukuanStore] Data berhasil disimpan', [
+                'cashbook_id' => $cashbook->id,
+                'nominal' => $cashbook->nominal,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => '✅ Data pembukuan berhasil disimpan.',
+                'data' => $cashbook,
+            ]);
+        } catch (\Throwable $th) {
+            \Log::error('💥 [PembukuanStore] Gagal menyimpan pembukuan', [
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => '❌ Terjadi kesalahan saat menyimpan ke pembukuan.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
 }

@@ -132,7 +132,7 @@ class RiwayatController extends Controller
                 'digital_products.name as product_name',
                 'digital_transactions.nominal as qty',
                 'digital_transactions.subtotal as amount',
-                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d') as date")
+                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime")
             ])
             ->orderBy('apps.name')
             ->orderByDesc('digital_transactions.created_at')
@@ -146,7 +146,7 @@ class RiwayatController extends Controller
                             'name' => $t->product_name,
                             'qty' => $t->qty,
                             'amount' => $t->amount,
-                            'date' => $t->date,
+                            'datetime' => $t->datetime,
                         ];
                     })->values(),
                     'total' => $transactions->sum('amount'),

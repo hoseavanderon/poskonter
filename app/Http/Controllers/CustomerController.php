@@ -66,23 +66,38 @@ class CustomerController extends Controller
 
     public function payDebt($id)
     {
-        // Cek apakah transaksi ada di tabel transactions
         $transaction = \App\Models\Transaction::find($id);
         $digital = \App\Models\DigitalTransaction::find($id);
 
-        if ($transaction) {
-            $transaction->update([
-                'paid_at' => now(),
-                'customer_id' => null,
-            ]);
-        } elseif ($digital) {
-            $digital->update([
-                'paid_at' => now(),
-                'customer_id' => null,
-            ]);
-        } else {
+        $debt = $transaction ?? $digital;
+
+        if (!$debt) {
             return response()->json(['error' => 'Transaksi tidak ditemukan'], 404);
         }
+
+        // 🔍 Ambil customer terkait sebelum dihapus dari transaksi
+        $customer = \App\Models\Customer::find($debt->customer_id);
+
+        // 💰 Total nominal utang yang dibayar
+        $nominal = $debt->subtotal ?? 0;
+
+        // ✅ Tandai transaksi lunas
+        $debt->update([
+            'paid_at' => now(),
+            'customer_id' => null,
+        ]);
+
+        // 🧾 Catat ke pembukuan (cashbook)
+        \App\Models\Cashbook::create([
+            'deskripsi' => $customer
+                ? "{$customer->name} membayar utang sebanyak Rp " . number_format($nominal, 0, ',', '.')
+                : "Pelunasan utang tanpa nama pelanggan",
+            'type' => 'IN',
+            'nominal' => $nominal,
+            'outlet_id' => Auth::user()->outlet_id,
+            'cashbook_category_id' => 4,
+            'cashbook_wallet_id' => 1,
+        ]);
 
         return response()->json(['success' => true]);
     }

@@ -50,23 +50,164 @@
         <div x-data="posApp()" x-init="init()" class="flex flex-col gap-4">
 
             {{-- Tabs atas --}}
-            <div class="flex gap-2 border-b border-gray-300 dark:border-gray-700 pb-2">
-                <button @click="activeTab = 'physical'"
-                    :class="activeTab === 'physical'
-                        ?
-                        'bg-blue-600 text-white dark:bg-blue-700' :
-                        'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
-                    class="px-4 py-2 rounded-lg font-semibold transition">
-                    🛍️ Produk Fisik
-                </button>
-                <button @click="activeTab = 'digital'"
-                    :class="activeTab === 'digital'
-                        ?
-                        'bg-blue-600 text-white dark:bg-blue-700' :
-                        'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
-                    class="px-4 py-2 rounded-lg font-semibold transition">
-                    ⚡ Produk Digital
-                </button>
+            <div class="flex justify-between items-center border-b border-gray-300 dark:border-gray-700 pb-2">
+                <!-- 🧭 Tombol Tab -->
+                <div class="flex gap-2">
+                    <button @click="activeTab = 'physical'"
+                        :class="activeTab === 'physical'
+                            ? 'bg-blue-600 text-white dark:bg-blue-700'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+                        class="px-4 py-2 rounded-lg font-semibold transition">
+                        🛍️ Produk Fisik
+                    </button>
+
+                    <button @click="activeTab = 'digital'"
+                        :class="activeTab === 'digital'
+                            ? 'bg-blue-600 text-white dark:bg-blue-700'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+                        class="px-4 py-2 rounded-lg font-semibold transition">
+                        ⚡ Produk Digital
+                    </button>
+                    <!-- 🧾 Tombol Tutup Buku -->
+                    <button @click="handleCloseBook()"
+                        class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
+                        📘 Tutup Buku
+                    </button>
+                </div>
+            </div>
+
+            <!-- 📘 Modal Tutup Buku -->
+            <div
+                x-show="showCloseBookModal"
+                x-transition.opacity
+                @keydown.escape.window="showCloseBookModal = false"
+                @click.self="showCloseBookModal = false"
+                class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
+                x-cloak
+            >
+                <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 text-gray-800 dark:text-gray-200">
+
+                    <!-- ❌ Tombol close -->
+                    <button
+                        @click="showCloseBookModal = false"
+                        class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                        ✖
+                    </button>
+
+                    <!-- 🧾 Isi laporan -->
+                    <template x-if="closeBookData">
+                        <div>
+                            <h2 class="text-lg font-bold mb-5 text-center leading-tight">
+                                Rincian Transaksi Tanggal <span x-text="closeBookData.tanggal"></span>
+                            </h2>
+
+                            <div class="space-y-3 text-sm">
+                                <!-- Barang -->
+                                <div class="flex justify-between">
+                                    <span>Barang :</span>
+                                    <span x-text="formatRupiah(closeBookData.barangTotal)"></span>
+                                </div>
+
+                                <!-- Digital per App -->
+                                <template x-for="app in closeBookData.digitalPerApp" :key="app.name">
+                                    <div class="flex justify-between">
+                                        <span x-text="app.name + ':'"></span>
+                                        <span x-text="formatRupiah(app.total)"></span>
+                                    </div>
+                                </template>
+
+                                <hr class="my-2 border-gray-600">
+                                <div class="flex justify-between font-semibold">
+                                    <span>Total Penjualan :</span>
+                                    <span x-text="formatRupiah(closeBookData.totalPenjualan)"></span>
+                                </div>
+
+                                <hr class="my-3 border-gray-700 opacity-70">
+
+                                <!-- Utang -->
+                                <template x-if="closeBookData.utangList.length > 0">
+                                    <div class="pt-1">
+                                        <div class="font-semibold mb-1">Utang :</div>
+                                        <template x-for="u in closeBookData.utangList" :key="u.name">
+                                            <div class="flex justify-between">
+                                                <span x-text="u.name"></span>
+                                                <span class="text-red-500" x-text="'(' + formatRupiah(u.subtotal) + ')'"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <hr class="my-3 border-gray-700 opacity-70">
+
+                                <div class="flex justify-between font-semibold">
+                                    <span>Total Setelah Utang :</span>
+                                    <span x-text="formatRupiah(closeBookData.totalSetelahUtang)"></span>
+                                </div>
+
+                                <div class="flex justify-between font-bold text-lg border-t pt-3 mt-2">
+                                    <span>Grand Total :</span>
+                                    <span x-text="formatRupiah(closeBookData.grandTotal)"></span>
+                                </div>
+
+                                <!-- Lebih input -->
+                                <div class="flex justify-between items-center mt-2">
+                                    <span>Lebih :</span>
+                                    <input
+                                        type="text"
+                                        x-on:input="formatLebihInput($event)"
+                                        class="w-32 text-right bg-transparent border-0 border-b border-gray-700 focus:border-blue-400 focus:outline-none focus:ring-0 text-gray-300 appearance-none transition-colors duration-150"
+                                        placeholder="0"
+                                    >
+                                </div>
+
+                                <div class="flex justify-between font-bold text-lg border-t pt-3 mt-2 text-green-400">
+                                    <span>Grand Total Akhir :</span>
+                                    <span x-text="formatRupiah((closeBookData.grandTotal ?? 0) + (lebih || 0))"></span>
+                                </div>
+
+                                <hr class="my-2 border-gray-700 opacity-60">
+
+                                <div class="flex justify-between text-sm text-gray-400">
+                                    <span>Total Transfer :</span>
+                                    <span x-text="formatRupiah(closeBookData.totalTransfer)"></span>
+                                </div>
+
+                                <div class="flex justify-between text-sm text-gray-400">
+                                    <span>Total Tarik :</span>
+                                    <span x-text="formatRupiah(closeBookData.totalTarik)"></span>
+                                </div>
+                            </div>
+
+                            <!-- Tombol aksi -->
+                            <div class="flex justify-end gap-3 mt-6 border-t border-gray-700 pt-4">
+                                <button
+                                    @click="copyCloseBook"
+                                    class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"
+                                    :class="copied
+                                        ? 'bg-green-600 text-white scale-105 shadow-[0_0_15px_rgba(16,185,129,0.6)]'
+                                        : 'bg-gray-700 hover:bg-gray-600 text-white'">
+                                    <template x-if="!copied">
+                                        <span class="flex items-center gap-2">📋 Copy</span>
+                                    </template>
+                                    <template x-if="copied">
+                                        <span class="flex items-center gap-2">✅ Disalin!</span>
+                                    </template>
+                                </button>
+
+                                <button
+                                    @click="handleFinalCloseBook()"
+                                    class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm transition">
+                                    ✅ Tutup Buku
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Loading state -->
+                    <div x-show="!closeBookData" class="text-center py-4 text-gray-500">
+                        Memuat data...
+                    </div>
+                </div>
             </div>
 
            {{-- ============================= --}}
@@ -110,14 +251,21 @@
 
                 {{-- Produk --}}
                 <div class="flex-1 relative">
-
                     {{-- 🧾 Form Scan Barcode --}}
                     <div class="relative mb-4">
-                        <input type="text"
+                        <input 
+                            id="barcodeInput"
+                            type="text"
                             placeholder="Scan barcode..."
-                            @change="handleBarcodeInput($event)"
+                            @keydown.enter.prevent="
+                                handleBarcodeInput($event);
+                                $event.target.value = '';
+                            "
                             class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
-                                focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                                focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                            autofocus
+                        >
+
                         <div class="absolute left-4 top-2.5 text-blue-600 dark:text-blue-400">
                             {{-- Heroicon barcode --}}
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -525,14 +673,14 @@
                             :style="`width: ${((step - 1) / 5) * 100}%`"></div>
                     </div>
                     <template
-                        x-for="(item, index) in [
-                            { icon: 'device', label: 'Device' },
-                            { icon: 'app', label: 'Aplikasi' },
-                            { icon: 'category', label: 'Kategori' },
-                            { icon: 'brand', label: 'Brand' },
-                            { icon: 'product', label: 'Produk' },
-                            { icon: 'payment', label: 'Pembayaran' }
-                    ]"
+                            x-for="(item, index) in [
+                                { icon: 'device', label: 'Device' },
+                                { icon: 'app', label: 'Aplikasi' },
+                                { icon: 'category', label: 'Kategori' },
+                                { icon: 'brand', label: 'Brand' },
+                                { icon: 'product', label: 'Produk' },
+                                { icon: 'payment', label: 'Pembayaran' }
+                        ]"
                         :key="index">
                         <div class="flex flex-col items-center w-full">
                             <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ease-in-out"
@@ -557,6 +705,13 @@
                                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
                                         <path d="M4 5h8v8H4zM14 5h6v8h-6zM4 15h8v4H4zM14 15h6v4h-6z" stroke="currentColor"
                                             stroke-width="1.1" />
+                                    </svg>
+                                </template>
+                                <template x-if="item.icon === 'brand'">
+                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.3" />
+                                        <path d="M8 12a4 4 0 018 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                                        <path d="M12 8v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
                                     </svg>
                                 </template>
                                 <template x-if="item.icon === 'product'">
@@ -1489,62 +1644,99 @@
                 </div>
             </div>
 
-            <!-- 🌟 MODAL REVIEW DIGITAL -->
-            <div x-show="showDigitalReviewModal" x-transition.opacity
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                <div @click.away="showDigitalReviewModal = false"
-                    class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6 border border-gray-300 dark:border-gray-700">
-                    <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6l4 2" />
-                        </svg>
-                        Konfirmasi Pembayaran Digital
-                    </h2>
+            <!-- 🌟 MODAL REVIEW TRANSAKSI DIGITAL -->
+            <div x-show="showDigitalReviewModal"
+                x-transition
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
 
-                    <div class="space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                        <div class="flex justify-between"><span>Device:</span>
-                            <span class="font-semibold" x-text="selectedDevice?.name"></span>
+                <div @click.away="showDigitalReviewModal = false"
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden border border-gray-300 dark:border-gray-700">
+
+                    <!-- Judul -->
+                    <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <i class="fa-solid fa-mobile-screen-button text-blue-500"></i>
+                            Konfirmasi Pembayaran Digital
+                        </h2>
+                    </div>
+
+                    <!-- Informasi Produk Digital -->
+                    <div class="text-sm md:text-base space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-laptop text-gray-400"></i> Device:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedDevice?.name ?? '-'"></span>
                         </div>
-                        <div class="flex justify-between"><span>Aplikasi:</span>
-                            <span class="font-semibold" x-text="selectedApp?.name"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-nodes text-gray-400"></i> Aplikasi:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedApp?.name ?? '-'"></span>
                         </div>
-                        <div class="flex justify-between"><span>Kategori:</span>
-                            <span class="font-semibold" x-text="selectedCategory?.name"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-gray-400"></i> Kategori:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedCategory?.name ?? '-'"></span>
                         </div>
-                        <div class="flex justify-between"><span>Brand:</span>
-                            <span class="font-semibold" x-text="selectedBrand?.name"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-tags text-gray-400"></i> Brand:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedBrand?.name ?? '-'"></span>
                         </div>
-                        <div class="flex justify-between"><span>Produk:</span>
-                            <span class="font-semibold" x-text="selectedProduct?.name"></span>
+
+                        <div class="flex justify-between items-center pb-3">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-box text-gray-400"></i> Produk:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedProduct?.name ?? '-'"></span>
                         </div>
-                        <div class="flex justify-between border-t border-gray-300 dark:border-gray-700 pt-2 mt-2">
-                            <span>Total:</span>
-                            <span class="font-bold text-blue-600 dark:text-blue-400"
+                    </div>
+
+                    <!-- Rangkuman Pembayaran -->
+                    <div class="mt-5 pt-4 border-t border-gray-300 dark:border-gray-700 space-y-3 text-base">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <span>💰</span> Total:
+                            </span>
+                            <span class="font-bold text-gray-900 dark:text-white"
                                 x-text="'Rp ' + payment.total.toLocaleString()"></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Dibayar:</span>
-                            <span x-text="'Rp ' + payment.paid.toLocaleString()"></span>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <span>💵</span> Dibayar:
+                            </span>
+                            <span class="text-gray-900 dark:text-white"
+                                x-text="'Rp ' + payment.paid.toLocaleString()"></span>
                         </div>
-                        <div class="flex justify-between"
-                            :class="(payment.paid - payment.total) >= 0 ? 'text-green-600 dark:text-green-400' :
-                                'text-red-600 dark:text-red-400'">
-                            <span>Kembalian:</span>
+
+                        <div class="flex justify-between items-center"
+                            :class="(payment.paid - payment.total) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                            <span class="flex items-center gap-2">
+                                <span>🔄</span> Kembalian:
+                            </span>
                             <span x-text="'Rp ' + (payment.paid - payment.total).toLocaleString()"></span>
                         </div>
                     </div>
 
-                    <div class="flex justify-end mt-6 gap-3">
+                    <!-- Tombol -->
+                    <div class="flex justify-end gap-3 mt-6 pt-4">
                         <button @click="showDigitalReviewModal = false"
-                            class="px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                            Batalkan
+                            class="px-5 py-2.5 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium hover:bg-gray-400 dark:hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-times mr-1"></i> Batalkan
                         </button>
                         <button @click="showDigitalReviewModal = false; confirmDigitalTransaction()"
-                            class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition">
-                            Konfirmasi Pembayaran
+                            class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow">
+                            <i class="fa-solid fa-check mr-1"></i> Konfirmasi Pembayaran
                         </button>
                     </div>
+
                 </div>
             </div>
 
@@ -1849,15 +2041,52 @@
                 showOptionModal: false,
                 selectedProduct: null,
                 selectedProductOptions: [],
+                showCloseBookModal: false,
+                closeBookData: null,
+                lebih: 0,
+                copied: false,
 
                 // ======== INIT UTAMA ========
                 async init() {
                     this.loadCart();
 
+                    // === AUTO BARCODE SCANNER DETECTION ===
+                    let buffer = "";
+                    let lastTime = Date.now();
+
+                    document.addEventListener("keydown", (e) => {
+                        const now = Date.now();
+                        const diff = now - lastTime;
+
+                        // Kalau jeda antar tombol lebih dari 50ms → reset buffer
+                        if (diff > 50) buffer = "";
+
+                        // Abaikan tombol non-karakter
+                        if (e.key.length === 1) {
+                            buffer += e.key;
+                        }
+
+                        // Saat tekan Enter → kirim ke handleBarcodeInput
+                        if (e.key === "Enter" && buffer.length > 3) {
+                            e.preventDefault();
+
+                            const code = buffer.trim();
+                            buffer = "";
+
+                            // Panggil handler yang sudah kamu buat
+                            if (this.handleBarcodeInput) {
+                                this.handleBarcodeInput({ target: { value: code } });
+                            }
+                        }
+
+                        lastTime = now;
+                    });
+                    // === END AUTO BARCODE SCANNER ===
+
                     // Produk fisik
-                    const raw = Array.isArray(this._rawProducts) ?
-                        this._rawProducts :
-                        Object.values(this._rawProducts || {});
+                    const raw = Array.isArray(this._rawProducts)
+                        ? this._rawProducts
+                        : Object.values(this._rawProducts || {});
                     this.products = raw.map(p => ({
                         id: p.id,
                         name: p.name ?? '',
@@ -1865,19 +2094,18 @@
                         price: Number(String(p.price ?? '0').replace(/[^\d]/g, '')),
                         stock: Number(p.stock ?? 0),
                         category_id: p.category_id,
-                        category_name: p.category_name ?? 'Tanpa Kategori', // 🆕 tambahkan ini
-                        category_code: p.category_code ?? '',               // 🆕 dan ini
+                        category_name: p.category_name ?? 'Tanpa Kategori',
+                        category_code: p.category_code ?? '',
                         attribute_values: p.attribute_values ?? [],
                     }));
 
-                    // Produk digital
                     await this.loadDigitalData();
 
-                    // 🌟 Tambahkan watcher di sini
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
                     });
                 },
+
                 // ======== MUAT DATA DIGITAL ========
                 async loadDigitalData() {
                     try {
@@ -2060,7 +2288,7 @@
                                 id: i.id,
                                 qty: i.qty,
                                 price: i.price,
-                                variant_id: i.variant_id ?? null, // 🆕 kirim id varian jika ada
+                                product_attribute_value_id: i.variant_id ?? null, // ubah jadi nama field sesuai backend
                             })),
                             subtotal: this.total(),
                             dibayar: this.paid,
@@ -2081,6 +2309,7 @@
                         const result = await res.json();
 
                         if (res.ok && result.success) {
+                            // ✅ Transaksi berhasil
                             this.showReview = false;
                             this.showSuccess = true;
                             this.lastTransaction = {
@@ -2090,8 +2319,29 @@
                             };
                             this.clearCart();
                             this.paid = 0;
+
                         } else {
-                            alert(result.message || "Gagal menyimpan transaksi.");
+                            // ⚠️ Tampilkan detail error
+                            console.error("❌ Transaksi gagal:", {
+                                status: res.status,
+                                statusText: res.statusText,
+                                result,
+                            });
+
+                            // Jika Laravel mengembalikan error validasi
+                            if (result.errors) {
+                                console.table(result.errors);
+                                const firstError = Object.values(result.errors)[0][0];
+                                alert(`Validasi gagal: ${firstError}`);
+                            } 
+                            // Jika ada pesan umum dari controller
+                            else if (result.message) {
+                                alert(`Gagal: ${result.message}`);
+                            } 
+                            // Jika tidak ada detail message
+                            else {
+                                alert(`Terjadi kesalahan (HTTP ${res.status}): ${res.statusText}`);
+                            }
                         }
 
                     } catch (err) {
@@ -2371,8 +2621,20 @@
                                 name: itemName,
                                 price: product.price,
                                 qty: 1,
-                                variant: opt.attribute_value
+                                variant: opt.attribute_value,
+                                variant_id: opt.id, // ✅ tambahkan ini
                             });
+
+                            // 🔄 Kurangi stok di UI agar langsung terlihat tanpa refresh
+                            const attrIndex = product.attribute_values.findIndex(a => a.id === opt.id);
+                            if (attrIndex !== -1 && product.attribute_values[attrIndex].stok > 0) {
+                                product.attribute_values[attrIndex].stok -= 1;
+                            }
+
+                            const prodIndex = this.products.findIndex(p => p.id === product.id);
+                            if (prodIndex !== -1 && this.products[prodIndex].stock > 0) {
+                                this.products[prodIndex].stock -= 1;
+                            }
                         }
 
                         this.saveCart();
@@ -2518,6 +2780,156 @@
                     setTimeout(() => this.showToast = false, 2000);
                     e.target.value = '';
                 },
+
+                handleCloseBook() {
+                    console.log("📘 Fetching close-book data...");
+                    fetch("{{ route('pos.closebook.data') }}")
+                        .then(res => {
+                            console.log("🔗 Response status:", res.status);
+                            return res.json();
+                        })
+                        .then(data => {
+                            console.log("✅ Data diterima:", data);
+                            this.closeBookData = data;
+                            this.showCloseBookModal = true;
+                        })
+                        .catch(err => {
+                            console.error("❌ Fetch gagal:", err);
+                            alert("Terjadi kesalahan saat mengambil data tutup buku: " + err.message);
+                        });
+                },
+                formatRupiah(angka) {
+                    if (angka == null) return 'Rp 0';
+                    return 'Rp ' + Number(angka).toLocaleString('id-ID');
+                },
+                formatLebihInput(event) {
+                    // Ambil hanya angka
+                    let raw = event.target.value.replace(/[^\d]/g, '');
+                    if (raw === '') raw = '0';
+
+                    // Format ke Rupiah
+                    const formatted = Number(raw).toLocaleString('id-ID');
+
+                    // Update tampilan input
+                    event.target.value = formatted;
+
+                    // Simpan nilai numeriknya ke variable lebih
+                    this.lebih = Number(raw);
+                },
+                async copyCloseBook() {
+                    if (!this.closeBookData) return;
+
+                    const d = this.closeBookData;
+                    const totalAkhir = (Number(d.grandTotal ?? 0) + Number(this.lebih || 0));
+                    const lebihText = this.lebih > 0 ? `Lebih => Rp ${this.lebih.toLocaleString('id-ID')}\n` : '';
+
+                    let text = '';
+
+                    // 🗓️ Tanggal
+                    text += `${d.tanggal}\n\n`;
+
+                    // 📦 Barang & Digital
+                    text += `Barang : Rp ${Number(d.barangTotal).toLocaleString('id-ID')}\n`;
+                    d.digitalPerApp.forEach(app => {
+                        text += `${app.name} : Rp ${Number(app.total).toLocaleString('id-ID')}\n`;
+                    });
+
+                    // 🔸 Total Penjualan
+                    text += `---------------------------\n`;
+                    text += `Total : Rp ${Number(d.totalPenjualan).toLocaleString('id-ID')}\n\n`;
+
+                    // 💸 Utang
+                    if (d.utangList.length > 0) {
+                        text += `Utang :\n`;
+                        d.utangList.forEach(u => {
+                            text += `- ${u.name}: (Rp ${Number(u.subtotal).toLocaleString('id-ID')})\n`;
+                        });
+                        text += `---------------------------\n`;
+                    }
+
+                    // 🧾 Total dan Lebih
+                    text += `Total => Rp ${Number(d.totalSetelahUtang).toLocaleString('id-ID')}\n`;
+                    if (this.lebih > 0) text += lebihText;
+
+                    // 💰 Grand Total (pakai total akhir!)
+                    text += `Total => Rp ${totalAkhir.toLocaleString('id-ID')}\n`;
+                    text += `---------------------------\n`;
+
+                    // 🏦 Transfer & Tarik
+                    text += `*Total TF : Rp ${Number(d.totalTransfer).toLocaleString('id-ID')}*\n`;
+                    text += `*Total Tarik : Rp ${Number(d.totalTarik).toLocaleString('id-ID')}*`;
+
+                    // 📋 Copy ke clipboard
+                    await navigator.clipboard.writeText(text);
+
+                    // ✨ Animasi tombol Copy
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                },
+                async handleFinalCloseBook() {
+                    try {
+                        this.showConfirmCloseBook = false;
+                        this.showCloseBookModal = false;
+
+                        // 🧮 Hitung total akhir (cukup GrandTotal + Lebih)
+                        const totalFinal = (this.closeBookData?.grandTotal ?? 0) + (this.lebih || 0);
+
+                        console.log('🚀 Mengirim data tutup buku:', {
+                            tanggal: this.closeBookData?.tanggal,
+                            total_final: totalFinal,
+                        });
+
+                        const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+                        if (!csrf) {
+                            alert('❌ Token CSRF tidak ditemukan.');
+                            return;
+                        }
+
+                        const response = await fetch('{{ route("cashbook.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                            },
+                            body: JSON.stringify({
+                                deskripsi: `Penjualan Tanggal ${this.closeBookData?.tanggal}`,
+                                type: 'IN',
+                                nominal: totalFinal,
+                                outlet_id: {{ Auth::user()->outlet_id ?? 1 }},
+                                cashbook_category_id: 3,
+                                cashbook_wallet_id: 1,
+                            }),
+                        });
+
+                        console.log('📬 Response Status:', response.status);
+                        const rawText = await response.text();
+                        console.log('🧾 Response Body:', rawText);
+
+                        let result = {};
+                        try {
+                            result = JSON.parse(rawText);
+                        } catch {
+                            console.warn('⚠️ Respon bukan JSON valid (mungkin redirect / HTML error).');
+                        }
+
+                        if (result.success) {
+                            const formatted = totalFinal.toLocaleString('id-ID');
+                            const toast = document.createElement('div');
+                            toast.textContent = `✅ Tutup buku berhasil! Rp ${formatted}`;
+                            toast.className = 'fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                            document.body.appendChild(toast);
+                            setTimeout(() => toast.remove(), 3000);
+                            setTimeout(() => window.location.href = '/riwayat', 1500);
+                        } else {
+                            alert(`❌ Gagal menyimpan: ${result.message || 'Server tidak merespons.'}`);
+                        }
+
+                    } catch (error) {
+                        console.error('💥 Gagal mengirim data ke pembukuan:', error);
+                        alert('❌ Terjadi kesalahan jaringan.');
+                    }
+                }
             }
         }
 

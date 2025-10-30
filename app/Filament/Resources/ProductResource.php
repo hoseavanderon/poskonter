@@ -76,12 +76,12 @@ class ProductResource extends Resource
                     ->label('Supplier')
                     ->options(Supplier::all()->pluck('name', 'id')),
 
-                Forms\Components\Select::make('shelves_id')
-                    ->label('Shelf')
-                    ->options(function () {
-                        $outletId = Auth::user()->outlet_id ?? null;
-                        return Shelf::where('outlet_id', $outletId)->pluck('name', 'id');
-                    })
+                Forms\Components\Select::make('shelf_id')
+                    ->label('Rak')
+                    ->options(fn () => Shelf::query()
+                        ->where('outlet_id', Auth::user()->outlet_id ?? null)
+                        ->pluck('name', 'id'))
+                    ->searchable()
                     ->required(),
 
                 Forms\Components\Hidden::make('outlet_id')

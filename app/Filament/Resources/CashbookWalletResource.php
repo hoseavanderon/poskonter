@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 
 class CashbookWalletResource extends Resource
 {
@@ -30,12 +31,20 @@ class CashbookWalletResource extends Resource
                     ->required()
                     ->maxLength(100)
                     ->placeholder('contoh: Main Wallet, Cash, Bank Account'),
+
+                Forms\Components\Hidden::make('outlet_id')
+                    ->default(fn () => Auth::user()->outlet_id)
+                    ->dehydrated(true),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                // 🔒 Filter berdasarkan outlet user yang sedang login
+                $query->where('outlet_id', Auth::user()->outlet_id ?? 0);
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label('#')
@@ -55,6 +64,32 @@ class CashbookWalletResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+     // Batasi akses supaya admin tidak bisa mengakses
+    public static function canViewAny(): bool
+    {
+        return Auth::check() && Auth::user()->role !== 'Admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::check() && Auth::user()->role !== 'Admin';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::check() && Auth::user()->role !== 'Admin';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::check() && Auth::user()->role !== 'Admin';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::check() && Auth::user()->role !== 'Admin';
     }
 
     public static function getRelations(): array

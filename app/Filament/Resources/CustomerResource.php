@@ -82,12 +82,17 @@ class CustomerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // ✅ Filter data Customer berdasarkan outlet user login
+            ->modifyQueryUsing(function ($query) {
+                $query->where('outlet_id', Auth::user()->outlet_id ?? 0);
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('No')->rowIndex(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Customer')
                     ->searchable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),

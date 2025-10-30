@@ -10,7 +10,7 @@ class CashbookWallet extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['cashbook_wallet'];
+    protected $fillable = ['cashbook_wallet','outlet_id'];
 
     public function cashbooks()
     {

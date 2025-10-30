@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('digital_category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('code')->nullable();
-            $table->string('type')->nullable();
             $table->string('base_price')->nullable();
             $table->boolean('is_fixed')->default(true);
             $table->foreignId('app_id')->nullable()->constrained()->nullOnDelete();

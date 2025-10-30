@@ -10,7 +10,14 @@ return new class extends Migration
     {
         Schema::create('cashbook_wallets', function (Blueprint $table) {
             $table->id();
-            $table->string('cashbook_wallet'); // Nama dompet, misalnya 'Main Wallet', 'Cash', dll
+            $table->string('cashbook_wallet'); 
+            $table->unsignedBigInteger('outlet_id')->nullable()->index();
+            $table->foreign('outlet_id')
+                ->references('id')
+                ->on('outlets')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -18,6 +25,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::table('cashbook_wallets', function (Blueprint $table) {
+            $table->dropForeign(['outlet_id']);
+        });
+
         Schema::dropIfExists('cashbook_wallets');
     }
 };
