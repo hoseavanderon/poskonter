@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->nullable()->after('app_id')->constrained()->nullOnDelete();
 
             // Tambah kolom pembayaran
-            $table->string('subtotal')->nullable()->after('admin_fee');
+            $table->string('subtotal');
             $table->string('dibayar')->nullable()->after('subtotal');
             $table->string('kembalian')->nullable()->after('dibayar');
 
