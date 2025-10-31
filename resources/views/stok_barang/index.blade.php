@@ -10,6 +10,8 @@
 
     <!-- 🧱 Daftar Rak -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 🔁 Loop daftar rak -->
         <template x-for="(rack, i) in shelves" :key="i">
             <div @click="openShelf(rack)"
                 class="relative bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-blue-400 cursor-pointer"
@@ -45,6 +47,16 @@
                 </div>
             </div>
         </template>
+
+        <!-- 🟡 Pesan jika belum ada rak -->
+        <template x-if="!isLoading && shelves.length === 0">
+            <div class="col-span-full text-center py-16 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                <x-heroicon-o-archive-box class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-3" />
+                <p class="text-base font-medium">Belum ada rak</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Tambahkan rak baru untuk mulai menyimpan produk.</p>
+            </div>
+        </template>
+
     </div>
 
     <!-- 📋 Modal Detail Rak -->
@@ -53,7 +65,7 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
         @click.self="closeModal">
 
-        <div x-show="showModal"
+        <div
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-90 translate-y-6"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -153,26 +165,32 @@ function stokBarang() {
         shelves: [],
         selectedRack: null,
         searchQuery: '',
+        isLoading: true, // 🔹 Tambahkan flag loading
 
-        init() {
-            fetch("{{ route('stok.data') }}")
-                .then(res => res.json())
-                .then(data => {
-                    this.shelves = data.map(shelf => ({
-                        id: shelf.id,
-                        name: shelf.name,
-                        code: shelf.code,
-                        icon: shelf.icon ?? '📦',
-                        products: shelf.products.map(p => ({
-                            name: p.name,
-                            barcode: p.barcode,
-                            stok: p.stok,
-                            minimal_stok: p.minimal_stok,
-                            attributes: p.attributes
-                        })),
-                        lowStock: shelf.products.filter(p => p.stok < p.minimal_stok).length
-                    }));
-                });
+        async init() {
+            try {
+                const res = await fetch("{{ route('stok.data') }}");
+                const data = await res.json();
+
+                this.shelves = data.map(shelf => ({
+                    id: shelf.id,
+                    name: shelf.name,
+                    code: shelf.code,
+                    icon: shelf.icon ?? '📦',
+                    products: shelf.products.map(p => ({
+                        name: p.name,
+                        barcode: p.barcode,
+                        stok: p.stok,
+                        minimal_stok: p.minimal_stok,
+                        attributes: p.attributes
+                    })),
+                    lowStock: shelf.products.filter(p => p.stok < p.minimal_stok).length
+                }));
+            } catch (e) {
+                console.error('Gagal memuat data rak:', e);
+            } finally {
+                this.isLoading = false; // 🔹 Selesai loading
+            }
         },
 
         get filteredProducts() {

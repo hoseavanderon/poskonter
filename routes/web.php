@@ -9,6 +9,7 @@ use App\Http\Controllers\PembukuanController;
 use App\Http\Controllers\InventoryHistoryController;
 use App\Http\Controllers\StokBarangController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\CetakBarcodeController;
 
 // Redirect ke login saat akses root
 Route::get('/', function () {
@@ -55,7 +56,7 @@ Route::middleware([
     // 📘 PEMBUKUAN
     // ===================================================
     Route::get('/pembukuan', [PembukuanController::class, 'index'])->name('pembukuan');
-    Route::post('/cashbook', [PembukuanController::class, 'store'])->name('cashbook.store');
+    Route::post('/cashbook', [PembukuanController::class, 'store'])->name('cashbooks.store');
     Route::delete('/cashbook/{id}', [PembukuanController::class, 'destroy'])->name('cashbook.destroy');
 
     // ===================================================
@@ -85,4 +86,9 @@ Route::middleware([
     Route::get('/api/attribute-values/{productId}', [BarangMasukController::class, 'getAttributeValues']);
     Route::get('/api/harga-values/{productId}', [BarangMasukController::class, 'getHargaValues']);
     Route::post('/barangmasuk/submit', [BarangMasukController::class, 'store'])->name('barangmasuk.store');
+
+    // ===================================================
+    // 🚚 BARANG MASUK
+    // ===================================================
+    Route::get('/cetakbarcode',[CetakBarcodeController::class, 'index'])->name('cetakbarcode');
 });

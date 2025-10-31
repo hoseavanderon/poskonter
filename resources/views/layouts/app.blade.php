@@ -204,7 +204,7 @@
                         $user = Auth::user();
                     @endphp
 
-                    @if ($user && in_array($user->role, ['Kasir']))
+                    @if ($user && in_array($user->role, ['kasir']))
                         <a href="{{ route('pos') }}"
                             @click="sidebarOpen = false; localStorage.setItem('sidebarOpen', 'false')"
                             class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -245,6 +245,13 @@
                             @click="sidebarOpen = false; localStorage.setItem('sidebarOpen', 'false')"
                             class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                             <x-heroicon-o-user-group class="w-5 h-5" /> <span>Langganan</span>
+                        </a>
+
+                        <a href="{{ route('cetakbarcode') }}"
+                            @click="sidebarOpen = false; localStorage.setItem('sidebarOpen', 'false')"
+                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <x-heroicon-o-qr-code class="w-5 h-5" /> 
+                            <span>Cetak Barcode</span>
                         </a>
                     @endif
                         <a href="/admin" @click="sidebarOpen = false; localStorage.setItem('sidebarOpen', 'false')" 

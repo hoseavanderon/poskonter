@@ -20,10 +20,14 @@ class PosController extends Controller
 {
     public function index()
     {
+        $outletId = Auth::user()->outlet_id ?? 1;
+
         $productsRaw = Product::with([
             'category:id,kode_category,name',
             'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
-        ])->get();
+        ])
+            ->where('outlet_id', $outletId)
+            ->get();
 
         $products = $productsRaw->map(function ($p) {
             $rawPrice = $p->jual ?? $p->price ?? $p->harga_jual ?? $p->harga ?? null;
@@ -61,7 +65,9 @@ class PosController extends Controller
             ->toArray();
 
         $customers = class_exists(Customer::class)
-            ? Customer::orderBy('name')->get(['id', 'name'])
+            ? Customer::where('outlet_id', $outletId)
+                ->orderBy('name')
+                ->get(['id', 'name'])
             : collect([]);
 
         return view('pos.index', [
@@ -121,7 +127,6 @@ class PosController extends Controller
         // Simpan detail transaksi & kurangi stok
         // ===============================
         foreach ($data['cart'] as $item) {
-            \Log::info('🧾 Cart Item:', $item);
             \App\Models\DetailTransaction::create([
                 'transaction_id' => $transaction->id,
                 'product_id' => $item['id'],
@@ -182,23 +187,23 @@ class PosController extends Controller
     public function today()
     {
         $today = now()->startOfDay();
+        $outletId = Auth::user()->outlet_id ?? 1;
 
         $transactions = \App\Models\Transaction::with([
             'details.product.category',
-            'customer:id,name', // ambil nama pelanggan
+            'customer:id,name',
         ])
+            ->where('outlet_id', $outletId)
             ->whereDate('created_at', $today)
             ->orderByDesc('id')
             ->get();
 
-        // ringkasan dasar
         $summary = [
             'total_penjualan' => $transactions->sum('subtotal'),
             'jumlah_transaksi' => $transactions->count(),
             'total_produk_terjual' => $transactions->flatMap->details->sum('qty'),
         ];
 
-        // kumpulkan kategori yang terjual hari ini
         $categorySummary = [];
         foreach ($transactions as $trx) {
             foreach ($trx->details as $detail) {
@@ -217,11 +222,11 @@ class PosController extends Controller
             'transactions' => $transactions->map(fn($trx) => [
                 'id' => $trx->id,
                 'nomor_nota' => $trx->nomor_nota,
-                'subtotal' => (int) $trx->subtotal,
-                'dibayar' => (int) $trx->dibayar,
-                'kembalian' => (int) $trx->kembalian,
+                'subtotal' => (int)$trx->subtotal,
+                'dibayar' => (int)$trx->dibayar,
+                'kembalian' => (int)$trx->kembalian,
                 'created_at' => $trx->created_at->format('H:i'),
-                'customer_id' => $trx->customer_id, // penting untuk status utang/tunai
+                'customer_id' => $trx->customer_id,
                 'customer' => $trx->customer ? [
                     'id' => $trx->customer->id,
                     'name' => $trx->customer->name,
@@ -234,9 +239,9 @@ class PosController extends Controller
                 'details' => $trx->details->map(fn($d) => [
                     'product' => $d->product->name ?? '',
                     'qty' => $d->qty,
-                    'subtotal' => (int) $d->subtotal,
+                    'subtotal' => (int)$d->subtotal,
                 ]),
-            ])->values()->toArray(), // <-- ini kuncinya
+            ])->values()->toArray(),
             'summary' => $summary,
         ]);
     }
@@ -246,7 +251,6 @@ class PosController extends Controller
         $outletId = Auth::user()->outlet_id ?? 1;
 
         try {
-            // === 1️⃣ Ambil devices (berdasarkan outlet) ===
             $devices = Device::with([
                 'apps' => function ($q) {
                     $q->select('apps.id', 'apps.name', 'apps.description', 'apps.logo');
@@ -255,22 +259,18 @@ class PosController extends Controller
                 ->where('outlet_id', $outletId)
                 ->get(['id', 'name', 'notes', 'icon', 'outlet_id']);
 
-            // === 2️⃣ Ambil semua apps ===
             $apps = App::select('id', 'name', 'description', 'logo')->get();
 
-            // === 3️⃣ Ambil semua kategori digital ===
             $categories = DigitalCategory::select('id', 'name')->get();
 
-            // === 4️⃣ Ambil semua brand digital ===
             $brands = \App\Models\DigitalBrand::select('id', 'name', 'logo')
                 ->orderBy('name')
                 ->get();
 
-            // === 5️⃣ Ambil semua produk digital (relasi ke kategori, brand, dan app) ===
             $products = DigitalProduct::with([
                 'category:id,name',
                 'app:id,name,logo',
-                'digitalBrands:id,name,logo' // ✅ relasi many-to-many
+                'digitalBrands:id,name,logo'
             ])
                 ->select(
                     'id',
@@ -283,7 +283,6 @@ class PosController extends Controller
                 )
                 ->get();
 
-            // === 6️⃣ Ambil semua aturan admin fee ===
             $rules = DigitalAdminRule::with('category:id,name')
                 ->select(
                     'id',
@@ -294,13 +293,12 @@ class PosController extends Controller
                 )
                 ->get();
 
-            // === ✅ Return data lengkap ===
             return response()->json([
                 'success' => true,
                 'devices' => $devices,
                 'apps' => $apps,
                 'categories' => $categories,
-                'brands' => $brands, // 🆕 tambahkan ke response
+                'brands' => $brands,
                 'products' => $products,
                 'rules' => $rules,
             ]);
@@ -390,12 +388,14 @@ class PosController extends Controller
 
     public function getDigitalTransactions(Request $request)
     {
+        $outletId = Auth::user()->outlet_id ?? 1; // ✅ outlet yang sedang login
         $appId = $request->input('app_id');
 
         // Jika app_id dikirim → tampilkan detail transaksi dari 1 app
         if ($appId) {
             $transactions = \App\Models\DigitalTransaction::with(['product', 'app'])
                 ->where('app_id', $appId)
+                ->where('outlet_id', $outletId) // ✅ filter berdasarkan outlet login
                 ->whereDate('created_at', today())
                 ->latest()
                 ->get();
@@ -428,6 +428,7 @@ class PosController extends Controller
         $today = now()->startOfDay();
 
         $summaryByApp = \App\Models\DigitalTransaction::selectRaw('app_id, SUM(subtotal) as total, COUNT(*) as count')
+            ->where('outlet_id', $outletId) // ✅ hanya outlet yang login
             ->whereDate('created_at', $today)
             ->groupBy('app_id')
             ->get()
@@ -511,20 +512,23 @@ class PosController extends Controller
         }
     }
 
-   public function getCloseBookData()
+    public function getCloseBookData()
     {
         $today = now()->toDateString();
+        $outletId = Auth::user()->outlet_id ?? 1; // ✅ Ambil outlet_id user login
 
         try {
             // === Barang (produk fisik)
             $barangTotal = DB::table('detail_transaction')
                 ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+                ->where('transactions.outlet_id', $outletId) // ✅ Filter outlet
                 ->whereDate('transactions.created_at', $today)
                 ->sum('detail_transaction.subtotal');
 
             // === Digital per App (tanpa tarik & transfer)
             $digitalPerApp = DB::table('digital_transactions')
                 ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+                ->where('digital_transactions.outlet_id', $outletId) // ✅ Filter outlet
                 ->whereDate('digital_transactions.created_at', $today)
                 ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
                 ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
@@ -533,12 +537,14 @@ class PosController extends Controller
 
             // === Total Transfer (digital_product_id = 6)
             $totalTransfer = DB::table('digital_transactions')
+                ->where('outlet_id', $outletId) // ✅ Filter outlet
                 ->where('digital_product_id', 6)
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
             // === Total Tarik (digital_product_id = 5)
             $totalTarik = DB::table('digital_transactions')
+                ->where('outlet_id', $outletId) // ✅ Filter outlet
                 ->where('digital_product_id', 5)
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
@@ -546,6 +552,7 @@ class PosController extends Controller
             // === Utang dari transaksi fisik
             $utangFisik = DB::table('transactions')
                 ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+                ->where('transactions.outlet_id', $outletId) // ✅ Filter outlet
                 ->whereDate('transactions.created_at', $today)
                 ->whereNotNull('transactions.customer_id')
                 ->whereNull('transactions.paid_at')
@@ -555,6 +562,7 @@ class PosController extends Controller
             // === Utang dari transaksi digital
             $utangDigital = DB::table('digital_transactions')
                 ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+                ->where('digital_transactions.outlet_id', $outletId) // ✅ Filter outlet
                 ->whereDate('digital_transactions.created_at', $today)
                 ->whereNotNull('digital_transactions.customer_id')
                 ->whereNull('digital_transactions.paid_at')

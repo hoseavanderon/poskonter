@@ -91,7 +91,8 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="opacity-100 scale-100"
                     x-transition:leave-end="opacity-0 scale-90"
-                    class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
+                    class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
+                    @click.self="closeModal">
 
                     <div class="bg-gray-800 rounded-2xl shadow-2xl w-[90%] max-w-md p-6 relative border border-gray-700">
 
@@ -697,7 +698,7 @@
                 }
 
                 try {
-                    const response = await fetch('{{ route('cashbook.store') }}', {
+                    const response = await fetch('{{ route('cashbooks.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

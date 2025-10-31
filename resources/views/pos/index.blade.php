@@ -768,54 +768,64 @@
                                                     class="flex items-center gap-2 px-3 py-1.5 rounded-lg 
                                                     bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 
                                                     hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm font-semibold shadow-sm active:scale-[0.98]">
-
-                                                    {{-- Heroicon: Clock Arrow Path --}}
                                                     <svg class="w-5 h-5 text-blue-600 dark:text-blue-400"
                                                         xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M12 8v4l3 3m6-3a9 9 0 11-9-9 9 9 0 019 9z" />
                                                     </svg>
-
                                                     <span>Riwayat</span>
                                                 </button>
                                             </div>
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <template x-for="dev in devices" :key="dev.id">
-                                                    <div @click="selectedDevice = dev; $el.parentNode.parentNode.__x_original_step = 1; step = 2; selectedApp = null; selectedCategory = null; selectedProduct = null;"
-                                                        class="border dark:border-gray-700 rounded-xl p-4 cursor-pointer bg-white dark:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-                                                        :class="selectedDevice?.id === dev.id ?
-                                                            'border-blue-500 ring-2 ring-blue-300 dark:ring-blue-700' :
-                                                            'border-gray-300 dark:border-gray-700'">
-                                                        <div class="flex flex-col items-center text-center">
-                                                            <div
-                                                                class="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700">
-                                                                <template x-if="dev.icon && window.heroicons[dev.icon]">
-                                                                    <div
-                                                                        class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
-                                                                        <div x-html="window.heroicons[dev.icon]"
-                                                                            class="w-6 h-6 text-blue-600 dark:text-blue-400 [&>svg]:w-6 [&>svg]:h-6 [&>svg]:stroke-current">
-                                                                        </div>
-                                                                    </div>
-                                                                </template>
 
-                                                                <template x-if="!dev.icon || !window.heroicons[dev.icon]">
-                                                                    <svg class="w-6 h-6 text-gray-500" viewBox="0 0 24 24"
-                                                                        fill="none">
-                                                                        <rect x="7" y="2" width="10" height="20"
-                                                                            rx="2" stroke="currentColor"
-                                                                            stroke-width="1.2" />
-                                                                    </svg>
-                                                                </template>
+                                            {{-- ✅ Jika ada device --}}
+                                            <template x-if="devices.length > 0">
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    <template x-for="dev in devices" :key="dev.id">
+                                                        <div @click="selectedDevice = dev; $el.parentNode.parentNode.__x_original_step = 1; step = 2; selectedApp = null; selectedCategory = null; selectedProduct = null;"
+                                                            class="border dark:border-gray-700 rounded-xl p-4 cursor-pointer bg-white dark:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                                                            :class="selectedDevice?.id === dev.id ?
+                                                                'border-blue-500 ring-2 ring-blue-300 dark:ring-blue-700' :
+                                                                'border-gray-300 dark:border-gray-700'">
+                                                            <div class="flex flex-col items-center text-center">
+                                                                <div
+                                                                    class="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700">
+                                                                    <template x-if="dev.icon && window.heroicons[dev.icon]">
+                                                                        <div
+                                                                            class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+                                                                            <div x-html="window.heroicons[dev.icon]"
+                                                                                class="w-6 h-6 text-blue-600 dark:text-blue-400 [&>svg]:w-6 [&>svg]:h-6 [&>svg]:stroke-current">
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+
+                                                                    <template x-if="!dev.icon || !window.heroicons[dev.icon]">
+                                                                        <svg class="w-6 h-6 text-gray-500" viewBox="0 0 24 24" fill="none">
+                                                                            <rect x="7" y="2" width="10" height="20"
+                                                                                rx="2" stroke="currentColor" stroke-width="1.2" />
+                                                                        </svg>
+                                                                    </template>
+                                                                </div>
+                                                                <h4 class="font-semibold text-gray-800 dark:text-gray-100" x-text="dev.name"></h4>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400" x-text="dev.notes"></p>
                                                             </div>
-                                                            <h4 class="font-semibold text-gray-800 dark:text-gray-100"
-                                                                x-text="dev.name"></h4>
-                                                            <p class="text-xs text-gray-500 dark:text-gray-400"
-                                                                x-text="dev.notes"></p>
                                                         </div>
-                                                    </div>
-                                                </template>
-                                            </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+
+                                            {{-- 🚫 Jika tidak ada device --}}
+                                            <template x-if="devices.length === 0">
+                                                <div class="flex flex-col items-center justify-center py-8 text-center text-gray-500 dark:text-gray-400">
+                                                    <svg class="w-10 h-10 mb-3 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <p class="text-sm font-medium">Belum ada device</p>
+                                                    <p class="text-xs text-gray-400">Silakan tambahkan device di halaman admin</p>
+                                                </div>
+                                            </template>
                                         </div>
                                     </template>
 
@@ -2208,8 +2218,28 @@
                     this.saveCart();
                 },
                 decreaseQty(i) {
-                    if (this.cart[i].qty > 1) this.cart[i].qty--;
-                    else this.cart.splice(i, 1);
+                    const item = this.cart[i];
+
+                    // ✅ Cari produk master di daftar produk
+                    const master = this.products.find(p => p.id === item.id);
+                    if (master) {
+                        master.stock += 1; // kembalikan stok 1 ke UI
+                    }
+
+                    // ✅ Kalau produk punya varian
+                    if (item.variant_id) {
+                        const prod = this.products.find(p => p.id === item.id);
+                        const attr = prod?.attribute_values?.find(a => a.id === item.variant_id);
+                        if (attr) attr.stok += 1;
+                    }
+
+                    // Hapus / kurangi dari cart
+                    if (item.qty > 1) {
+                        this.cart[i].qty--;
+                    } else {
+                        this.cart.splice(i, 1);
+                    }
+
                     this.saveCart();
                 },
                 total() {
@@ -2222,10 +2252,21 @@
                     this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 },
                 clearCart() {
+                    // ✅ Kembalikan semua stok produk ke UI
+                    this.cart.forEach(item => {
+                        const prod = this.products.find(p => p.id === item.id);
+                        if (prod) prod.stock += item.qty;
+
+                        if (item.variant_id) {
+                            const attr = prod?.attribute_values?.find(a => a.id === item.variant_id);
+                            if (attr) attr.stok += item.qty;
+                        }
+                    });
+
+                    // Kosongkan keranjang
                     this.cart = [];
                     this.saveCart();
                 },
-
                 // ======== KALKULATOR FISIK ========
                 addPayment(n) {
                     this.paid += n;
@@ -2920,7 +2961,7 @@
                             toast.className = 'fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
                             document.body.appendChild(toast);
                             setTimeout(() => toast.remove(), 3000);
-                            setTimeout(() => window.location.href = '/riwayat', 1500);
+                            setTimeout(() => window.location.href = '/pembukuan', 1500);
                         } else {
                             alert(`❌ Gagal menyimpan: ${result.message || 'Server tidak merespons.'}`);
                         }

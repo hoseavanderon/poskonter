@@ -39,9 +39,28 @@ class ProductResource extends Resource
                     ->label('Product Name'),
 
                 Forms\Components\TextInput::make('barcode')
-                    ->required()
+                    ->label('Barcode')
                     ->unique(ignoreRecord: true)
-                    ->label('Barcode'),
+                    ->helperText('Biarkan kosong untuk generate otomatis.')
+                    ->afterStateHydrated(function ($component, $record) {
+                        // kalau sedang edit dan barcode kosong, tampilkan kosong saja
+                        if (!$record || !$record->barcode) {
+                            $component->state('');
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state, callable $get) {
+                        // jika user isi barcode manual → gunakan itu
+                        if (!empty($state)) {
+                            return $state;
+                        }
+
+                        // kalau kosong → generate otomatis
+                        do {
+                            $random = str_pad(mt_rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT);
+                        } while (\App\Models\Product::where('barcode', $random)->exists());
+
+                        return $random;
+                    }),
 
                 Forms\Components\Select::make('category_id')
                     ->label('Category')
@@ -161,6 +180,7 @@ class ProductResource extends Resource
                     ->createItemButtonLabel('Tambah Attribute'),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {

@@ -111,9 +111,11 @@ class BarangMasukController extends Controller
     public function searchProduct(Request $request)
     {
         $query = $request->input('q');
+        $outletId = Auth::user()->outlet_id; // ✅ ambil outlet dari user login
 
-        $products = Product::select('id', 'name')
+        $products = \App\Models\Product::select('id', 'name', 'outlet_id')
             ->with(['attributeValues.productAttribute:id,name,data_type'])
+            ->where('outlet_id', $outletId) // ✅ filter hanya produk milik outlet login
             ->when($query, fn($q) => $q->where('name', 'like', "%$query%"))
             ->limit(10)
             ->get()
@@ -129,7 +131,7 @@ class BarangMasukController extends Controller
 
         return response()->json($products);
     }
-
+    
     // 🔍 API: ambil attribute_value berdasarkan product dan attribute
     public function getAttributeValues($productId)
     {
