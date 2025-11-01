@@ -70,7 +70,6 @@ class DigitalProductResource extends Resource
                 Tables\Columns\TextColumn::make('No')->rowIndex(),
                 Tables\Columns\TextColumn::make('name')->label('Nama Produk')->searchable(),
                 Tables\Columns\TextColumn::make('digitalCategory.name')->label('Kategori'),
-                Tables\Columns\TextColumn::make('type')->label('Tipe'),
                 Tables\Columns\TextColumn::make('base_price')->label('Harga Dasar'),
                 Tables\Columns\IconColumn::make('is_fixed')
                     ->label('Harga Tetap')
