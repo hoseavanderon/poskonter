@@ -2391,10 +2391,17 @@
                     }
                 },
 
-                // ======== RIWAYAT TRANSAKSI HARI INI ========
                 async loadTodayTransactions() {
                     try {
                         const res = await fetch("{{ route('pos.today') }}");
+
+                        if (!res.ok) {
+                            const text = await res.text(); // 🔍 tampilkan isi error sebenarnya
+                            console.error("🚨 Response error:", text);
+                            alert("Terjadi kesalahan server: " + res.status + " " + res.statusText);
+                            return;
+                        }
+
                         const data = await res.json();
                         if (data.success) {
                             this.transactionsToday = data.transactions;
@@ -2410,10 +2417,9 @@
                         }
                     } catch (err) {
                         console.error("❌ Kesalahan jaringan:", err);
-                        alert("Terjadi kesalahan saat memuat data transaksi hari ini.");
+                        alert("Terjadi kesalahan saat memuat data transaksi hari ini: " + err.message);
                     }
                 },
-
                 // ======== CHECKOUT DIGITAL ========
                 async confirmDigitalTransaction() {
                     try {
