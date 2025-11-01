@@ -26,7 +26,8 @@ class BrandResource extends Resource
             Forms\Components\TextInput::make('name')
                 ->label('Nama Brand')
                 ->required()
-                ->maxLength(255),
+                ->maxLength(255)
+                ->unique('brands', 'name'),
         ]);
     }
 
