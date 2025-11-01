@@ -44,6 +44,18 @@
         }
 
         [x-cloak] { display: none !important; }
+
+        /* Scrollbar halus dan tipis */
+        aside::-webkit-scrollbar {
+            width: 6px;
+        }
+        aside::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 100, 100, 0.4);
+            border-radius: 3px;
+        }
+        aside:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 100, 100, 0.7);
+        }
     </style>
 
     <main>
@@ -210,7 +222,7 @@
                 </div>
             </div>
 
-           {{-- ============================= --}}
+            {{-- ============================= --}}
             {{-- TAB: PRODUK FISIK --}}
             {{-- ============================= --}}
             <div x-show="activeTab === 'physical'" x-transition:enter="transition ease-out duration-300"
@@ -220,14 +232,14 @@
 
                 {{-- Sidebar kategori --}}
                 <aside
-                    class="md:w-52 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 hidden md:block">
+                    class="md:w-52 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 hidden md:block overflow-y-auto"
+                    style="max-height: 80vh;">
                     <h2 class="text-lg font-semibold mb-3">Kategori Barangs</h2>
                     <ul class="space-y-2">
                         <li>
                             <button @click="switchCategory(null)"
                                 :class="{
-                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory ===
-                                        null
+                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory === null
                                 }"
                                 class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                                 <i class="fa-solid fa-layer-group mr-1"></i> Semua Produk
@@ -237,8 +249,7 @@
                             <li>
                                 <button @click="switchCategory(cat)"
                                     :class="{
-                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory
-                                            ?.id === cat.id
+                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory?.id === cat.id
                                     }"
                                     class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                                     <i class="fa-solid fa-folder mr-1"></i>
@@ -401,116 +412,118 @@
                 </div>
 
                 {{-- Keranjang --}}
-                <aside
-                    class="md:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col justify-between">
-                    {{-- Pilihan Pembayaran / Pelanggan --}}
-                    <div class="mb-4">
-                        <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
+<aside
+    class="md:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
+    style="max-height: 90vh;">
+    {{-- Pilihan Pembayaran / Pelanggan --}}
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
 
-                        <select x-model="selectedCustomer"
-                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="">💵 Tunai</option>
-                            <template x-for="cust in customers" :key="cust.id">
-                                <option :value="cust.id" x-text="'👤 ' + cust.name"></option>
-                            </template>
-                        </select>
+        <select x-model="selectedCustomer"
+            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="">💵 Tunai</option>
+            <template x-for="cust in customers" :key="cust.id">
+                <option :value="cust.id" x-text="'👤 ' + cust.name"></option>
+            </template>
+        </select>
 
-                        <template x-if="selectedCustomer">
-                            <p class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                                <i class="fa-solid fa-circle-exclamation"></i>
-                                Transaksi akan dicatat sebagai <strong>utang</strong>.
-                            </p>
-                        </template>
-                    </div>
+        <template x-if="selectedCustomer">
+            <p class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                Transaksi akan dicatat sebagai <strong>utang</strong>.
+            </p>
+        </template>
+    </div>
 
-                    <div>
-                        <h2 class="text-lg font-semibold mb-3">Keranjang Belanja</h2>
-                        <template x-if="cart.length === 0">
-                            <div class="text-center text-gray-500 py-10">
-                                <i class="fa-solid fa-cart-shopping text-3xl mb-2"></i>
-                                <p>Keranjang Kosong</p>
-                            </div>
-                        </template>
+    <div>
+        <h2 class="text-lg font-semibold mb-3">Keranjang Belanja</h2>
+        <template x-if="cart.length === 0">
+            <div class="text-center text-gray-500 py-10">
+                <i class="fa-solid fa-cart-shopping text-3xl mb-2"></i>
+                <p>Keranjang Kosong</p>
+            </div>
+        </template>
 
-                        <template x-for="(item, index) in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
-                            <div
-                                class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-                                <div>
-                                    <div x-text="item.name" class="font-medium"></div>
-                                    <div class="text-sm text-gray-500"
-                                        x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <button @click="decreaseQty(index)"
-                                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">-</button>
-                                    <span x-text="item.qty"></span>
-                                    <button @click="increaseQty(index)"
-                                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">+</button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+        <template x-for="(item, index) in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
+            <div
+                class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                <div>
+                    <div x-text="item.name" class="font-medium"></div>
+                    <div class="text-sm text-gray-500"
+                        x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button @click="decreaseQty(index)"
+                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">-</button>
+                    <span x-text="item.qty"></span>
+                    <button @click="increaseQty(index)"
+                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">+</button>
+                </div>
+            </div>
+        </template>
+    </div>
 
-                    {{-- Kalkulator & Tombol Bayar --}}
-                    <div class="mt-4 border-t pt-4">
-                        <div class="flex justify-between mb-2">
-                            <span>Subtotal:</span>
-                            <span x-text="'Rp ' + total().toLocaleString()"></span>
-                        </div>
-                        <div class="flex justify-between font-semibold mb-3">
-                            <span>Total:</span>
-                            <span class="text-blue-600" x-text="'Rp ' + total().toLocaleString()"></span>
-                        </div>
+    {{-- Kalkulator & Tombol Bayar --}}
+    <div class="mt-4 border-t pt-4">
+        <div class="flex justify-between mb-2">
+            <span>Subtotal:</span>
+            <span x-text="'Rp ' + total().toLocaleString()"></span>
+        </div>
+        <div class="flex justify-between font-semibold mb-3">
+            <span>Total:</span>
+            <span class="text-blue-600" x-text="'Rp ' + total().toLocaleString()"></span>
+        </div>
 
-                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center">
-                            <h3 class="font-bold mb-1">Total Bayar</h3>
-                            <div class="text-3xl font-bold text-blue-600 mb-3" x-text="'Rp ' + paid.toLocaleString()">
-                            </div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center">
+            <h3 class="font-bold mb-1">Total Bayar</h3>
+            <div class="text-3xl font-bold text-blue-600 mb-3" x-text="'Rp ' + paid.toLocaleString()">
+            </div>
 
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
-                                <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
-                                    <button @click="addPayment(n)"
-                                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 py-2 rounded text-sm font-semibold"
-                                        x-text="'Rp ' + n.toLocaleString()"></button>
-                                </template>
-                                <button @click="payExact()"
-                                    class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">UANG
-                                    PAS</button>
-                            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
+                    <button @click="addPayment(n)"
+                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 py-2 rounded text-sm font-semibold"
+                        x-text="'Rp ' + n.toLocaleString()"></button>
+                </template>
+                <button @click="payExact()"
+                    class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">UANG
+                    PAS</button>
+            </div>
 
-                            <div class="grid grid-cols-3 gap-2 text-lg mb-3">
-                                <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
-                                    <button @click="handleKey(btn)"
-                                        class="bg-gray-200 dark:bg-gray-600 py-3 rounded font-bold hover:bg-gray-300 dark:hover:bg-gray-500">
-                                        <span x-text="btn"></span>
-                                    </button>
-                                </template>
-                            </div>
+            <div class="grid grid-cols-3 gap-2 text-lg mb-3">
+                <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
+                    <button @click="handleKey(btn)"
+                        class="bg-gray-200 dark:bg-gray-600 py-3 rounded font-bold hover:bg-gray-300 dark:hover:bg-gray-500">
+                        <span x-text="btn"></span>
+                    </button>
+                </template>
+            </div>
 
-                            <div class="mt-4 flex justify-between font-semibold text-lg">
-                                <span>Kembalian:</span>
-                                <span x-text="'Rp ' + change().toLocaleString()"></span>
-                            </div>
+            <div class="mt-4 flex justify-between font-semibold text-lg">
+                <span>Kembalian:</span>
+                <span x-text="'Rp ' + change().toLocaleString()"></span>
+            </div>
 
-                            <div class="flex gap-3 mt-4">
-                                <button @click="loadTodayTransactions()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
-                                dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 
-                                py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm border border-gray-300 dark:border-gray-600">
-                                    <i class="fa-solid fa-clock-rotate-left text-base"></i>
-                                    <span>Riwayat</span>
-                                </button>
+            <div class="flex gap-3 mt-4">
+                <button @click="loadTodayTransactions()"
+                    class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
+                dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 
+                py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm border border-gray-300 dark:border-gray-600">
+                    <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                    <span>Riwayat</span>
+                </button>
 
-                                <button @click="openReviewModal()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
-                                text-white py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm">
-                                    <i class="fa-solid fa-cash-register text-base"></i>
-                                    <span>Bayar</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                <button @click="openReviewModal()"
+                    class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+                text-white py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm">
+                    <i class="fa-solid fa-cash-register text-base"></i>
+                    <span>Bayar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</aside>
+
             </div>
 
             {{-- ============================= --}}
