@@ -24,13 +24,30 @@ class CategoryResource extends Resource
     {
         return $form->schema([
             Forms\Components\TextInput::make('kode_category')
-                ->label('Kode Category')
-                ->required()
-                ->maxLength(50),
+            ->label('Kode Category')
+            ->required()
+            ->maxLength(50)
+            ->unique(
+                table: 'categories',   // nama tabel
+                column: 'kode_category',
+                ignoreRecord: true     // agar tidak error saat edit
+            )
+            ->validationMessages([
+                'unique' => 'Kode category ini sudah digunakan.',
+            ]),
+
             Forms\Components\TextInput::make('name')
                 ->label('Nama Category')
                 ->required()
-                ->maxLength(255),
+                ->maxLength(255)
+                ->unique(
+                    table: 'categories',
+                    column: 'name',
+                    ignoreRecord: true
+                )
+                ->validationMessages([
+                    'unique' => 'Nama category ini sudah digunakan.',
+                ]),
 
             Repeater::make('subCategories')
                 ->label('Sub Categories')
