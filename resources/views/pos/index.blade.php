@@ -221,7 +221,7 @@
                 {{-- Sidebar kategori --}}
                 <aside
                     class="md:w-52 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 hidden md:block">
-                    <h2 class="text-lg font-semibold mb-3">Kategori Barang</h2>
+                    <h2 class="text-lg font-semibold mb-3">Kategori Barangs</h2>
                     <ul class="space-y-2">
                         <li>
                             <button @click="switchCategory(null)"
