@@ -413,8 +413,8 @@
 
                 {{-- Keranjang --}}
 <aside
-    class="md:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
-    style="max-height: 90vh;">
+    class="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
+    style="max-height: 90vh; min-width: 320px; z-index: 10;">
     {{-- Pilihan Pembayaran / Pelanggan --}}
     <div class="mb-4">
         <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
