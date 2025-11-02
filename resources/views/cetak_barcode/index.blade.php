@@ -319,7 +319,7 @@
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
                     <style>
   @page {
-    size: 100mm 25mm; /* 2 label per baris, tinggi label 25mm */
+    size: 100mm 25mm; /* sesuai label custom */
     margin: 0;
   }
 
@@ -330,14 +330,14 @@
 
   .sheet {
     display: grid;
-    grid-template-columns: repeat(2, 50mm);
-    grid-auto-rows: 25mm;
-    gap: 2mm 2mm;
+    grid-template-columns: repeat(2, 49mm); /* 2 kolom label */
+    grid-auto-rows: 25mm; /* tinggi label */
+    gap: 2mm 2mm; /* jarak antar label */
     justify-content: center;
   }
 
   .label {
-    width: 50mm;
+    width: 49mm;
     height: 25mm;
     display: flex;
     flex-direction: column;
@@ -345,22 +345,29 @@
     align-items: center;
     text-align: center;
     overflow: hidden;
-    padding: 1mm;
   }
 
   .barcode {
-    width: 100%;
+    width: 90%;
     height: 9mm;
   }
 
   .name {
-    font-size: 8px;
     font-weight: 600;
+    font-size: 8px;
+    margin-top: 1px;
+  }
+
+  .code {
+    font-size: 8px;
+    margin-top: 1px;
   }
 
   .price {
-    font-size: 8px;
     font-weight: 700;
+    font-size: 8px;
+    color: #000;
+    margin-top: 1px;
   }
 </style>
                 </head>
