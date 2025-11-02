@@ -318,64 +318,51 @@
                     <title>Print Barcode</title>
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
                     <style>
-                        @page {
-                            size: A4;
-                            margin: 4mm; /* Biar gak mepet ke tepi */
-                        }
+  @page {
+    size: 100mm 25mm; /* 2 label per baris, tinggi label 25mm */
+    margin: 0;
+  }
 
-                        body {
-                            font-family: system-ui, sans-serif;
-                            color: #111;
-                            margin: 0;
-                            padding: 0;
-                        }
+  body {
+    margin: 0;
+    padding: 0;
+  }
 
-                        .sheet {
-                            display: grid;
-                            grid-template-columns: repeat(2, 50mm); /* 🔹 2 kolom, tiap label 50mm */
-                            grid-auto-rows: 25mm; /* 🔹 tinggi label fisik */
-                            gap: 3mm 3mm; /* 🔹 jarak antar label */
-                            justify-content: center;
-                            margin: 4mm auto;
-                        }
+  .sheet {
+    display: grid;
+    grid-template-columns: repeat(2, 50mm);
+    grid-auto-rows: 25mm;
+    gap: 2mm 2mm;
+    justify-content: center;
+  }
 
-                        .label {
-                            width: 50mm;
-                            height: 25mm;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            text-align: center;
-                            overflow: hidden;
-                            padding: 1mm;
-                        }
+  .label {
+    width: 50mm;
+    height: 25mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 1mm;
+  }
 
-                        .barcode {
-                            width: 100%;
-                            height: 10mm;
-                        }
+  .barcode {
+    width: 100%;
+    height: 9mm;
+  }
 
-                        .name {
-                            font-weight: 600;
-                            font-size: 8px;
-                            line-height: 1;
-                            margin-top: 1px;
-                        }
+  .name {
+    font-size: 8px;
+    font-weight: 600;
+  }
 
-                        .code {
-                            font-size: 7px;
-                            line-height: 1;
-                            margin-top: 1px;
-                        }
-
-                        .price {
-                            font-weight: 700;
-                            font-size: 8px;
-                            color: #000;
-                            margin-top: 1px;
-                        }
-                        </style>
+  .price {
+    font-size: 8px;
+    font-weight: 700;
+  }
+</style>
                 </head>
                 <body>
                     <div class="sheet" id="barcode-container"></div>
