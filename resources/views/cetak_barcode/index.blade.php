@@ -318,57 +318,25 @@
                     <title>Print Barcode</title>
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
                     <style>
-  @page {
-    size: 100mm 25mm; /* sesuai label custom */
-    margin: 0;
-  }
-
+@page {
+  size: 100mm 25mm;
+  margin: 0;
+}
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-print-color-adjust: exact;
+}
+@media print {
+  @page { margin: 0; }
   body {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-
-  .sheet {
-    display: grid;
-    grid-template-columns: repeat(2, 49mm); /* 2 kolom label */
-    grid-auto-rows: 25mm; /* tinggi label */
-    gap: 2mm 2mm; /* jarak antar label */
-    justify-content: center;
+  header, footer {
+    display: none !important;
   }
-
-  .label {
-    width: 49mm;
-    height: 25mm;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    overflow: hidden;
-  }
-
-  .barcode {
-    width: 90%;
-    height: 9mm;
-  }
-
-  .name {
-    font-weight: 600;
-    font-size: 8px;
-    margin-top: 1px;
-  }
-
-  .code {
-    font-size: 8px;
-    margin-top: 1px;
-  }
-
-  .price {
-    font-weight: 700;
-    font-size: 8px;
-    color: #000;
-    margin-top: 1px;
-  }
+}
 </style>
                 </head>
                 <body>
