@@ -79,11 +79,16 @@
                             class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-md text-sm">
                             Clear
                         </button>
-                        <button @click="printCart()" :disabled="!cart.length"
-                            :class="!cart.length ? 'opacity-60 cursor-not-allowed' : ''"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm shadow">
-                            Cetak Barcode
-                        </button>
+
+                        <form method="POST" action="{{ route('cetakbarcode.print') }}" target="_blank" id="printForm"
+                            @submit.prevent="submitForPrint">
+                            @csrf
+                            <input type="hidden" name="items" id="printItems">
+                            <button type="submit" :disabled="!cart.length"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm shadow">
+                                Cetak Barcode
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -286,7 +291,7 @@
                 printCart() {
                     if (!this.cart.length) return this.showPopup('Pilih minimal satu produk.');
 
-                    // Validasi stok
+                    // 🔸 Validasi stok (tetap sama)
                     for (const item of this.cart) {
                         const qty = parseInt(item.qty) || 0;
                         const stock = parseInt(item.stock) || 0;
@@ -304,48 +309,96 @@
                         }
                     }
 
-                    // ✅ Lanjutkan cetak jika valid
+                    // 🔹 Kumpulkan semua label yang akan dicetak
                     const labels = [];
                     this.cart.forEach(item => {
                         const copies = parseInt(item.qty);
                         for (let i = 0; i < copies; i++) labels.push(item);
                     });
 
+                    // 🔹 Hitung tinggi halaman dinamis (Konfigurasi 33mm x 15mm pada kertas 70mm)
+                    const labelHeight = 15; // mm (Tinggi label)
+                    const labelWidth = 33; // mm (Lebar label)
+                    const gap = 4; // mm (Jarak antar label: (70 - 2*33) = 4)
+                    const cols = 2;
+                    const totalLabels = labels.length;
+                    const rows = Math.ceil(totalLabels / cols);
+                    const pageHeight = rows * labelHeight + (rows - 1) * gap + 10; // buffer kecil bawah
+
+                    // 🔹 Buka jendela print
                     const w = window.open('', '_blank');
                     w.document.write(`
-                <html>
-                <head>
-                    <title>Print Barcode</title>
-                    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
-                    <style>
-@page {
-  size: 100mm 25mm;
-  margin: 0;
-}
-body {
-  margin: 0;
-  padding: 0;
-  -webkit-print-color-adjust: exact;
-}
-@media print {
-  @page { margin: 0; }
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  header, footer {
-    display: none !important;
-  }
-}
-</style>
-                </head>
-                <body>
-                    <div class="sheet" id="barcode-container"></div>
-                </body>
-                </html>
-            `);
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Print Barcode</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+    <style>
+        @page {
+            size: 60mm ${pageHeight}mm; /* ⬅️ otomatis sesuai jumlah label */
+            margin: 0;
+        }
+        html, body {
+            width: 70mm;
+            height: ${pageHeight}mm;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            overflow: hidden;
+        }
+        .sheet {
+            display: grid;
+            grid-template-columns: repeat(${cols}, ${labelWidth}mm); /* 33mm */
+            grid-auto-rows: ${labelHeight}mm;
+            gap: ${gap}mm ${gap}mm;
+            justify-content: center;
+            align-content: start; /* Nempel atas */
+            width: 100%;
+            height: 100%;
+            padding: ${gap / 2}mm 0; /* padding atas agar tidak terlalu mepet */
+            box-sizing: border-box;
+        }
+        .label {
+            width: ${labelWidth}mm; /* 33mm */
+            height: ${labelHeight}mm; /* 15mm */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .barcode { width: 100%; height: 6mm; } /* Tinggi SVG 6mm */
+        .name {
+            font-weight: 600;
+            font-size: 5.5px;
+            line-height: 1;
+            margin-top: 1px;
+        }
+        .code {
+            font-size: 5.5px;
+            line-height: 1;
+            margin-top: 1px;
+        }
+        .price {
+            font-weight: 700;
+            font-size: 6.5px;
+            color: #000;
+            margin-top: 1px;
+        }
+        @media print {
+            header, footer { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sheet" id="barcode-container"></div>
+</body>
+</html>
+    `);
                     w.document.close();
 
+                    // 🔹 Render barcode setelah window siap
                     w.onload = function() {
                         const container = w.document.getElementById('barcode-container');
                         labels.forEach((it, i) => {
@@ -354,25 +407,28 @@ body {
                             const productName = it.variant ? `${it.name} (${it.variant})` : it.name;
 
                             label.innerHTML = `
-                        <svg id="barcode-${i}" class="barcode"></svg>
-                        <div class="name">${productName}</div>
-                        <div class="code">${it.barcode}</div>
-                        <div class="price">Rp ${parseInt(it.jual || 0).toLocaleString('id-ID')}</div>
-                    `;
+                <svg id="barcode-${i}" class="barcode"></svg>
+                <div class="name">${productName}</div>
+                <div class="code">${it.barcode ?? '-'}</div>
+                <div class="price">Rp ${parseInt(it.jual || 0).toLocaleString('id-ID')}</div>
+            `;
                             container.appendChild(label);
 
+                            // generate barcode
                             w.JsBarcode(`#barcode-${i}`, it.barcode, {
                                 format: 'CODE128',
-                                lineColor: '#111',
+                                lineColor: '#000',
                                 width: 1.1,
-                                height: 20,
+                                height: 18, // Tinggi barcode diatur agar muat
                                 displayValue: false
                             });
                         });
 
-                        setTimeout(() => w.print(), 800);
+                        // print otomatis setelah render
+                        setTimeout(() => w.print(), 600);
                     };
                 },
+
                 updateQty(item, value) {
                     let val = parseInt(value) || 0;
 
@@ -386,6 +442,16 @@ body {
                     // Paksa Alpine refresh reactive
                     this.cart = [...this.cart];
                 },
+                submitForPrint() {
+                    if (confirm('Lihat preview dulu sebelum cetak?')) {
+                        document.getElementById('printForm').action =
+                            "{{ route('cetakbarcode.print', ['preview' => true]) }}";
+                    } else {
+                        document.getElementById('printForm').action = "{{ route('cetakbarcode.print') }}";
+                    }
+                    document.getElementById('printItems').value = JSON.stringify(this.cart);
+                    document.getElementById('printForm').submit();
+                }
             }
         }
     </script>

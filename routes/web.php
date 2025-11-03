@@ -90,5 +90,6 @@ Route::middleware([
     // ===================================================
     // 🚚 BARANG MASUK
     // ===================================================
-    Route::get('/cetakbarcode',[CetakBarcodeController::class, 'index'])->name('cetakbarcode');
+    Route::get('/cetakbarcode', [CetakBarcodeController::class, 'index'])->name('cetakbarcode');
+    Route::post('/cetakbarcode/print', [CetakBarcodeController::class, 'print'])->name('cetakbarcode.print');
 });
