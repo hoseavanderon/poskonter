@@ -16,7 +16,8 @@ class ProductAttributeResource extends Resource
     protected static ?string $model = ProductAttribute::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-tag';
-    protected static ?string $navigationGroup = 'Products';
+    protected static ?string $navigationGroup = 'Produk';
+    protected static ?string $navigationLabel = 'Atribut Produk';
 
     // 🔒 Hanya user non-admin yang bisa akses
     public static function canViewAny(): bool

@@ -11,7 +11,7 @@ use App\Models\SubCategory;
 use App\Models\Brand;
 use App\Models\Supplier;
 use Filament\Forms;
-use Filament\Forms\Form; 
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -22,7 +22,8 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
     protected static ?string $navigationIcon = 'heroicon-s-cube';
-    protected static ?string $navigationGroup = 'Products';
+    protected static ?string $navigationGroup = 'Produk';
+    protected static ?string $navigationLabel = 'Produk';
 
     // Hanya user selain admin yang bisa akses
     public static function canViewAny(): bool
@@ -70,7 +71,7 @@ class ProductResource extends Resource
 
                 Forms\Components\Select::make('sub_category_id')
                     ->label('Sub Category')
-                    ->options(fn ($get) => SubCategory::where('category_id', $get('category_id'))->pluck('name', 'id'))
+                    ->options(fn($get) => SubCategory::where('category_id', $get('category_id'))->pluck('name', 'id'))
                     ->required(),
 
                 Forms\Components\Select::make('brand_id')
@@ -97,7 +98,7 @@ class ProductResource extends Resource
 
                 Forms\Components\Select::make('shelf_id')
                     ->label('Rak')
-                    ->options(fn () => Shelf::query()
+                    ->options(fn() => Shelf::query()
                         ->where('outlet_id', Auth::user()->outlet_id ?? null)
                         ->pluck('name', 'id'))
                     ->searchable()
@@ -112,7 +113,7 @@ class ProductResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('product_attribute_id')
                             ->label('Attribute')
-                            ->options(fn () => ProductAttribute::pluck('name', 'id'))
+                            ->options(fn() => ProductAttribute::pluck('name', 'id'))
                             ->reactive()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $set('attribute_type', ProductAttribute::find($state)?->data_type);
@@ -127,23 +128,26 @@ class ProductResource extends Resource
 
                         Forms\Components\TextInput::make('value_string')
                             ->label('Value')
-                            ->visible(fn ($get) => in_array($get('attribute_type'), ['text', 'string']))
-                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                            ->visible(fn($get) => in_array($get('attribute_type'), ['text', 'string']))
+                            ->afterStateHydrated(
+                                fn($component, $get, callable $set) =>
                                 $set('value_string', $get('attribute_value'))
                             ),
 
                         Forms\Components\TextInput::make('value_integer')
                             ->label('Value')
                             ->numeric()
-                            ->visible(fn ($get) => in_array($get('attribute_type'), ['number', 'integer']))
-                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                            ->visible(fn($get) => in_array($get('attribute_type'), ['number', 'integer']))
+                            ->afterStateHydrated(
+                                fn($component, $get, callable $set) =>
                                 $set('value_integer', $get('attribute_value'))
                             ),
 
                         Forms\Components\DatePicker::make('value_date')
                             ->label('Value')
-                            ->visible(fn ($get) => in_array($get('attribute_type'), ['date', 'datetime']))
-                            ->afterStateHydrated(fn ($component, $get, callable $set) =>
+                            ->visible(fn($get) => in_array($get('attribute_type'), ['date', 'datetime']))
+                            ->afterStateHydrated(
+                                fn($component, $get, callable $set) =>
                                 $set('value_date', $get('attribute_value'))
                             ),
 
@@ -156,7 +160,7 @@ class ProductResource extends Resource
                                     'date', 'datetime' => $get('value_date'),
                                     default => null,
                                 };
-                            }), 
+                            }),
 
                         Forms\Components\TextInput::make('stok')
                             ->numeric()
@@ -164,7 +168,7 @@ class ProductResource extends Resource
                             ->required(),
 
                         Forms\Components\Hidden::make('last_restock_date')
-                            ->default(fn () => now()->toDateString())
+                            ->default(fn() => now()->toDateString())
                             ->dehydrated(),
 
                         Forms\Components\Hidden::make('last_sale_date')
@@ -172,7 +176,7 @@ class ProductResource extends Resource
                             ->dehydrated(),
 
                         Forms\Components\Hidden::make('outlet_id')
-                            ->default(fn () => Auth::user()?->outlet_id)
+                            ->default(fn() => Auth::user()?->outlet_id)
                             ->dehydrated(),
                     ])
                     ->columns(2)

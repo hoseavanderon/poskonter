@@ -17,9 +17,9 @@ class AppResource extends Resource
     protected static ?string $model = App::class;
 
     // Sidebar Group
-    protected static ?string $navigationGroup = 'Digital Product';
+    protected static ?string $navigationGroup = 'Produk Digital';
     protected static ?string $navigationIcon = 'heroicon-o-device-tablet';
-    protected static ?string $navigationLabel = 'Apps';
+    protected static ?string $navigationLabel = 'Aplikasi';
 
     public static function form(Form $form): Form
     {

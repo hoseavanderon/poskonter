@@ -16,25 +16,25 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationGroup = 'Products';
+    protected static ?string $navigationGroup = 'Produk';
     protected static ?string $navigationIcon = 'heroicon-s-cube';
-    protected static ?string $navigationLabel = 'Categories';
+    protected static ?string $navigationLabel = 'Kategori';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\TextInput::make('kode_category')
-            ->label('Kode Category')
-            ->required()
-            ->maxLength(50)
-            ->unique(
-                table: 'categories',   // nama tabel
-                column: 'kode_category',
-                ignoreRecord: true     // agar tidak error saat edit
-            )
-            ->validationMessages([
-                'unique' => 'Kode category ini sudah digunakan.',
-            ]),
+                ->label('Kode Category')
+                ->required()
+                ->maxLength(50)
+                ->unique(
+                    table: 'categories',   // nama tabel
+                    column: 'kode_category',
+                    ignoreRecord: true     // agar tidak error saat edit
+                )
+                ->validationMessages([
+                    'unique' => 'Kode category ini sudah digunakan.',
+                ]),
 
             Forms\Components\TextInput::make('name')
                 ->label('Nama Category')

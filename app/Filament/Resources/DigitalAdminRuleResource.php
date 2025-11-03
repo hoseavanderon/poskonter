@@ -16,7 +16,7 @@ class DigitalAdminRuleResource extends Resource
 {
     protected static ?string $model = DigitalAdminRule::class;
 
-    protected static ?string $navigationGroup = 'Digital Product';
+    protected static ?string $navigationGroup = 'Produk Digital';
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static ?string $navigationLabel = 'Digital Admin Rules';
 

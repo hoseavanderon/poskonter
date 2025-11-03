@@ -16,11 +16,11 @@ class CustomerResource extends Resource
     protected static ?string $model = Customer::class;
 
     // Sidebar Group: Customers
-    protected static ?string $navigationGroup = 'Customers';
+    protected static ?string $navigationGroup = 'Pelanggan';
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'Customers';
+    protected static ?string $navigationLabel = 'Pelanggan';
 
-     // Batasi akses supaya admin tidak bisa mengakses
+    // Batasi akses supaya admin tidak bisa mengakses
     public static function canViewAny(): bool
     {
         return Auth::check() && Auth::user()->role !== 'Admin';

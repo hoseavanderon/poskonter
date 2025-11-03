@@ -15,9 +15,9 @@ class DigitalProductResource extends Resource
 {
     protected static ?string $model = DigitalProduct::class;
 
-    protected static ?string $navigationGroup = 'Digital Product';
+    protected static ?string $navigationGroup = 'Produk Digital';
     protected static ?string $navigationIcon = 'heroicon-o-device-tablet';
-    protected static ?string $navigationLabel = 'Digital Products';
+    protected static ?string $navigationLabel = 'Produk Digital';
 
     public static function form(Form $form): Form
     {

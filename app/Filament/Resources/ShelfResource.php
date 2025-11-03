@@ -17,9 +17,9 @@ class ShelfResource extends Resource
     protected static ?string $model = Shelf::class;
 
     // Sidebar group: Products
-    protected static ?string $navigationGroup = 'Products';
+    protected static ?string $navigationGroup = 'Produk';
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
-    protected static ?string $navigationLabel = 'Shelves';
+    protected static ?string $navigationLabel = 'Rak';
 
     public static function form(Form $form): Form
     {

@@ -22,9 +22,9 @@ class DeviceResource extends Resource
 {
     protected static ?string $model = Device::class;
 
-    protected static ?string $navigationGroup = 'Digital Product';
+    protected static ?string $navigationGroup = 'Produk Digital';
     protected static ?string $navigationIcon = 'heroicon-o-device-tablet';
-    protected static ?string $navigationLabel = 'Devices';
+    protected static ?string $navigationLabel = 'Perangkat';
 
     public static function form(Forms\Form $form): Forms\Form
     {
@@ -45,7 +45,7 @@ class DeviceResource extends Resource
                 ])
                 ->searchable()
                 ->hint('Pilih icon yang mewakili device ini')
-                ->prefixIcon(fn ($state) => match ($state) {
+                ->prefixIcon(fn($state) => match ($state) {
                     'device-phone-mobile' => 'heroicon-o-phone',
                     'credit-card' => 'heroicon-o-credit-card',
                     default => 'heroicon-o-phone',
@@ -53,7 +53,7 @@ class DeviceResource extends Resource
 
             MultiSelect::make('apps')
                 ->label('Apps Terpasang')
-                ->relationship('apps', 'name') 
+                ->relationship('apps', 'name')
                 ->preload()
                 ->searchable(),
         ]);

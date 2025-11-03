@@ -17,9 +17,9 @@ class DigitalBrandResource extends Resource
     protected static ?string $model = DigitalBrand::class;
 
     // Sidebar group dan label
-    protected static ?string $navigationGroup = 'Digital Product';
+    protected static ?string $navigationGroup = 'Produk Digital';
     protected static ?string $navigationIcon = 'heroicon-o-device-tablet';
-    protected static ?string $navigationLabel = 'Digital Brands';
+    protected static ?string $navigationLabel = 'Merk Digital';
 
     // Form
     public static function form(Form $form): Form
