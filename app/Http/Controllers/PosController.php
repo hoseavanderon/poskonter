@@ -538,7 +538,7 @@ class PosController extends Controller
             // === Total Transfer (digital_product_id = 6)
             $totalTransfer = DB::table('digital_transactions')
                 ->where('outlet_id', $outletId) // ✅ Filter outlet
-                ->where('digital_product_id', [112, 114, 115])
+                ->whereIn('digital_product_id', [112, 114, 115])
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
