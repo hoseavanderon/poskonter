@@ -130,7 +130,8 @@ class RiwayatController extends Controller
             ->join('digital_products', 'digital_products.id', '=', 'digital_transactions.digital_product_id')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->whereDate('digital_transactions.created_at', $tanggal)
-            ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116]) // ⛔ exclude tarik & transfer
+            ->where('digital_transactions.app_id', '<>', 7) // ✅ exclude app_id = 7
             ->select([
                 'apps.name as app_name',
                 'digital_products.name as product_name',
@@ -169,7 +170,7 @@ class RiwayatController extends Controller
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereDate('digital_transactions.created_at', $tanggal)
-            ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
             ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
             ->groupBy('apps.name')
             ->orderByDesc('total')
@@ -177,13 +178,13 @@ class RiwayatController extends Controller
 
         $totalTarik = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->where('digital_product_id', 5)
+            ->whereIn('digital_product_id', [113, 116]) // ← gunakan whereIn untuk banyak ID
             ->whereDate('digital_transactions.created_at', $tanggal)
             ->sum('subtotal');
 
         $totalTransfer = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->where('digital_product_id', 6)
+            ->whereIn('digital_product_id', [112, 114, 115]) // ← ambil semua ID Transfer Bank
             ->whereDate('digital_transactions.created_at', $tanggal)
             ->sum('subtotal');
 

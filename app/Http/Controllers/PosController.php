@@ -66,8 +66,8 @@ class PosController extends Controller
 
         $customers = class_exists(Customer::class)
             ? Customer::where('outlet_id', $outletId)
-                ->orderBy('name')
-                ->get(['id', 'name'])
+            ->orderBy('name')
+            ->get(['id', 'name'])
             : collect([]);
 
         return view('pos.index', [
@@ -530,7 +530,7 @@ class PosController extends Controller
                 ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
                 ->where('digital_transactions.outlet_id', $outletId) // ✅ Filter outlet
                 ->whereDate('digital_transactions.created_at', $today)
-                ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+                ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
                 ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
                 ->groupBy('apps.name')
                 ->get();
@@ -538,14 +538,13 @@ class PosController extends Controller
             // === Total Transfer (digital_product_id = 6)
             $totalTransfer = DB::table('digital_transactions')
                 ->where('outlet_id', $outletId) // ✅ Filter outlet
-                ->where('digital_product_id', 6)
+                ->where('digital_product_id', [112, 114, 115])
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
-            // === Total Tarik (digital_product_id = 5)
             $totalTarik = DB::table('digital_transactions')
-                ->where('outlet_id', $outletId) // ✅ Filter outlet
-                ->where('digital_product_id', 5)
+                ->where('outlet_id', $outletId)
+                ->whereIn('digital_product_id', [113, 116]) // ← pakai whereIn
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
@@ -663,5 +662,4 @@ class PosController extends Controller
             ], 500);
         }
     }
-
 }
