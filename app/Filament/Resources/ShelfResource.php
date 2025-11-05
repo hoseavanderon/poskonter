@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class ShelfResource extends Resource
 {
@@ -83,6 +84,12 @@ class ShelfResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::check() && Auth::user()->role !== 'Admin';
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('outlet_id', Auth::user()->outlet_id);
     }
 
     public static function getPages(): array
