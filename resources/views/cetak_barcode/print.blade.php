@@ -85,7 +85,7 @@
                 <tr>
                     @foreach ($pair as $item)
                         <td>
-                            <div class="name">{{ $item->name }}</div>
+                            <div class="name">{{ Str::limit($item->name, 20) }}</div>
                             <div class="barcode">{!! $item->barcode_svg !!}</div>
                             <div class="price">Rp {{ number_format($item->jual, 0, ',', '.') }}</div>
                         </td>
