@@ -196,7 +196,15 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('brand.name')->label('Brand'),
                 Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 Tables\Columns\TextColumn::make('subCategory.name')->label('Sub Category'),
-                Tables\Columns\TextColumn::make('minimal_stok')->label('Minimal Stok'),
+                Tables\Columns\TextColumn::make('stok')
+                    ->label('Stok')
+                    ->getStateUsing(function ($record) {
+                        return optional(
+                            $record->attributeValues
+                                ->where('outlet_id', Auth::user()?->outlet_id)
+                                ->first()
+                        )->stok ?? '-';
+                    }),
             ])
             ->filters([])
             ->actions([
