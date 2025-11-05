@@ -66,7 +66,9 @@ class ProductResource extends Resource
 
                 Forms\Components\Select::make('category_id')
                     ->label('Category')
-                    ->options(Category::all()->pluck('name', 'id'))
+                    ->options(fn() => Category::query()
+                        ->pluck('name', 'id'))
+                    ->searchable()
                     ->reactive()
                     ->required(),
 
@@ -77,7 +79,9 @@ class ProductResource extends Resource
 
                 Forms\Components\Select::make('brand_id')
                     ->label('Brand')
-                    ->options(Brand::all()->pluck('name', 'id'))
+                    ->options(fn() => Brand::query()
+                        ->pluck('name', 'id'))
+                    ->searchable()
                     ->required(),
 
                 Forms\Components\TextInput::make('modal')
@@ -191,7 +195,7 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('No')->sortable(),
+                Tables\Columns\TextColumn::make('index')->label('No')->rowIndex(),
                 Tables\Columns\TextColumn::make('name')->label('Product Name')->searchable(),
                 Tables\Columns\TextColumn::make('barcode')->label('Barcode')->searchable(),
                 Tables\Columns\TextColumn::make('brand.name')->label('Brand'),
