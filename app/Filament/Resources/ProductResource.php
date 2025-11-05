@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Shelf;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
@@ -223,5 +224,11 @@ class ProductResource extends Resource
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('outlet_id', Auth::user()->outlet_id);
     }
 }
