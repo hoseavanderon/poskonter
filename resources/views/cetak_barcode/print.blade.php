@@ -18,7 +18,8 @@
             padding: 0;
             font-family: Arial, sans-serif;
             -webkit-print-color-adjust: exact !important;
-            transform: translateX(-0.6mm);
+            transform: translateX(-0.8mm);
+            /* ⬅️ geser semua konten sedikit ke kiri */
         }
 
         table {
@@ -37,6 +38,7 @@
             padding: 0;
         }
 
+        /* simulasi gap tengah (2mm total, masing2 1mm kiri kanan) */
         td:nth-child(1) {
             padding-right: 1mm;
         }
@@ -46,32 +48,34 @@
         }
 
         .name {
-            font-size: 5.8px;
+            font-size: 6px;
             font-weight: 700;
             margin-top: 2px;
+            font-family: 'DejaVu Sans', 'Arial Black', 'Liberation Sans', sans-serif;
             text-transform: uppercase;
-            line-height: 1.1;
-            font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
+            -webkit-font-smoothing: none;
+            text-rendering: geometricPrecision;
+            image-rendering: pixelated;
         }
 
         .barcode {
             width: 25mm;
-            height: 7.5mm;
+            height: auto;
             display: block;
-            margin: 0.5mm auto 0 auto;
-        }
-
-        .barcode svg {
-            width: 100% !important;
-            height: 100% !important;
+            margin: 0 auto;
         }
 
         .price {
             font-size: 6px;
             font-weight: 800;
-            font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
+            margin: 0;
+            font-family: 'DejaVu Sans', 'Arial Black', 'Liberation Sans', sans-serif;
+            -webkit-font-smoothing: none;
+            text-rendering: geometricPrecision;
+            image-rendering: pixelated;
         }
     </style>
+
 </head>
 
 <body>
@@ -82,9 +86,7 @@
                     @foreach ($pair as $item)
                         <td>
                             <div class="name">{{ Str::limit($item->name, 20) }}</div>
-                            <div class="barcode">
-                                {!! $item->barcode_svg !!}
-                            </div>
+                            <div class="barcode">{!! $item->barcode_svg !!}</div>
                             <div class="price">Rp {{ number_format($item->jual, 0, ',', '.') }}</div>
                         </td>
                     @endforeach
