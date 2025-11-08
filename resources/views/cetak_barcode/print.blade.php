@@ -18,7 +18,7 @@
             padding: 0;
             font-family: Arial, sans-serif;
             -webkit-print-color-adjust: exact !important;
-            transform: translateX(-0.8mm);
+            transform: translateX(-0.6mm);
         }
 
         table {
@@ -46,20 +46,20 @@
         }
 
         .name {
-            font-size: 6.5px;
+            font-size: 5.8px;
             font-weight: 700;
             margin-top: 1px;
             text-transform: uppercase;
+            line-height: 1.1;
             font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
 
         .barcode {
-            width: 32mm;
-            /* dari 25mm -> 32mm */
-            height: 10mm;
-            /* tambahkan tinggi agar garis barcode cukup panjang */
+            width: 27mm;
+            /* pas di tengah tapi masih bisa discan */
+            height: 7.5mm;
             display: block;
-            margin: 1px auto 0 auto;
+            margin: 0.5mm auto 0 auto;
         }
 
         .barcode svg {
@@ -68,9 +68,9 @@
         }
 
         .price {
-            font-size: 7px;
+            font-size: 6px;
             font-weight: 800;
-            margin: 0;
+            margin-top: 0.5mm;
             font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
     </style>
