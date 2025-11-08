@@ -43,6 +43,7 @@ Route::middleware([
     Route::delete('/digital-transactions/{transaction}', [PosController::class, 'deleteDigitalTransaction'])->name('digital.transaction.delete');
     Route::get('/pos/close-book-data', [PosController::class, 'getCloseBookData'])->name('pos.closebook.data');
     Route::post('/cashbook/store', [PosController::class, 'pembukuanStore'])->name('cashbook.store');
+    Route::get('/pos/load-more', [PosController::class, 'loadMoreProducts'])->name('pos.loadMore');
 
     // ===================================================
     // 📜 RIWAYAT TRANSAKSI

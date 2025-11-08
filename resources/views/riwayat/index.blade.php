@@ -241,8 +241,8 @@
                     <!-- TOTAL TARIK -->
                     <template x-if="totalTarik > 0">
                         <div class="pt-1 flex justify-between">
-                            <span>Total Tarik :</span>
-                            <span class="font-medium text-blue-400" x-text="formatCurrency(totalTarik)"></span>
+                            <span class="text-red-500">Total Tarik :</span>
+                            <span class="font-medium text-red-500" x-text="formatCurrency(totalTarik)"></span>
                         </div>
                     </template>
                 </div>

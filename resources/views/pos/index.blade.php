@@ -289,7 +289,9 @@
                     </h2>
 
                     {{-- Grid produk --}}
-                    <div class="relative">
+                    {{-- Wrapper scroll khusus produk --}}
+                    <div id="productScrollArea" class="relative min-h-[60vh] max-h-[70vh] overflow-y-auto pr-2">
+                        {{-- Grid produk --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" x-show="!transitioning"
                             x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
@@ -388,6 +390,13 @@
                         <template x-if="filteredProducts.length === 0">
                             <div class="text-center text-gray-500 dark:text-gray-400 py-10">
                                 Tidak ada produk untuk kategori ini.
+                            </div>
+                        </template>
+
+                        {{-- Loading indicator --}}
+                        <template x-if="loadingMore">
+                            <div class="text-center text-gray-400 py-4 animate-pulse text-sm">
+                                Memuat produk tambahan...
                             </div>
                         </template>
                     </div>
@@ -2075,33 +2084,25 @@
                 copied: false,
 
                 // ======== INIT UTAMA ========
+                // ======== INIT UTAMA ========
                 async init() {
+                    // 🔁 Load keranjang
                     this.loadCart();
 
-                    // === AUTO BARCODE SCANNER DETECTION ===
+                    // === AUTO BARCODE SCANNER ===
                     let buffer = "";
                     let lastTime = Date.now();
 
                     document.addEventListener("keydown", (e) => {
                         const now = Date.now();
                         const diff = now - lastTime;
-
-                        // Kalau jeda antar tombol lebih dari 50ms → reset buffer
                         if (diff > 50) buffer = "";
+                        if (e.key.length === 1) buffer += e.key;
 
-                        // Abaikan tombol non-karakter
-                        if (e.key.length === 1) {
-                            buffer += e.key;
-                        }
-
-                        // Saat tekan Enter → kirim ke handleBarcodeInput
                         if (e.key === "Enter" && buffer.length > 3) {
                             e.preventDefault();
-
                             const code = buffer.trim();
                             buffer = "";
-
-                            // Panggil handler yang sudah kamu buat
                             if (this.handleBarcodeInput) {
                                 this.handleBarcodeInput({
                                     target: {
@@ -2110,32 +2111,72 @@
                                 });
                             }
                         }
-
                         lastTime = now;
                     });
-                    // === END AUTO BARCODE SCANNER ===
+                    // === END AUTO BARCODE ===
 
-                    // Produk fisik
-                    const raw = Array.isArray(this._rawProducts) ?
-                        this._rawProducts :
-                        Object.values(this._rawProducts || {});
-                    this.products = raw.map(p => ({
-                        id: p.id,
-                        name: p.name ?? '',
-                        code: p.code ?? p.barcode ?? '',
-                        price: Number(String(p.price ?? '0').replace(/[^\d]/g, '')),
-                        stock: Number(p.stock ?? 0),
-                        category_id: p.category_id,
-                        category_name: p.category_name ?? 'Tanpa Kategori',
-                        category_code: p.category_code ?? '',
-                        attribute_values: p.attribute_values ?? [],
-                    }));
+                    // 🧱 Inisialisasi Produk Pertama
+                    this.products = @json($products ?? []);
+                    this.hasMore = true;
+                    this.loadingMore = false;
+                    console.log("✅ First 15 products loaded:", this.products.length);
 
+                    // 🔁 Data digital
                     await this.loadDigitalData();
 
+                    // 📜 Infinite Scroll
+                    const scrollContainer = document.querySelector('#productScrollArea');
+                    if (scrollContainer) {
+                        let isUserScrolling = false;
+                        scrollContainer.addEventListener('wheel', () => (isUserScrolling = true));
+                        scrollContainer.addEventListener('touchmove', () => (isUserScrolling = true));
+
+                        scrollContainer.addEventListener('scroll', async () => {
+                            if (!isUserScrolling) return;
+
+                            const scrollTop = scrollContainer.scrollTop;
+                            const visibleHeight = scrollContainer.clientHeight;
+                            const totalHeight = scrollContainer.scrollHeight;
+
+                            if (scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this
+                                .loadingMore) {
+                                this.loadingMore = true;
+                                await this.loadProducts();
+                                this.loadingMore = false;
+                            }
+                        });
+                    }
+
+                    // WATCHER
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
                     });
+                },
+
+                async loadProducts() {
+                    try {
+                        const offset = this.products.length;
+                        const limit = 15;
+
+                        console.log("📦 Fetching products offset:", offset);
+
+                        const res = await fetch(`/pos/load-more?offset=${offset}&limit=${limit}`);
+                        const data = await res.json();
+
+                        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                            const newItems = data.data.filter(
+                                newP => !this.products.some(p => p.id === newP.id)
+                            );
+                            this.products.push(...newItems);
+                            console.log(`✅ Loaded ${newItems.length} new items`);
+                        } else {
+                            console.log("⚠️ No more products to load.");
+                            this.hasMore = false;
+                        }
+                    } catch (err) {
+                        console.error("❌ Gagal memuat produk:", err);
+                        this.hasMore = false;
+                    }
                 },
 
                 // ======== MUAT DATA DIGITAL ========

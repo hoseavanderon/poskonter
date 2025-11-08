@@ -27,6 +27,8 @@ class PosController extends Controller
             'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
         ])
             ->where('outlet_id', $outletId)
+            ->orderBy('id', 'desc') // opsional, biar yang terbaru tampil dulu
+            ->take(15) // <== 💥 ambil 15 produk pertama aja
             ->get();
 
         $products = $productsRaw->map(function ($p) {
@@ -74,6 +76,59 @@ class PosController extends Controller
             'products' => $products,
             'categories' => $categories,
             'customers' => $customers,
+        ]);
+    }
+
+    public function loadMoreProducts(Request $request)
+    {
+        $outletId = Auth::user()->outlet_id ?? 1;
+
+        // ambil offset dan limit dari request (default: offset=0, limit=15)
+        $offset = (int) $request->get('offset', 0);
+        $limit = (int) $request->get('limit', 15);
+
+        // query produk sesuai offset
+        $productsRaw = Product::with([
+            'category:id,kode_category,name',
+            'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
+        ])
+            ->where('outlet_id', $outletId)
+            ->orderBy('id', 'desc')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        // mapping data (sama seperti di index)
+        $products = $productsRaw->map(function ($p) {
+            $rawPrice = $p->jual ?? $p->price ?? $p->harga_jual ?? $p->harga ?? null;
+            $price = 0;
+
+            if (!is_null($rawPrice)) {
+                $clean = preg_replace('/[^\d]/', '', (string) $rawPrice);
+                $price = $clean === '' ? 0 : (int) $clean;
+            }
+
+            return [
+                'id' => $p->id,
+                'name' => $p->name ?? '(Tanpa Nama)',
+                'code' => $p->barcode ?? '-',
+                'price' => $price,
+                'stock' => (int) ($p->attributeValues->sum('stok') ?? 0),
+                'category_id' => $p->category_id,
+                'category_name' => $p->category?->name ?? '(Tanpa Kategori)',
+                'category_code' => $p->category?->kode_category ?? '',
+                'attribute_values' => $p->attributeValues->map(fn($attr) => [
+                    'id' => $attr->id,
+                    'product_attribute_id' => $attr->product_attribute_id,
+                    'attribute_value' => $attr->attribute_value ?? '(Tidak ada)',
+                    'stok' => (int) $attr->stok,
+                ])->values(),
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
         ]);
     }
 
