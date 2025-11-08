@@ -449,13 +449,16 @@ class PosController extends Controller
     {
         try {
             $transaction = \App\Models\Transaction::withTrashed()
-                ->with('details.product.attributeValues')
+                ->with(['details.product.attributeValues'])
                 ->findOrFail($id);
+
+            $detailsData = [];
 
             // 🧩 Soft delete detail transaksi + kembalikan stok
             if ($transaction->details()->exists()) {
                 foreach ($transaction->details as $detail) {
                     $attr = $detail->product->attributeValues->first();
+
                     if ($attr) {
                         $attr->increment('stok', $detail->qty);
                         $attr->update(['last_restock_date' => now()]);
@@ -469,6 +472,13 @@ class PosController extends Controller
                             'keterangan' => 'RETUR: Pembatalan transaksi ' . $transaction->nomor_nota,
                             'outlet_id' => \Illuminate\Support\Facades\Auth::user()->outlet_id ?? 1,
                         ]);
+
+                        // 🧾 Simpan data detail untuk dikirim ke frontend
+                        $detailsData[] = [
+                            'product_id' => $detail->product_id,
+                            'product_attribute_value_id' => $attr->id,
+                            'qty' => $detail->qty,
+                        ];
                     }
                 }
 
@@ -479,10 +489,11 @@ class PosController extends Controller
             // 🧩 Soft delete transaksi utama
             $transaction->delete();
 
-            // ✅ Tambahkan response JSON di akhir
+            // ✅ Kirim data detail ke frontend biar stok UI bisa disinkron
             return response()->json([
                 'success' => true,
                 'message' => 'Transaksi berhasil dihapus dan stok dikembalikan.',
+                'details' => $detailsData, // ⬅️ data produk yang stoknya dikembalikan
             ], 200, ['Content-Type' => 'application/json']);
         } catch (\Throwable $e) {
             return response()->json([
@@ -492,6 +503,7 @@ class PosController extends Controller
             ], 500);
         }
     }
+
 
     public function deleteDigitalTransaction($id)
     {

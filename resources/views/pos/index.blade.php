@@ -43,16 +43,20 @@
             scrollbar-color: #9ca3af transparent;
         }
 
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
 
         /* Scrollbar halus dan tipis */
         aside::-webkit-scrollbar {
             width: 6px;
         }
+
         aside::-webkit-scrollbar-thumb {
             background-color: rgba(100, 100, 100, 0.4);
             border-radius: 3px;
         }
+
         aside:hover::-webkit-scrollbar-thumb {
             background-color: rgba(100, 100, 100, 0.7);
         }
@@ -67,16 +71,18 @@
                 <div class="flex gap-2">
                     <button @click="activeTab = 'physical'"
                         :class="activeTab === 'physical'
-                            ? 'bg-blue-600 text-white dark:bg-blue-700'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+                            ?
+                            'bg-blue-600 text-white dark:bg-blue-700' :
+                            'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
                         class="px-4 py-2 rounded-lg font-semibold transition">
                         🛍️ Produk Fisik
                     </button>
 
                     <button @click="activeTab = 'digital'"
                         :class="activeTab === 'digital'
-                            ? 'bg-blue-600 text-white dark:bg-blue-700'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+                            ?
+                            'bg-blue-600 text-white dark:bg-blue-700' :
+                            'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
                         class="px-4 py-2 rounded-lg font-semibold transition">
                         ⚡ Produk Digital
                     </button>
@@ -89,19 +95,14 @@
             </div>
 
             <!-- 📘 Modal Tutup Buku -->
-            <div
-                x-show="showCloseBookModal"
-                x-transition.opacity
-                @keydown.escape.window="showCloseBookModal = false"
+            <div x-show="showCloseBookModal" x-transition.opacity @keydown.escape.window="showCloseBookModal = false"
                 @click.self="showCloseBookModal = false"
-                class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
-                x-cloak
-            >
-                <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 text-gray-800 dark:text-gray-200">
+                class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4" x-cloak>
+                <div
+                    class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 text-gray-800 dark:text-gray-200">
 
                     <!-- ❌ Tombol close -->
-                    <button
-                        @click="showCloseBookModal = false"
+                    <button @click="showCloseBookModal = false"
                         class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
                         ✖
                     </button>
@@ -143,7 +144,8 @@
                                         <template x-for="u in closeBookData.utangList" :key="u.name">
                                             <div class="flex justify-between">
                                                 <span x-text="u.name"></span>
-                                                <span class="text-red-500" x-text="'(' + formatRupiah(u.subtotal) + ')'"></span>
+                                                <span class="text-red-500"
+                                                    x-text="'(' + formatRupiah(u.subtotal) + ')'"></span>
                                             </div>
                                         </template>
                                     </div>
@@ -164,12 +166,9 @@
                                 <!-- Lebih input -->
                                 <div class="flex justify-between items-center mt-2">
                                     <span>Lebih :</span>
-                                    <input
-                                        type="text"
-                                        x-on:input="formatLebihInput($event)"
+                                    <input type="text" x-on:input="formatLebihInput($event)"
                                         class="w-32 text-right bg-transparent border-0 border-b border-gray-700 focus:border-blue-400 focus:outline-none focus:ring-0 text-gray-300 appearance-none transition-colors duration-150"
-                                        placeholder="0"
-                                    >
+                                        placeholder="0">
                                 </div>
 
                                 <div class="flex justify-between font-bold text-lg border-t pt-3 mt-2 text-green-400">
@@ -192,12 +191,12 @@
 
                             <!-- Tombol aksi -->
                             <div class="flex justify-end gap-3 mt-6 border-t border-gray-700 pt-4">
-                                <button
-                                    @click="copyCloseBook"
+                                <button @click="copyCloseBook"
                                     class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"
                                     :class="copied
-                                        ? 'bg-green-600 text-white scale-105 shadow-[0_0_15px_rgba(16,185,129,0.6)]'
-                                        : 'bg-gray-700 hover:bg-gray-600 text-white'">
+                                        ?
+                                        'bg-green-600 text-white scale-105 shadow-[0_0_15px_rgba(16,185,129,0.6)]' :
+                                        'bg-gray-700 hover:bg-gray-600 text-white'">
                                     <template x-if="!copied">
                                         <span class="flex items-center gap-2">📋 Copy</span>
                                     </template>
@@ -206,8 +205,7 @@
                                     </template>
                                 </button>
 
-                                <button
-                                    @click="handleFinalCloseBook()"
+                                <button @click="handleFinalCloseBook()"
                                     class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm transition">
                                     ✅ Tutup Buku
                                 </button>
@@ -239,7 +237,8 @@
                         <li>
                             <button @click="switchCategory(null)"
                                 :class="{
-                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory === null
+                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory ===
+                                        null
                                 }"
                                 class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                                 <i class="fa-solid fa-layer-group mr-1"></i> Semua Produk
@@ -249,7 +248,8 @@
                             <li>
                                 <button @click="switchCategory(cat)"
                                     :class="{
-                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory?.id === cat.id
+                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory
+                                            ?.id === cat.id
                                     }"
                                     class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                                     <i class="fa-solid fa-folder mr-1"></i>
@@ -264,22 +264,19 @@
                 <div class="flex-1 relative">
                     {{-- 🧾 Form Scan Barcode --}}
                     <div class="relative mb-4">
-                        <input 
-                            id="barcodeInput"
-                            type="text"
-                            placeholder="Scan barcode..."
+                        <input id="barcodeInput" type="text" placeholder="Scan barcode..."
                             @keydown.enter.prevent="
                                 handleBarcodeInput($event);
                                 $event.target.value = '';
                             "
                             class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
                                 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                            autofocus
-                        >
+                            autofocus>
 
                         <div class="absolute left-4 top-2.5 text-blue-600 dark:text-blue-400">
                             {{-- Heroicon barcode --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 7v10M8 7v10M12 7v10M16 7v10M20 7v10" />
                             </svg>
@@ -293,8 +290,7 @@
 
                     {{-- Grid produk --}}
                     <div class="relative">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-                            x-show="!transitioning"
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" x-show="!transitioning"
                             x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0">
@@ -311,9 +307,10 @@
                                         {{-- Kiri: Icon + Nama + Kategori --}}
                                         <div class="flex items-start gap-3">
                                             {{-- Cube icon --}}
-                                            <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.6" stroke="currentColor"
+                                            <div
+                                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"
                                                     class="w-6 h-6 text-gray-500 dark:text-gray-300">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.3 7.25l8.7 4.88 8.7-4.88M12 12v8" />
@@ -331,17 +328,20 @@
 
                                         {{-- Kanan: Stock Label (dengan satuan pcs) --}}
                                         <template x-if="product.stock > 10">
-                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                            <span
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                                                 x-text="product.stock"></span>
                                         </template>
                                         <template x-if="product.stock <= 10 && product.stock > 0">
-                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                            <span
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
                                                 x-text="product.stock"></span>
                                         </template>
                                         <template x-if="product.stock <= 0">
-                                            <span class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                            <span
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
                                                 0 pcs
                                             </span>
@@ -394,179 +394,167 @@
                 </div>
 
                 <!-- TOAST GLOBAL (paste setelah header) -->
-                <div 
-                    x-show="showToast"
-                    x-cloak
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 -translate-y-2"
-                    x-transition:enter-end="opacity-100 translate-y-0"
+                <div x-show="showToast" x-cloak x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
                     x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-2"
-                    class="fixed right-6 z-[9999] pointer-events-auto"
-                    style="top: calc(64px + 0.75rem);"
-                >
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+                    class="fixed right-6 z-[9999] pointer-events-auto" style="top: calc(64px + 0.75rem);">
                     <div class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold">
                         <span x-text="toastMsg"></span>
                     </div>
                 </div>
 
                 {{-- Keranjang --}}
-<aside
-    class="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
-    style="max-height: 90vh; min-width: 320px; z-index: 10;">
-    {{-- Pilihan Pembayaran / Pelanggan --}}
-    <div class="mb-4">
-        <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
+                <aside
+                    class="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
+                    style="max-height: 90vh; min-width: 320px; z-index: 10;">
+                    {{-- Pilihan Pembayaran / Pelanggan --}}
+                    <div class="mb-4">
+                        <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
 
-        <select x-model="selectedCustomer"
-            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            <option value="">💵 Tunai</option>
-            <template x-for="cust in customers" :key="cust.id">
-                <option :value="cust.id" x-text="'👤 ' + cust.name"></option>
-            </template>
-        </select>
+                        <select x-model="selectedCustomer"
+                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">💵 Tunai</option>
+                            <template x-for="cust in customers" :key="cust.id">
+                                <option :value="cust.id" x-text="'👤 ' + cust.name"></option>
+                            </template>
+                        </select>
 
-        <template x-if="selectedCustomer">
-            <p class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                Transaksi akan dicatat sebagai <strong>utang</strong>.
-            </p>
-        </template>
-    </div>
+                        <template x-if="selectedCustomer">
+                            <p class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                Transaksi akan dicatat sebagai <strong>utang</strong>.
+                            </p>
+                        </template>
+                    </div>
 
-    <div>
-        <h2 class="text-lg font-semibold mb-3">Keranjang Belanja</h2>
-        <template x-if="cart.length === 0">
-            <div class="text-center text-gray-500 py-10">
-                <i class="fa-solid fa-cart-shopping text-3xl mb-2"></i>
-                <p>Keranjang Kosong</p>
-            </div>
-        </template>
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">Keranjang Belanja</h2>
+                        <template x-if="cart.length === 0">
+                            <div class="text-center text-gray-500 py-10">
+                                <i class="fa-solid fa-cart-shopping text-3xl mb-2"></i>
+                                <p>Keranjang Kosong</p>
+                            </div>
+                        </template>
 
-        <template x-for="(item, index) in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
-            <div
-                class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                    <div x-text="item.name" class="font-medium"></div>
-                    <div class="text-sm text-gray-500"
-                        x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
-                </div>
-                <div class="flex items-center gap-1">
-                    <button @click="decreaseQty(index)"
-                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">-</button>
-                    <span x-text="item.qty"></span>
-                    <button @click="increaseQty(index)"
-                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">+</button>
-                </div>
-            </div>
-        </template>
-    </div>
+                        <template x-for="(item, index) in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
+                            <div
+                                class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                                <div>
+                                    <div x-text="item.name" class="font-medium"></div>
+                                    <div class="text-sm text-gray-500"
+                                        x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button @click="decreaseQty(index)"
+                                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">-</button>
+                                    <span x-text="item.qty"></span>
+                                    <button @click="increaseQty(index)"
+                                        class="px-2 bg-gray-200 dark:bg-gray-700 rounded">+</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
 
-    {{-- Kalkulator & Tombol Bayar --}}
-    <div class="mt-4 border-t pt-4">
-        <div class="flex justify-between mb-2">
-            <span>Subtotal:</span>
-            <span x-text="'Rp ' + total().toLocaleString()"></span>
-        </div>
-        <div class="flex justify-between font-semibold mb-3">
-            <span>Total:</span>
-            <span class="text-blue-600" x-text="'Rp ' + total().toLocaleString()"></span>
-        </div>
+                    {{-- Kalkulator & Tombol Bayar --}}
+                    <div class="mt-4 border-t pt-4">
+                        <div class="flex justify-between mb-2">
+                            <span>Subtotal:</span>
+                            <span x-text="'Rp ' + total().toLocaleString()"></span>
+                        </div>
+                        <div class="flex justify-between font-semibold mb-3">
+                            <span>Total:</span>
+                            <span class="text-blue-600" x-text="'Rp ' + total().toLocaleString()"></span>
+                        </div>
 
-        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center">
-            <h3 class="font-bold mb-1">Total Bayar</h3>
-            <div class="text-3xl font-bold text-blue-600 mb-3" x-text="'Rp ' + paid.toLocaleString()">
-            </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center">
+                            <h3 class="font-bold mb-1">Total Bayar</h3>
+                            <div class="text-3xl font-bold text-blue-600 mb-3" x-text="'Rp ' + paid.toLocaleString()">
+                            </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
-                <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
-                    <button @click="addPayment(n)"
-                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 py-2 rounded text-sm font-semibold"
-                        x-text="'Rp ' + n.toLocaleString()"></button>
-                </template>
-                <button @click="payExact()"
-                    class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">UANG
-                    PAS</button>
-            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                                <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
+                                    <button @click="addPayment(n)"
+                                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 py-2 rounded text-sm font-semibold"
+                                        x-text="'Rp ' + n.toLocaleString()"></button>
+                                </template>
+                                <button @click="payExact()"
+                                    class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">UANG
+                                    PAS</button>
+                            </div>
 
-            <div class="grid grid-cols-3 gap-2 text-lg mb-3">
-                <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
-                    <button @click="handleKey(btn)"
-                        class="bg-gray-200 dark:bg-gray-600 py-3 rounded font-bold hover:bg-gray-300 dark:hover:bg-gray-500">
-                        <span x-text="btn"></span>
-                    </button>
-                </template>
-            </div>
+                            <div class="grid grid-cols-3 gap-2 text-lg mb-3">
+                                <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
+                                    <button @click="handleKey(btn)"
+                                        class="bg-gray-200 dark:bg-gray-600 py-3 rounded font-bold hover:bg-gray-300 dark:hover:bg-gray-500">
+                                        <span x-text="btn"></span>
+                                    </button>
+                                </template>
+                            </div>
 
-            <div class="mt-4 flex justify-between font-semibold text-lg">
-                <span>Kembalian:</span>
-                <span x-text="'Rp ' + change().toLocaleString()"></span>
-            </div>
+                            <div class="mt-4 flex justify-between font-semibold text-lg">
+                                <span>Kembalian:</span>
+                                <span x-text="'Rp ' + change().toLocaleString()"></span>
+                            </div>
 
-            <div class="flex gap-3 mt-4">
-                <button @click="loadTodayTransactions()"
-                    class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
+                            <div class="flex gap-3 mt-4">
+                                <button @click="loadTodayTransactions()"
+                                    class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
                 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 
                 py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm border border-gray-300 dark:border-gray-600">
-                    <i class="fa-solid fa-clock-rotate-left text-base"></i>
-                    <span>Riwayat</span>
-                </button>
+                                    <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                                    <span>Riwayat</span>
+                                </button>
 
-                <button @click="openReviewModal()"
-                    class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+                                <button @click="openReviewModal()"
+                                    class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
                 text-white py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm">
-                    <i class="fa-solid fa-cash-register text-base"></i>
-                    <span>Bayar</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</aside>
+                                    <i class="fa-solid fa-cash-register text-base"></i>
+                                    <span>Bayar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
 
             </div>
 
             {{-- ============================= --}}
             {{-- MODAL: PILIH VARIAN PRODUK --}}
             {{-- ============================= --}}
-            <div 
-                x-show="showOptionModal"
-                x-transition
-                @keydown.window.escape="showOptionModal = false"
+            <div x-show="showOptionModal" x-transition @keydown.window.escape="showOptionModal = false"
                 @click.self="showOptionModal = false"
-                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            >
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl mx-4 p-8 relative">
                     {{-- Tombol Close --}}
-                    <button 
-                        @click="showOptionModal = false" 
-                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
-                    >
+                    <button @click="showOptionModal = false"
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition">
                         <i class="fa-solid fa-xmark text-3xl"></i>
                     </button>
 
                     <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100" x-text="selectedProduct?.name"></h2>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100" x-text="selectedProduct?.name">
+                        </h2>
                         <p class="text-sm text-gray-500 dark:text-gray-400" x-text="selectedProduct?.code"></p>
                     </div>
 
-                    <div class="mb-4 text-blue-700 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-300 rounded-lg p-3 text-sm">
+                    <div
+                        class="mb-4 text-blue-700 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-300 rounded-lg p-3 text-sm">
                         Produk ini memiliki beberapa varian. Silakan pilih salah satu:
                     </div>
 
                     {{-- Grid varian lebih besar --}}
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                         <template x-for="opt in selectedProductOptions" :key="opt.id">
-                            <button 
-                                @click="opt.stok > 0 && chooseOption(opt)"
-                                :disabled="opt.stok <= 0"
-                                :class="opt.stok > 0 
-                                    ? 'border-2 rounded-xl p-4 text-left hover:bg-blue-50 dark:hover:bg-blue-800 transition flex flex-col justify-between min-h-[110px]' 
-                                    : 'border-2 rounded-xl p-4 text-left bg-gray-100 dark:bg-gray-700 opacity-60 cursor-not-allowed flex flex-col justify-between min-h-[110px]'">
-                                <div class="font-semibold text-gray-900 dark:text-gray-100 text-lg" 
+                            <button @click="opt.stok > 0 && chooseOption(opt)" :disabled="opt.stok <= 0"
+                                :class="opt.stok > 0 ?
+                                    'border-2 rounded-xl p-4 text-left hover:bg-blue-50 dark:hover:bg-blue-800 transition flex flex-col justify-between min-h-[110px]' :
+                                    'border-2 rounded-xl p-4 text-left bg-gray-100 dark:bg-gray-700 opacity-60 cursor-not-allowed flex flex-col justify-between min-h-[110px]'">
+                                <div class="font-semibold text-gray-900 dark:text-gray-100 text-lg"
                                     x-text="opt.attribute_value"></div>
-                                <div class="text-sm" 
-                                    :class="opt.stok > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'"
+                                <div class="text-sm"
+                                    :class="opt.stok > 0 ? 'text-green-600 dark:text-green-400' :
+                                        'text-red-500 dark:text-red-400'"
                                     x-text="opt.stok > 0 ? ('Stok: ' + opt.stok) : 'Stok Habis'"></div>
                                 <div class="text-base font-bold text-blue-600"
                                     x-text="'Rp ' + Number(selectedProduct.price).toLocaleString()"></div>
@@ -576,7 +564,8 @@
 
                     <div class="text-xs text-gray-500 mt-6 border-t pt-4 text-center">
                         Klik varian untuk menambah ke keranjang.<br>
-                        <span class="block text-gray-400 mt-1">Tekan <strong>ESC</strong> atau klik di luar area untuk menutup.</span>
+                        <span class="block text-gray-400 mt-1">Tekan <strong>ESC</strong> atau klik di luar area untuk
+                            menutup.</span>
                     </div>
                 </div>
             </div>
@@ -686,7 +675,7 @@
                             :style="`width: ${((step - 1) / 5) * 100}%`"></div>
                     </div>
                     <template
-                            x-for="(item, index) in [
+                        x-for="(item, index) in [
                                 { icon: 'device', label: 'Device' },
                                 { icon: 'app', label: 'Aplikasi' },
                                 { icon: 'category', label: 'Kategori' },
@@ -722,9 +711,12 @@
                                 </template>
                                 <template x-if="item.icon === 'brand'">
                                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.3" />
-                                        <path d="M8 12a4 4 0 018 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
-                                        <path d="M12 8v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                                        <circle cx="12" cy="12" r="9" stroke="currentColor"
+                                            stroke-width="1.3" />
+                                        <path d="M8 12a4 4 0 018 0" stroke="currentColor" stroke-width="1.3"
+                                            stroke-linecap="round" />
+                                        <path d="M12 8v8" stroke="currentColor" stroke-width="1.3"
+                                            stroke-linecap="round" />
                                     </svg>
                                 </template>
                                 <template x-if="item.icon === 'product'">
@@ -803,7 +795,8 @@
                                                             <div class="flex flex-col items-center text-center">
                                                                 <div
                                                                     class="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700">
-                                                                    <template x-if="dev.icon && window.heroicons[dev.icon]">
+                                                                    <template
+                                                                        x-if="dev.icon && window.heroicons[dev.icon]">
                                                                         <div
                                                                             class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                                                                             <div x-html="window.heroicons[dev.icon]"
@@ -812,15 +805,21 @@
                                                                         </div>
                                                                     </template>
 
-                                                                    <template x-if="!dev.icon || !window.heroicons[dev.icon]">
-                                                                        <svg class="w-6 h-6 text-gray-500" viewBox="0 0 24 24" fill="none">
-                                                                            <rect x="7" y="2" width="10" height="20"
-                                                                                rx="2" stroke="currentColor" stroke-width="1.2" />
+                                                                    <template
+                                                                        x-if="!dev.icon || !window.heroicons[dev.icon]">
+                                                                        <svg class="w-6 h-6 text-gray-500"
+                                                                            viewBox="0 0 24 24" fill="none">
+                                                                            <rect x="7" y="2" width="10"
+                                                                                height="20" rx="2"
+                                                                                stroke="currentColor"
+                                                                                stroke-width="1.2" />
                                                                         </svg>
                                                                     </template>
                                                                 </div>
-                                                                <h4 class="font-semibold text-gray-800 dark:text-gray-100" x-text="dev.name"></h4>
-                                                                <p class="text-xs text-gray-500 dark:text-gray-400" x-text="dev.notes"></p>
+                                                                <h4 class="font-semibold text-gray-800 dark:text-gray-100"
+                                                                    x-text="dev.name"></h4>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400"
+                                                                    x-text="dev.notes"></p>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -829,14 +828,17 @@
 
                                             {{-- 🚫 Jika tidak ada device --}}
                                             <template x-if="devices.length === 0">
-                                                <div class="flex flex-col items-center justify-center py-8 text-center text-gray-500 dark:text-gray-400">
-                                                    <svg class="w-10 h-10 mb-3 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <div
+                                                    class="flex flex-col items-center justify-center py-8 text-center text-gray-500 dark:text-gray-400">
+                                                    <svg class="w-10 h-10 mb-3 text-gray-400 dark:text-gray-500"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
                                                     <p class="text-sm font-medium">Belum ada device</p>
-                                                    <p class="text-xs text-gray-400">Silakan tambahkan device di halaman admin</p>
+                                                    <p class="text-xs text-gray-400">Silakan tambahkan device di halaman
+                                                        admin</p>
                                                 </div>
                                             </template>
                                         </div>
@@ -1295,9 +1297,9 @@
 
             {{-- 🧾 Modal Konfirmasi Transaksi --}}
             <div x-show="showReview"
-                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
-                x-transition>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden">
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden">
 
                     {{-- Judul --}}
                     <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-4">
@@ -1336,8 +1338,7 @@
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <span>💵</span> Dibayar:
                             </span>
-                            <span class="text-gray-900 dark:text-white"
-                                x-text="'Rp ' + paid.toLocaleString()"></span>
+                            <span class="text-gray-900 dark:text-white" x-text="'Rp ' + paid.toLocaleString()"></span>
                         </div>
 
                         <div class="flex justify-between items-center">
@@ -1403,14 +1404,13 @@
                 </div>
             </div>
 
-            {{-- Modal Riwayat Transaksi --}}
-            <div x-show="showHistory" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
-                x-transition>
-                <div
+            <div x-show="showHistory" @click.self="showHistory = false"
+                class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" x-transition>
+                <div x-transition.scale.duration.300ms
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[800px] 
-                max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-thin 
-                scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 
-                scrollbar-track-transparent">
+                            max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-thin 
+                            scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 
+                            scrollbar-track-transparent">
 
                     {{-- Header --}}
                     <div class="flex justify-between items-center mb-4">
@@ -1668,8 +1668,7 @@
             </div>
 
             <!-- 🌟 MODAL REVIEW TRANSAKSI DIGITAL -->
-            <div x-show="showDigitalReviewModal"
-                x-transition
+            <div x-show="showDigitalReviewModal" x-transition
                 class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
 
                 <div @click.away="showDigitalReviewModal = false"
@@ -1689,35 +1688,40 @@
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fa-solid fa-laptop text-gray-400"></i> Device:
                             </span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedDevice?.name ?? '-'"></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="selectedDevice?.name ?? '-'"></span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fa-solid fa-circle-nodes text-gray-400"></i> Aplikasi:
                             </span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedApp?.name ?? '-'"></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="selectedApp?.name ?? '-'"></span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-gray-400"></i> Kategori:
                             </span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedCategory?.name ?? '-'"></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="selectedCategory?.name ?? '-'"></span>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fa-solid fa-tags text-gray-400"></i> Brand:
                             </span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedBrand?.name ?? '-'"></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="selectedBrand?.name ?? '-'"></span>
                         </div>
 
                         <div class="flex justify-between items-center pb-3">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fa-solid fa-box text-gray-400"></i> Produk:
                             </span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="selectedProduct?.name ?? '-'"></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="selectedProduct?.name ?? '-'"></span>
                         </div>
                     </div>
 
@@ -1740,7 +1744,8 @@
                         </div>
 
                         <div class="flex justify-between items-center"
-                            :class="(payment.paid - payment.total) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                            :class="(payment.paid - payment.total) >= 0 ? 'text-green-600 dark:text-green-400' :
+                                'text-red-600 dark:text-red-400'">
                             <span class="flex items-center gap-2">
                                 <span>🔄</span> Kembalian:
                             </span>
@@ -1921,8 +1926,8 @@
                                                             class="w-full flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-400
                                hover:bg-red-50 dark:hover:bg-red-900/40 transition">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"
-                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                                stroke-width="2">
+                                                                fill="none" viewBox="0 0 24 24"
+                                                                stroke="currentColor" stroke-width="2">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                                     d="M6 18L18 6M6 6l12 12" />
                                                             </svg>
@@ -2098,7 +2103,11 @@
 
                             // Panggil handler yang sudah kamu buat
                             if (this.handleBarcodeInput) {
-                                this.handleBarcodeInput({ target: { value: code } });
+                                this.handleBarcodeInput({
+                                    target: {
+                                        value: code
+                                    }
+                                });
                             }
                         }
 
@@ -2107,9 +2116,9 @@
                     // === END AUTO BARCODE SCANNER ===
 
                     // Produk fisik
-                    const raw = Array.isArray(this._rawProducts)
-                        ? this._rawProducts
-                        : Object.values(this._rawProducts || {});
+                    const raw = Array.isArray(this._rawProducts) ?
+                        this._rawProducts :
+                        Object.values(this._rawProducts || {});
                     this.products = raw.map(p => ({
                         id: p.id,
                         name: p.name ?? '',
@@ -2342,7 +2351,8 @@
                                 id: i.id,
                                 qty: i.qty,
                                 price: i.price,
-                                product_attribute_value_id: i.variant_id ?? null, // ubah jadi nama field sesuai backend
+                                product_attribute_value_id: i.variant_id ??
+                                    null, // ubah jadi nama field sesuai backend
                             })),
                             subtotal: this.total(),
                             dibayar: this.paid,
@@ -2363,7 +2373,6 @@
                         const result = await res.json();
 
                         if (res.ok && result.success) {
-                            // ✅ Transaksi berhasil
                             this.showReview = false;
                             this.showSuccess = true;
                             this.lastTransaction = {
@@ -2371,9 +2380,20 @@
                                 dibayar: payload.dibayar,
                                 kembalian: payload.kembalian
                             };
-                            this.clearCart();
+
+                            // 🔄 Kosongkan keranjang TANPA nambah stok lagi
+                            this.finalizeCheckout();
                             this.paid = 0;
 
+                            // 🔁 Refresh stok dari backend
+                            if (typeof this.loadProducts === 'function') {
+                                await this.loadProducts();
+                            }
+
+                            // ✅ Toast sukses
+                            this.showToast = true;
+                            this.toastMsg = "Transaksi berhasil! Stok diperbarui.";
+                            setTimeout(() => this.showToast = false, 3000);
                         } else {
                             // ⚠️ Tampilkan detail error
                             console.error("❌ Transaksi gagal:", {
@@ -2387,11 +2407,11 @@
                                 console.table(result.errors);
                                 const firstError = Object.values(result.errors)[0][0];
                                 alert(`Validasi gagal: ${firstError}`);
-                            } 
+                            }
                             // Jika ada pesan umum dari controller
                             else if (result.message) {
                                 alert(`Gagal: ${result.message}`);
-                            } 
+                            }
                             // Jika tidak ada detail message
                             else {
                                 alert(`Terjadi kesalahan (HTTP ${res.status}): ${res.statusText}`);
@@ -2541,6 +2561,7 @@
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
                             },
                         });
 
@@ -2548,15 +2569,17 @@
                         console.log("🗑️ Hapus transaksi result:", result);
 
                         if (result.success) {
-                            // Tutup modal konfirmasi
                             this.showDeleteConfirm = false;
-
-                            // ✅ Hapus transaksi dari daftar
+                            this.showHistory = false;
+                            // ✅ Hapus transaksi dari daftar riwayat
                             this.transactionsToday = this.transactionsToday.filter(t => t.id !== trx.id);
 
-                            // ✅ Update summary dasar
+                            // ✅ Update summary (jumlah, total, produk terjual)
                             this.summary.jumlah_transaksi = this.transactionsToday.length;
-                            this.summary.total_penjualan = this.transactionsToday.reduce((sum, t) => sum + (t.subtotal || 0), 0);
+                            this.summary.total_penjualan = this.transactionsToday.reduce(
+                                (sum, t) => sum + (t.subtotal || 0),
+                                0
+                            );
                             this.summary.total_produk_terjual = this.transactionsToday.reduce(
                                 (sum, t) => sum + (t.details?.reduce((a, d) => a + (d.qty || 0), 0) || 0),
                                 0
@@ -2576,27 +2599,58 @@
                                 pcs,
                             }));
 
-                            // ✅ Toast
-                            this.toastMsg = result.message || 'Transaksi berhasil dihapus.';
+                            // ✅ Update stok di UI pakai data dari server (result.details)
+                            if (result.details && result.details.length > 0) {
+                                result.details.forEach(item => {
+                                    const prod = this.products.find(p => p.id === item.product_id);
+                                    if (prod) {
+                                        prod.stock += Number(item.qty) || 0;
+
+                                        if (item.product_attribute_value_id) {
+                                            const attr = prod.attribute_values?.find(
+                                                a => a.id === item.product_attribute_value_id
+                                            );
+                                            if (attr) {
+                                                attr.stok += Number(item.qty) || 0;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+
+                            // ✅ Tampilkan toast sukses
+                            this.toastMsg = result.message || 'Transaksi berhasil dihapus dan stok dikembalikan.';
                             this.showToast = true;
-                            setTimeout(() => this.showToast = false, 2000);
+                            setTimeout(() => (this.showToast = false), 2500);
+
+                            // 🔁 Refresh produk dari backend agar stok final konsisten
+                            if (typeof this.loadProducts === 'function') {
+                                await this.loadProducts();
+                            }
+
                         } else {
+                            // ❌ Gagal hapus
                             this.toastMsg = result.message || 'Gagal menghapus transaksi.';
                             this.showToast = true;
-                            setTimeout(() => this.showToast = false, 2000);
+                            setTimeout(() => (this.showToast = false), 2500);
                         }
-
                     } catch (err) {
                         console.error("🔥 Error saat hapus:", err);
                         this.toastMsg = 'Terjadi kesalahan saat menghapus transaksi.';
                         this.showToast = true;
-                        setTimeout(() => this.showToast = false, 2000);
+                        setTimeout(() => (this.showToast = false), 2500);
                     }
                 },
 
                 confirmDeleteDigital(trx) {
                     this.digitalToDelete = trx;
                     this.showDeleteConfirmDigital = true;
+                },
+
+                finalizeCheckout() {
+                    // Kosongkan keranjang TANPA mengubah stok di UI
+                    this.cart = [];
+                    this.saveCart();
                 },
 
                 async deleteDigitalTransaction(trx) {
@@ -2945,7 +2999,7 @@
                             return;
                         }
 
-                        const response = await fetch('{{ route("cashbook.store") }}', {
+                        const response = await fetch('{{ route('cashbook.store') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -2977,7 +3031,8 @@
                             const formatted = totalFinal.toLocaleString('id-ID');
                             const toast = document.createElement('div');
                             toast.textContent = `✅ Tutup buku berhasil! Rp ${formatted}`;
-                            toast.className = 'fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                            toast.className =
+                                'fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
                             document.body.appendChild(toast);
                             setTimeout(() => toast.remove(), 3000);
                             setTimeout(() => window.location.href = '/pembukuan', 1500);

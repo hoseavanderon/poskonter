@@ -77,6 +77,7 @@ class RiwayatController extends Controller
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->whereDate('transactions.created_at', $tanggal)
+            ->whereNull('transactions.deleted_at')
             ->where('transactions.outlet_id', $outletId)
             ->select('categories.name', DB::raw('SUM(detail_transaction.qty) as total_pcs'))
             ->groupBy('categories.name')
@@ -89,6 +90,7 @@ class RiwayatController extends Controller
             ->leftJoin('detail_transaction', 'detail_transaction.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'detail_transaction.product_id')
             ->whereDate('transactions.created_at', $tanggal)
+            ->whereNull('transactions.deleted_at')
             ->select([
                 'transactions.id as transaction_id',
                 'transactions.subtotal as total',
@@ -130,28 +132,34 @@ class RiwayatController extends Controller
             ->join('digital_products', 'digital_products.id', '=', 'digital_transactions.digital_product_id')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->whereDate('digital_transactions.created_at', $tanggal)
-            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116]) // ⛔ exclude tarik & transfer
-            ->where('digital_transactions.app_id', '<>', 7) // ✅ exclude app_id = 7
+            // 🧹 Filter soft delete untuk semua tabel yang pakai SoftDeletes
+            ->whereNull('digital_transactions.deleted_at')
             ->select([
+                'apps.id as app_id',
                 'apps.name as app_name',
                 'digital_products.name as product_name',
+                'digital_products.digital_category_id',
                 'digital_transactions.nominal as qty',
                 'digital_transactions.subtotal as amount',
-                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime")
+                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime"),
             ])
             ->orderBy('apps.name')
             ->orderByDesc('digital_transactions.created_at')
             ->get()
             ->groupBy('app_name')
             ->map(function ($transactions, $appName) {
+                $appId = $transactions->first()->app_id ?? null;
+
                 return [
                     'name' => $appName,
+                    'app_id' => $appId,
                     'transactions' => $transactions->map(function ($t) {
                         return [
                             'name' => $t->product_name,
                             'qty' => $t->qty,
                             'amount' => $t->amount,
                             'datetime' => $t->datetime,
+                            'category_id' => $t->digital_category_id,
                         ];
                     })->values(),
                     'total' => $transactions->sum('amount'),
@@ -159,10 +167,13 @@ class RiwayatController extends Controller
             })
             ->values();
 
+
+
         // --- TOTALS
         $barangTotal = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->where('transactions.outlet_id', $outletId)
+            ->whereNull('transactions.deleted_at')
             ->whereDate('transactions.created_at', $tanggal)
             ->sum('detail_transaction.subtotal');
 
@@ -171,6 +182,7 @@ class RiwayatController extends Controller
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereDate('digital_transactions.created_at', $tanggal)
             ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
+            ->whereNull('digital_transactions.deleted_at')
             ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
             ->groupBy('apps.name')
             ->orderByDesc('total')
@@ -262,23 +274,25 @@ class RiwayatController extends Controller
         $from = Carbon::parse($from)->startOfDay();
         $to = Carbon::parse($to)->endOfDay();
 
-        // --- CATEGORY SUMMARY (produk fisik)
+        // --- CATEGORY SUMMARY
         $categorySummary = DB::table('detail_transaction')
             ->join('products', 'products.id', '=', 'detail_transaction.product_id')
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->where('transactions.outlet_id', $outletId)
+            ->whereNull('transactions.deleted_at')
             ->whereBetween('transactions.created_at', [$from, $to])
             ->select('categories.name', DB::raw('SUM(detail_transaction.qty) as total_pcs'))
             ->groupBy('categories.name')
             ->orderBy('categories.name')
             ->get();
 
-        // --- PRODUCT TRANSACTIONS (group per nota)
+        // --- PRODUCT TRANSACTIONS
         $productTransactions = DB::table('transactions')
             ->where('transactions.outlet_id', $outletId)
             ->leftJoin('detail_transaction', 'detail_transaction.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'detail_transaction.product_id')
+            ->whereNull('transactions.deleted_at')
             ->whereBetween('transactions.created_at', [$from, $to])
             ->select([
                 'transactions.id as transaction_id',
@@ -315,100 +329,111 @@ class RiwayatController extends Controller
             })
             ->values();
 
-        // --- DIGITAL TRANSACTIONS (kecuali tarik tunai & transfer)
+        // --- DIGITAL TRANSACTIONS
         $digitalTransactions = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
             ->join('digital_products', 'digital_products.id', '=', 'digital_transactions.digital_product_id')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->whereBetween('digital_transactions.created_at', [$from, $to])
-            ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+            ->whereNull('digital_transactions.deleted_at')
             ->select([
+                'apps.id as app_id', // 🆕 tambahkan app_id
                 'apps.name as app_name',
                 'digital_products.name as product_name',
+                'digital_products.digital_category_id', // 🆕 tambahkan kategori digital
                 'digital_transactions.nominal as qty',
                 'digital_transactions.subtotal as amount',
-                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d') as date")
+                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime"),
             ])
+            ->orderBy('apps.name')
             ->orderByDesc('digital_transactions.created_at')
             ->get()
             ->groupBy('app_name')
-            ->map(function ($items, $appName) {
+            ->map(function ($transactions, $appName) {
+                // ambil app_id dari salah satu transaksi (semua dalam grup punya app_id sama)
+                $appId = $transactions->first()->app_id ?? null;
+
                 return [
                     'name' => $appName,
-                    'transactions' => $items->map(fn($i) => [
-                        'name' => $i->product_name,
-                        'qty' => $i->qty,
-                        'amount' => $i->amount,
-                    ]),
-                    'total' => $items->sum('amount'),
-                    'open' => false,
+                    'app_id' => $appId, // 🆕 kirim ke frontend
+                    'transactions' => $transactions->map(function ($t) {
+                        return [
+                            'name' => $t->product_name,
+                            'qty' => $t->qty,
+                            'amount' => $t->amount,
+                            'datetime' => $t->datetime,
+                            'category_id' => $t->digital_category_id, // 🆕 kirim kategori ke frontend
+                        ];
+                    })->values(),
+                    'total' => $transactions->sum('amount'),
                 ];
             })
             ->values();
 
-        // --- TOTAL BARANG
+
+        // --- TOTALS
         $barangTotal = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->where('transactions.outlet_id', $outletId)
+            ->whereNull('transactions.deleted_at')
             ->whereBetween('transactions.created_at', [$from, $to])
             ->sum('detail_transaction.subtotal');
 
-        // --- TOTAL DIGITAL PER APP
         $digitalPerApp = DB::table('digital_transactions')
-            ->where('digital_transactions.outlet_id', $outletId)
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+            ->where('digital_transactions.outlet_id', $outletId)
             ->whereBetween('digital_transactions.created_at', [$from, $to])
-            ->whereNotIn('digital_transactions.digital_product_id', [5, 6])
+            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
+            ->whereNull('digital_transactions.deleted_at')
             ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
             ->groupBy('apps.name')
             ->orderByDesc('total')
             ->get();
 
-        // --- TOTAL TARIK & TRANSFER
         $totalTarik = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->where('digital_product_id', 5)
-            ->whereBetween('created_at', [$from, $to])
+            ->whereIn('digital_product_id', [113, 116])
+            ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->sum('subtotal');
 
         $totalTransfer = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->where('digital_product_id', 6)
-            ->whereBetween('created_at', [$from, $to])
+            ->whereIn('digital_product_id', [112, 114, 115])
+            ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->sum('subtotal');
 
-        // --- UTANG FISIK
+        // --- UTANG
         $utangFisik = DB::table('transactions')
-            ->where('transactions.outlet_id', $outletId)
             ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->where('transactions.outlet_id', $outletId)
             ->whereBetween('transactions.created_at', [$from, $to])
             ->whereNotNull('transactions.customer_id')
             ->whereNull('transactions.paid_at')
             ->select('customers.name', 'transactions.subtotal')
             ->get();
 
-        // --- UTANG DIGITAL
         $utangDigital = DB::table('digital_transactions')
-            ->where('digital_transactions.outlet_id', $outletId)
             ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+            ->where('digital_transactions.outlet_id', $outletId)
             ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->whereNotNull('digital_transactions.customer_id')
             ->whereNull('digital_transactions.paid_at')
             ->select('customers.name', 'digital_transactions.subtotal')
             ->get();
 
-        // --- GABUNGKAN UTANG
         $utangList = $utangFisik->merge($utangDigital)
             ->groupBy('name')
-            ->map(fn($items) => [
-                'name' => $items->first()->name,
-                'subtotal' => $items->sum('subtotal'),
-            ])
+            ->map(function ($items) {
+                return [
+                    'name' => $items->first()->name,
+                    'subtotal' => $items->sum('subtotal'),
+                ];
+            })
             ->values();
 
         // --- TOTAL AKHIR
         $totalProduk = $productTransactions->sum('total');
-        $totalDigital = $digitalPerApp->sum('total');
+        $totalDigital = $digitalTransactions->sum('total');
         $total = $totalProduk + $totalDigital;
         $extra = 0;
 
