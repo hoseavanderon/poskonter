@@ -91,7 +91,7 @@ class CetakBarcodeController extends Controller
 
         foreach ($labels as &$lbl) {
             try {
-                $lbl->barcode_svg = $d->getBarcodeSVG($lbl->barcode, 'C128', 1, 25, 'black', false);
+                $lbl->barcode_svg = $d->getBarcodeSVG($lbl->barcode, 'C128', 1.5, 25, 'black', false);
             } catch (\Exception $e) {
                 $lbl->barcode_svg = null;
             }

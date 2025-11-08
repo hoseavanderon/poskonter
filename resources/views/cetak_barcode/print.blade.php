@@ -58,13 +58,6 @@
             image-rendering: pixelated;
         }
 
-        .barcode {
-            width: 25mm;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
         .price {
             font-size: 6px;
             font-weight: 800;
@@ -73,6 +66,19 @@
             -webkit-font-smoothing: none;
             text-rendering: geometricPrecision;
             image-rendering: pixelated;
+        }
+
+        .barcode {
+            width: 25mm;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .barcode svg {
+            width: 100% !important;
+            height: auto !important;
         }
     </style>
 
@@ -86,7 +92,9 @@
                     @foreach ($pair as $item)
                         <td>
                             <div class="name">{{ Str::limit($item->name, 20) }}</div>
-                            <div class="barcode">{!! $item->barcode_svg !!}</div>
+                            <div class="barcode">
+                                {!! $item->barcode_svg !!}
+                            </div>
                             <div class="price">Rp {{ number_format($item->jual, 0, ',', '.') }}</div>
                         </td>
                     @endforeach
