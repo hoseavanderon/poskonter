@@ -6,14 +6,14 @@
     <title>Preview Barcode</title>
     <style>
         @page {
-            size: 62mm 20mm;
+            size: 62mm 15mm;
             margin: 0;
         }
 
         html,
         body {
             width: 62mm;
-            height: 20mm;
+            height: 15mm;
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
@@ -31,7 +31,7 @@
 
         td {
             width: 30mm;
-            height: 20mm;
+            height: 15mm;
             text-align: center;
             vertical-align: middle;
             padding: 0;
@@ -48,15 +48,14 @@
         .name {
             font-size: 5.8px;
             font-weight: 700;
-            margin-top: 1px;
+            margin-top: 2px;
             text-transform: uppercase;
             line-height: 1.1;
             font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
 
         .barcode {
-            width: 27mm;
-            /* pas di tengah tapi masih bisa discan */
+            width: 25mm;
             height: 7.5mm;
             display: block;
             margin: 0.5mm auto 0 auto;
@@ -70,7 +69,6 @@
         .price {
             font-size: 6px;
             font-weight: 800;
-            margin-top: 0.5mm;
             font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
     </style>
