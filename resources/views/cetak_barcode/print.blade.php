@@ -6,20 +6,19 @@
     <title>Preview Barcode</title>
     <style>
         @page {
-            size: 62mm 15mm;
+            size: 62mm 20mm;
             margin: 0;
         }
 
         html,
         body {
             width: 62mm;
-            height: 15mm;
+            height: 20mm;
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
             -webkit-print-color-adjust: exact !important;
             transform: translateX(-0.8mm);
-            /* ⬅️ geser semua konten sedikit ke kiri */
         }
 
         table {
@@ -32,13 +31,12 @@
 
         td {
             width: 30mm;
-            height: 15mm;
+            height: 20mm;
             text-align: center;
             vertical-align: middle;
             padding: 0;
         }
 
-        /* simulasi gap tengah (2mm total, masing2 1mm kiri kanan) */
         td:nth-child(1) {
             padding-right: 1mm;
         }
@@ -48,40 +46,34 @@
         }
 
         .name {
-            font-size: 6px;
+            font-size: 6.5px;
             font-weight: 700;
-            margin-top: 2px;
-            font-family: 'DejaVu Sans', 'Arial Black', 'Liberation Sans', sans-serif;
+            margin-top: 1px;
             text-transform: uppercase;
-            -webkit-font-smoothing: none;
-            text-rendering: geometricPrecision;
-            image-rendering: pixelated;
-        }
-
-        .price {
-            font-size: 6px;
-            font-weight: 800;
-            margin: 0;
-            font-family: 'DejaVu Sans', 'Arial Black', 'Liberation Sans', sans-serif;
-            -webkit-font-smoothing: none;
-            text-rendering: geometricPrecision;
-            image-rendering: pixelated;
+            font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
 
         .barcode {
-            width: 25mm;
-            height: auto;
+            width: 32mm;
+            /* dari 25mm -> 32mm */
+            height: 10mm;
+            /* tambahkan tinggi agar garis barcode cukup panjang */
             display: block;
-            margin: 0 auto;
-            overflow: hidden;
+            margin: 1px auto 0 auto;
         }
 
         .barcode svg {
             width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
+        }
+
+        .price {
+            font-size: 7px;
+            font-weight: 800;
+            margin: 0;
+            font-family: 'DejaVu Sans', 'Arial Black', sans-serif;
         }
     </style>
-
 </head>
 
 <body>
