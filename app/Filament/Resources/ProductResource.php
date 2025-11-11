@@ -204,7 +204,11 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('index')->label('No')->rowIndex(),
                 Tables\Columns\TextColumn::make('name')->label('Product Name')->searchable(),
-                Tables\Columns\TextColumn::make('barcode')->label('Barcode')->searchable(),
+                Tables\Columns\TextColumn::make('jual')
+                    ->label('Harga')
+                    ->searchable()
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('brand.name')->label('Brand'),
                 Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 Tables\Columns\TextColumn::make('subCategory.name')->label('Sub Category'),

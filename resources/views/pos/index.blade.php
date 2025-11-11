@@ -1547,7 +1547,7 @@
 
                                     <div class="relative flex items-center justify-between">
                                         <!-- Jam -->
-                                        <span x-text="trx.created_at + ' WIB'"
+                                        <span x-text="trx.created_at + ' WITA'"
                                             class="text-sm text-gray-500 dark:text-gray-400"></span>
 
                                         <!-- ⋮ Tombol Dropdown -->
@@ -1914,7 +1914,7 @@
 
                                             <div class="flex items-center gap-3">
                                                 <span class="text-sm text-gray-500 dark:text-gray-400"
-                                                    x-text="trx.created_at + ' WIB'"></span>
+                                                    x-text="trx.created_at + ' WITA'"></span>
 
                                                 {{-- Menu Tiga Titik --}}
                                                 <div x-data="{ open: false }" class="relative">
