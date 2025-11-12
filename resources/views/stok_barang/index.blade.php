@@ -117,9 +117,8 @@
                                     </template>
                                 </div>
 
-                                <!-- 🧩 Attributes + stok detail -->
                                 <div class="mt-3 space-y-2">
-                                    <template x-for="attr in product.attributes" :key="attr.name">
+                                    <template x-for="attr in product.attributes" :key="attr.name + attr.value">
                                         <div
                                             class="flex justify-between items-center text-sm border-b border-gray-200 dark:border-gray-700 pb-1">
                                             <div>
@@ -134,7 +133,8 @@
                                     </template>
 
                                     <!-- 🔹 Total stok -->
-                                    <div class="flex justify-between items-center mt-2 pt-2 text-sm font-semibold">
+                                    <div
+                                        class="flex justify-between items-center mt-2 pt-2 border-t border-gray-300 dark:border-gray-600 text-sm font-semibold">
                                         <span>Total Stok</span>
                                         <span x-text="product.stok + ' pcs'"></span>
                                     </div>
