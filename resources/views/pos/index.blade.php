@@ -2174,10 +2174,64 @@
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
                     });
+
+                    // 🎯 Watcher Search Produk
+                    this.$watch('searchQuery', Alpine.debounce(async (q) => {
+                        q = q.trim();
+
+                        if (q === '') {
+                            // 🔙 Kosong → Kembali ke default 15 produk
+                            console.log('🔄 Query kosong, reset produk ke awal');
+                            this.products = [];
+                            this.hasMore = true;
+                            await this.loadProducts(); // muat ulang dari awal
+                            return;
+                        }
+
+                        console.log('🔍 Mencari produk:', q);
+                        try {
+                            const res = await fetch(`/pos/search-products?q=${encodeURIComponent(q)}`);
+                            const data = await res.json();
+
+                            if (data.success && Array.isArray(data.data)) {
+                                this.products = data.data;
+                                this.hasMore = false; // matikan infinite scroll sementara
+                                console.log(`✅ Ditemukan ${data.data.length} produk untuk '${q}'`);
+                            } else {
+                                this.products = [];
+                                console.log('⚠️ Tidak ada hasil untuk pencarian');
+                            }
+                        } catch (err) {
+                            console.error('❌ Gagal mencari produk:', err);
+                            this.products = [];
+                        }
+                    }, 400));
                 },
 
                 async loadProducts() {
                     try {
+                        const q = this.searchQuery.trim();
+
+                        // 🧠 Kalau sedang mencari produk (searchQuery tidak kosong)
+                        if (q !== '') {
+                            console.log("🔍 Mencari produk:", q);
+
+                            const res = await fetch(`/pos/search-products?q=${encodeURIComponent(q)}`);
+                            const data = await res.json();
+
+                            if (data.success && Array.isArray(data.data)) {
+                                this.products = data.data; // tampilkan semua hasil pencarian
+                                this.hasMore = false; // matikan infinite scroll
+                                console.log(`✅ Ditemukan ${data.data.length} produk`);
+                            } else {
+                                this.products = [];
+                                this.hasMore = false;
+                                console.log("⚠️ Tidak ada hasil ditemukan");
+                            }
+                            return; // keluar biar gak lanjut ke bagian offset-load
+                        }
+
+                        // 📦 Kalau bukan mode pencarian → lanjut pakai offset biasa
                         const offset = this.products.length;
                         const limit = 15;
 
