@@ -2909,9 +2909,6 @@
 
                             if (data.success) {
                                 found = data.data;
-                                // Masukkan ke daftar produk agar bisa dipakai selanjutnya
-                                this.products.unshift(found);
-                                console.log('🆕 Produk dimuat dari server:', found.name);
                             } else {
                                 this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
                                 this.showToast = true;
