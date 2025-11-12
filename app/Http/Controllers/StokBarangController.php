@@ -16,14 +16,14 @@ class StokBarangController extends Controller
         return view('stok_barang.index');
     }
 
-   public function getData()
+    public function getData()
     {
         $outletId = Auth::user()->outlet_id; // ✅ Ambil outlet ID dari user login
 
         // 🔹 Ambil semua shelf + produk milik outlet yang sedang login
         $shelves = \App\Models\Shelf::with(['products' => function ($q) {
-                $q->select('id', 'shelf_id', 'name', 'barcode', 'minimal_stok', 'outlet_id');
-            }])
+            $q->select('id', 'shelf_id', 'name', 'barcode', 'minimal_stok', 'outlet_id');
+        }])
             ->where('outlet_id', $outletId) // ✅ filter berdasarkan outlet login
             ->get();
 
@@ -36,21 +36,18 @@ class StokBarangController extends Controller
             }
             $shelf->icon_component = $iconName;
 
-            // 🔹 Loop produk dalam shelf
             foreach ($shelf->products as $product) {
-                // Ambil semua atribut produk
-                $attributes = \App\Models\ProductAttributeValue::where('product_id', $product->id)
+                $attributeValues = \App\Models\ProductAttributeValue::where('product_id', $product->id)
                     ->join('product_attributes', 'product_attribute_values.product_attribute_id', '=', 'product_attributes.id')
-                    ->select('product_attributes.name as name', 'product_attribute_values.attribute_value as value')
+                    ->select(
+                        'product_attributes.name as name',
+                        'product_attribute_values.attribute_value as value',
+                        'product_attribute_values.stok as stok'
+                    )
                     ->get();
 
-                // Ambil stok terbaru
-                $latest = \App\Models\ProductAttributeValue::where('product_id', $product->id)
-                    ->orderByDesc('updated_at')
-                    ->first();
-
-                $product->stok = $latest->stok ?? 0;
-                $product->attributes = $attributes;
+                $product->stok = $attributeValues->sum('stok');
+                $product->attributes = $attributeValues;
             }
 
             // 🔹 Hitung low stock
@@ -59,5 +56,4 @@ class StokBarangController extends Controller
 
         return response()->json($shelves);
     }
-
 }
