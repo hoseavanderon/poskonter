@@ -132,6 +132,51 @@ class PosController extends Controller
         ]);
     }
 
+    public function findProductByBarcode(Request $request)
+    {
+        $barcode = trim($request->get('barcode'));
+        $outletId = Auth::user()->outlet_id ?? 1;
+
+        $product = Product::with([
+            'category:id,kode_category,name',
+            'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
+        ])
+            ->where('outlet_id', $outletId)
+            ->where('barcode', $barcode)
+            ->first();
+
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan']);
+        }
+
+        $rawPrice = $product->jual ?? $product->price ?? $product->harga_jual ?? $product->harga ?? null;
+        $price = 0;
+
+        if (!is_null($rawPrice)) {
+            $clean = preg_replace('/[^\d]/', '', (string) $rawPrice);
+            $price = $clean === '' ? 0 : (int) $clean;
+        }
+
+        $data = [
+            'id' => $product->id,
+            'name' => $product->name ?? '(Tanpa Nama)',
+            'code' => $product->barcode ?? '-',
+            'price' => $price,
+            'stock' => (int) ($product->attributeValues->sum('stok') ?? 0),
+            'category_id' => $product->category_id,
+            'category_name' => $product->category?->name ?? '(Tanpa Kategori)',
+            'category_code' => $product->category?->kode_category ?? '',
+            'attribute_values' => $product->attributeValues->map(fn($attr) => [
+                'id' => $attr->id,
+                'product_attribute_id' => $attr->product_attribute_id,
+                'attribute_value' => $attr->attribute_value ?? '(Tidak ada)',
+                'stok' => (int) $attr->stok,
+            ])->values(),
+        ];
+
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
     public function checkout(Request $request)
     {
         $data = $request->validate([

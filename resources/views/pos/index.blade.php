@@ -263,24 +263,46 @@
                 {{-- Produk --}}
                 <div class="flex-1 relative">
                     {{-- 🧾 Form Scan Barcode --}}
-                    <div class="relative mb-4">
-                        <input id="barcodeInput" type="text" placeholder="Scan barcode..."
-                            @keydown.enter.prevent="
-                                handleBarcodeInput($event);
-                                $event.target.value = '';
-                            "
-                            class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
-                                focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                            autofocus>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
 
-                        <div class="absolute left-4 top-2.5 text-blue-600 dark:text-blue-400">
-                            {{-- Heroicon barcode --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 7v10M8 7v10M12 7v10M16 7v10M20 7v10" />
-                            </svg>
+                        <!-- 📸 Scan Barcode -->
+                        <div class="relative">
+                            <input id="barcodeInput" type="text" placeholder="Scan barcode..."
+                                @keydown.enter.prevent="
+                handleBarcodeInput($event);
+                $event.target.value = '';
+            "
+                                class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
+                focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 dark:text-gray-100"
+                                autofocus>
+
+                            <div class="absolute left-4 top-2.5 text-blue-600 dark:text-blue-400">
+                                <!-- Heroicon barcode -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 7v10M8 7v10M12 7v10M16 7v10M20 7v10" />
+                                </svg>
+                            </div>
                         </div>
+
+                        <!-- 🔍 Search Produk -->
+                        <div class="relative">
+                            <input id="searchInput" type="text" placeholder="Cari nama produk..."
+                                x-model="searchQuery"
+                                class="w-full pl-12 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
+                focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 dark:text-gray-100">
+
+                            <div class="absolute left-4 top-2.5 text-gray-500 dark:text-gray-400">
+                                <!-- Heroicon search -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z" />
+                                </svg>
+                            </div>
+                        </div>
+
                     </div>
 
                     {{-- Judul kategori aktif --}}
@@ -2869,48 +2891,68 @@
                 },
 
                 // Update scanner agar mendeteksi produk bervarian
-                handleBarcodeInput(e) {
+                async handleBarcodeInput(e) {
                     const code = e.target.value.trim();
-                    if (!code) return e.target.value = '';
-                    const found = this.products.find(p => String(p.code) === String(code));
-                    if (!found) {
-                        this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
-                        this.showToast = true;
-                        setTimeout(() => this.showToast = false, 2000);
+                    if (!code) {
                         e.target.value = '';
                         return;
                     }
 
+                    // 1️⃣ Cari di produk lokal dulu
+                    let found = this.products.find(p => String(p.code) === String(code));
+
+                    // 2️⃣ Kalau belum ketemu, cari ke backend
+                    if (!found) {
+                        try {
+                            const res = await fetch(`/pos/find-product?barcode=${encodeURIComponent(code)}`);
+                            const data = await res.json();
+
+                            if (data.success) {
+                                found = data.data;
+                                // Masukkan ke daftar produk agar bisa dipakai selanjutnya
+                                this.products.unshift(found);
+                                console.log('🆕 Produk dimuat dari server:', found.name);
+                            } else {
+                                this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
+                                this.showToast = true;
+                                setTimeout(() => (this.showToast = false), 2500);
+                                e.target.value = '';
+                                return;
+                            }
+                        } catch (err) {
+                            console.error('❌ Gagal memuat produk dari server:', err);
+                            this.toastMsg = 'Koneksi gagal. Coba lagi.';
+                            this.showToast = true;
+                            setTimeout(() => (this.showToast = false), 2500);
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+
+                    // 3️⃣ Setelah ditemukan → cek apakah punya varian
                     const attrs = found.attribute_values || [];
 
-                    // Jika produk punya varian
                     if (attrs.length > 0) {
-                        // Jika cuma 1 varian -> otomatis pilih varian tersebut (sama seperti chooseOption)
                         if (attrs.length === 1) {
                             const opt = attrs[0];
-
-                            // cek stok varian
                             const masterStock = opt.stok ?? 0;
+
                             if (masterStock <= 0) {
                                 this.toastMsg = `⚠️ Stok ${found.name} - ${opt.attribute_value} habis.`;
                                 this.showToast = true;
-                                setTimeout(() => this.showToast = false, 2500);
+                                setTimeout(() => (this.showToast = false), 2500);
                                 e.target.value = '';
                                 return;
                             }
 
-                            // siapkan selectedProduct agar chooseOption berfungsi konsisten
                             this.selectedProduct = found;
                             this.selectedProductOptions = attrs;
-
-                            // langsung pilih opt (chooseOption akan menutup modal, update cart, dsb)
                             this.chooseOption(opt);
-
                             e.target.value = '';
                             return;
                         }
 
-                        // Kalau varian lebih dari 1 -> buka modal pilihan
+                        // Lebih dari 1 varian → buka modal
                         this.selectedProduct = found;
                         this.selectedProductOptions = attrs;
                         this.showOptionModal = true;
@@ -2918,13 +2960,14 @@
                         return;
                     }
 
-                    // Kalau tidak ada varian, langsung tambahkan ke keranjang
+                    // 4️⃣ Kalau tanpa varian, langsung tambahkan
                     const existing = this.cart.find(i => i.id === found.id);
                     const qtyInCart = existing ? existing.qty : 0;
+
                     if (found.stock <= qtyInCart) {
                         this.toastMsg = `Stok ${found.name} tidak cukup (tersisa ${found.stock}).`;
                         this.showToast = true;
-                        setTimeout(() => this.showToast = false, 2500);
+                        setTimeout(() => (this.showToast = false), 2500);
                         e.target.value = '';
                         return;
                     }
@@ -2932,7 +2975,7 @@
                     this.addToCart(found);
                     this.toastMsg = `${found.name} ditambahkan!`;
                     this.showToast = true;
-                    setTimeout(() => this.showToast = false, 2000);
+                    setTimeout(() => (this.showToast = false), 2000);
                     e.target.value = '';
                 },
 
