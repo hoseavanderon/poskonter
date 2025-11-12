@@ -18,17 +18,16 @@ class StokBarangController extends Controller
 
     public function getData()
     {
-        $outletId = Auth::user()->outlet_id; // ✅ Ambil outlet ID dari user login
+        $outletId = Auth::user()->outlet_id;
 
-        // 🔹 Ambil semua shelf + produk milik outlet yang sedang login
-        $shelves = \App\Models\Shelf::with(['products' => function ($q) {
+        $shelves = Shelf::with(['products' => function ($q) {
             $q->select('id', 'shelf_id', 'name', 'barcode', 'minimal_stok', 'outlet_id');
         }])
-            ->where('outlet_id', $outletId) // ✅ filter berdasarkan outlet login
+            ->where('outlet_id', $outletId)
             ->get();
 
         foreach ($shelves as $shelf) {
-            // 🔸 Tentukan ikon shelf (gunakan fallback jika file tidak ada)
+            // Icon
             $iconName = $shelf->icon ?? 'archive-box';
             $iconPath = resource_path("views/components/heroicon-o-{$iconName}.blade.php");
             if (!file_exists($iconPath)) {
@@ -37,33 +36,33 @@ class StokBarangController extends Controller
             $shelf->icon_component = $iconName;
 
             foreach ($shelf->products as $product) {
-                $attributeValues = \App\Models\ProductAttributeValue::where('product_id', $product->id)
+                // Ambil attribute + value + stok
+                $rawAttributes = ProductAttributeValue::where('product_id', $product->id)
                     ->join('product_attributes', 'product_attribute_values.product_attribute_id', '=', 'product_attributes.id')
                     ->select(
-                        'product_attribute_values.id',
-                        'product_attributes.name as name',
+                        'product_attributes.name as attribute_name',
                         'product_attribute_values.attribute_value as value',
                         'product_attribute_values.stok as stok'
                     )
-                    ->orderBy('product_attribute_values.id')
-                    ->get()
-                    ->map(function ($item) {
-                        return [
-                            'name' => $item->name,
-                            'value' => $item->value,
-                            'stok' => (int) $item->stok,
-                        ];
-                    })
-                    ->values(); // pastikan jadi numerik array
+                    ->get();
 
-                // total stok semua attribute
-                $product->stok = $attributeValues->sum('stok');
+                // Group by attribute_name → biar jadi seperti { "Warna": [ {value, stok}, ... ] }
+                $grouped = $rawAttributes->groupBy('attribute_name')->map(function ($items, $key) {
+                    return [
+                        'name' => $key,
+                        'values' => $items->map(function ($i) {
+                            return [
+                                'value' => $i->value,
+                                'stok' => (int)$i->stok,
+                            ];
+                        })->values()
+                    ];
+                })->values();
 
-                // kirim semua attribute (jangan collapse)
-                $product->attributes = $attributeValues;
+                $product->stok = $rawAttributes->sum('stok');
+                $product->attributes = $grouped;
             }
 
-            // 🔹 Hitung low stock
             $shelf->lowStock = $shelf->products->filter(fn($p) => $p->stok < $p->minimal_stok)->count();
         }
 
