@@ -40,13 +40,26 @@ class StokBarangController extends Controller
                 $attributeValues = \App\Models\ProductAttributeValue::where('product_id', $product->id)
                     ->join('product_attributes', 'product_attribute_values.product_attribute_id', '=', 'product_attributes.id')
                     ->select(
+                        'product_attribute_values.id',
                         'product_attributes.name as name',
                         'product_attribute_values.attribute_value as value',
                         'product_attribute_values.stok as stok'
                     )
-                    ->get();
+                    ->orderBy('product_attribute_values.id')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'name' => $item->name,
+                            'value' => $item->value,
+                            'stok' => (int) $item->stok,
+                        ];
+                    })
+                    ->values(); // pastikan jadi numerik array
 
+                // total stok semua attribute
                 $product->stok = $attributeValues->sum('stok');
+
+                // kirim semua attribute (jangan collapse)
                 $product->attributes = $attributeValues;
             }
 
