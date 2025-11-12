@@ -2104,6 +2104,10 @@
                 closeBookData: null,
                 lebih: 0,
                 copied: false,
+                searchQuery: '', // input teks pencarian
+                limit: 15,
+                offset: 0,
+                endOfList: false,
 
                 // ======== INIT UTAMA ========
                 // ======== INIT UTAMA ========
@@ -2160,7 +2164,7 @@
                             const visibleHeight = scrollContainer.clientHeight;
                             const totalHeight = scrollContainer.scrollHeight;
 
-                            if (scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this
+                            if (scrollTop + visibleHeight >= totalHeight - 120 && !this.endOfList && !this
                                 .loadingMore) {
                                 this.loadingMore = true;
                                 await this.loadProducts();
@@ -2173,31 +2177,48 @@
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
                     });
+
+                    // 🔍 Watcher Search Produk (otomatis cari saat mengetik)
+                    this.$watch('searchQuery', Alpine.debounce(async (val) => {
+                        await this.loadProducts(true);
+                    }, 400));
                 },
 
-                async loadProducts() {
+                async loadProducts(reset = false) {
                     try {
-                        const offset = this.products.length;
-                        const limit = 15;
+                        if (reset) {
+                            this.products = [];
+                            this.offset = 0;
+                            this.endOfList = false;
+                        }
 
-                        console.log("📦 Fetching products offset:", offset);
+                        if (this.loadingMore || this.endOfList) return;
 
-                        const res = await fetch(`/pos/load-more?offset=${offset}&limit=${limit}`);
+                        this.loadingMore = true;
+                        const q = this.searchQuery.trim();
+
+                        const url = q ?
+                            `/pos/search-products?q=${encodeURIComponent(q)}&offset=${this.offset}&limit=${this.limit}` :
+                            `/pos/load-more?offset=${this.offset}&limit=${this.limit}`;
+
+
+                        const res = await fetch(url);
                         const data = await res.json();
 
-                        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-                            const newItems = data.data.filter(
-                                newP => !this.products.some(p => p.id === newP.id)
-                            );
+                        if (data.success && Array.isArray(data.data)) {
+                            const newItems = data.data.filter(newP => !this.products.some(p => p.id === newP.id));
                             this.products.push(...newItems);
-                            console.log(`✅ Loaded ${newItems.length} new items`);
-                        } else {
-                            console.log("⚠️ No more products to load.");
-                            this.hasMore = false;
+
+                            if (newItems.length < this.limit) {
+                                this.endOfList = true;
+                            }
+
+                            this.offset += newItems.length;
                         }
+
+                        this.loadingMore = false;
                     } catch (err) {
-                        console.error("❌ Gagal memuat produk:", err);
-                        this.hasMore = false;
+                        this.loadingMore = false;
                     }
                 },
 

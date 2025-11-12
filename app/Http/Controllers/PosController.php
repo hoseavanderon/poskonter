@@ -132,6 +132,65 @@ class PosController extends Controller
         ]);
     }
 
+    public function searchProducts(Request $request)
+    {
+        $outletId = Auth::user()->outlet_id ?? 1;
+        $query = trim($request->get('q', ''));
+        $offset = (int) $request->get('offset', 0);
+        $limit = (int) $request->get('limit', 15);
+
+        // kalau input kosong → pakai data normal (fungsi existing)
+        if ($query === '') {
+            return $this->loadMoreProducts($request);
+        }
+
+        $productsRaw = Product::with([
+            'category:id,kode_category,name',
+            'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
+        ])
+            ->where('outlet_id', $outletId)
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                    ->orWhere('barcode', 'like', "%{$query}%");
+            })
+            ->orderBy('id', 'desc')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        $products = $productsRaw->map(function ($p) {
+            $rawPrice = $p->jual ?? $p->price ?? $p->harga_jual ?? $p->harga ?? null;
+            $price = 0;
+
+            if (!is_null($rawPrice)) {
+                $clean = preg_replace('/[^\d]/', '', (string) $rawPrice);
+                $price = $clean === '' ? 0 : (int) $clean;
+            }
+
+            return [
+                'id' => $p->id,
+                'name' => $p->name ?? '(Tanpa Nama)',
+                'code' => $p->barcode ?? '-',
+                'price' => $price,
+                'stock' => (int) ($p->attributeValues->sum('stok') ?? 0),
+                'category_id' => $p->category_id,
+                'category_name' => $p->category?->name ?? '(Tanpa Kategori)',
+                'category_code' => $p->category?->kode_category ?? '',
+                'attribute_values' => $p->attributeValues->map(fn($attr) => [
+                    'id' => $attr->id,
+                    'product_attribute_id' => $attr->product_attribute_id,
+                    'attribute_value' => $attr->attribute_value ?? '(Tidak ada)',
+                    'stok' => (int) $attr->stok,
+                ])->values(),
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+        ]);
+    }
+
     public function findProductByBarcode(Request $request)
     {
         $barcode = trim($request->get('barcode'));

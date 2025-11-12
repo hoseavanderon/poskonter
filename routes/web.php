@@ -45,6 +45,7 @@ Route::middleware([
     Route::post('/cashbook/store', [PosController::class, 'pembukuanStore'])->name('cashbook.store');
     Route::get('/pos/load-more', [PosController::class, 'loadMoreProducts'])->name('pos.loadMore');
     Route::get('/pos/find-product', [PosController::class, 'findProductByBarcode'])->name('pos.findProduct');
+    Route::get('/pos/search-products', [PosController::class, 'searchProducts'])->name('pos.searchProducts');
 
 
     // ===================================================
