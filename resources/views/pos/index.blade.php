@@ -2910,8 +2910,8 @@
 
                             if (data.success) {
                                 found = data.data;
-                                // Masukkan ke daftar produk agar bisa dipakai selanjutnya
-                                this.products.unshift(found);
+                                // ❌ Jangan masukkan ke daftar produk
+                                // this.products.unshift(found);
                                 console.log('🆕 Produk dimuat dari server:', found.name);
                             } else {
                                 this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
@@ -2920,6 +2920,7 @@
                                 e.target.value = '';
                                 return;
                             }
+
                         } catch (err) {
                             console.error('❌ Gagal memuat produk dari server:', err);
                             this.toastMsg = 'Koneksi gagal. Coba lagi.';
