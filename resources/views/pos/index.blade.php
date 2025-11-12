@@ -2104,10 +2104,7 @@
                 closeBookData: null,
                 lebih: 0,
                 copied: false,
-                searchQuery: '', // input teks pencarian
-                limit: 15,
-                offset: 0,
-                endOfList: false,
+                searchQuery: '',
 
                 // ======== INIT UTAMA ========
                 // ======== INIT UTAMA ========
@@ -2164,7 +2161,7 @@
                             const visibleHeight = scrollContainer.clientHeight;
                             const totalHeight = scrollContainer.scrollHeight;
 
-                            if (scrollTop + visibleHeight >= totalHeight - 120 && !this.endOfList && !this
+                            if (scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this
                                 .loadingMore) {
                                 this.loadingMore = true;
                                 await this.loadProducts();
@@ -2177,48 +2174,31 @@
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
                     });
-
-                    // 🔍 Watcher Search Produk (otomatis cari saat mengetik)
-                    this.$watch('searchQuery', Alpine.debounce(async (val) => {
-                        await this.loadProducts(true);
-                    }, 400));
                 },
 
-                async loadProducts(reset = false) {
+                async loadProducts() {
                     try {
-                        if (reset) {
-                            this.products = [];
-                            this.offset = 0;
-                            this.endOfList = false;
-                        }
+                        const offset = this.products.length;
+                        const limit = 15;
 
-                        if (this.loadingMore || this.endOfList) return;
+                        console.log("📦 Fetching products offset:", offset);
 
-                        this.loadingMore = true;
-                        const q = this.searchQuery.trim();
-
-                        const url = q ?
-                            `/pos/search-products?q=${encodeURIComponent(q)}&offset=${this.offset}&limit=${this.limit}` :
-                            `/pos/load-more?offset=${this.offset}&limit=${this.limit}`;
-
-
-                        const res = await fetch(url);
+                        const res = await fetch(`/pos/load-more?offset=${offset}&limit=${limit}`);
                         const data = await res.json();
 
-                        if (data.success && Array.isArray(data.data)) {
-                            const newItems = data.data.filter(newP => !this.products.some(p => p.id === newP.id));
+                        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                            const newItems = data.data.filter(
+                                newP => !this.products.some(p => p.id === newP.id)
+                            );
                             this.products.push(...newItems);
-
-                            if (newItems.length < this.limit) {
-                                this.endOfList = true;
-                            }
-
-                            this.offset += newItems.length;
+                            console.log(`✅ Loaded ${newItems.length} new items`);
+                        } else {
+                            console.log("⚠️ No more products to load.");
+                            this.hasMore = false;
                         }
-
-                        this.loadingMore = false;
                     } catch (err) {
-                        this.loadingMore = false;
+                        console.error("❌ Gagal memuat produk:", err);
+                        this.hasMore = false;
                     }
                 },
 
@@ -2930,6 +2910,9 @@
 
                             if (data.success) {
                                 found = data.data;
+                                // Masukkan ke daftar produk agar bisa dipakai selanjutnya
+                                this.products.unshift(found);
+                                console.log('🆕 Produk dimuat dari server:', found.name);
                             } else {
                                 this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
                                 this.showToast = true;
