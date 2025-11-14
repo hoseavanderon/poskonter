@@ -440,17 +440,49 @@
                     class="w-full md:w-1/2 lg:w-1/3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 flex flex-col overflow-y-auto"
                     style="max-height: 90vh; min-width: 320px; z-index: 10;">
                     {{-- Pilihan Pembayaran / Pelanggan --}}
-                    <div class="mb-4">
-                        <h2 class="text-lg font-semibold mb-3">Pelanggan : </h2>
+                    <div class="mb-4" x-data="{ open: false }">
+                        <h2 class="text-lg font-semibold mb-3">Pelanggan :</h2>
 
-                        <select x-model="selectedCustomer"
-                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="">💵 Tunai</option>
-                            <template x-for="cust in customers" :key="cust.id">
-                                <option :value="cust.id" x-text="'👤 ' + cust.name"></option>
-                            </template>
-                        </select>
+                        <!-- Fake Select -->
+                        <div @click="open = !open"
+                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm flex justify-between items-center cursor-pointer">
+                            <span
+                                x-text="selectedCustomer 
+            ? ('👤 ' + (customers.find(c => c.id == selectedCustomer)?.name || ''))
+            : '💵 Tunai'">
+                            </span>
+                            <i class="fa-solid fa-caret-down text-gray-500"></i>
+                        </div>
 
+                        <!-- Dropdown -->
+                        <div x-show="open" @click.outside="open = false"
+                            class="mt-2 border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+
+                            <!-- Search Input -->
+                            <input type="text" x-model="customerSearch" placeholder="Cari pelanggan..."
+                                class="w-full p-2 border-b dark:border-gray-700 bg-white dark:bg-gray-800 text-sm outline-none">
+
+                            <!-- Default Opsi Tunai -->
+                            <div class="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                                @click="selectedCustomer = ''; open = false; customerSearch = ''">
+                                💵 Tunai
+                            </div>
+
+                            <!-- List Customer -->
+                            <div class="max-h-48 overflow-y-auto">
+                                <template x-for="cust in filteredCustomers" :key="cust.id">
+                                    <div class="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                                        @click="selectedCustomer = cust.id; open = false; customerSearch = cust.name"
+                                        x-text="'👤 ' + cust.name"></div>
+                                </template>
+
+                                <template x-if="filteredCustomers.length === 0">
+                                    <div class="p-2 text-gray-500 text-sm">Tidak ditemukan.</div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Info utang -->
                         <template x-if="selectedCustomer">
                             <p class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                                 <i class="fa-solid fa-circle-exclamation"></i>
@@ -458,6 +490,7 @@
                             </p>
                         </template>
                     </div>
+
 
                     <div>
                         <h2 class="text-lg font-semibold mb-3">Keranjang Belanja</h2>
