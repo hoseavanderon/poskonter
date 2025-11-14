@@ -351,19 +351,19 @@
                                         </div>
 
                                         {{-- Kanan: Stock Label (dengan satuan pcs) --}}
-                                        <template x-if="product.stock > 10">
+                                        <template x-if="displayStock(product) > 10">
                                             <span
                                                 class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                                                x-text="product.stock"></span>
+                                                x-text="displayStock(product)"></span>
                                         </template>
-                                        <template x-if="product.stock <= 10 && product.stock > 0">
+                                        <template x-if="displayStock(product) <= 10 && displayStock(product) > 0">
                                             <span
                                                 class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                                                x-text="product.stock"></span>
+                                                x-text="displayStock(product)"></span>
                                         </template>
-                                        <template x-if="product.stock <= 0">
+                                        <template x-if="displayStock(product) <= 0">
                                             <span
                                                 class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
                                                         bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
@@ -1070,34 +1070,36 @@
 
                                                     {{-- 🧾 Pelanggan --}}
                                                     <div class="mb-4">
-                                                        <h2
-                                                            class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
-                                                            <svg class="w-4 h-4 text-blue-500 dark:text-blue-400"
-                                                                viewBox="0 0 24 24" fill="none">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="1.5"
-                                                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0" />
-                                                            </svg>
-                                                            Pelanggan
-                                                        </h2>
+                                                        <h2 class="text-lg font-semibold mb-3">Pelanggan :</h2>
 
-                                                        <select x-model="selectedCustomer"
-                                                            class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
-                                                            <option value="">💵 Tunai</option>
-                                                            <template x-for="cust in customers" :key="cust.id">
-                                                                <option :value="cust.id" x-text="'👤 ' + cust.name">
-                                                                </option>
-                                                            </template>
-                                                        </select>
+                                                        <!-- Input search -->
+                                                        <input type="text" x-model="customerSearch"
+                                                            placeholder="Cari nama pelanggan..."
+                                                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
 
+                                                        <!-- Dropdown hasil pencarian -->
+                                                        <div class="relative">
+                                                            <div class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
+                                                                x-show="filteredCustomers.length > 0">
+
+                                                                <template x-for="cust in filteredCustomers"
+                                                                    :key="cust.id">
+                                                                    <div class="px-3 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-700/40"
+                                                                        @click="
+                        selectedCustomer = cust.id;
+                        customerSearch = cust.name;
+                    "
+                                                                        x-text="cust.name">
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Info utang -->
                                                         <template x-if="selectedCustomer">
                                                             <p
-                                                                class="mt-2 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                    stroke-width="2" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                </svg>
+                                                                class="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                                                <i class="fa-solid fa-circle-exclamation"></i>
                                                                 Transaksi akan dicatat sebagai <strong>utang</strong>.
                                                             </p>
                                                         </template>
@@ -2105,6 +2107,7 @@
                 lebih: 0,
                 copied: false,
                 searchQuery: '',
+                customerSearch: "",
 
                 // ======== INIT UTAMA ========
                 // ======== INIT UTAMA ========
@@ -2322,13 +2325,11 @@
 
                 // ======== PRODUK FISIK: KERANJANG ========
                 addToCart(p) {
-                    const master = this.products.find(x => x.id === p.id);
-                    if (!master) return alert('Produk tidak ditemukan.');
                     const existing = this.cart.find(i => i.id === p.id);
-                    const desiredQty = (existing ? existing.qty : 0) + 1;
+                    const qtyInCart = existing ? existing.qty : 0;
 
-                    if (master.stock < desiredQty) {
-                        this.toastMsg = `Stok ${master.name} tidak cukup (tersisa ${master.stock}).`;
+                    if (qtyInCart >= p.stock) {
+                        this.toastMsg = `Stok ${p.name} tinggal ${p.stock}`;
                         this.showToast = true;
                         setTimeout(() => this.showToast = false, 2500);
                         return;
@@ -2341,7 +2342,14 @@
                         price: p.price,
                         qty: 1
                     });
+
                     this.saveCart();
+                },
+
+                displayStock(product) {
+                    const item = this.cart.find(i => i.id === product.id);
+                    const qty = item ? item.qty : 0;
+                    return product.stock - qty;
                 },
 
                 increaseQty(i) {
@@ -2571,6 +2579,15 @@
                         alert("Terjadi kesalahan saat memuat data transaksi hari ini: " + err.message);
                     }
                 },
+
+                get filteredCustomers() {
+                    if (!this.customerSearch) return this.customers;
+
+                    return this.customers.filter(c =>
+                        c.name.toLowerCase().includes(this.customerSearch.toLowerCase())
+                    );
+                },
+
                 // ======== CHECKOUT DIGITAL ========
                 async confirmDigitalTransaction() {
                     try {
