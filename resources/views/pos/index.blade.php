@@ -86,6 +86,15 @@
                         class="px-4 py-2 rounded-lg font-semibold transition">
                         ⚡ Produk Digital
                     </button>
+
+                    <button @click="activeTab = 'manual'"
+                        :class="activeTab === 'manual'
+                            ?
+                            'bg-blue-600 text-white dark:bg-blue-700' :
+                            'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+                        class="px-4 py-2 rounded-lg font-semibold transition">
+                        ✏️ Input Manual
+                    </button>
                     <!-- 🧾 Tombol Tutup Buku -->
                     <button @click="handleCloseBook()"
                         class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition">
@@ -1379,6 +1388,179 @@
                 </div>
             </div>
 
+            <!-- ====================== TAB INPUT MANUAL ====================== -->
+
+            <div x-show="activeTab === 'manual'" x-transition class="mt-4 flex justify-center">
+                <div class="flex gap-6">
+
+                    <!-- ========== KIRI: FORM SERVICE ========== -->
+                    <div class="bg-gray-800 text-white p-5 rounded-xl w-[420px]">
+                        <h2 class="text-xl font-bold mb-4">Input Manual / Jasa</h2>
+
+                        <!-- NAMA -->
+                        <label class="block mb-2 font-medium">Nama Item / Jasa</label>
+                        <input type="text" x-model="manualName" class="w-full p-2 rounded bg-gray-700 mb-4"
+                            placeholder="Contoh: Service Ganti LCD">
+
+                        <!-- HARGA -->
+                        <label class="block mb-2 font-medium">Harga</label>
+
+                        <div>
+                            <input type="text" x-model="manualPriceDisplay" @input="formatManualPrice"
+                                inputmode="numeric"
+                                class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 
+                   focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
+                                placeholder="Rp Masukkan harga" />
+                        </div>
+                    </div>
+
+                    <!-- ========== KANAN: KALKULATOR ========== -->
+                    <div class="bg-gray-800 text-white p-5 rounded-xl w-[620px]">
+                        <!-- ====================== KALKULATOR MANUAL ====================== -->
+                        <div class="mt-6 border-t border-gray-700 pt-4">
+
+                            <!-- SUBTOTAL -->
+                            <div class="flex justify-between mb-2">
+                                <span>Subtotal:</span>
+                                <span x-text="'Rp ' + manualPrice.toLocaleString('id-ID')"></span>
+                            </div>
+
+                            <!-- TOTAL -->
+                            <div class="flex justify-between font-semibold mb-3">
+                                <span>Total:</span>
+                                <span class="text-blue-400" x-text="'Rp ' + manualPrice.toLocaleString('id-ID')"></span>
+                            </div>
+
+                            <div class="bg-gray-900 p-3 rounded-lg text-center">
+                                <h3 class="font-bold mb-1 text-gray-300">Total Bayar</h3>
+
+                                <!-- NOMINAL DIBAYAR -->
+                                <div class="text-3xl font-bold text-blue-400 mb-3"
+                                    x-text="'Rp ' + manualPaid.toLocaleString('id-ID')">
+                                </div>
+
+                                <!-- NOMINAL CEPAT -->
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                                    <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
+                                        <button @click="manualAddPayment(n)"
+                                            class="bg-blue-800 hover:bg-blue-700 text-blue-200 py-2 rounded text-sm font-semibold"
+                                            x-text="'Rp ' + n.toLocaleString('id-ID')">
+                                        </button>
+                                    </template>
+
+                                    <button @click="manualPayExact()"
+                                        class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">
+                                        UANG PAS
+                                    </button>
+                                </div>
+
+                                <!-- KEYBOARD ANGKA -->
+                                <div class="grid grid-cols-3 gap-2 text-lg mb-3">
+                                    <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
+                                        <button @click="manualHandleKey(btn)"
+                                            class="bg-gray-800 py-3 rounded font-bold hover:bg-gray-700">
+                                            <span x-text="btn"></span>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <!-- KEMBALIAN -->
+                                <div class="mt-4 flex justify-between font-semibold text-lg">
+                                    <span>Kembalian:</span>
+                                    <span x-text="'Rp ' + manualChange().toLocaleString('id-ID')"></span>
+                                </div>
+
+                                <!-- TOMBOL AKSI -->
+                                <div class="flex gap-3 mt-4">
+                                    <button @click="loadTodayTransactions()"
+                                        class="flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 
+                       text-gray-200 py-3 rounded-lg font-semibold text-sm transition border border-gray-600">
+                                        <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                                        <span>Riwayat</span>
+                                    </button>
+
+                                    <button @click="showManualConfirm = true"
+                                        class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+text-white py-3 rounded-lg font-semibold text-sm transition">
+                                        <i class="fa-solid fa-cash-register text-base"></i>
+                                        <span>Bayar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 🧾 Modal Konfirmasi Manual --}}
+            <div x-show="showManualConfirm"
+                class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden"
+                    x-transition.scale>
+
+                    {{-- Judul --}}
+                    <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
+                            Konfirmasi Pembayaran Manual
+                        </h2>
+                    </div>
+
+                    {{-- Detail Manual --}}
+                    <div class="space-y-3 text-base">
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                🛠️ Nama Jasa:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white" x-text="manualName || '-'">
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                💰 Harga:
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-white"
+                                x-text="'Rp ' + manualPrice.toLocaleString('id-ID')">
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                💵 Dibayar:
+                            </span>
+                            <span class="font-semibold text-blue-400" x-text="'Rp ' + manualPaid.toLocaleString('id-ID')">
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                🔄 Kembalian:
+                            </span>
+                            <span class="font-bold text-green-400"
+                                x-text="'Rp ' + manualChange().toLocaleString('id-ID')">
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Tombol --}}
+                    <div class="flex justify-end gap-3 mt-6 pt-4">
+                        <button @click="showManualConfirm = false"
+                            class="px-5 py-2.5 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium hover:bg-gray-400 dark:hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-times mr-1"></i> Batalkan
+                        </button>
+
+                        <button @click="confirmManualCheckout()"
+                            class="px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold shadow">
+                            <i class="fa-solid fa-check mr-1"></i> Konfirmasi
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+
             {{-- 🧾 Modal Konfirmasi Transaksi --}}
             <div x-show="showReview"
                 class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
@@ -1887,8 +2069,8 @@
                                                     alt="App Logo">
                                             </template>
                                             <template x-if="!app.logo">
-                                                <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24"
-                                                    fill="none">
+                                                <svg class="w-8 h-8 text-blue-600 dark:text-blue-400"
+                                                    viewBox="0 0 24 24" fill="none">
                                                     <rect x="3" y="3" width="18" height="18" rx="3"
                                                         stroke="currentColor" stroke-width="1.5" />
                                                 </svg>
@@ -1934,7 +2116,8 @@
                                     </svg>
                                     Kembali
                                 </button>
-                                <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                                <h3
+                                    class="font-semibold text-lg text-gray-800 dark:text-gray-100 flex items-center gap-2">
                                     <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24"
                                         fill="none">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -2140,7 +2323,6 @@
                 showDigitalReviewModal: false,
                 editingTotal: false,
                 showHistoryDigital: false,
-                apps: [],
                 selectedAppFilter: '',
                 digitalTransactions: [],
                 loadingDigitalTransactions: false,
@@ -2160,6 +2342,11 @@
                 searchQuery: '',
                 customerSearch: "",
                 isScanning: false,
+                manualName: '',
+                manualPrice: 0,
+                manualPriceDisplay: '',
+                manualPaid: 0,
+                showManualConfirm: false,
 
                 // ======== INIT UTAMA ========
                 async init() {
@@ -2401,6 +2588,39 @@
                     this.saveCart();
                 },
 
+                formatManualPrice(e) {
+                    // Ambil hanya angka
+                    let raw = e.target.value.replace(/\D/g, '');
+                    if (raw === '') raw = '0';
+
+                    // Simpan nilai numerik asli (untuk checkout)
+                    this.manualPrice = parseInt(raw);
+
+                    // Tampilkan format Rp modern
+                    this.manualPriceDisplay = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.manualPrice);
+                },
+
+                manualAddPayment(n) {
+                    this.manualPaid += n;
+                },
+
+                manualPayExact() {
+                    this.manualPaid = this.manualPrice; // harga jasa
+                },
+
+                manualHandleKey(b) {
+                    if (b === '⌫') {
+                        this.manualPaid = Math.floor(this.manualPaid / 10);
+                    } else {
+                        this.manualPaid = Number(String(this.manualPaid) + b);
+                    }
+                },
+
+                manualChange() {
+                    return this.manualPaid - this.manualPrice;
+                },
+
+
                 displayStock(product) {
                     const item = this.cart.find(i => i.id === product.id);
                     const qty = item ? item.qty : 0;
@@ -2503,6 +2723,7 @@
 
                         const payload = {
                             cart: this.cart.map(i => ({
+                                item_type: "product",
                                 id: i.id,
                                 qty: i.qty,
                                 price: i.price,
@@ -2576,6 +2797,87 @@
                     } catch (err) {
                         console.error("🔥 Error confirmCheckout:", err);
                         alert("Kesalahan saat memproses transaksi. Cek console untuk detail.");
+                    }
+                },
+
+                // ======== CHECKOUT MANUAL / SERVICE ========
+                async confirmManualCheckout() {
+                    try {
+                        if (!this.manualName || this.manualName.trim() === "") {
+                            alert("Nama layanan belum diisi.");
+                            return;
+                        }
+
+                        if (this.manualPrice <= 0) {
+                            alert("Harga layanan tidak valid.");
+                            return;
+                        }
+
+                        if (this.manualPaid < this.manualPrice) {
+                            alert("Pembayaran kurang.");
+                            return;
+                        }
+
+                        const payload = {
+                            cart: [{
+                                item_type: "service",
+                                manual_name: this.manualName,
+                                qty: 1,
+                                price: this.manualPrice,
+                                id: null,
+                                product_attribute_value_id: null
+                            }],
+                            subtotal: this.manualPrice,
+                            dibayar: this.manualPaid,
+                            kembalian: this.manualChange(),
+                            customer_id: this.selectedCustomer || null,
+                        };
+
+                        const res = await fetch("{{ route('pos.checkout') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
+                            },
+                            body: JSON.stringify(payload),
+                        });
+
+                        const result = await res.json();
+
+                        if (res.ok && result.success) {
+                            this.showManualConfirm = false;
+                            this.showSuccess = true;
+
+                            this.lastTransaction = {
+                                total: payload.subtotal,
+                                dibayar: payload.dibayar,
+                                kembalian: payload.kembalian,
+                            };
+
+                            // 🔄 Reset form manual
+                            this.manualName = "";
+                            this.manualPrice = 0;
+                            this.manualPriceDisplay = "";
+                            this.manualPaid = 0;
+
+                            // 🔥 Toast
+                            this.toastMsg = "Transaksi jasa berhasil!";
+                            this.showToast = true;
+                            setTimeout(() => (this.showToast = false), 3000);
+
+                        } else {
+                            if (result.errors) {
+                                const firstError = Object.values(result.errors)[0][0];
+                                alert(`Validasi gagal: ${firstError}`);
+                            } else {
+                                alert(result.message || "Gagal menyimpan transaksi.");
+                            }
+                        }
+
+                    } catch (err) {
+                        console.error("🔥 Error confirmManualCheckout:", err);
+                        alert("Kesalahan jaringan, coba lagi.");
                     }
                 },
 

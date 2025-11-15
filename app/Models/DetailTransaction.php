@@ -15,6 +15,8 @@ class DetailTransaction extends Model
     protected $fillable = [
         'transaction_id',
         'product_id',
+        'manual_name',
+        'item_type',      // product | service
         'qty',
         'harga_satuan',
         'subtotal',

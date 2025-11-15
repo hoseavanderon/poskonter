@@ -239,75 +239,99 @@ class PosController extends Controller
     {
         $data = $request->validate([
             'cart' => 'required|array',
-            'cart.*.id' => 'required|exists:products,id',
+
+            'cart.*.item_type' => 'required|string|in:product,service',
+            'cart.*.id' => 'nullable|exists:products,id',
+            'cart.*.manual_name' => 'nullable|string',
             'cart.*.qty' => 'required|numeric|min:1',
             'cart.*.price' => 'required|numeric|min:0',
             'cart.*.product_attribute_value_id' => 'nullable|exists:product_attribute_values,id',
+
             'subtotal' => 'required|numeric',
             'dibayar' => 'required|numeric',
             'kembalian' => 'required|numeric',
             'customer_id' => 'nullable|exists:customers,id',
         ]);
 
+        $outletId = Auth::user()->outlet_id ?? 1;
         $isHutang = !empty($data['customer_id']);
 
         // ===============================
-        // 💡 Generate nomor nota harian
+        // 1️⃣ Simpan transaksi dulu TANPA nomor nota
         // ===============================
-        $tanggal = now()->format('Ymd');
-        $outletId = Auth::user()->outlet_id ?? 1;
-
-        $todayCount = \App\Models\Transaction::withTrashed()
-            ->where('outlet_id', $outletId)
-            ->whereDate('created_at', today())
-            ->count() + 1;
-
-        // Format: TRX-<OutletID>-YYYYMMDD-XXX
-        $nomorNota = 'TRX-' . str_pad($outletId, 2, '0', STR_PAD_LEFT) . '-' .
-            $tanggal . '-' .
-            str_pad($todayCount, 3, '0', STR_PAD_LEFT);
-
-        // ===============================
-        // Simpan transaksi utama
-        // ===============================
-
         $transaction = \App\Models\Transaction::create([
             'subtotal' => $data['subtotal'],
             'dibayar' => $data['dibayar'],
             'kembalian' => $data['kembalian'],
-            'nomor_nota' => $nomorNota,
+
+            // nanti diupdate
+            'nomor_nota' => null,
+
             'outlet_id' => $outletId,
             'is_lunas' => $isHutang ? 0 : 1,
             'customer_id' => $data['customer_id'] ?? null,
             'paid_at' => $isHutang ? null : now(),
         ]);
+
         // ===============================
-        // Simpan detail transaksi & kurangi stok
+        // 2️⃣ Generate nomor nota pakai ID (100% unik)
+        // ===============================
+        $nomorNota = 'TRX-'
+            . str_pad($outletId, 2, '0', STR_PAD_LEFT)
+            . '-' . now()->format('Ymd')
+            . '-' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT);
+
+        // Update transaksi dengan nomor nota final
+        $transaction->update([
+            'nomor_nota' => $nomorNota,
+        ]);
+
+        // ===============================
+        // 3️⃣ Simpan detail transaksi
         // ===============================
         foreach ($data['cart'] as $item) {
+
+            if ($item['item_type'] === 'service') {
+
+                \App\Models\DetailTransaction::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id' => null,
+                    'manual_name' => $item['manual_name'],
+                    'item_type' => 'service',
+                    'qty' => $item['qty'],
+                    'harga_satuan' => $item['price'],
+                    'subtotal' => $item['price'] * $item['qty'],
+                ]);
+
+                continue;
+            }
+
+            // PRODUCT
             \App\Models\DetailTransaction::create([
                 'transaction_id' => $transaction->id,
                 'product_id' => $item['id'],
+                'manual_name' => null,
+                'item_type' => 'product',
                 'qty' => $item['qty'],
                 'harga_satuan' => $item['price'],
                 'subtotal' => $item['price'] * $item['qty'],
             ]);
 
+            // Kurangi stok
             $product = \App\Models\Product::find($item['id']);
 
-            // 🧩 Cek apakah produk punya varian (product_attribute_value_id)
             if (!empty($item['product_attribute_value_id'])) {
+
                 $variant = \App\Models\ProductAttributeValue::find($item['product_attribute_value_id']);
 
                 if ($variant) {
+
                     $stokAwal = $variant->stok;
                     $qtyKeluar = $item['qty'];
 
-                    // ✅ Kurangi stok varian
                     $variant->decrement('stok', $qtyKeluar);
                     $variant->update(['last_sale_date' => now()]);
 
-                    // ✅ Catat history stok keluar
                     \App\Models\InventoryHistory::create([
                         'product_id' => $product->id,
                         'product_attribute_value_id' => $variant->id,
@@ -316,31 +340,31 @@ class PosController extends Controller
                         'keterangan' => 'Penjualan tanggal ' . now()->translatedFormat('d F Y'),
                         'outlet_id' => $outletId,
                     ]);
-
-                    \Log::info('✅ Kurangi stok varian', [
-                        'variant_id' => $variant->id,
-                        'stok_awal' => $stokAwal,
-                        'qty_keluar' => $qtyKeluar,
-                        'stok_akhir' => $variant->fresh()->stok,
-                    ]);
                 } else {
-                    \Log::warning('⚠️ Varian tidak ditemukan', ['id' => $item['product_attribute_value_id']]);
+                    \Log::warning('⚠️ Varian tidak ditemukan', [
+                        'id' => $item['product_attribute_value_id']
+                    ]);
                 }
             } else {
-                // ⚠️ Jika tidak ada varian, log saja agar tahu
                 \Log::warning('Produk tanpa varian tidak dikurangi stok', [
-                    'product_id' => $item['id'],
+                    'product_id' => $product->id,
                     'product_name' => $product->name ?? '(Tanpa Nama)',
                 ]);
             }
         }
 
+        // ===============================
+        // Response
+        // ===============================
         return response()->json([
             'success' => true,
-            'message' => $isHutang ? 'Transaksi berhasil dicatat sebagai utang pelanggan.' : 'Transaksi tunai berhasil disimpan.',
+            'message' => $isHutang
+                ? 'Transaksi berhasil dicatat sebagai utang pelanggan.'
+                : 'Transaksi tunai berhasil disimpan.',
             'data' => $transaction,
         ]);
     }
+
 
     public function today()
     {
