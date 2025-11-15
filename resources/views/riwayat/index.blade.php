@@ -145,194 +145,157 @@
         <!-- MAIN GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-5">
 
-            <!-- LEFT SUMMARY -->
-            <div id="summaryBox" class="bg-gray-800 border border-gray-700 rounded-2xl p-5 text-sm text-gray-300 space-y-3">
+            <div id="summaryBox"
+                class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-6 text-[15px] text-[#D8DFEA] space-y-6 leading-normal">
 
-                <!-- JUDUL TANGGAL -->
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-base font-semibold text-gray-100">
-                        Rincian Transaksi
-                        <template x-if="isRangeActive">
-                            <span x-text="'Tanggal ' + formatRangeTanggal(fromDate, toDate)"></span>
-                        </template>
-                        <template x-if="!isRangeActive">
-                            <span
-                                x-text="'Tanggal ' + formatTanggal(selectedDate, selectedMonthNumber, selectedYear)"></span>
-                        </template>
-                        :
-                    </h2>
+                <!-- HEADER -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[12px] uppercase tracking-wider text-[#7A8292]">Transaction Summary</p>
 
-                    <!-- Tombol Copy -->
-                    <button @click="copySummary()"
-                        class="flex items-center gap-1 px-2 py-1 text-xs rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700 transition-all duration-300 relative overflow-hidden"
-                        :disabled="copied">
-                        <template x-if="!copied">
-                            <span class="flex items-center gap-1">
-                                📋 <span>Copy</span>
-                            </span>
-                        </template>
-                        <template x-if="copied">
-                            <span class="flex items-center gap-1 text-green-400 animate-pulse">
-                                ✅ <span>Copied!</span>
-                            </span>
-                        </template>
-                    </button>
-                </div>
-
-                <!-- BAGIAN ATAS: Barang + Digital App -->
-                <div class="space-y-1.5">
-                    <!-- BARANG -->
-                    <div class="flex justify-between items-center">
-                        <span>Barang :</span>
-                        <span class="font-medium text-blue-400" x-text="formatCurrency(barangTotal)">
-                        </span>
+                        <h2 class="text-[20px] font-semibold text-white mt-1">
+                            <template x-if="isRangeActive">
+                                <span x-text="formatRangeTanggal(fromDate, toDate)"></span>
+                            </template>
+                            <template x-if="!isRangeActive">
+                                <span x-text="formatTanggal(selectedDate, selectedMonthNumber, selectedYear)"></span>
+                            </template>
+                        </h2>
                     </div>
 
-                    <!-- DIGITAL APPS -->
+                    <button @click="copySummary()" class="p-1 transition" :disabled="copied">
+
+                        <!-- ICON -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            class="w-5 h-5 transition-all duration-300"
+                            :class="copied
+                                ?
+                                'text-green-400 drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] scale-110' :
+                                'text-[#A9B4C8] hover:opacity-80'">
+
+                            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M13 13H7a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2z" />
+
+                            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" d="M17 17H11a2 2 0 01-2-2v-6" />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+                <hr class="border-[#1E2532]">
+
+                <!-- BARANG + DIGITAL -->
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-[#9BA8BF]">Barang</span>
+                        <span class="font-semibold text-[#81ACFF]" x-text="formatCurrency(barangTotal)"></span>
+                    </div>
+
                     <template x-for="d in digitalPerApp" :key="d.name">
-                        <div class="flex justify-between items-center">
-                            <span x-text="d.name + ' :'"></span>
-                            <span class="font-medium text-blue-400" x-text="formatCurrency(d.total)"></span>
+                        <div class="flex justify-between">
+                            <span class="text-[#9BA8BF]" x-text="d.name"></span>
+                            <span class="font-semibold text-[#81ACFF]" x-text="formatCurrency(d.total)"></span>
                         </div>
                     </template>
                 </div>
 
-                <hr class="border-gray-700 my-2">
+                <hr class="border-[#1E2532]">
 
-                <!-- TOTAL SEBELUM UTANG -->
-                <div class="flex justify-between items-center mt-2">
-                    <span>Total Penjualan (Sebelum Utang)</span>
-                    <span class="font-medium" x-text="formatCurrency(totalPenjualanSebelumUtang)">
-                    </span>
+                <!-- SUBTOTAL -->
+                <div class="flex justify-between pt-1">
+                    <span class="text-[#A3AEC0]">Subtotal (Pre-Debt)</span>
+                    <span class="font-semibold text-white" x-text="formatCurrency(totalPenjualanSebelumUtang)"></span>
                 </div>
 
-                <!-- ⚡️UTANG -->
+                <!-- DEBT -->
                 <template x-if="utangList.length > 0">
-                    <div>
-                        <hr class="border-gray-700 my-2">
-                        <p class="font-semibold text-gray-200 mb-1">Utang :</p>
+                    <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
+                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">DEBT</p>
+
                         <template x-for="u in utangList" :key="u.name">
-                            <div class="flex justify-between items-center pl-2">
-                                <span x-text="u.name"></span>
-                                <span class="text-rose-400" x-text="'(' + formatCurrency(u.subtotal) + ')'"></span>
+                            <div class="flex justify-between">
+                                <span class="text-white" x-text="u.name"></span>
+                                <span class="text-[#FF6B6B] font-semibold"
+                                    x-text="'(' + formatCurrency(u.subtotal) + ')'"></span>
                             </div>
                         </template>
                     </div>
                 </template>
-                <!-- ⚡️UTANG SAMPAI SINI⚡️ -->
 
-                <!-- ⚡️ PEMBAYARAN UTANG (warna hijau) -->
+                <!-- PAYMENT -->
                 <template x-if="pembayaranUtang.length > 0">
-                    <div>
-                        <hr class="border-gray-700 my-2">
-                        <p class="font-semibold text-gray-200 mb-1">Pembayaran Utang :</p>
+                    <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
+                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">PAYMENT</p>
 
                         <template x-for="u in pembayaranUtang" :key="u.name">
-                            <div class="flex justify-between items-center pl-2">
-                                <span class="text-green-400 font-semibold" x-text="u.name"></span>
-                                <span class="text-green-400" x-text="formatCurrency(u.subtotal)"></span>
+                            <div class="flex justify-between">
+                                <span class="text-[#7CFF99]" x-text="u.name"></span>
+                                <span class="text-[#7CFF99] font-semibold" x-text="formatCurrency(u.subtotal)"></span>
                             </div>
                         </template>
                     </div>
                 </template>
 
-                <hr class="border-gray-700 my-2">
+                <!-- TOTAL SALES -->
+                <div class="bg-[#131B2C] rounded-xl px-4 py-3 flex justify-between font-semibold text-white">
+                    <span>Total Sales</span>
+                    <span x-text="formatCurrency(computedTotalPenjualan())"></span>
+                </div>
 
-                <!-- TOTAL SUMMARY -->
-                <div class="space-y-1">
+                <!-- TRANSFERS -->
+                <div>
+                    <p class="uppercase text-[12px] text-[#7A8292] font-semibold mb-2">Transfers</p>
 
-                    <!-- Total Penjualan Semua (Barang + Digital) -->
-                    <div class="flex justify-between font-semibold text-gray-200">
-                        <span>Total Penjualan</span>
-                        <span x-text="formatCurrency(computedTotalPenjualan())"></span>
-                    </div>
+                    <div class="space-y-2">
 
-                    <hr class="border-gray-700 my-2">
-
-                    <!-- PER-APP TRANSFER & TARIK -->
-                    <div class="mt-3 space-y-1">
-
-                        <!-- Brimo -->
-                        <template x-if="tfTarikByApp[5]?.tf > 0">
-                            <div class="flex justify-between">
-                                <span>Brimo TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[5].tf)" class="text-blue-400"></span>
-                            </div>
-                        </template>
-
-                        <template x-if="tfTarikByApp[5]?.tarik > 0">
-                            <div class="flex justify-between">
-                                <span class="text-red-400">Brimo Tarik :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[5].tarik)" class="text-red-400"></span>
-                            </div>
-                        </template>
-
-                        <!-- Seabank -->
-                        <template x-if="tfTarikByApp[6]?.tf > 0">
-                            <div class="flex justify-between">
-                                <span>Seabank TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[6].tf)" class="text-blue-400"></span>
-                            </div>
-                        </template>
-
-                        <!-- Brilink -->
                         <template x-if="tfTarikByApp[7]?.tf > 0">
                             <div class="flex justify-between">
-                                <span>Brilink TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[7].tf)" class="text-blue-400"></span>
+                                <span class="text-[#9BA8BF]">Brilink TF</span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[7].tf)"></span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[7]?.tarik > 0">
                             <div class="flex justify-between">
-                                <span class="text-red-400">Brilink Tarik :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[7].tarik)" class="text-red-400"></span>
+                                <span class="text-[#FF6B6B]">Brilink Tarik</span>
+                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[7].tarik)"></span>
                             </div>
                         </template>
 
-                        <!-- MyBCA -->
                         <template x-if="tfTarikByApp[9]?.tf > 0">
                             <div class="flex justify-between">
-                                <span>MyBCA TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[9].tf)" class="text-blue-400"></span>
+                                <span class="text-[#9BA8BF]">MyBCA TF</span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[9].tf)"></span>
                             </div>
                         </template>
 
-                        <template x-if="tfTarikByApp[9]?.tarik > 0">
-                            <div class="flex justify-between">
-                                <span class="text-red-400">MyBCA Tarik :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[9].tarik)" class="text-red-400"></span>
-                            </div>
-                        </template>
-
-                        <!-- SHP Pay -->
                         <template x-if="tfTarikByApp[10]?.tf > 0">
                             <div class="flex justify-between">
-                                <span>SHP Pay TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[10].tf)" class="text-blue-400"></span>
+                                <span class="text-[#9BA8BF]">SHP Pay TF</span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[10].tf)"></span>
                             </div>
                         </template>
 
-                        <!-- ShopeePay -->
                         <template x-if="tfTarikByApp[12]?.tf > 0">
                             <div class="flex justify-between">
-                                <span>ShopeePay TF :</span>
-                                <span x-text="formatCurrency(tfTarikByApp[12].tf)" class="text-blue-400"></span>
+                                <span class="text-[#9BA8BF]">ShopeePay TF</span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[12].tf)"></span>
                             </div>
                         </template>
 
                     </div>
-
-                    <hr class="border-gray-700 my-3">
-
-                    @if (Auth::user()->outlet_id == 3)
-                        <div class="flex justify-between font-semibold text-blue-400 text-lg">
-                            <span>Grand Total</span>
-                            <span x-text="formatCurrency(computedGrandTotal())"></span>
-                        </div>
-                    @endif
-
                 </div>
+
+                @if (Auth::user()->outlet_id == 3)
+                    <div class="flex justify-between items-center font-semibold text-white text-lg mt-4">
+                        <span>Grand Total</span>
+                        <span x-text="formatCurrency(computedGrandTotal())"></span>
+                    </div>
+                @endif
+
             </div>
 
             <!-- RIGHT SIDE -->

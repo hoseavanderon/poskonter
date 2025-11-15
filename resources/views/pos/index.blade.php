@@ -1101,32 +1101,50 @@
                                                         Rincian Transaksi
                                                     </h4>
 
-                                                    {{-- 🧾 Pelanggan --}}
                                                     <div class="mb-4">
                                                         <h2 class="text-lg font-semibold mb-3">Pelanggan :</h2>
 
-                                                        <!-- Input search -->
-                                                        <input type="text" x-model="customerSearch"
-                                                            placeholder="Cari nama pelanggan..."
-                                                            class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                                        <!-- Jika belum memilih customer, tampilkan input search -->
+                                                        <template x-if="!selectedCustomer">
+                                                            <div>
+                                                                <input type="text" x-model="customerSearch"
+                                                                    placeholder="Cari nama pelanggan..."
+                                                                    class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 mb-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
 
-                                                        <!-- Dropdown hasil pencarian -->
-                                                        <div class="relative">
-                                                            <div class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
-                                                                x-show="filteredCustomers.length > 0">
+                                                                <!-- Dropdown pencarian -->
+                                                                <div class="relative"
+                                                                    x-show="customerSearch.length > 0 && filteredCustomers.length > 0">
+                                                                    <div
+                                                                        class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 absolute w-full z-20">
 
-                                                                <template x-for="cust in filteredCustomers"
-                                                                    :key="cust.id">
-                                                                    <div class="px-3 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-700/40"
-                                                                        @click="
-                        selectedCustomer = cust.id;
-                        customerSearch = cust.name;
-                    "
-                                                                        x-text="cust.name">
+                                                                        <template x-for="cust in filteredCustomers"
+                                                                            :key="cust.id">
+                                                                            <div class="px-3 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-700/40"
+                                                                                @click="
+                                selectedCustomer = cust.id;
+                                customerSearch = cust.name;
+                            "
+                                                                                x-text="cust.name">
+                                                                            </div>
+                                                                        </template>
                                                                     </div>
-                                                                </template>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </template>
+
+                                                        <!-- Jika sudah memilih customer -->
+                                                        <template x-if="selectedCustomer">
+                                                            <div>
+                                                                <input type="text" x-model="customerSearch"
+                                                                    class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm mb-2"
+                                                                    readonly>
+
+                                                                <button class="text-xs text-red-400 underline"
+                                                                    @click="selectedCustomer = null; customerSearch = ''">
+                                                                    Ganti pelanggan
+                                                                </button>
+                                                            </div>
+                                                        </template>
 
                                                         <!-- Info utang -->
                                                         <template x-if="selectedCustomer">
