@@ -18,8 +18,8 @@ class CustomerController extends Controller
         $customers = Customer::with(['attributes' => function ($q) {
             $q->select('id', 'customer_id', 'attribute_value', 'attribute_notes');
         }])
-        ->where('outlet_id', $outlet->id)
-        ->get();
+            ->where('outlet_id', $outlet->id)
+            ->get();
 
         /**
          * Ambil utang dari transaksi fisik
@@ -84,19 +84,6 @@ class CustomerController extends Controller
         // ✅ Tandai transaksi lunas
         $debt->update([
             'paid_at' => now(),
-            'customer_id' => null,
-        ]);
-
-        // 🧾 Catat ke pembukuan (cashbook)
-        \App\Models\Cashbook::create([
-            'deskripsi' => $customer
-                ? "{$customer->name} membayar utang sebanyak Rp " . number_format($nominal, 0, ',', '.')
-                : "Pelunasan utang tanpa nama pelanggan",
-            'type' => 'IN',
-            'nominal' => $nominal,
-            'outlet_id' => Auth::user()->outlet_id,
-            'cashbook_category_id' => 4,
-            'cashbook_wallet_id' => 1,
         ]);
 
         return response()->json(['success' => true]);

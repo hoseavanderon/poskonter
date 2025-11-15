@@ -146,7 +146,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-5">
 
             <!-- LEFT SUMMARY -->
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5 text-sm text-gray-300 space-y-3">
+            <div id="summaryBox" class="bg-gray-800 border border-gray-700 rounded-2xl p-5 text-sm text-gray-300 space-y-3">
 
                 <!-- JUDUL TANGGAL -->
                 <div class="flex justify-between items-center mb-2">
@@ -184,7 +184,8 @@
                     <!-- BARANG -->
                     <div class="flex justify-between items-center">
                         <span>Barang :</span>
-                        <span class="font-medium text-blue-400" x-text="formatCurrency(barangTotal)"></span>
+                        <span class="font-medium text-blue-400" x-text="formatCurrency(barangTotal)">
+                        </span>
                     </div>
 
                     <!-- DIGITAL APPS -->
@@ -196,7 +197,16 @@
                     </template>
                 </div>
 
-                <!-- ⚡️UTANG DITEMPATKAN DI SINI⚡️ -->
+                <hr class="border-gray-700 my-2">
+
+                <!-- TOTAL SEBELUM UTANG -->
+                <div class="flex justify-between items-center mt-2">
+                    <span>Total Penjualan (Sebelum Utang)</span>
+                    <span class="font-medium" x-text="formatCurrency(totalPenjualanSebelumUtang)">
+                    </span>
+                </div>
+
+                <!-- ⚡️UTANG -->
                 <template x-if="utangList.length > 0">
                     <div>
                         <hr class="border-gray-700 my-2">
@@ -211,6 +221,21 @@
                 </template>
                 <!-- ⚡️UTANG SAMPAI SINI⚡️ -->
 
+                <!-- ⚡️ PEMBAYARAN UTANG (warna hijau) -->
+                <template x-if="pembayaranUtang.length > 0">
+                    <div>
+                        <hr class="border-gray-700 my-2">
+                        <p class="font-semibold text-gray-200 mb-1">Pembayaran Utang :</p>
+
+                        <template x-for="u in pembayaranUtang" :key="u.name">
+                            <div class="flex justify-between items-center pl-2">
+                                <span class="text-green-400 font-semibold" x-text="u.name"></span>
+                                <span class="text-green-400" x-text="formatCurrency(u.subtotal)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
                 <hr class="border-gray-700 my-2">
 
                 <!-- TOTAL SUMMARY -->
@@ -219,32 +244,94 @@
                     <!-- Total Penjualan Semua (Barang + Digital) -->
                     <div class="flex justify-between font-semibold text-gray-200">
                         <span>Total Penjualan</span>
-                        <span x-text="formatCurrency(totalPenjualan)"></span>
-                    </div>
-
-                    <!-- Grand Total (setelah dikurangi utang) -->
-                    <div class="flex justify-between font-semibold text-blue-400">
-                        <span>Grand Total</span>
-                        <span x-text="formatCurrency(grandTotal)"></span>
+                        <span x-text="formatCurrency(computedTotalPenjualan())"></span>
                     </div>
 
                     <hr class="border-gray-700 my-2">
 
-                    <!-- TOTAL TRANSFER -->
-                    <template x-if="totalTransfer > 0">
-                        <div class="pt-3 flex justify-between">
-                            <span>Total Transfer :</span>
-                            <span class="font-medium text-blue-400" x-text="formatCurrency(totalTransfer)"></span>
-                        </div>
-                    </template>
+                    <!-- PER-APP TRANSFER & TARIK -->
+                    <div class="mt-3 space-y-1">
 
-                    <!-- TOTAL TARIK -->
-                    <template x-if="totalTarik > 0">
-                        <div class="pt-1 flex justify-between">
-                            <span class="text-red-500">Total Tarik :</span>
-                            <span class="font-medium text-red-500" x-text="formatCurrency(totalTarik)"></span>
+                        <!-- Brimo -->
+                        <template x-if="tfTarikByApp[5]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>Brimo TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[5].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                        <template x-if="tfTarikByApp[5]?.tarik > 0">
+                            <div class="flex justify-between">
+                                <span class="text-red-400">Brimo Tarik :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[5].tarik)" class="text-red-400"></span>
+                            </div>
+                        </template>
+
+                        <!-- Seabank -->
+                        <template x-if="tfTarikByApp[6]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>Seabank TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[6].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                        <!-- Brilink -->
+                        <template x-if="tfTarikByApp[7]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>Brilink TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[7].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                        <template x-if="tfTarikByApp[7]?.tarik > 0">
+                            <div class="flex justify-between">
+                                <span class="text-red-400">Brilink Tarik :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[7].tarik)" class="text-red-400"></span>
+                            </div>
+                        </template>
+
+                        <!-- MyBCA -->
+                        <template x-if="tfTarikByApp[9]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>MyBCA TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[9].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                        <template x-if="tfTarikByApp[9]?.tarik > 0">
+                            <div class="flex justify-between">
+                                <span class="text-red-400">MyBCA Tarik :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[9].tarik)" class="text-red-400"></span>
+                            </div>
+                        </template>
+
+                        <!-- SHP Pay -->
+                        <template x-if="tfTarikByApp[10]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>SHP Pay TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[10].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                        <!-- ShopeePay -->
+                        <template x-if="tfTarikByApp[12]?.tf > 0">
+                            <div class="flex justify-between">
+                                <span>ShopeePay TF :</span>
+                                <span x-text="formatCurrency(tfTarikByApp[12].tf)" class="text-blue-400"></span>
+                            </div>
+                        </template>
+
+                    </div>
+
+                    <hr class="border-gray-700 my-3">
+
+                    @if (Auth::user()->outlet_id == 3)
+                        <div class="flex justify-between font-semibold text-blue-400 text-lg">
+                            <span>Grand Total</span>
+                            <span x-text="formatCurrency(computedGrandTotal())"></span>
                         </div>
-                    </template>
+                    @endif
+
                 </div>
             </div>
 
@@ -433,12 +520,15 @@
                 digitalPerApp: @json($defaultData['digitalPerApp'] ?? []),
                 totalTarik: @json($defaultData['totalTarik'] ?? 0),
                 utangList: @json($defaultData['utangList'] ?? []),
+                pembayaranUtang: @json($defaultData['pembayaranUtang'] ?? []),
+                totalPembayaranUtang: @json($defaultData['totalPembayaranUtang'] ?? 0),
                 totalTransfer: @json($defaultData['totalTransfer'] ?? 0),
                 productTransactions: @json($defaultData['productTransactions'] ?? []),
                 groupedDigitalTransactions: @json($defaultData['digitalTransactions'] ?? []),
                 copied: false,
-
+                tfTarikByApp: @json($defaultData['tfTarikByApp'] ?? []),
                 isRangeActive: false,
+                outletId: {{ Auth::user()->outlet_id }},
 
                 get totalPenjualan() {
                     // Hitung total barang + semua digital apps
@@ -447,7 +537,15 @@
                 },
 
                 get grandTotal() {
-                    // Total - semua utang
+                    const outletId = {{ Auth::user()->outlet_id }};
+
+                    if (outletId == 3) {
+                        return Number(this.totalPenjualan || 0) +
+                            this.totalTransferFix -
+                            this.totalTarikFix;
+                    }
+
+                    // Outlet lain → rumus lama
                     const totalUtang = this.utangList.reduce((sum, u) => sum + Number(u.subtotal || 0), 0);
                     return this.totalPenjualan - totalUtang;
                 },
@@ -536,6 +634,7 @@
 
                 async fetchData() {
                     this.isRangeActive = false;
+
                     const monthNum = this.selectedMonthNumber;
                     const day = String(this.selectedDate).padStart(2, '0');
                     const date = `${this.selectedYear}-${monthNum}-${day}`;
@@ -546,86 +645,135 @@
 
                         if (data.empty) {
                             this.emptyData = true;
+
                             this.categories = [];
                             this.productTransactions = [];
                             this.digitalTransactions = [];
+                            this.groupedDigitalTransactions = [];
+
                             this.total = 0;
                             this.extra = 0;
                             this.barangTotal = 0;
+
                             this.digitalPerApp = [];
                             this.totalTransfer = 0;
                             this.totalTarik = 0;
+
                             this.utangList = [];
-                            this.groupedDigitalTransactions = [];
+                            this.pembayaranUtang = [];
+                            this.totalPembayaranUtang = 0;
+
+                            this.tfTarikByApp = {};
                         } else {
                             this.emptyData = false;
+
                             this.categories = data.categories;
+
                             this.productTransactions = data.productTransactions.map(t => ({
                                 ...t,
                                 open: false
                             }));
+
                             this.digitalTransactions = data.digitalTransactions || [];
+                            this.groupedDigitalTransactions = data.digitalTransactions || [];
+
                             this.total = data.total;
                             this.extra = data.extra;
                             this.barangTotal = data.barangTotal;
-                            this.digitalPerApp = data.digitalPerApp;
-                            this.totalTransfer = data.totalTransfer;
-                            this.totalTarik = data.totalTarik;
-                            this.utangList = data.utangList;
-                            this.groupedDigitalTransactions = data.digitalTransactions;
+
+                            this.digitalPerApp = data.digitalPerApp || [];
+
+                            this.totalTransfer = data.totalTransfer || 0;
+                            this.totalTarik = data.totalTarik || 0;
+
+                            this.utangList = data.utangList || [];
+                            this.tfTarikByApp = data.tfTarikByApp || {};
+
+                            // 🔥 WAJIB
+                            this.pembayaranUtang = data.pembayaranUtang || [];
+                            this.totalPembayaranUtang = data.totalPembayaranUtang || 0;
                         }
+
                     } catch (error) {
                         console.error("⚠️ Gagal memuat data transaksi:", error);
+
                         this.emptyData = true;
+
                         this.categories = [];
                         this.productTransactions = [];
                         this.digitalTransactions = [];
+                        this.groupedDigitalTransactions = [];
+
                         this.total = 0;
                         this.extra = 0;
                         this.barangTotal = 0;
+
                         this.digitalPerApp = [];
                         this.totalTransfer = 0;
                         this.totalTarik = 0;
+
                         this.utangList = [];
+                        this.pembayaranUtang = [];
+                        this.totalPembayaranUtang = 0;
+
+                        this.tfTarikByApp = {};
                     }
                 },
 
                 async fetchDataRange() {
                     if (!this.fromDate || !this.toDate) return;
-                    this.isRangeActive = true; // <--- Tambahkan ini
+                    this.isRangeActive = true;
+
                     try {
                         const res = await fetch(`/riwayat/data-range?from=${this.fromDate}&to=${this.toDate}`);
                         const data = await res.json();
 
                         if (data.empty) {
                             this.emptyData = true;
+
                             this.categories = [];
                             this.productTransactions = [];
                             this.digitalTransactions = [];
+                            this.groupedDigitalTransactions = [];
+
                             this.total = 0;
                             this.extra = 0;
                             this.barangTotal = 0;
+
                             this.digitalPerApp = [];
                             this.totalTransfer = 0;
                             this.totalTarik = 0;
+
                             this.utangList = [];
-                            this.groupedDigitalTransactions = [];
+                            this.pembayaranUtang = [];
+                            this.totalPembayaranUtang = 0;
                         } else {
                             this.emptyData = false;
+
                             this.categories = data.categories;
+
                             this.productTransactions = (data.productTransactions || []).map(t => ({
                                 ...t,
                                 open: false
                             }));
+
                             this.digitalTransactions = data.digitalTransactions || [];
+                            this.groupedDigitalTransactions = data.digitalTransactions || [];
+
                             this.total = data.total || 0;
                             this.extra = data.extra || 0;
                             this.barangTotal = data.barangTotal || 0;
+
                             this.digitalPerApp = data.digitalPerApp || [];
+
                             this.totalTransfer = data.totalTransfer || 0;
                             this.totalTarik = data.totalTarik || 0;
+
                             this.utangList = data.utangList || [];
-                            this.groupedDigitalTransactions = data.digitalTransactions || [];
+
+                            // 🔥 WAJIB
+                            this.pembayaranUtang = data.pembayaranUtang || [];
+                            this.totalPembayaranUtang = data.totalPembayaranUtang || 0;
                         }
 
                         this.rangeDisplay = this.formatRangeTanggal(this.fromDate, this.toDate);
@@ -643,6 +791,7 @@
                                 });
                             }
                         });
+
                     } catch (err) {
                         console.error("Gagal memuat data rentang tanggal:", err);
                     }
@@ -655,69 +804,158 @@
 
                 async copySummary() {
                     try {
-                        // 📅 Format tanggal (range atau satuan)
                         const tanggal = this.isRangeActive ?
                             this.formatRangeTanggal(this.fromDate, this.toDate) :
                             this.formatTanggal(this.selectedDate, this.selectedMonthNumber, this.selectedYear);
 
                         let lines = [];
-                        lines.push(`${tanggal}`);
+                        lines.push(`Rincian Transaksi ${tanggal}`);
                         lines.push('');
 
-                        // 🧩 TOTAL BARANG
+                        // ============================
+                        // BARANG + DIGITAL
+                        // ============================
                         lines.push(`Barang : ${this.formatCurrency(this.barangTotal)}`);
 
-                        // 🧩 DIGITAL PER APP
-                        let totalDigital = 0;
-                        if (this.digitalPerApp.length > 0) {
-                            this.digitalPerApp.forEach(app => {
-                                totalDigital += Number(app.total || 0);
-                                lines.push(`${app.name} : ${this.formatCurrency(app.total)}`);
-                            });
-                            lines.push('');
-                        }
+                        this.digitalPerApp.forEach(d => {
+                            lines.push(`${d.name} : ${this.formatCurrency(d.total)}`);
+                        });
 
-                        // 🧩 TOTAL SEMUA PRODUK = Barang + Digital
-                        const totalProduk = Number(this.barangTotal || 0) + totalDigital;
-                        lines.push(`= ${this.formatCurrency(totalProduk)}`);
                         lines.push('');
 
-                        // 🧩 UTANG
+                        // ============================
+                        // TOTAL SEBELUM UTANG
+                        // ============================
+                        lines.push(
+                            `Total Penjualan (Sebelum Utang) : ${this.formatCurrency(this.totalPenjualanSebelumUtang)}`
+                        );
+                        lines.push('');
+
+                        // ============================
+                        // UTANG
+                        // ============================
                         if (this.utangList.length > 0) {
                             lines.push('Utang :');
                             this.utangList.forEach(u => {
-                                const nominal = Math.abs(Number(u.subtotal || 0));
-                                lines.push(`${u.name} (Rp ${nominal.toLocaleString('id-ID')})`);
+                                lines.push(`- ${u.name} (${this.formatCurrency(u.subtotal)})`);
                             });
                             lines.push('');
                         }
 
-                        // 🧩 BAYAR HUTANG
-                        lines.push('Bayar Hutang  :');
+                        // ============================
+                        // PEMBAYARAN UTANG (BARU)
+                        // ============================
+                        if (this.pembayaranUtang.length > 0) {
+                            lines.push('Pembayaran Utang :');
+                            this.pembayaranUtang.forEach(u => {
+                                lines.push(`+ ${u.name} (${this.formatCurrency(u.subtotal)})`);
+                            });
+                            lines.push('');
+                        }
+
+                        // ============================
+                        // TOTAL SESUDAH UTANG
+                        // ============================
+                        lines.push(
+                            `Total Penjualan : ${this.formatCurrency(this.computedTotalPenjualan())}`
+                        );
                         lines.push('');
 
-                        // 🧩 TOTAL RINCIAN
-                        // (Total & Grand Total pakai totalProduk + extra)
-                        lines.push(`Total => ${this.formatCurrency(totalProduk)}`);
-                        lines.push(`Lebih => ${this.formatCurrency(this.extra)}`);
-                        lines.push(`Total => ${this.formatCurrency(totalProduk + Number(this.extra || 0))}`);
+                        // ============================
+                        // TF & TARIK per APP
+                        // ============================
+                        const APP_LABELS = {
+                            5: "Brimo",
+                            6: "Seabank",
+                            7: "Brilink",
+                            9: "MyBCA",
+                            10: "SHP Pay",
+                            12: "ShopeePay"
+                        };
+
+                        let totalTF = 0;
+                        let totalTarik = 0;
+
+                        Object.keys(APP_LABELS).forEach(appId => {
+                            const item = this.tfTarikByApp[appId];
+                            if (!item) return;
+
+                            const name = APP_LABELS[appId];
+
+                            if (item.tf > 0) {
+                                lines.push(`${name} TF : ${this.formatCurrency(item.tf)}`);
+                                totalTF += Number(item.tf);
+                            }
+
+                            if (item.tarik > 0) {
+                                lines.push(`${name} Tarik : ${this.formatCurrency(item.tarik)}`);
+                                totalTarik += Number(item.tarik);
+                            }
+                        });
+
                         lines.push('');
 
-                        // 🧩 BAGIAN BOLD (format WhatsApp-friendly)
-                        lines.push(`*TOTAL NARIK : ${this.formatCurrency(this.totalTarik)}*`);
-                        lines.push(`*TOTAL TF : ${this.formatCurrency(this.totalTransfer)}*`);
+                        // ============================
+                        // GRAND TOTAL (OUTLET 3)
+                        // ============================
+                        if (this.outletId == 3) {
+                            lines.push(
+                                `Grand Total : ${this.formatCurrency(this.computedGrandTotal())}`
+                            );
+                        }
 
-                        // 🧾 SALIN KE CLIPBOARD
-                        const textToCopy = lines.join('\n');
-                        await navigator.clipboard.writeText(textToCopy);
+                        // ============================
+                        // TOTAL TF/TARIK (OUTLET BUKAN 3)
+                        // ============================
+                        if (this.outletId != 3) {
+                            lines.push(`TOTAL TF : ${this.formatCurrency(totalTF)}`);
+                            lines.push(`TOTAL TARIK : ${this.formatCurrency(totalTarik)}`);
+                        }
 
-                        // 🔄 Animasi copied
+                        await navigator.clipboard.writeText(lines.join('\n'));
+
                         this.copied = true;
-                        setTimeout(() => this.copied = false, 2000);
+                        setTimeout(() => (this.copied = false), 2000);
+
                     } catch (err) {
-                        console.error('❌ Gagal menyalin teks:', err);
-                        alert('Gagal menyalin teks ke clipboard.');
+                        console.error('❌ Copy gagal:', err);
                     }
+                },
+
+                computedTotalPenjualan() {
+                    const barang = Number(this.barangTotal || 0);
+                    const digital = this.digitalPerApp.reduce((s, d) => s + Number(d.total || 0), 0);
+
+                    // ini FIXED
+                    const utang = this.utangList.reduce((s, d) => s + Number(d.subtotal || 0), 0);
+
+                    const bayarUtang = Number(this.totalPembayaranUtang || 0);
+
+                    return (barang + digital) - utang + bayarUtang;
+                },
+
+                computedGrandTotal() {
+                    if (this.outletId !== 3) return 0;
+
+                    const totalPenjualan = this.computedTotalPenjualan();
+                    const totalTF = this.totalTransferFix;
+                    const totalTarik = this.totalTarikFix;
+
+                    return totalPenjualan + totalTF - totalTarik;
+                },
+
+                get totalPenjualanSebelumUtang() {
+                    const barang = Number(this.barangTotal || 0);
+                    const digital = this.digitalPerApp.reduce((s, d) => s + Number(d.total || 0), 0);
+                    return barang + digital;
+                },
+
+                get totalTransferFix() {
+                    return Object.values(this.tfTarikByApp || {}).reduce((sum, a) => sum + (a.tf || 0), 0);
+                },
+
+                get totalTarikFix() {
+                    return Object.values(this.tfTarikByApp || {}).reduce((sum, a) => sum + (a.tarik || 0), 0);
                 },
 
                 init() {

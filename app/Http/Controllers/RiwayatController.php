@@ -71,6 +71,25 @@ class RiwayatController extends Controller
     {
         $outletId = Auth::user()->outlet_id;
 
+        $transferProducts = [
+            112,
+            114,
+            115,
+            119,
+            123,
+            124,
+            125,
+            127,
+            128,
+            129
+        ];
+
+        $tarikProducts = [
+            113,
+            116,
+            120
+        ];
+
         // --- CATEGORY SUMMARY
         $categorySummary = DB::table('detail_transaction')
             ->join('products', 'products.id', '=', 'detail_transaction.product_id')
@@ -167,8 +186,6 @@ class RiwayatController extends Controller
             })
             ->values();
 
-
-
         // --- TOTALS
         $barangTotal = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
@@ -181,24 +198,32 @@ class RiwayatController extends Controller
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereDate('digital_transactions.created_at', $tanggal)
-            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
+            ->whereNotIn('digital_transactions.digital_product_id', array_merge($transferProducts, $tarikProducts))
             ->whereNull('digital_transactions.deleted_at')
             ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
             ->groupBy('apps.name')
             ->orderByDesc('total')
             ->get();
 
-        $totalTarik = DB::table('digital_transactions')
+        $tfTarikByApp = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->whereIn('digital_product_id', [113, 116]) // ← gunakan whereIn untuk banyak ID
+            ->whereNull('digital_transactions.deleted_at')
             ->whereDate('digital_transactions.created_at', $tanggal)
-            ->sum('subtotal');
-
-        $totalTransfer = DB::table('digital_transactions')
-            ->where('digital_transactions.outlet_id', $outletId)
-            ->whereIn('digital_product_id', [112, 114, 115]) // ← ambil semua ID Transfer Bank
-            ->whereDate('digital_transactions.created_at', $tanggal)
-            ->sum('subtotal');
+            ->select(
+                'app_id',
+                DB::raw("SUM(CASE WHEN digital_product_id IN (" . implode(",", $transferProducts) . ") THEN subtotal ELSE 0 END) as total_tf"),
+                DB::raw("SUM(CASE WHEN digital_product_id IN (" . implode(",", $tarikProducts) . ") THEN subtotal ELSE 0 END) as total_tarik")
+            )
+            ->groupBy('app_id')
+            ->get()
+            ->mapWithKeys(function ($row) {
+                return [
+                    $row->app_id => [
+                        'tf' => (int) $row->total_tf,
+                        'tarik' => (int) $row->total_tarik,
+                    ]
+                ];
+            });
 
         // --- UTANG
         $utangFisik = DB::table('transactions')
@@ -216,6 +241,7 @@ class RiwayatController extends Controller
             ->whereDate('digital_transactions.created_at', $tanggal)
             ->whereNotNull('digital_transactions.customer_id')
             ->whereNull('digital_transactions.paid_at')
+            ->whereNull('digital_transactions.deleted_at')
             ->select('customers.name', 'digital_transactions.subtotal')
             ->get();
 
@@ -227,6 +253,27 @@ class RiwayatController extends Controller
                     'subtotal' => $items->sum('subtotal'),
                 ];
             })
+            ->values();
+
+        // --- PEMBAYARAN UTANG — ambil dari paid_at
+        $pembayaranUtangFisik = DB::table('transactions')
+            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->where('transactions.outlet_id', $outletId)
+            ->whereNotNull('transactions.paid_at')
+            ->whereDate('transactions.paid_at', $tanggal)
+            ->select('customers.name', 'transactions.subtotal')
+            ->get();
+
+        $pembayaranUtangDigital = DB::table('digital_transactions')
+            ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereNotNull('digital_transactions.paid_at')
+            ->whereDate('digital_transactions.paid_at', $tanggal)
+            ->select('customers.name', 'digital_transactions.subtotal')
+            ->get();
+
+        $pembayaranUtang = $pembayaranUtangFisik
+            ->merge($pembayaranUtangDigital)
             ->values();
 
         // --- TOTAL AKHIR
@@ -249,12 +296,15 @@ class RiwayatController extends Controller
             'digitalTransactions' => $digitalTransactions,
             'total' => $total,
             'extra' => $extra,
-            'barangTotal' => $totalProduk,
+            'barangTotal' => $barangTotal,
             'digitalPerApp' => $digitalPerApp,
-            'totalTransfer' => $totalTransfer,
-            'totalTarik' => $totalTarik,
             'utangList' => $utangList,
             'empty' => $empty,
+            'tfTarikByApp' => $tfTarikByApp,
+            'totalTransfer' => collect($tfTarikByApp)->sum('tf'),
+            'totalTarik'    => collect($tfTarikByApp)->sum('tarik'),
+            'pembayaranUtang' => $pembayaranUtang,
+            'totalPembayaranUtang' => $pembayaranUtang->sum('subtotal'),
         ];
     }
 
@@ -272,9 +322,14 @@ class RiwayatController extends Controller
     {
         $outletId = Auth::user()->outlet_id;
         $from = Carbon::parse($from)->startOfDay();
-        $to = Carbon::parse($to)->endOfDay();
+        $to   = Carbon::parse($to)->endOfDay();
 
-        // --- CATEGORY SUMMARY
+        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129];
+        $tarikProducts    = [113, 116, 120];
+
+        /**
+         * ========== CATEGORY SUMMARY ==========
+         */
         $categorySummary = DB::table('detail_transaction')
             ->join('products', 'products.id', '=', 'detail_transaction.product_id')
             ->join('categories', 'categories.id', '=', 'products.category_id')
@@ -287,7 +342,9 @@ class RiwayatController extends Controller
             ->orderBy('categories.name')
             ->get();
 
-        // --- PRODUCT TRANSACTIONS
+        /**
+         * ========== PRODUCT TRANSACTIONS ==========
+         */
         $productTransactions = DB::table('transactions')
             ->where('transactions.outlet_id', $outletId)
             ->leftJoin('detail_transaction', 'detail_transaction.transaction_id', '=', 'transactions.id')
@@ -306,8 +363,8 @@ class RiwayatController extends Controller
             ->orderByDesc('transactions.created_at')
             ->get()
             ->map(function ($t) {
-                $names = explode('||', $t->product_names ?? '');
-                $qtys = explode('||', $t->product_qtys ?? '');
+                $names   = explode('||', $t->product_names ?? '');
+                $qtys    = explode('||', $t->product_qtys ?? '');
                 $amounts = explode('||', $t->product_amounts ?? '');
 
                 $details = [];
@@ -315,7 +372,7 @@ class RiwayatController extends Controller
                     if (!$name) continue;
                     $details[] = [
                         'name' => $name,
-                        'qty' => $qtys[$i] ?? 0,
+                        'qty'  => $qtys[$i] ?? 0,
                         'amount' => $amounts[$i] ?? 0,
                     ];
                 }
@@ -329,18 +386,20 @@ class RiwayatController extends Controller
             })
             ->values();
 
-        // --- DIGITAL TRANSACTIONS
+        /**
+         * ========== DIGITAL TRANSACTIONS GROUPED ==========
+         */
         $digitalTransactions = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
             ->join('digital_products', 'digital_products.id', '=', 'digital_transactions.digital_product_id')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
-            ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->whereNull('digital_transactions.deleted_at')
+            ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->select([
-                'apps.id as app_id', // 🆕 tambahkan app_id
+                'apps.id as app_id',
                 'apps.name as app_name',
                 'digital_products.name as product_name',
-                'digital_products.digital_category_id', // 🆕 tambahkan kategori digital
+                'digital_products.digital_category_id',
                 'digital_transactions.nominal as qty',
                 'digital_transactions.subtotal as amount',
                 DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime"),
@@ -350,19 +409,17 @@ class RiwayatController extends Controller
             ->get()
             ->groupBy('app_name')
             ->map(function ($transactions, $appName) {
-                // ambil app_id dari salah satu transaksi (semua dalam grup punya app_id sama)
                 $appId = $transactions->first()->app_id ?? null;
-
                 return [
                     'name' => $appName,
-                    'app_id' => $appId, // 🆕 kirim ke frontend
+                    'app_id' => $appId,
                     'transactions' => $transactions->map(function ($t) {
                         return [
                             'name' => $t->product_name,
                             'qty' => $t->qty,
                             'amount' => $t->amount,
                             'datetime' => $t->datetime,
-                            'category_id' => $t->digital_category_id, // 🆕 kirim kategori ke frontend
+                            'category_id' => $t->digital_category_id,
                         ];
                     })->values(),
                     'total' => $transactions->sum('amount'),
@@ -370,8 +427,9 @@ class RiwayatController extends Controller
             })
             ->values();
 
-
-        // --- TOTALS
+        /**
+         * ========== TOTAL BARANG ==========
+         */
         $barangTotal = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->where('transactions.outlet_id', $outletId)
@@ -379,30 +437,46 @@ class RiwayatController extends Controller
             ->whereBetween('transactions.created_at', [$from, $to])
             ->sum('detail_transaction.subtotal');
 
+        /**
+         * ========== DIGITAL TOTAL PER APP ==========
+         */
         $digitalPerApp = DB::table('digital_transactions')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereBetween('digital_transactions.created_at', [$from, $to])
-            ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
+            ->whereNotIn('digital_transactions.digital_product_id', array_merge($transferProducts, $tarikProducts))
             ->whereNull('digital_transactions.deleted_at')
             ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
             ->groupBy('apps.name')
             ->orderByDesc('total')
             ->get();
 
-        $totalTarik = DB::table('digital_transactions')
+        /**
+         * ========== TF & TARIK PER APP ==========
+         */
+        $tfTarikByApp = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
-            ->whereIn('digital_product_id', [113, 116])
+            ->whereNull('digital_transactions.deleted_at')
             ->whereBetween('digital_transactions.created_at', [$from, $to])
-            ->sum('subtotal');
+            ->select(
+                'app_id',
+                DB::raw("SUM(CASE WHEN digital_product_id IN (" . implode(",", $transferProducts) . ") THEN subtotal ELSE 0 END) as total_tf"),
+                DB::raw("SUM(CASE WHEN digital_product_id IN (" . implode(",", $tarikProducts) . ") THEN subtotal ELSE 0 END) as total_tarik")
+            )
+            ->groupBy('app_id')
+            ->get()
+            ->mapWithKeys(function ($row) {
+                return [
+                    $row->app_id => [
+                        'tf' => (int) $row->total_tf,
+                        'tarik' => (int) $row->total_tarik,
+                    ],
+                ];
+            });
 
-        $totalTransfer = DB::table('digital_transactions')
-            ->where('digital_transactions.outlet_id', $outletId)
-            ->whereIn('digital_product_id', [112, 114, 115])
-            ->whereBetween('digital_transactions.created_at', [$from, $to])
-            ->sum('subtotal');
-
-        // --- UTANG
+        /**
+         * ========== UTANG ==========
+         */
         $utangFisik = DB::table('transactions')
             ->join('customers', 'customers.id', '=', 'transactions.customer_id')
             ->where('transactions.outlet_id', $outletId)
@@ -431,32 +505,51 @@ class RiwayatController extends Controller
             })
             ->values();
 
-        // --- TOTAL AKHIR
-        $totalProduk = $productTransactions->sum('total');
-        $totalDigital = $digitalTransactions->sum('total');
-        $total = $totalProduk + $totalDigital;
-        $extra = 0;
+        /**
+         * ========== PEMBAYARAN UTANG (paid_at) ==========
+         */
+        $pembayaranUtangFisik = DB::table('transactions')
+            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->where('transactions.outlet_id', $outletId)
+            ->whereNotNull('transactions.paid_at')
+            ->whereBetween('transactions.paid_at', [$from, $to])
+            ->select('customers.name', 'transactions.subtotal')
+            ->get();
 
-        $empty = (
-            $categorySummary->isEmpty() &&
-            $productTransactions->isEmpty() &&
-            $digitalTransactions->isEmpty() &&
-            $digitalPerApp->isEmpty() &&
-            $utangList->isEmpty()
-        );
+        $pembayaranUtangDigital = DB::table('digital_transactions')
+            ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereNotNull('digital_transactions.paid_at')
+            ->whereBetween('digital_transactions.paid_at', [$from, $to])
+            ->select('customers.name', 'digital_transactions.subtotal')
+            ->get();
 
+        $pembayaranUtang = $pembayaranUtangFisik
+            ->merge($pembayaranUtangDigital)
+            ->values();
+
+        /**
+         * ========== FINAL ==========
+         */
         return [
             'categories' => $categorySummary,
             'productTransactions' => $productTransactions,
             'digitalTransactions' => $digitalTransactions,
-            'total' => $total,
-            'extra' => $extra,
-            'barangTotal' => $totalProduk,
+            'barangTotal' => $barangTotal,
             'digitalPerApp' => $digitalPerApp,
-            'totalTransfer' => $totalTransfer,
-            'totalTarik' => $totalTarik,
             'utangList' => $utangList,
-            'empty' => $empty,
+            'pembayaranUtang' => $pembayaranUtang,
+            'totalPembayaranUtang' => $pembayaranUtang->sum('subtotal'),
+            'tfTarikByApp' => $tfTarikByApp,
+            'totalTransfer' => collect($tfTarikByApp)->sum('tf'),
+            'totalTarik' => collect($tfTarikByApp)->sum('tarik'),
+            'empty' => (
+                $categorySummary->isEmpty()
+                && $productTransactions->isEmpty()
+                && $digitalTransactions->isEmpty()
+                && $digitalPerApp->isEmpty()
+                && $utangList->isEmpty()
+            ),
         ];
     }
 }
