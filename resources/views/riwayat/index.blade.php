@@ -280,6 +280,13 @@
                             </div>
                         </template>
 
+                        <template x-if="tfTarikByApp[9]?.tarik > 0">
+                            <div class="flex justify-between">
+                                <span class="text-[#FF6B6B]">MyBCA Tarik</span>
+                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[9].tarik)"></span>
+                            </div>
+                        </template>
+
                         <template x-if="tfTarikByApp[10]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">SHP Pay TF</span>
