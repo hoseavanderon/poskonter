@@ -29,6 +29,14 @@
         .animate-pulse {
             animation: pulse 0.8s ease-in-out infinite;
         }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
     </style>
 
     <style>
@@ -299,77 +307,100 @@
             </div>
 
             <!-- RIGHT SIDE -->
-            <div class="flex flex-col gap-5">
-                <!-- CATEGORY SUMMARY -->
-                <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                    <h3 class="text-sm font-semibold text-gray-200 mb-3">Ringkasan Kategori Produk</h3>
+            <div class="flex flex-col gap-5 overflow-y-auto no-scrollbar" x-ref="rightSide"
+                style="max-height: calc(110vh - 100px);">
+                <!-- TABS -->
+                <div class="flex items-center border-b border-gray-700 w-full">
+                    <button @click="activeTab = 'produk'"
+                        class="px-4 py-2 text-sm font-semibold transition-all flex-1 text-center"
+                        :class="activeTab === 'produk'
+                            ?
+                            'text-blue-400 border-blue-400 border-b-2' :
+                            'text-gray-400 hover:text-gray-300'">
+                        Produk Fisik
+                    </button>
 
-                    <!-- Kalau ada data -->
-                    <template x-if="categories.length > 0">
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                            <template x-for="(c, index) in categories" :key="c.name + index">
-                                <div class="bg-gray-700/60 rounded-xl py-3 transition hover:bg-gray-700/90">
-                                    <p class="text-sm font-semibold text-gray-100" x-text="c.name"></p>
-                                    <p class="text-sm text-gray-400" x-text="c.total_pcs + ' pcs'"></p>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-
-                    <!-- Kalau kosong -->
-                    <template x-if="categories.length === 0">
-                        <div class="text-center text-gray-400 py-10">
-                            <template x-if="!isRangeActive">
-                                <p>
-                                    📭 Tidak ada data pada tanggal
-                                    <span x-text="formatTanggal(selectedDate, selectedMonthNumber, selectedYear)"></span>.
-                                </p>
-                            </template>
-
-                            <template x-if="isRangeActive">
-                                <p>
-                                    📭 Tidak ada data dari tanggal
-                                    <span x-text="formatIndo(fromDate)"></span>
-                                    sampai
-                                    <span x-text="formatIndo(toDate)"></span>.
-                                </p>
-                            </template>
-                        </div>
-                    </template>
+                    <button @click="activeTab = 'digital'"
+                        class="px-4 py-2 text-sm font-semibold transition-all flex-1 text-center"
+                        :class="activeTab === 'digital'
+                            ?
+                            'text-blue-400 border-blue-400 border-b-2' :
+                            'text-gray-400 hover:text-gray-300'">
+                        Produk Digital
+                    </button>
                 </div>
 
-                <!-- PRODUCT + DIGITAL HISTORY -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- TAB PRODUK FISIK -->
+                <div x-show="activeTab === 'produk'" class="space-y-5">
 
-                    <!-- PRODUCT HISTORY (Card per Transaction, simple) -->
+                    <!-- CATEGORY SUMMARY -->
+                    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
+                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Ringkasan Kategori Produk</h3>
+
+                        <template x-if="categories.length > 0">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                                <template x-for="(c, index) in categories" :key="c.name + index">
+                                    <div class="bg-gray-700/60 rounded-xl py-3 transition hover:bg-gray-700/90">
+                                        <p class="text-sm font-semibold text-gray-100" x-text="c.name"></p>
+                                        <p class="text-sm text-gray-400" x-text="c.total_pcs + ' pcs'"></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="categories.length === 0">
+                            <p class="text-center text-gray-400 py-10">📭 Tidak ada data kategori produk.</p>
+                        </template>
+                    </div>
+
+                    <!-- PRODUCT HISTORY -->
                     <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
                         <h3 class="text-sm font-semibold text-gray-200 mb-3">Riwayat Transaksi Produk</h3>
 
                         <template x-if="productTransactions.length > 0">
-                            <div class="space-y-3">
+                            <div class="space-y-4">
                                 <template x-for="t in productTransactions" :key="t.transaction_id">
                                     <div
-                                        class="bg-gray-700/60 rounded-xl p-3 hover:bg-gray-700/80 transition-all duration-200">
-                                        <!-- DETAIL PRODUK DALAM TRANSAKSI -->
-                                        <div class="space-y-2">
-                                            <template x-for="d in t.details" :key="d.name">
-                                                <div>
-                                                    <!-- Baris 1: nama produk + harga -->
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-gray-200 text-sm truncate"
-                                                            x-text="d.name"></span>
-                                                        <span class="text-blue-400 text-sm font-medium"
-                                                            x-text="formatCurrency(d.amount)"></span>
-                                                    </div>
+                                        class="bg-gray-700/60 rounded-xl p-4 hover:bg-gray-700/80 transition-all duration-200 space-y-3">
 
-                                                    <!-- Baris 2: jumlah pcs -->
-                                                    <div class="text-right text-xs text-gray-400" x-text="d.qty + ' pcs'">
-                                                    </div>
-                                                </div>
-                                            </template>
+                                        <!-- TAMPILKAN TANGGAL & JAM SEKALI SAJA -->
+                                        <div class="mb-2 flex items-center gap-2">
+                                            <span class="text-xs text-gray-400"
+                                                x-text="formatPrettyDate(t.datetime || t.date || t.created_at)">
+                                            </span>
+
+                                            <span class="text-xs text-gray-400" x-text="getTransactionTime(t)">
+                                            </span>
                                         </div>
+
+                                        <!-- LIST PRODUK DALAM TRANSAKSI -->
+                                        <template x-for="d in t.details" :key="d.name">
+
+                                            <div class="flex justify-between items-start">
+
+                                                <!-- KIRI (NAMA PRODUK) -->
+                                                <div class="flex flex-col">
+                                                    <span class="text-gray-100 font-semibold text-sm"
+                                                        x-text="d.name"></span>
+
+                                                    <!-- pcs -->
+                                                    <span class="text-xs text-gray-400" x-text="d.qty + ' pcs'"></span>
+                                                </div>
+
+                                                <!-- KANAN (HARGA) -->
+                                                <div class="flex flex-col text-right">
+                                                    <span class="text-blue-400 font-semibold text-sm"
+                                                        x-text="formatCurrency(d.amount)"></span>
+                                                </div>
+
+                                            </div>
+
+                                        </template>
+
                                     </div>
+
                                 </template>
+
                             </div>
                         </template>
 
@@ -378,82 +409,102 @@
                         </template>
                     </div>
 
-                    <!-- DIGITAL HISTORY -->
+                </div>
+
+                <!-- TAB PRODUK DIGITAL -->
+                <div x-show="activeTab === 'digital'" class="space-y-5">
+
                     <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Riwayat Transaksi Produk Digital</h3>
+                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Riwayat Produk Digital</h3>
 
-                        <template x-if="groupedDigitalTransactions.length > 0">
-                            <div class="space-y-3">
-                                <template x-for="(app, appIndex) in groupedDigitalTransactions"
-                                    :key="app.name + appIndex">
-                                    <div class="bg-gray-700/60 rounded-xl p-3">
-                                        <!-- HEADER APP -->
-                                        <button @click="app.open = !app.open"
-                                            class="w-full flex justify-between items-center px-2 py-1 text-left text-sm font-semibold text-gray-100 hover:text-blue-400 transition">
-                                            <div class="flex items-center gap-2">
-                                                <span x-text="app.name"></span>
-                                                <!-- 🔹 Tambahan: jumlah transaksi -->
-                                                <span class="text-xs text-gray-400 font-normal"
-                                                    x-text="'( ' + app.transactions.length + ' Trx )'"></span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-blue-400 font-medium text-xs"
-                                                    x-text="formatCurrency(app.total)"></span>
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="w-4 h-4 transform transition-transform"
-                                                    :class="app.open ? 'rotate-180' : ''" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
-                                        </button>
+                        <template x-if="Object.keys(digitalTransactions).length > 0">
+                            <div class="space-y-6">
 
-                                        <!-- DETAIL PRODUK PER APP -->
-                                        <div x-show="app.open" x-collapse class="mt-3 space-y-2">
-                                            <template x-for="(t, index) in app.transactions"
-                                                :key="app.name + '-' + index">
-                                                <div
-                                                    class="bg-gray-800/60 border border-gray-700 rounded-lg p-3 flex justify-between items-center hover:bg-gray-700 transition">
-                                                    <div class="flex flex-col">
-                                                        <span class="text-gray-100 text-sm font-semibold"
-                                                            x-text="t.name"></span>
-                                                        <div class="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                class="w-3 h-3 text-blue-400" viewBox="0 0 20 20"
-                                                                fill="currentColor">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.5a.75.75 0 00.75.75h3a.75.75 0 000-1.5H10.75v-3.75z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            <span x-text="t.datetime"></span>
+                                <!-- DEVICE LIST -->
+                                <template x-for="(apps, deviceName) in digitalTransactions" :key="deviceName">
+                                    <div>
+                                        <h4 class="text-gray-200 font-semibold mb-3 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 2h6a2 2 0 012 2v16a2 2 0 01-2 2H9a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                            </svg>
+                                            <span x-text="deviceName"></span>
+                                        </h4>
+
+                                        <!-- APPS UNDER DEVICE -->
+                                        <div class="space-y-3">
+                                            <template x-for="(app, appName) in apps" :key="appName">
+                                                <div class="bg-gray-700/60 rounded-xl p-3">
+
+                                                    <!-- APP HEADER -->
+                                                    <button @click="app.open = !app.open"
+                                                        class="w-full flex justify-between items-center px-2 py-1 text-left text-sm font-semibold text-gray-100 hover:text-blue-400">
+
+                                                        <div class="flex items-center gap-2">
+                                                            <span x-text="appName"></span>
+                                                            <span class="text-xs text-gray-400"
+                                                                x-text="app.transactions.length + ' Trx'"></span>
                                                         </div>
+
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-blue-400 text-xs font-medium"
+                                                                x-text="formatCurrency(app.total)"></span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="w-4 h-4 transition-transform"
+                                                                :class="app.open ? 'rotate-180' : ''" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                            </svg>
+                                                        </div>
+
+                                                    </button>
+
+                                                    <!-- DETAIL -->
+                                                    <div x-show="app.open" x-collapse class="mt-3 space-y-2">
+                                                        <template x-for="t in app.transactions">
+                                                            <div
+                                                                class="bg-gray-800/60 border border-gray-700 rounded-lg p-3 flex justify-between items-center">
+                                                                <div>
+                                                                    <p class="text-gray-100 text-sm font-semibold"
+                                                                        x-text="t.name"></p>
+                                                                    <p class="text-xs text-gray-400" x-text="t.datetime">
+                                                                    </p>
+                                                                </div>
+                                                                <span class="text-sm font-semibold"
+                                                                    :class="{
+                                                                        'text-green-400': t.category_id == 8,
+                                                                        'text-red-400': t.category_id == 9,
+                                                                        'text-blue-400': ![8, 9].includes(t
+                                                                            .category_id),
+                                                                    }"
+                                                                    x-text="formatCurrency(t.amount)">
+                                                                </span>
+                                                            </div>
+                                                        </template>
                                                     </div>
-                                                    <span class="text-sm font-semibold"
-                                                        :class="{
-                                                            'text-green-400': [5, 6, 7].includes(app.app_id) && t
-                                                                .category_id == 8, // transfer = hijau
-                                                            'text-red-400': [5, 6, 7].includes(app.app_id) && t
-                                                                .category_id == 9, // tarik tunai = merah
-                                                            'text-blue-400': ![8, 9].includes(t
-                                                                .category_id) // normal = biru
-                                                        }"
-                                                        x-text="formatCurrency(t.amount)">
-                                                    </span>
+
                                                 </div>
                                             </template>
                                         </div>
+
                                     </div>
                                 </template>
+
                             </div>
                         </template>
 
-                        <template x-if="groupedDigitalTransactions.length === 0">
-                            <p class="text-gray-400 text-center py-8">📭 Tidak ada transaksi digital pada tanggal ini.</p>
+                        <template x-if="Object.keys(digitalTransactions).length === 0">
+                            <p class="text-center text-gray-400 py-10">📭 Tidak ada transaksi digital.</p>
                         </template>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
     </div>
 
@@ -492,6 +543,7 @@
                 tfTarikByApp: @json($defaultData['tfTarikByApp'] ?? []),
                 isRangeActive: false,
                 outletId: {{ Auth::user()->outlet_id }},
+                activeTab: 'produk',
 
                 get totalPenjualan() {
                     // Hitung total barang + semua digital apps
@@ -560,6 +612,52 @@
                     const m = String(date.getMonth() + 1).padStart(2, '0');
                     const d = String(date.getDate()).padStart(2, '0');
                     return `${y}-${m}-${d}`;
+                },
+
+                formatPrettyDate(dateValue) {
+                    if (!dateValue) return '-';
+
+                    // Case: "YYYY-MM-DD HH:MM:SS" atau "YYYY-MM-DD HH:MM"
+                    if (typeof dateValue === 'string' && dateValue.includes(' ')) {
+                        const [datePart, timePart] = dateValue.split(' ');
+                        const dateObj = new Date(datePart + 'T' + (timePart || '00:00'));
+                        if (!isNaN(dateObj)) {
+                            const cleanTime = timePart?.substring(0, 5) || '';
+                            return `${this.formatIndo(datePart)} ${cleanTime}`;
+                        }
+                    }
+
+                    // Case: lengkap ISO: "2025-11-15T14:30:00"
+                    const tryISO = new Date(dateValue);
+                    if (!isNaN(tryISO)) {
+                        const jam = String(tryISO.getHours()).padStart(2, '0');
+                        const menit = String(tryISO.getMinutes()).padStart(2, '0');
+                        return `${this.formatIndo(tryISO)} ${jam}:${menit}`;
+                    }
+
+                    // Case fallback: "YYYY-MM-DD"
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                        return this.formatIndo(dateValue);
+                    }
+
+                    // Kalau semua gagal → tampilkan apa adanya
+                    return dateValue;
+                },
+
+                getTransactionTime(t) {
+                    if (!t) return '';
+
+                    // Cari jam dari field transaksi langsung
+                    const dt = t.datetime || t.created_at || t.date || null;
+                    if (!dt) return '';
+
+                    const d = new Date(dt);
+                    if (isNaN(d)) return '';
+
+                    const jam = String(d.getHours()).padStart(2, '0');
+                    const menit = String(d.getMinutes()).padStart(2, '0');
+
+                    return `${jam}:${menit}`;
                 },
 
                 // helper to produce pretty Indonesian date

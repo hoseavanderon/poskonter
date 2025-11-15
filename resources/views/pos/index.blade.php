@@ -2159,8 +2159,8 @@
                 copied: false,
                 searchQuery: '',
                 customerSearch: "",
+                isScanning: false,
 
-                // ======== INIT UTAMA ========
                 // ======== INIT UTAMA ========
                 async init() {
                     // 🔁 Load keranjang
@@ -2177,16 +2177,20 @@
                         if (e.key.length === 1) buffer += e.key;
 
                         if (e.key === "Enter" && buffer.length > 3) {
+                            if (this.isScanning) return; // 🔥 cegah double scan
+
+                            this.isScanning = true;
+                            setTimeout(() => this.isScanning = false, 80); // cooldown 80ms
+
                             e.preventDefault();
                             const code = buffer.trim();
                             buffer = "";
-                            if (this.handleBarcodeInput) {
-                                this.handleBarcodeInput({
-                                    target: {
-                                        value: code
-                                    }
-                                });
-                            }
+
+                            this.handleBarcodeInput({
+                                target: {
+                                    value: code
+                                }
+                            });
                         }
                         lastTime = now;
                     });
