@@ -320,7 +320,7 @@
                             x-transition:enter-end="opacity-100 translate-y-0">
 
                             <template x-for="product in filteredProducts" :key="product.id">
-                                <div @click="openProductOptions(product)"
+                                <div @click.stop="openProductOptions(product)"
                                     :class="{ 'opacity-60 pointer-events-none grayscale': product.stock <= 0 }"
                                     class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
                                         rounded-xl shadow-sm hover:shadow-md transition-all duration-200 
@@ -2419,20 +2419,6 @@
                 decreaseQty(i) {
                     const item = this.cart[i];
 
-                    // ✅ Cari produk master di daftar produk
-                    const master = this.products.find(p => p.id === item.id);
-                    if (master) {
-                        master.stock += 1; // kembalikan stok 1 ke UI
-                    }
-
-                    // ✅ Kalau produk punya varian
-                    if (item.variant_id) {
-                        const prod = this.products.find(p => p.id === item.id);
-                        const attr = prod?.attribute_values?.find(a => a.id === item.variant_id);
-                        if (attr) attr.stok += 1;
-                    }
-
-                    // Hapus / kurangi dari cart
                     if (item.qty > 1) {
                         this.cart[i].qty--;
                     } else {
@@ -2451,18 +2437,6 @@
                     this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 },
                 clearCart() {
-                    // ✅ Kembalikan semua stok produk ke UI
-                    this.cart.forEach(item => {
-                        const prod = this.products.find(p => p.id === item.id);
-                        if (prod) prod.stock += item.qty;
-
-                        if (item.variant_id) {
-                            const attr = prod?.attribute_values?.find(a => a.id === item.variant_id);
-                            if (attr) attr.stok += item.qty;
-                        }
-                    });
-
-                    // Kosongkan keranjang
                     this.cart = [];
                     this.saveCart();
                 },
@@ -2885,7 +2859,7 @@
                 openProductOptions(product) {
                     const attrs = product.attribute_values || [];
 
-                    // 🚀 Kalau tidak ada varian → langsung masuk keranjang + tampilkan toast
+                    // 🚀 Kalau tidak ada varian → langsung masuk keranjang
                     if (attrs.length === 0) {
                         this.addToCart(product);
                         this.toastMsg = `${product.name} ditambahkan!`;
@@ -2894,13 +2868,16 @@
                         return;
                     }
 
-                    // 🚀 Kalau cuma 1 varian → langsung tambah ke keranjang juga
+                    // 🚀 Kalau cuma 1 varian → langsung tambah ke keranjang
                     if (attrs.length === 1) {
                         const opt = attrs[0];
                         const itemName = `${product.name} - ${opt.attribute_value}`;
                         const masterStock = opt.stok ?? 0;
 
-                        const existing = this.cart.find(i => i.id === product.id && i.variant === opt.attribute_value);
+                        const existing = this.cart.find(
+                            i => i.id === product.id && i.variant_id === opt.id
+                        );
+
                         if (existing) {
                             if (existing.qty + 1 > masterStock) {
                                 this.toastMsg = `Stok ${itemName} tidak cukup (tersisa ${masterStock}).`;
@@ -2916,25 +2893,15 @@
                                 setTimeout(() => this.showToast = false, 2500);
                                 return;
                             }
+
                             this.cart.push({
                                 id: product.id,
                                 name: itemName,
                                 price: product.price,
                                 qty: 1,
                                 variant: opt.attribute_value,
-                                variant_id: opt.id, // ✅ tambahkan ini
+                                variant_id: opt.id,
                             });
-
-                            // 🔄 Kurangi stok di UI agar langsung terlihat tanpa refresh
-                            const attrIndex = product.attribute_values.findIndex(a => a.id === opt.id);
-                            if (attrIndex !== -1 && product.attribute_values[attrIndex].stok > 0) {
-                                product.attribute_values[attrIndex].stok -= 1;
-                            }
-
-                            const prodIndex = this.products.findIndex(p => p.id === product.id);
-                            if (prodIndex !== -1 && this.products[prodIndex].stock > 0) {
-                                this.products[prodIndex].stock -= 1;
-                            }
                         }
 
                         this.saveCart();
@@ -2957,7 +2924,7 @@
                     const itemName = `${this.selectedProduct.name} - ${opt.attribute_value}`;
                     const masterStock = opt.stok ?? 0;
 
-                    // Cek stok
+                    // ❌ Cek stok habis
                     if (masterStock <= 0) {
                         this.toastMsg = `⚠️ Stok ${itemName} habis.`;
                         this.showToast = true;
@@ -2965,9 +2932,8 @@
                         return;
                     }
 
-                    // Cek apakah item sudah ada di keranjang
-                    const existing = this.cart.find(i =>
-                        i.id === this.selectedProduct.id && i.variant_id === opt.id
+                    const existing = this.cart.find(
+                        i => i.id === this.selectedProduct.id && i.variant_id === opt.id
                     );
 
                     if (existing) {
@@ -2985,29 +2951,17 @@
                             price: this.selectedProduct.price,
                             qty: 1,
                             variant: opt.attribute_value,
-                            variant_id: opt.id, // simpan id varian
+                            variant_id: opt.id,
                         });
-                    }
-
-                    // 🔄 Update stok UI sementara (bukan database)
-                    const attrIndex = this.selectedProductOptions.findIndex(a => a.id === opt.id);
-                    if (attrIndex !== -1 && this.selectedProductOptions[attrIndex].stok > 0) {
-                        this.selectedProductOptions[attrIndex].stok -= 1;
-                    }
-
-                    const prodIndex = this.products.findIndex(p => p.id === this.selectedProduct.id);
-                    if (prodIndex !== -1 && this.products[prodIndex].stock > 0) {
-                        this.products[prodIndex].stock -= 1;
                     }
 
                     this.saveCart();
 
-                    // ✅ Tutup modal langsung setelah pilih
+                    // Tutup modal
                     this.showOptionModal = false;
                     this.selectedProduct = null;
                     this.selectedProductOptions = [];
 
-                    // ✅ Tampilkan notifikasi
                     this.toastMsg = `${itemName} ditambahkan!`;
                     this.showToast = true;
                     setTimeout(() => this.showToast = false, 2000);
