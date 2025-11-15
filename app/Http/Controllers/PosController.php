@@ -419,9 +419,12 @@ class PosController extends Controller
                         : (string)$trx->paid_at)
                     : null,
                 'details' => $trx->details->map(fn($d) => [
-                    'product' => $d->product->name ?? '',
+                    'id' => $d->id,
+                    'item_type' => $d->item_type,
+                    'manual_name' => $d->manual_name,
+                    'product' => $d->product->name ?? null,
                     'qty' => $d->qty,
-                    'subtotal' => (int)$d->subtotal,
+                    'subtotal' => (int) $d->subtotal,
                 ]),
             ])->values()->toArray(),
             'summary' => $summary,
@@ -709,60 +712,103 @@ class PosController extends Controller
     public function getCloseBookData()
     {
         $today = now()->toDateString();
-        $outletId = Auth::user()->outlet_id ?? 1; // ✅ Ambil outlet_id user login
+        $outletId = Auth::user()->outlet_id ?? 1;
+
+        \Log::info("📘 [CloseBook] Request diterima", [
+            'today' => $today,
+            'outlet_id' => $outletId,
+        ]);
 
         try {
-            // === Barang (produk fisik)
+
+            // ======== BARANG FISIK ========
+            \Log::info("📦 [CloseBook] Mulai hitung barangTotal...");
+
             $barangTotal = DB::table('detail_transaction')
                 ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-                ->where('transactions.outlet_id', $outletId) // ✅ Filter outlet
+                ->where('transactions.outlet_id', $outletId)
                 ->whereDate('transactions.created_at', $today)
                 ->sum('detail_transaction.subtotal');
 
-            // === Digital per App (tanpa tarik & transfer)
+            \Log::info("📦 [CloseBook] barangTotal OK", [
+                'barangTotal' => $barangTotal
+            ]);
+
+            // ======== DIGITAL PER APP ========
+            \Log::info("📱 [CloseBook] Mulai hitung digitalPerApp...");
+
             $digitalPerApp = DB::table('digital_transactions')
                 ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
-                ->where('digital_transactions.outlet_id', $outletId) // ✅ Filter outlet
+                ->where('digital_transactions.outlet_id', $outletId)
                 ->whereDate('digital_transactions.created_at', $today)
                 ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
                 ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
                 ->groupBy('apps.name')
                 ->get();
 
-            // === Total Transfer (digital_product_id = 6)
+            \Log::info("📱 [CloseBook] digitalPerApp OK", [
+                'digitalPerApp' => $digitalPerApp
+            ]);
+
+            // ======== TRANSFER ========
+            \Log::info("💸 [CloseBook] Mulai hitung totalTransfer...");
+
             $totalTransfer = DB::table('digital_transactions')
-                ->where('outlet_id', $outletId) // ✅ Filter outlet
+                ->where('outlet_id', $outletId)
                 ->whereIn('digital_product_id', [112, 114, 115])
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
+            \Log::info("💸 [CloseBook] totalTransfer OK", [
+                'totalTransfer' => $totalTransfer
+            ]);
+
+            // ======== TARIK ========
+            \Log::info("🏧 [CloseBook] Mulai hitung totalTarik...");
+
             $totalTarik = DB::table('digital_transactions')
                 ->where('outlet_id', $outletId)
-                ->whereIn('digital_product_id', [113, 116]) // ← pakai whereIn
+                ->whereIn('digital_product_id', [113, 116])
                 ->whereDate('created_at', $today)
                 ->sum('subtotal');
 
-            // === Utang dari transaksi fisik
+            \Log::info("🏧 [CloseBook] totalTarik OK", [
+                'totalTarik' => $totalTarik
+            ]);
+
+            // ======== UTANG FISIK ========
+            \Log::info("🧾 [CloseBook] Mulai ambil utang fisik...");
+
             $utangFisik = DB::table('transactions')
                 ->join('customers', 'customers.id', '=', 'transactions.customer_id')
-                ->where('transactions.outlet_id', $outletId) // ✅ Filter outlet
+                ->where('transactions.outlet_id', $outletId)
                 ->whereDate('transactions.created_at', $today)
                 ->whereNotNull('transactions.customer_id')
                 ->whereNull('transactions.paid_at')
                 ->select('customers.name', 'transactions.subtotal')
                 ->get();
 
-            // === Utang dari transaksi digital
+            \Log::info("🧾 [CloseBook] utangFisik OK", [
+                'utangFisik' => $utangFisik
+            ]);
+
+            // ======== UTANG DIGITAL ========
+            \Log::info("📲 [CloseBook] Mulai ambil utang digital...");
+
             $utangDigital = DB::table('digital_transactions')
                 ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
-                ->where('digital_transactions.outlet_id', $outletId) // ✅ Filter outlet
+                ->where('digital_transactions.outlet_id', $outletId)
                 ->whereDate('digital_transactions.created_at', $today)
                 ->whereNotNull('digital_transactions.customer_id')
                 ->whereNull('digital_transactions.paid_at')
                 ->select('customers.name', 'digital_transactions.subtotal')
                 ->get();
 
-            // === Gabungkan utang fisik + digital
+            \Log::info("📲 [CloseBook] utangDigital OK", [
+                'utangDigital' => $utangDigital
+            ]);
+
+            // ======== GABUNG UTANG ========
             $utangList = $utangFisik->merge($utangDigital)
                 ->groupBy('name')
                 ->map(fn($items) => [
@@ -771,14 +817,25 @@ class PosController extends Controller
                 ])
                 ->values();
 
-            // === Hitung total penjualan dan total akhir
+            \Log::info("🧮 [CloseBook] utangList final", [
+                'utangList' => $utangList,
+            ]);
+
+
+            // ======== HITUNG AKHIR ========
             $totalDigital = $digitalPerApp->sum('total');
             $totalPenjualan = $barangTotal + $totalDigital;
             $totalUtang = $utangList->sum('subtotal');
             $totalSetelahUtang = max(0, $totalPenjualan - $totalUtang);
-
-            // 💡 Grand total = totalSetelahUtang (tidak termasuk transfer)
             $grandTotal = $totalSetelahUtang;
+
+            \Log::info("🏁 [CloseBook] Perhitungan final selesai", [
+                'totalDigital' => $totalDigital,
+                'totalPenjualan' => $totalPenjualan,
+                'totalUtang' => $totalUtang,
+                'totalSetelahUtang' => $totalSetelahUtang,
+                'grandTotal' => $grandTotal,
+            ]);
 
             return response()->json([
                 'tanggal' => now()->translatedFormat('d F Y'),
@@ -793,9 +850,17 @@ class PosController extends Controller
                 'totalTarik' => $totalTarik,
             ]);
         } catch (\Throwable $e) {
+
+            \Log::error("💥 [CloseBook] ERROR!", [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat mengambil data tutup buku',
+                'message' => '❌ Terjadi kesalahan saat mengambil data tutup buku.',
                 'error' => $e->getMessage(),
             ], 500);
         }

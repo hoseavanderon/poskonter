@@ -1836,13 +1836,20 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                     </div>
                                 </div>
 
-                                {{-- Detail Produk: nama + qty pcs --}}
-                                <template x-for="item in trx.details.slice(0, 3)" :key="item.product">
+                                <template x-for="item in trx.details.slice(0, 3)" :key="item.id">
                                     <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300">
                                         <span>
-                                            <span x-text="item.product"></span> ×
-                                            <span x-text="item.qty"></span> pcs
+
+                                            <!-- Nama item: product OR service -->
+                                            <span
+                                                x-text="item.item_type === 'service' 
+                                                ? item.manual_name 
+                                                : item.product">
+                                            </span>
+
+                                            × <span x-text="item.qty"></span> pcs
                                         </span>
+
                                         <span x-text="'Rp ' + item.subtotal.toLocaleString()"></span>
                                     </div>
                                 </template>
