@@ -386,8 +386,13 @@
                     {{-- Wrapper scroll khusus produk --}}
                     <div id="productScrollArea" class="relative min-h-[60vh] max-h-[70vh] overflow-y-auto pr-2">
                         {{-- Grid produk --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" x-show="!transitioning"
-                            x-transition:enter="transition ease-out duration-300"
+                        <div class="grid 
+            grid-cols-2 
+            sm:grid-cols-2 
+            md:grid-cols-1 
+            xl:grid-cols-3 
+            gap-5"
+                            x-show="!transitioning" x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0">
 
