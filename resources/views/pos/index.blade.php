@@ -389,7 +389,7 @@
                         <div class="grid 
             grid-cols-2 
             sm:grid-cols-2 
-            md:grid-cols-1 
+            md:grid-cols-2
             xl:grid-cols-3 
             gap-5"
                             x-show="!transitioning" x-transition:enter="transition ease-out duration-300"
