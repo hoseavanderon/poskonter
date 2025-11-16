@@ -123,120 +123,122 @@
                     </div>
 
                     <!-- BODY WRAPPER -->
-                    <div class="text-sm space-y-4" x-show="closeBookData">
+                    <template x-if="closeBookData">
+                        <div class="text-sm space-y-4" x-show="closeBookData">
 
-                        <!-- BARANG + DIGITAL PER APP -->
-                        <div class="space-y-0">
-                            <div class="flex justify-between py-1">
-                                <span>Barang</span>
-                                <span x-text="formatRupiah(closeBookData.barangTotal)"></span>
+                            <!-- BARANG + DIGITAL PER APP -->
+                            <div class="space-y-0">
+                                <div class="flex justify-between py-1">
+                                    <span>Barang</span>
+                                    <span x-text="formatRupiah(closeBookData.barangTotal)"></span>
+                                </div>
+
+                                <template x-if="closeBookData.digitalPerApp.length > 0">
+                                    <div class="space-y-0">
+                                        <template x-for="app in closeBookData.digitalPerApp" :key="app.name">
+                                            <div class="flex justify-between py-1">
+                                                <span x-text="app.name"></span>
+                                                <span x-text="formatRupiah(app.total)"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
                             </div>
 
-                            <template x-if="closeBookData.digitalPerApp.length > 0">
-                                <div class="space-y-0">
-                                    <template x-for="app in closeBookData.digitalPerApp" :key="app.name">
-                                        <div class="flex justify-between py-1">
-                                            <span x-text="app.name"></span>
-                                            <span x-text="formatRupiah(app.total)"></span>
+                            <hr class="border-gray-700">
+
+                            <!-- TOTAL PENJUALAN -->
+                            <div class="flex justify-between font-semibold">
+                                <span>Total Penjualan</span>
+                                <span x-text="formatRupiah(closeBookData.totalPenjualan)"></span>
+                            </div>
+
+                            <!-- UTANG -->
+                            <template x-if="closeBookData.utangList.length > 0">
+                                <div class="pt-1">
+                                    <div class="font-semibold text-gray-300 mb-1">UTANG</div>
+                                    <template x-for="u in closeBookData.utangList" :key="u.name">
+                                        <div class="flex justify-between">
+                                            <span x-text="u.name"></span>
+                                            <span class="text-red-400" x-text="'-' + formatRupiah(u.subtotal)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- BAYAR UTANG -->
+                            <template x-if="closeBookData.bayarUtangList.length > 0">
+                                <div class="pt-1">
+                                    <div class="font-semibold text-gray-300 mb-1">BAYAR UTANG</div>
+                                    <template x-for="u in closeBookData.bayarUtangList" :key="u.name">
+                                        <div class="flex justify-between">
+                                            <span x-text="u.name"></span>
+                                            <span class="text-green-400" x-text="formatRupiah(u.subtotal)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <hr class="border-gray-700">
+
+                            <!-- TOTAL SETELAH UTANG -->
+                            <div class="flex justify-between font-semibold">
+                                <span>Total Setelah Utang</span>
+                                <span
+                                    x-text="formatRupiah(Number(closeBookData.totalPenjualan) + Number(closeBookData.bayarUtang) - Number(closeBookData.totalUtang))">
+                                </span>
+                            </div>
+
+                            <hr class="border-gray-700">
+
+                            <!-- GRAND TOTAL -->
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Grand Total</span>
+                                <span x-text="formatRupiah(closeBookData.grandTotal)"></span>
+                            </div>
+
+                            <!-- LEBIH INPUT -->
+                            <div class="flex justify-between items-center">
+                                <span>Lebih</span>
+                                <input type="text" placeholder="0" x-on:input="formatLebihInput($event)"
+                                    class="w-20 bg-transparent border-0 border-b border-gray-600 text-right focus:border-blue-400 focus:outline-none focus:ring-0">
+                            </div>
+
+                            <!-- GRAND TOTAL AKHIR -->
+                            <div class="flex justify-between font-bold text-lg text-green-400">
+                                <span>Grand Total Akhir</span>
+                                <span x-text="formatRupiah(Number(closeBookData.grandTotal) + Number(lebih || 0))"></span>
+                            </div>
+
+                            <hr class="border-gray-700">
+
+                            <!-- TRANSFER -->
+                            <template x-if="closeBookData.transferDetail.length > 0">
+                                <div>
+                                    <div class="font-semibold text-blue-400 mb-1">TRANSFER</div>
+                                    <template x-for="t in closeBookData.transferDetail" :key="t.name">
+                                        <div class="flex justify-between text-sm">
+                                            <span x-text="t.name"></span>
+                                            <span x-text="formatRupiah(t.total)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- TARIK -->
+                            <template x-if="closeBookData.tarikDetail.length > 0">
+                                <div>
+                                    <div class="font-semibold text-red-400 mb-1">TARIK</div>
+                                    <template x-for="t in closeBookData.tarikDetail" :key="t.name">
+                                        <div class="flex justify-between text-sm">
+                                            <span x-text="t.name"></span>
+                                            <span x-text="formatRupiah(t.total)"></span>
                                         </div>
                                     </template>
                                 </div>
                             </template>
                         </div>
-
-                        <hr class="border-gray-700">
-
-                        <!-- TOTAL PENJUALAN -->
-                        <div class="flex justify-between font-semibold">
-                            <span>Total Penjualan</span>
-                            <span x-text="formatRupiah(closeBookData.totalPenjualan)"></span>
-                        </div>
-
-                        <!-- UTANG -->
-                        <template x-if="closeBookData.utangList.length > 0">
-                            <div class="pt-1">
-                                <div class="font-semibold text-gray-300 mb-1">UTANG</div>
-                                <template x-for="u in closeBookData.utangList" :key="u.name">
-                                    <div class="flex justify-between">
-                                        <span x-text="u.name"></span>
-                                        <span class="text-red-400" x-text="'-' + formatRupiah(u.subtotal)"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-
-                        <!-- BAYAR UTANG -->
-                        <template x-if="closeBookData.bayarUtangList.length > 0">
-                            <div class="pt-1">
-                                <div class="font-semibold text-gray-300 mb-1">BAYAR UTANG</div>
-                                <template x-for="u in closeBookData.bayarUtangList" :key="u.name">
-                                    <div class="flex justify-between">
-                                        <span x-text="u.name"></span>
-                                        <span class="text-green-400" x-text="formatRupiah(u.subtotal)"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-
-                        <hr class="border-gray-700">
-
-                        <!-- TOTAL SETELAH UTANG -->
-                        <div class="flex justify-between font-semibold">
-                            <span>Total Setelah Utang</span>
-                            <span
-                                x-text="formatRupiah(Number(closeBookData.totalPenjualan) + Number(closeBookData.bayarUtang) - Number(closeBookData.totalUtang))">
-                            </span>
-                        </div>
-
-                        <hr class="border-gray-700">
-
-                        <!-- GRAND TOTAL -->
-                        <div class="flex justify-between font-bold text-lg">
-                            <span>Grand Total</span>
-                            <span x-text="formatRupiah(closeBookData.grandTotal)"></span>
-                        </div>
-
-                        <!-- LEBIH INPUT -->
-                        <div class="flex justify-between items-center">
-                            <span>Lebih</span>
-                            <input type="text" placeholder="0" x-on:input="formatLebihInput($event)"
-                                class="w-20 bg-transparent border-0 border-b border-gray-600 text-right focus:border-blue-400 focus:outline-none focus:ring-0">
-                        </div>
-
-                        <!-- GRAND TOTAL AKHIR -->
-                        <div class="flex justify-between font-bold text-lg text-green-400">
-                            <span>Grand Total Akhir</span>
-                            <span x-text="formatRupiah(Number(closeBookData.grandTotal) + Number(lebih || 0))"></span>
-                        </div>
-
-                        <hr class="border-gray-700">
-
-                        <!-- TRANSFER -->
-                        <template x-if="closeBookData.transferDetail.length > 0">
-                            <div>
-                                <div class="font-semibold text-blue-400 mb-1">TRANSFER</div>
-                                <template x-for="t in closeBookData.transferDetail" :key="t.name">
-                                    <div class="flex justify-between text-sm">
-                                        <span x-text="t.name"></span>
-                                        <span x-text="formatRupiah(t.total)"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-
-                        <!-- TARIK -->
-                        <template x-if="closeBookData.tarikDetail.length > 0">
-                            <div>
-                                <div class="font-semibold text-red-400 mb-1">TARIK</div>
-                                <template x-for="t in closeBookData.tarikDetail" :key="t.name">
-                                    <div class="flex justify-between text-sm">
-                                        <span x-text="t.name"></span>
-                                        <span x-text="formatRupiah(t.total)"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
+                    </template>
 
                     <!-- FOOTER BUTTONS -->
                     <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
