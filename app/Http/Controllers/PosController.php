@@ -712,159 +712,141 @@ class PosController extends Controller
     public function getCloseBookData()
     {
         $today = now()->toDateString();
-        $outletId = Auth::user()->outlet_id ?? 1;
+        $outletId = Auth::user()->outlet_id;
 
-        \Log::info("📘 [CloseBook] Request diterima", [
-            'today' => $today,
-            'outlet_id' => $outletId,
+        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129];
+        $tarikProducts    = [113, 116, 120];
+
+        // --- TOTAL BARANG FISIK
+        $barangTotal = DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->where('transactions.outlet_id', $outletId)
+            ->whereDate('transactions.created_at', $today)
+            ->whereNull('transactions.deleted_at')
+            ->sum('detail_transaction.subtotal');
+
+        // --- DIGITAL NORMAL PER APP
+        $digitalPerApp = DB::table('digital_transactions')
+            ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereDate('digital_transactions.created_at', $today)
+            ->whereNotIn('digital_product_id', array_merge($transferProducts, $tarikProducts))
+            ->whereNull('digital_transactions.deleted_at')
+            ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
+            ->groupBy('apps.name')
+            ->get();
+
+        $totalDigitalNormal = $digitalPerApp->sum('total');
+
+        // --- TRANSFER
+        $transferDetail = DB::table('digital_transactions')
+            ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereIn('digital_product_id', $transferProducts)
+            ->whereDate('digital_transactions.created_at', $today)
+            ->whereNull('digital_transactions.deleted_at')
+            ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
+            ->groupBy('apps.name')
+            ->get();
+
+        // --- TARIK
+        $tarikDetail = DB::table('digital_transactions')
+            ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereIn('digital_product_id', $tarikProducts)
+            ->whereDate('digital_transactions.created_at', $today)
+            ->whereNull('digital_transactions.deleted_at')
+            ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
+            ->groupBy('apps.name')
+            ->get();
+
+        // --- UTANG (belum dibayar)
+        $utangFisik = DB::table('transactions')
+            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->where('transactions.outlet_id', $outletId)
+            ->whereDate('transactions.created_at', $today)
+            ->whereNotNull('transactions.customer_id')
+            ->whereNull('transactions.paid_at')
+            ->select('customers.name', 'transactions.subtotal')
+            ->get();
+
+        $utangDigital = DB::table('digital_transactions')
+            ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereDate('digital_transactions.created_at', $today)
+            ->whereNotNull('digital_transactions.customer_id')
+            ->whereNull('digital_transactions.paid_at')
+            ->whereNull('digital_transactions.deleted_at')
+            ->select('customers.name', 'digital_transactions.subtotal')
+            ->get();
+
+        $utangList = $utangFisik->merge($utangDigital)
+            ->groupBy('name')
+            ->map(fn($items) => [
+                'name' => $items->first()->name,
+                'subtotal' => $items->sum('subtotal'),
+            ])
+            ->values();
+
+        $totalUtang = $utangList->sum('subtotal');
+
+        // --- BAYAR UTANG (LIST)
+        $bayarUtangFisikList = DB::table('transactions')
+            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->where('transactions.outlet_id', $outletId)
+            ->whereNotNull('transactions.paid_at')
+            ->whereDate('transactions.paid_at', $today)
+            ->whereRaw('DATE(transactions.created_at) <> DATE(transactions.paid_at)')
+            ->select('customers.name', 'transactions.subtotal')
+            ->get();
+
+        $bayarUtangDigitalList = DB::table('digital_transactions')
+            ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
+            ->where('digital_transactions.outlet_id', $outletId)
+            ->whereNotNull('digital_transactions.paid_at')
+            ->whereDate('digital_transactions.paid_at', $today)
+            ->whereRaw('DATE(digital_transactions.created_at) <> DATE(digital_transactions.paid_at)')
+            ->select('customers.name', 'digital_transactions.subtotal')
+            ->get();
+
+        // Gabungan list bayar utang
+        $bayarUtangList = $bayarUtangFisikList->merge($bayarUtangDigitalList)
+            ->groupBy('name')
+            ->map(fn($items) => [
+                'name' => $items->first()->name,
+                'subtotal' => $items->sum('subtotal'),
+            ])
+            ->values();
+
+        // Total bayar utang (angka)
+        $bayarUtang = $bayarUtangFisikList->sum('subtotal') + $bayarUtangDigitalList->sum('subtotal');
+
+        // --- TOTAL PENJUALAN
+        $totalPenjualan = $barangTotal + $totalDigitalNormal;
+
+        // --- GRAND TOTAL
+        $grandTotal = $totalPenjualan + $bayarUtang - $totalUtang;
+
+        return response()->json([
+            'tanggal' => now()->translatedFormat('d F Y'),
+
+            'barangTotal' => $barangTotal,
+            'digitalPerApp' => $digitalPerApp,
+            'totalPenjualan' => $totalPenjualan,
+
+            'utangList' => $utangList,
+            'totalUtang' => $totalUtang,
+
+            'bayarUtang' => $bayarUtang,
+            'bayarUtangList' => $bayarUtangList,
+
+            'grandTotal' => $grandTotal,
+
+            'transferDetail' => $transferDetail,
+            'tarikDetail' => $tarikDetail,
         ]);
-
-        try {
-
-            // ======== BARANG FISIK ========
-            \Log::info("📦 [CloseBook] Mulai hitung barangTotal...");
-
-            $barangTotal = DB::table('detail_transaction')
-                ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-                ->where('transactions.outlet_id', $outletId)
-                ->whereDate('transactions.created_at', $today)
-                ->sum('detail_transaction.subtotal');
-
-            \Log::info("📦 [CloseBook] barangTotal OK", [
-                'barangTotal' => $barangTotal
-            ]);
-
-            // ======== DIGITAL PER APP ========
-            \Log::info("📱 [CloseBook] Mulai hitung digitalPerApp...");
-
-            $digitalPerApp = DB::table('digital_transactions')
-                ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
-                ->where('digital_transactions.outlet_id', $outletId)
-                ->whereDate('digital_transactions.created_at', $today)
-                ->whereNotIn('digital_transactions.digital_product_id', [112, 113, 114, 115, 116])
-                ->select('apps.name', DB::raw('SUM(digital_transactions.subtotal) as total'))
-                ->groupBy('apps.name')
-                ->get();
-
-            \Log::info("📱 [CloseBook] digitalPerApp OK", [
-                'digitalPerApp' => $digitalPerApp
-            ]);
-
-            // ======== TRANSFER ========
-            \Log::info("💸 [CloseBook] Mulai hitung totalTransfer...");
-
-            $totalTransfer = DB::table('digital_transactions')
-                ->where('outlet_id', $outletId)
-                ->whereIn('digital_product_id', [112, 114, 115])
-                ->whereDate('created_at', $today)
-                ->sum('subtotal');
-
-            \Log::info("💸 [CloseBook] totalTransfer OK", [
-                'totalTransfer' => $totalTransfer
-            ]);
-
-            // ======== TARIK ========
-            \Log::info("🏧 [CloseBook] Mulai hitung totalTarik...");
-
-            $totalTarik = DB::table('digital_transactions')
-                ->where('outlet_id', $outletId)
-                ->whereIn('digital_product_id', [113, 116])
-                ->whereDate('created_at', $today)
-                ->sum('subtotal');
-
-            \Log::info("🏧 [CloseBook] totalTarik OK", [
-                'totalTarik' => $totalTarik
-            ]);
-
-            // ======== UTANG FISIK ========
-            \Log::info("🧾 [CloseBook] Mulai ambil utang fisik...");
-
-            $utangFisik = DB::table('transactions')
-                ->join('customers', 'customers.id', '=', 'transactions.customer_id')
-                ->where('transactions.outlet_id', $outletId)
-                ->whereDate('transactions.created_at', $today)
-                ->whereNotNull('transactions.customer_id')
-                ->whereNull('transactions.paid_at')
-                ->select('customers.name', 'transactions.subtotal')
-                ->get();
-
-            \Log::info("🧾 [CloseBook] utangFisik OK", [
-                'utangFisik' => $utangFisik
-            ]);
-
-            // ======== UTANG DIGITAL ========
-            \Log::info("📲 [CloseBook] Mulai ambil utang digital...");
-
-            $utangDigital = DB::table('digital_transactions')
-                ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
-                ->where('digital_transactions.outlet_id', $outletId)
-                ->whereDate('digital_transactions.created_at', $today)
-                ->whereNotNull('digital_transactions.customer_id')
-                ->whereNull('digital_transactions.paid_at')
-                ->select('customers.name', 'digital_transactions.subtotal')
-                ->get();
-
-            \Log::info("📲 [CloseBook] utangDigital OK", [
-                'utangDigital' => $utangDigital
-            ]);
-
-            // ======== GABUNG UTANG ========
-            $utangList = $utangFisik->merge($utangDigital)
-                ->groupBy('name')
-                ->map(fn($items) => [
-                    'name' => $items->first()->name,
-                    'subtotal' => $items->sum('subtotal'),
-                ])
-                ->values();
-
-            \Log::info("🧮 [CloseBook] utangList final", [
-                'utangList' => $utangList,
-            ]);
-
-
-            // ======== HITUNG AKHIR ========
-            $totalDigital = $digitalPerApp->sum('total');
-            $totalPenjualan = $barangTotal + $totalDigital;
-            $totalUtang = $utangList->sum('subtotal');
-            $totalSetelahUtang = max(0, $totalPenjualan - $totalUtang);
-            $grandTotal = $totalSetelahUtang;
-
-            \Log::info("🏁 [CloseBook] Perhitungan final selesai", [
-                'totalDigital' => $totalDigital,
-                'totalPenjualan' => $totalPenjualan,
-                'totalUtang' => $totalUtang,
-                'totalSetelahUtang' => $totalSetelahUtang,
-                'grandTotal' => $grandTotal,
-            ]);
-
-            return response()->json([
-                'tanggal' => now()->translatedFormat('d F Y'),
-                'barangTotal' => $barangTotal,
-                'digitalPerApp' => $digitalPerApp,
-                'utangList' => $utangList,
-                'totalPenjualan' => $totalPenjualan,
-                'totalUtang' => $totalUtang,
-                'totalSetelahUtang' => $totalSetelahUtang,
-                'grandTotal' => $grandTotal,
-                'totalTransfer' => $totalTransfer,
-                'totalTarik' => $totalTarik,
-            ]);
-        } catch (\Throwable $e) {
-
-            \Log::error("💥 [CloseBook] ERROR!", [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => '❌ Terjadi kesalahan saat mengambil data tutup buku.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
     }
+
 
     public function pembukuanStore(Request $request)
     {

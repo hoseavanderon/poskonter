@@ -103,131 +103,192 @@
                 </div>
             </div>
 
-            <!-- 📘 Modal Tutup Buku -->
+            <!-- MODAL CLOSE BOOK - CLEAN & NEAT VERSION -->
             <div x-show="showCloseBookModal" x-transition.opacity @keydown.escape.window="showCloseBookModal = false"
                 @click.self="showCloseBookModal = false"
-                class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4" x-cloak>
-                <div
-                    class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 text-gray-800 dark:text-gray-200">
+                class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 p-4" x-cloak>
 
-                    <!-- ❌ Tombol close -->
+                <div
+                    class="relative bg-[#0e1420] text-gray-200 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-700">
+
+                    <!-- CLOSE BUTTON -->
                     <button @click="showCloseBookModal = false"
-                        class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                        class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
                         ✖
                     </button>
 
-                    <!-- 🧾 Isi laporan -->
-                    <template x-if="closeBookData">
-                        <div>
-                            <h2 class="text-lg font-bold mb-5 text-center leading-tight">
-                                Rincian Transaksi Tanggal <span x-text="closeBookData.tanggal"></span>
-                            </h2>
-
-                            <div class="space-y-3 text-sm">
-                                <!-- Barang -->
-                                <div class="flex justify-between">
-                                    <span>Barang :</span>
-                                    <span x-text="formatRupiah(closeBookData.barangTotal)"></span>
-                                </div>
-
-                                <!-- Digital per App -->
-                                <template x-for="app in closeBookData.digitalPerApp" :key="app.name">
-                                    <div class="flex justify-between">
-                                        <span x-text="app.name + ':'"></span>
-                                        <span x-text="formatRupiah(app.total)"></span>
-                                    </div>
-                                </template>
-
-                                <hr class="my-2 border-gray-600">
-                                <div class="flex justify-between font-semibold">
-                                    <span>Total Penjualan :</span>
-                                    <span x-text="formatRupiah(closeBookData.totalPenjualan)"></span>
-                                </div>
-
-                                <hr class="my-3 border-gray-700 opacity-70">
-
-                                <!-- Utang -->
-                                <template x-if="closeBookData.utangList.length > 0">
-                                    <div class="pt-1">
-                                        <div class="font-semibold mb-1">Utang :</div>
-                                        <template x-for="u in closeBookData.utangList" :key="u.name">
-                                            <div class="flex justify-between">
-                                                <span x-text="u.name"></span>
-                                                <span class="text-red-500"
-                                                    x-text="'(' + formatRupiah(u.subtotal) + ')'"></span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-
-                                <hr class="my-3 border-gray-700 opacity-70">
-
-                                <div class="flex justify-between font-semibold">
-                                    <span>Total Setelah Utang :</span>
-                                    <span x-text="formatRupiah(closeBookData.totalSetelahUtang)"></span>
-                                </div>
-
-                                <div class="flex justify-between font-bold text-lg border-t pt-3 mt-2">
-                                    <span>Grand Total :</span>
-                                    <span x-text="formatRupiah(closeBookData.grandTotal)"></span>
-                                </div>
-
-                                <!-- Lebih input -->
-                                <div class="flex justify-between items-center mt-2">
-                                    <span>Lebih :</span>
-                                    <input type="text" x-on:input="formatLebihInput($event)"
-                                        class="w-32 text-right bg-transparent border-0 border-b border-gray-700 focus:border-blue-400 focus:outline-none focus:ring-0 text-gray-300 appearance-none transition-colors duration-150"
-                                        placeholder="0">
-                                </div>
-
-                                <div class="flex justify-between font-bold text-lg border-t pt-3 mt-2 text-green-400">
-                                    <span>Grand Total Akhir :</span>
-                                    <span x-text="formatRupiah((closeBookData.grandTotal ?? 0) + (lebih || 0))"></span>
-                                </div>
-
-                                <hr class="my-2 border-gray-700 opacity-60">
-
-                                <div class="flex justify-between text-sm text-gray-400">
-                                    <span>Total Transfer :</span>
-                                    <span x-text="formatRupiah(closeBookData.totalTransfer)"></span>
-                                </div>
-
-                                <div class="flex justify-between text-sm text-gray-400">
-                                    <span>Total Tarik :</span>
-                                    <span x-text="formatRupiah(closeBookData.totalTarik)"></span>
-                                </div>
-                            </div>
-
-                            <!-- Tombol aksi -->
-                            <div class="flex justify-end gap-3 mt-6 border-t border-gray-700 pt-4">
-                                <button @click="copyCloseBook"
-                                    class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"
-                                    :class="copied
-                                        ?
-                                        'bg-green-600 text-white scale-105 shadow-[0_0_15px_rgba(16,185,129,0.6)]' :
-                                        'bg-gray-700 hover:bg-gray-600 text-white'">
-                                    <template x-if="!copied">
-                                        <span class="flex items-center gap-2">📋 Copy</span>
-                                    </template>
-                                    <template x-if="copied">
-                                        <span class="flex items-center gap-2">✅ Disalin!</span>
-                                    </template>
-                                </button>
-
-                                <button @click="handleFinalCloseBook()"
-                                    class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm transition">
-                                    ✅ Tutup Buku
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
-                    <!-- Loading state -->
-                    <div x-show="!closeBookData" class="text-center py-4 text-gray-500">
-                        Memuat data...
+                    <!-- HEADER -->
+                    <h2 class="text-lg font-bold text-center">Transaction</h2>
+                    <div class="text-center text-sm text-gray-400 mb-5" x-text="closeBookData?.tanggal">
                     </div>
+
+                    <!-- BODY WRAPPER -->
+                    <div class="text-sm space-y-4" x-show="closeBookData">
+
+                        <!-- BARANG + DIGITAL PER APP -->
+                        <div class="space-y-0">
+                            <div class="flex justify-between py-1">
+                                <span>Barang</span>
+                                <span x-text="formatRupiah(closeBookData.barangTotal)"></span>
+                            </div>
+
+                            <template x-if="closeBookData.digitalPerApp.length > 0">
+                                <div class="space-y-0">
+                                    <template x-for="app in closeBookData.digitalPerApp" :key="app.name">
+                                        <div class="flex justify-between py-1">
+                                            <span x-text="app.name"></span>
+                                            <span x-text="formatRupiah(app.total)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <hr class="border-gray-700">
+
+                        <!-- TOTAL PENJUALAN -->
+                        <div class="flex justify-between font-semibold">
+                            <span>Total Penjualan</span>
+                            <span x-text="formatRupiah(closeBookData.totalPenjualan)"></span>
+                        </div>
+
+                        <!-- UTANG -->
+                        <template x-if="closeBookData.utangList.length > 0">
+                            <div class="pt-1">
+                                <div class="font-semibold text-gray-300 mb-1">UTANG</div>
+                                <template x-for="u in closeBookData.utangList" :key="u.name">
+                                    <div class="flex justify-between">
+                                        <span x-text="u.name"></span>
+                                        <span class="text-red-400" x-text="'-' + formatRupiah(u.subtotal)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- BAYAR UTANG -->
+                        <template x-if="closeBookData.bayarUtangList.length > 0">
+                            <div class="pt-1">
+                                <div class="font-semibold text-gray-300 mb-1">BAYAR UTANG</div>
+                                <template x-for="u in closeBookData.bayarUtangList" :key="u.name">
+                                    <div class="flex justify-between">
+                                        <span x-text="u.name"></span>
+                                        <span class="text-green-400" x-text="formatRupiah(u.subtotal)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <hr class="border-gray-700">
+
+                        <!-- TOTAL SETELAH UTANG -->
+                        <div class="flex justify-between font-semibold">
+                            <span>Total Setelah Utang</span>
+                            <span
+                                x-text="formatRupiah(Number(closeBookData.totalPenjualan) + Number(closeBookData.bayarUtang) - Number(closeBookData.totalUtang))">
+                            </span>
+                        </div>
+
+                        <hr class="border-gray-700">
+
+                        <!-- GRAND TOTAL -->
+                        <div class="flex justify-between font-bold text-lg">
+                            <span>Grand Total</span>
+                            <span x-text="formatRupiah(closeBookData.grandTotal)"></span>
+                        </div>
+
+                        <!-- LEBIH INPUT -->
+                        <div class="flex justify-between items-center">
+                            <span>Lebih</span>
+                            <input type="text" placeholder="0" x-on:input="formatLebihInput($event)"
+                                class="w-20 bg-transparent border-0 border-b border-gray-600 text-right focus:border-blue-400 focus:outline-none focus:ring-0">
+                        </div>
+
+                        <!-- GRAND TOTAL AKHIR -->
+                        <div class="flex justify-between font-bold text-lg text-green-400">
+                            <span>Grand Total Akhir</span>
+                            <span x-text="formatRupiah(Number(closeBookData.grandTotal) + Number(lebih || 0))"></span>
+                        </div>
+
+                        <hr class="border-gray-700">
+
+                        <!-- TRANSFER -->
+                        <template x-if="closeBookData.transferDetail.length > 0">
+                            <div>
+                                <div class="font-semibold text-blue-400 mb-1">TRANSFER</div>
+                                <template x-for="t in closeBookData.transferDetail" :key="t.name">
+                                    <div class="flex justify-between text-sm">
+                                        <span x-text="t.name"></span>
+                                        <span x-text="formatRupiah(t.total)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- TARIK -->
+                        <template x-if="closeBookData.tarikDetail.length > 0">
+                            <div>
+                                <div class="font-semibold text-red-400 mb-1">TARIK</div>
+                                <template x-for="t in closeBookData.tarikDetail" :key="t.name">
+                                    <div class="flex justify-between text-sm">
+                                        <span x-text="t.name"></span>
+                                        <span x-text="formatRupiah(t.total)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- FOOTER BUTTONS -->
+                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-700">
+                        <button @click="copyCloseBook"
+                            class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"
+                            :class="copied ? 'bg-green-600 text-white scale-105 shadow-[0_0_15px_rgba(16,185,129,0.6)]' :
+                                'bg-gray-700 hover:bg-gray-600 text-white'">
+                            <template x-if="!copied"><span>📋 Copy</span></template>
+                            <template x-if="copied"><span>✅ Disalin!</span></template>
+                        </button>
+
+                        <button
+                            @click="grandTotalAkhir = Number(closeBookData.grandTotal) + Number(lebih || 0); showConfirmClose = true"
+                            class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm transition">
+                            ✅ Tutup Buku
+                        </button>
+                    </div>
+
+                    <div x-show="showConfirmClose" x-transition.opacity @keydown.escape.window="showConfirmClose = false"
+                        @click="showConfirmClose = false"
+                        class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                        <div @click.stop
+                            class="bg-[#121a26] text-gray-200 p-6 rounded-xl shadow-2xl w-full max-w-sm border border-gray-700">
+
+
+                            <h3 class="text-lg font-semibold text-center mb-4">Yakin ingin tutup buku?</h3>
+
+
+                            <p class="text-center mb-6">
+                                Total akhir:
+                                <span class="font-bold text-green-400" x-text="formatRupiah(grandTotalAkhir)"></span>
+                            </p>
+
+
+                            <div class="flex justify-center gap-3">
+                                <button @click="showConfirmClose = false"
+                                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">Batal</button>
+
+
+                                <button @click="showConfirmClose = false; handleFinalCloseBook();"
+                                    class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm">Ya,
+                                    Tutup Buku</button>
+                            </div>
+
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
+
 
             {{-- ============================= --}}
             {{-- TAB: PRODUK FISIK --}}
@@ -529,67 +590,127 @@
                         </template>
                     </div>
 
-                    {{-- Kalkulator & Tombol Bayar --}}
-                    <div class="mt-4 border-t pt-4">
-                        <div class="flex justify-between mb-2">
-                            <span>Subtotal:</span>
-                            <span x-text="'Rp ' + total().toLocaleString()"></span>
-                        </div>
-                        <div class="flex justify-between font-semibold mb-3">
-                            <span>Total:</span>
-                            <span class="text-blue-600" x-text="'Rp ' + total().toLocaleString()"></span>
-                        </div>
+                    <div class="bg-gray-800 text-white p-5 rounded-xl w-full">
 
-                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center">
+                        <!-- ======================= -->
+                        <!--      TOTAL BAYAR       -->
+                        <!-- ======================= -->
+                        <div class="text-center mb-4">
+
                             <h3 class="font-bold mb-1">Total Bayar</h3>
-                            <div class="text-3xl font-bold text-blue-600 mb-3" x-text="'Rp ' + paid.toLocaleString()">
+
+                            <!-- ========================= -->
+                            <!-- DISPLAY MODE (klik = edit) -->
+                            <!-- ========================= -->
+                            <template x-if="!editingTotal">
+                                <div @click="editingTotal = true"
+                                    class="text-4xl font-extrabold text-blue-400 cursor-pointer select-none hover:opacity-80 transition"
+                                    x-text="'Rp ' + payment.total.toLocaleString('id-ID')">
+                                </div>
+                            </template>
+
+                            <!-- ========================= -->
+                            <!-- EDIT MODE -->
+                            <!-- ========================= -->
+                            <template x-if="editingTotal">
+                                <input type="text" x-ref="totalInput" inputmode="numeric" pattern="[0-9]*"
+                                    @focus="payment.editingPaid = true"
+                                    @blur="editingTotal = false; payment.editingPaid = false"
+                                    @input="formatTotalInput($event)" @keydown.enter="$el.blur()"
+                                    class="w-full text-center text-4xl font-bold border border-blue-500 bg-gray-900 
+                text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                                    placeholder="Masukkan total bayar">
+                            </template>
+
+                            <!-- ========================= -->
+                            <!-- HARGA ASLI (muncul hanya kalau total override) -->
+                            <!-- ========================= -->
+                            <template x-if="payment.total !== total()">
+                                <div class="text-sm text-gray-400 mt-1">
+                                    Asli:
+                                    <span class="line-through text-red-400"
+                                        x-text="'Rp ' + total().toLocaleString('id-ID')">
+                                    </span>
+                                </div>
+                            </template>
+
+                        </div>
+
+
+                        <!-- ======================= -->
+                        <!--     QUICK BUTTONS       -->
+                        <!-- ======================= -->
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
+                                <button @click="payment.paid += n"
+                                    class="bg-gray-700 hover:bg-gray-600 text-gray-200 py-2 rounded text-sm font-semibold">
+                                    Rp <span x-text="n.toLocaleString('id-ID')"></span>
+                                </button>
+                            </template>
+
+                            <button @click="payment.paid = payment.total"
+                                class="col-span-3 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold">
+                                UANG PAS
+                            </button>
+                        </div>
+
+
+                        <!-- ======================= -->
+                        <!--         NUMPAD          -->
+                        <!-- ======================= -->
+                        <div class="grid grid-cols-3 gap-2 text-lg mb-4">
+                            <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
+                                <button
+                                    @click="btn === '⌫' ? payment.paid = Math.floor(payment.paid / 10) : payment.paid = Number(String(payment.paid) + btn)"
+                                    class="bg-gray-700 py-3 rounded font-bold hover:bg-gray-600">
+                                    <span x-text="btn"></span>
+                                </button>
+                            </template>
+                        </div>
+
+
+                        <!-- ======================= -->
+                        <!--      DIBAYAR & KMBL     -->
+                        <!-- ======================= -->
+                        <div class="mt-4 border-t border-gray-700 pt-4">
+                            <div class="flex justify-between mb-2">
+                                <span>Dibayar:</span>
+                                <span x-text="'Rp ' + payment.paid.toLocaleString('id-ID')"></span>
                             </div>
 
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
-                                <template x-for="n in [1000,2000,5000,10000,20000,50000,100000]">
-                                    <button @click="addPayment(n)"
-                                        class="bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-300 py-2 rounded text-sm font-semibold"
-                                        x-text="'Rp ' + n.toLocaleString()"></button>
-                                </template>
-                                <button @click="payExact()"
-                                    class="col-span-2 sm:col-span-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded">UANG
-                                    PAS</button>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-2 text-lg mb-3">
-                                <template x-for="btn in ['1','2','3','4','5','6','7','8','9','00','0','⌫']">
-                                    <button @click="handleKey(btn)"
-                                        class="bg-gray-200 dark:bg-gray-600 py-3 rounded font-bold hover:bg-gray-300 dark:hover:bg-gray-500">
-                                        <span x-text="btn"></span>
-                                    </button>
-                                </template>
-                            </div>
-
-                            <div class="mt-4 flex justify-between font-semibold text-lg">
+                            <div class="flex justify-between font-semibold text-lg"
+                                :class="{
+                                    'text-red-400': payment.paid < payment.total,
+                                    'text-green-400': payment.paid >=
+                                        payment.total
+                                }">
                                 <span>Kembalian:</span>
-                                <span x-text="'Rp ' + change().toLocaleString()"></span>
+                                <span x-text="'Rp ' + (payment.paid - payment.total).toLocaleString('id-ID')"></span>
                             </div>
+                        </div>
 
-                            <div class="flex gap-3 mt-4">
-                                <button @click="loadTodayTransactions()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 
-                dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 
-                py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm border border-gray-300 dark:border-gray-600">
-                                    <i class="fa-solid fa-clock-rotate-left text-base"></i>
-                                    <span>Riwayat</span>
-                                </button>
 
-                                <button @click="openReviewModal()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
-                text-white py-3 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm">
-                                    <i class="fa-solid fa-cash-register text-base"></i>
-                                    <span>Bayar</span>
-                                </button>
-                            </div>
+                        <!-- ======================= -->
+                        <!--         BUTTONS         -->
+                        <!-- ======================= -->
+                        <div class="flex gap-3 mt-6">
+                            <button @click="loadTodayTransactions()"
+                                class="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 
+            text-gray-200 py-3 rounded-lg font-semibold text-sm border border-gray-600">
+                                <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                                <span>Riwayat</span>
+                            </button>
+
+                            <button @click="openReviewModal()"
+                                class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+            text-white py-3 rounded-lg font-semibold text-sm transition">
+                                <i class="fa-solid fa-cash-register text-base"></i>
+                                <span>Bayar</span>
+                            </button>
                         </div>
                     </div>
-                </aside>
 
+                </aside>
             </div>
 
             {{-- ============================= --}}
@@ -1313,6 +1434,8 @@
                                                             class="font-bold mb-1 text-lg text-gray-700 dark:text-gray-200">
                                                             Total Bayar</h3>
                                                         <div class="mb-5">
+
+                                                            <!-- DISPLAY MODE -->
                                                             <template x-if="!editingTotal">
                                                                 <div @click="editingTotal = true"
                                                                     class="text-4xl font-bold text-blue-600 dark:text-blue-400 cursor-pointer select-none hover:opacity-80 transition"
@@ -1321,13 +1444,18 @@
                                                                 </div>
                                                             </template>
 
+                                                            <!-- EDIT MODE -->
                                                             <template x-if="editingTotal">
-                                                                <input type="number" x-model.number="payment.total"
+                                                                <input type="text" x-ref="totalInput"
+                                                                    @input="formatTotalInput($event)"
                                                                     @blur="editingTotal = false"
-                                                                    class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700 
-                                                                    text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                                                    @keydown.enter="$el.blur()"
+                                                                    class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700
+               text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 
+               outline-none transition"
                                                                     placeholder="Masukkan total bayar">
                                                             </template>
+
                                                         </div>
                                                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
                                                             <template
@@ -1564,11 +1692,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             {{-- 🧾 Modal Konfirmasi Transaksi --}}
             <div x-show="showReview"
                 class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" x-transition>
+
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden">
 
                     {{-- Judul --}}
-                    <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-4">
+                    <div class="border-b border-gray-300 dark:border-gray-700 pb-4 mb-6">
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                             <i class="fa-solid fa-file-invoice-dollar text-green-500"></i>
                             Konfirmasi Transaksi
@@ -1576,52 +1705,60 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
 
                     {{-- Daftar Produk --}}
-                    <div class="text-sm md:text-base space-y-3 max-h-[50vh] overflow-y-auto pr-2 pb-2">
+                    <div class="text-sm md:text-base space-y-4 max-h-[45vh] overflow-y-auto pr-2 pb-4">
                         <template x-for="item in cart" :key="item.id + '-' + (item.variant_id ?? 'default')">
-                            <div>
+                            <div class="pb-3 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex justify-between items-center">
                                     <div class="font-semibold text-gray-900 dark:text-gray-100" x-text="item.name"></div>
+
                                     <div class="font-semibold text-gray-800 dark:text-gray-100"
                                         x-text="'Rp ' + (item.price * item.qty).toLocaleString()"></div>
                                 </div>
+
                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-1"
                                     x-text="item.qty + ' × Rp ' + item.price.toLocaleString()"></div>
                             </div>
                         </template>
                     </div>
 
-                    {{-- Total & Info Pembayaran --}}
-                    <div class="mt-5 pt-4 border-t border-gray-300 dark:border-gray-700 space-y-3 text-base">
-                        <div class="flex justify-between items-center">
+                    {{-- Total & Pembayaran --}}
+                    <div class="mt-6 pt-4 space-y-4">
+
+                        <!-- Total -->
+                        <div class="flex justify-between items-center text-lg">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <span>💰</span> Total:
                             </span>
                             <span class="font-bold text-gray-900 dark:text-white"
-                                x-text="'Rp ' + total().toLocaleString()"></span>
+                                x-text="'Rp ' + payment.total.toLocaleString('id-ID')"></span>
                         </div>
 
-                        <div class="flex justify-between items-center">
+                        <!-- Dibayar -->
+                        <div class="flex justify-between items-center text-lg">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <span>💵</span> Dibayar:
                             </span>
-                            <span class="text-gray-900 dark:text-white" x-text="'Rp ' + paid.toLocaleString()"></span>
+                            <span class="text-gray-900 dark:text-white"
+                                x-text="'Rp ' + payment.paid.toLocaleString('id-ID')"></span>
                         </div>
 
-                        <div class="flex justify-between items-center">
+                        <!-- Kembalian -->
+                        <div class="flex justify-between items-center text-lg">
                             <span class="text-gray-600 dark:text-gray-300 flex items-center gap-2">
                                 <span>🔄</span> Kembalian:
                             </span>
-                            <span class="text-blue-600 dark:text-blue-400 font-semibold"
-                                x-text="'Rp ' + change().toLocaleString()"></span>
+                            <span class="text-blue-600 dark:text-blue-400 font-bold"
+                                x-text="'Rp ' + (payment.paid - payment.total).toLocaleString('id-ID')"></span>
                         </div>
                     </div>
 
                     {{-- Tombol --}}
-                    <div class="flex justify-end gap-3 mt-6 pt-4">
+                    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-300 dark:border-gray-700">
                         <button @click="showReview = false"
                             class="px-5 py-2.5 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium hover:bg-gray-400 dark:hover:bg-gray-600 transition">
                             <i class="fa-solid fa-times mr-1"></i> Batalkan
                         </button>
+
                         <button @click="confirmCheckout()"
                             class="px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold shadow">
                             <i class="fa-solid fa-check mr-1"></i> Konfirmasi
@@ -1630,6 +1767,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                 </div>
             </div>
+
 
             {{-- Modal Success --}}
             <div x-show="showSuccess" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -2297,7 +2435,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 payment: {
                     customer: '',
                     total: 0,
-                    paid: 0
+                    paid: 0,
+                    editingPaid: false
                 },
                 customers: @json($customers ?? []),
 
@@ -2307,7 +2446,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 products: [],
                 cart: JSON.parse(localStorage.getItem('cart') || '[]'),
                 selectedCategoryPhysical: null,
-                paid: 0,
                 showToast: false,
                 toastMsg: '',
                 showReview: false,
@@ -2354,6 +2492,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 manualPriceDisplay: '',
                 manualPaid: 0,
                 showManualConfirm: false,
+                showConfirmClose: false,
+                grandTotalAkhir: 0,
 
                 // ======== INIT UTAMA ========
                 async init() {
@@ -2458,6 +2598,46 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.products = [];
                         }
                     }, 400));
+
+                    this.$watch('editingTotal', (value) => {
+                        if (value === true) {
+                            this.$nextTick(() => {
+                                if (this.$refs.totalInput) {
+                                    this.$refs.totalInput.value =
+                                        new Intl.NumberFormat("id-ID").format(this.payment.total);
+
+                                    this.$refs.totalInput.focus();
+                                    this.$refs.totalInput.select();
+                                }
+                            });
+                        }
+                    });
+
+                    // sync paid dengan total() ketika cart berubah, kecuali saat sedang edit manual
+                    this.$watch(() => this.total(), (newTotal) => {
+                        // Total otomatis ikut keranjang selama TIDAK sedang edit manual
+                        if (!this.editingTotal) {
+                            this.payment.total = newTotal;
+                        }
+
+                        // Dibayar ikut total selama tidak sedang edit "dibayar"
+                        if (!this.payment.editingPaid) {
+                            this.payment.paid = this.payment.total;
+                        }
+                    });
+
+                },
+
+                formatPaidInput(event) {
+                    // ambil hanya angka
+                    let raw = String(event.target.value).replace(/\D/g, '');
+                    if (raw === '') raw = '0';
+
+                    // simpan nilai numerik ke model (dipakai untuk perhitungan)
+                    this.payment.paid = Number(raw);
+
+                    // tampilkan format rupiah (tanpa prefix "Rp ")
+                    event.target.value = new Intl.NumberFormat('id-ID').format(raw);
                 },
 
                 async loadProducts() {
@@ -2529,6 +2709,18 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     }
                 },
 
+                formatTotalInput(event) {
+                    let raw = event.target.value.replace(/\D/g, ""); // hanya angka
+
+                    if (raw === "") raw = "0";
+
+                    // simpan angka asli ke model (payment.total)
+                    this.payment.total = Number(raw);
+
+                    // format tampilan input
+                    event.target.value = new Intl.NumberFormat("id-ID").format(raw);
+                },
+
                 // ======== GETTER (Dynamic Filtering) ========
                 get categoriesForSelectedApp() {
                     if (!this.selectedApp) return [];
@@ -2536,6 +2728,15 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         .filter(p => Number(p.app_id) === Number(this.selectedApp.id))
                         .map(p => Number(p.digital_category_id)))];
                     return this.digitalCategories.filter(c => catIds.includes(Number(c.id)));
+                },
+
+                updatePaymentTotals() {
+                    if (!this.editingTotal) {
+                        this.payment.total = this.total();
+                    }
+                    if (!this.payment.editingPaid) {
+                        this.payment.paid = this.payment.total;
+                    }
                 },
 
                 // 🧩 Filter brand berdasarkan kategori & app dari relasi pivot
@@ -2588,11 +2789,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     else this.cart.push({
                         id: p.id,
                         name: p.name,
-                        price: p.price,
+                        price: Number(p.jual),
                         qty: 1
                     });
 
                     this.saveCart();
+                    this.updatePaymentTotals(); // 🔥 WAJIB!!
                 },
 
                 formatManualPrice(e) {
@@ -2638,14 +2840,17 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     const item = this.cart[i];
                     const master = this.products.find(x => x.id === item.id);
                     if (!master) return;
+
                     if (master.stock < item.qty + 1) {
                         this.toastMsg = `Stok ${master.name} tidak cukup (tersisa ${master.stock}).`;
                         this.showToast = true;
                         setTimeout(() => this.showToast = false, 2500);
                         return;
                     }
+
                     this.cart[i].qty++;
                     this.saveCart();
+                    this.updatePaymentTotals(); // 🔥
                 },
                 decreaseQty(i) {
                     const item = this.cart[i];
@@ -2657,6 +2862,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     }
 
                     this.saveCart();
+                    this.updatePaymentTotals(); // 🔥
                 },
                 total() {
                     return this.cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -2666,6 +2872,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
                 loadCart() {
                     this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    this.updatePaymentTotals(); // 🔥 penting kalau reload halaman
                 },
                 clearCart() {
                     this.cart = [];
@@ -2673,18 +2880,18 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
                 // ======== KALKULATOR FISIK ========
                 addPayment(n) {
-                    this.paid += n;
+                    this.payment.paid += n;
                 },
                 payExact() {
-                    this.paid = this.total();
+                    this.payment.paid = this.payment.total;
                 },
                 handleKey(b) {
                     b === '⌫' ?
-                        this.paid = Math.floor(this.paid / 10) :
-                        this.paid = Number(String(this.paid) + b);
+                        this.payment.paid = Math.floor(this.payment.paid / 10) :
+                        this.payment.paid = Number(String(this.payment.paid) + b);
                 },
                 change() {
-                    return this.paid - this.total();
+                    return this.payment.paid - this.payment.total;
                 },
 
                 // ======== FILTER PRODUK FISIK ========
@@ -2707,12 +2914,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         return;
                     }
 
-                    if (this.total() === 0) {
+                    if ((this.payment.total || 0) === 0) {
                         alert("Total transaksi tidak valid.");
                         return;
                     }
 
-                    if (this.paid < this.total()) {
+                    if ((this.payment.paid || 0) < (this.payment.total || 0)) {
                         alert("Uang yang dibayar belum cukup.");
                         return;
                     }
@@ -2733,13 +2940,13 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 item_type: "product",
                                 id: i.id,
                                 qty: i.qty,
-                                price: i.price,
-                                product_attribute_value_id: i.variant_id ??
-                                    null, // ubah jadi nama field sesuai backend
+                                price: this.payment.total > 0 ?
+                                    Math.round((this.payment.total / this.total()) * i.price) : i.price,
+                                product_attribute_value_id: i.variant_id ?? null,
                             })),
-                            subtotal: this.total(),
-                            dibayar: this.paid,
-                            kembalian: this.change(),
+                            subtotal: this.payment.total || this.total(),
+                            dibayar: this.payment.paid || (this.payment.total || this.total()),
+                            kembalian: ((this.payment.paid || 0) - (this.payment.total || this.total())),
                             customer_id: this.selectedCustomer || null,
                         };
 
@@ -2766,7 +2973,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                             // 🔄 Kosongkan keranjang TANPA nambah stok lagi
                             this.finalizeCheckout();
-                            this.paid = 0;
 
                             // 🔁 Refresh stok dari backend
                             if (typeof this.loadProducts === 'function') {
@@ -3210,7 +3416,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.cart.push({
                                 id: product.id,
                                 name: itemName,
-                                price: product.price,
+                                price: Number(product.jual ?? product.price ?? 0), // pakai jual, fallback ke price
                                 qty: 1,
                                 variant: opt.attribute_value,
                                 variant_id: opt.id,
@@ -3261,7 +3467,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         this.cart.push({
                             id: this.selectedProduct.id,
                             name: itemName,
-                            price: this.selectedProduct.price,
+                            price: Number(this.selectedProduct.jual),
                             qty: 1,
                             variant: opt.attribute_value,
                             variant_id: opt.id,
@@ -3269,6 +3475,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     }
 
                     this.saveCart();
+                    this.updatePaymentTotals();
 
                     // Tutup modal
                     this.showOptionModal = false;
@@ -3299,8 +3506,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                             if (data.success) {
                                 found = data.data;
-                                // ❌ Jangan masukkan ke daftar produk
-                                // this.products.unshift(found);
                                 console.log('🆕 Produk dimuat dari server:', found.name);
                             } else {
                                 this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
@@ -3320,10 +3525,15 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         }
                     }
 
-                    // 3️⃣ Setelah ditemukan → cek apakah punya varian
+                    // 3️⃣ Cek varian
                     const attrs = found.attribute_values || [];
 
+                    // ==========================================
+                    // CASE: Ada varian
+                    // ==========================================
                     if (attrs.length > 0) {
+
+                        // --- VARIAN TUNGGAL ---
                         if (attrs.length === 1) {
                             const opt = attrs[0];
                             const masterStock = opt.stok ?? 0;
@@ -3336,14 +3546,45 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 return;
                             }
 
-                            this.selectedProduct = found;
-                            this.selectedProductOptions = attrs;
-                            this.chooseOption(opt);
+                            // Push langsung varian ke cart
+                            const itemName = `${found.name} - ${opt.attribute_value}`;
+
+                            const existing = this.cart.find(
+                                i => i.id === found.id && i.variant_id === opt.id
+                            );
+
+                            if (existing) {
+                                if (existing.qty + 1 > masterStock) {
+                                    this.toastMsg = `Stok ${itemName} tidak cukup (tersisa ${masterStock}).`;
+                                    this.showToast = true;
+                                    setTimeout(() => this.showToast = false, 2500);
+                                    e.target.value = '';
+                                    return;
+                                }
+                                existing.qty++;
+                            } else {
+                                this.cart.push({
+                                    id: found.id,
+                                    name: itemName,
+                                    price: Number(found.jual),
+                                    qty: 1,
+                                    variant: opt.attribute_value,
+                                    variant_id: opt.id,
+                                });
+                            }
+
+                            this.saveCart();
+                            this.updatePaymentTotals(); // FIX: update total
+
+                            this.toastMsg = `${itemName} ditambahkan!`;
+                            this.showToast = true;
+                            setTimeout(() => this.showToast = false, 2000);
+
                             e.target.value = '';
                             return;
                         }
 
-                        // Lebih dari 1 varian → buka modal
+                        // --- VARIAN BANYAK: buka modal ---
                         this.selectedProduct = found;
                         this.selectedProductOptions = attrs;
                         this.showOptionModal = true;
@@ -3351,7 +3592,10 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         return;
                     }
 
-                    // 4️⃣ Kalau tanpa varian, langsung tambahkan
+                    // ==========================================
+                    // CASE: Tidak punya varian
+                    // ==========================================
+
                     const existing = this.cart.find(i => i.id === found.id);
                     const qtyInCart = existing ? existing.qty : 0;
 
@@ -3363,47 +3607,61 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         return;
                     }
 
-                    this.addToCart(found);
+                    // Tambah tanpa varian
+                    if (existing) {
+                        existing.qty++;
+                    } else {
+                        this.cart.push({
+                            id: found.id,
+                            name: found.name,
+                            price: Number(found.jual), // FIX harga
+                            qty: 1
+                        });
+                    }
+
+                    this.saveCart();
+                    this.updatePaymentTotals(); // FIX: wajib biar total update
+
                     this.toastMsg = `${found.name} ditambahkan!`;
                     this.showToast = true;
                     setTimeout(() => (this.showToast = false), 2000);
+
                     e.target.value = '';
                 },
 
-                handleCloseBook() {
-                    console.log("📘 Fetching close-book data...");
-                    fetch("{{ route('pos.closebook.data') }}")
-                        .then(res => {
-                            console.log("🔗 Response status:", res.status);
-                            return res.json();
-                        })
-                        .then(data => {
-                            console.log("✅ Data diterima:", data);
-                            this.closeBookData = data;
-                            this.showCloseBookModal = true;
-                        })
-                        .catch(err => {
-                            console.error("❌ Fetch gagal:", err);
-                            alert("Terjadi kesalahan saat mengambil data tutup buku: " + err.message);
-                        });
+
+                async handleCloseBook() {
+                    this.showCloseBookModal = true;
+                    this.closeBookData = null;
+
+                    try {
+                        const res = await fetch("{{ route('pos.closebook.data') }}");
+                        const data = await res.json();
+
+                        // Pastikan semua numeric field dipaksa jadi Number
+                        data.barangTotal = Number(data.barangTotal) || 0;
+                        data.totalPenjualan = Number(data.totalPenjualan) || 0;
+                        data.totalUtang = Number(data.totalUtang) || 0;
+                        data.bayarUtang = Number(data.bayarUtang) || 0;
+                        data.grandTotal = Number(data.grandTotal) || 0;
+
+                        this.closeBookData = data;
+
+                    } catch (e) {
+                        alert("Gagal memuat data tutup buku.");
+                    }
                 },
                 formatRupiah(angka) {
-                    if (angka == null) return 'Rp 0';
-                    return 'Rp ' + Number(angka).toLocaleString('id-ID');
+                    angka = Number(angka);
+                    if (isNaN(angka)) angka = 0;
+                    return 'Rp ' + angka.toLocaleString('id-ID');
                 },
                 formatLebihInput(event) {
-                    // Ambil hanya angka
-                    let raw = event.target.value.replace(/[^\d]/g, '');
-                    if (raw === '') raw = '0';
+                    let raw = event.target.value.replace(/\D/g, "");
+                    if (!raw) raw = "0";
 
-                    // Format ke Rupiah
-                    const formatted = Number(raw).toLocaleString('id-ID');
-
-                    // Update tampilan input
-                    event.target.value = formatted;
-
-                    // Simpan nilai numeriknya ke variable lebih
-                    this.lebih = Number(raw);
+                    this.lebih = Number(raw) || 0;
+                    event.target.value = this.lebih.toLocaleString("id-ID");
                 },
                 async copyCloseBook() {
                     if (!this.closeBookData) return;

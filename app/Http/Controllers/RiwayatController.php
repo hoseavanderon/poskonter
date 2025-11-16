@@ -263,22 +263,28 @@ class RiwayatController extends Controller
             })
             ->values();
 
-        // --- PEMBAYARAN UTANG — ambil dari paid_at
         $pembayaranUtangFisik = DB::table('transactions')
             ->join('customers', 'customers.id', '=', 'transactions.customer_id')
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
             ->whereDate('transactions.paid_at', $tanggal)
-            ->select('customers.name', 'transactions.subtotal')
-            ->get();
+            ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
+            ->get()
+            ->filter(function ($row) {
+                // ⛔ Skip kalau dibuat & dibayar di tanggal yang sama
+                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
+            });
 
         $pembayaranUtangDigital = DB::table('digital_transactions')
             ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereNotNull('digital_transactions.paid_at')
             ->whereDate('digital_transactions.paid_at', $tanggal)
-            ->select('customers.name', 'digital_transactions.subtotal')
-            ->get();
+            ->select('customers.name', 'digital_transactions.subtotal', 'digital_transactions.created_at', 'digital_transactions.paid_at')
+            ->get()
+            ->filter(function ($row) {
+                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
+            });
 
         $pembayaranUtang = $pembayaranUtangFisik
             ->merge($pembayaranUtangDigital)
@@ -521,16 +527,22 @@ class RiwayatController extends Controller
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
             ->whereBetween('transactions.paid_at', [$from, $to])
-            ->select('customers.name', 'transactions.subtotal')
-            ->get();
+            ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
+            ->get()
+            ->filter(function ($row) {
+                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
+            });
 
         $pembayaranUtangDigital = DB::table('digital_transactions')
             ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereNotNull('digital_transactions.paid_at')
             ->whereBetween('digital_transactions.paid_at', [$from, $to])
-            ->select('customers.name', 'digital_transactions.subtotal')
-            ->get();
+            ->select('customers.name', 'digital_transactions.subtotal', 'digital_transactions.created_at', 'digital_transactions.paid_at')
+            ->get()
+            ->filter(function ($row) {
+                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
+            });
 
         $pembayaranUtang = $pembayaranUtangFisik
             ->merge($pembayaranUtangDigital)
@@ -559,5 +571,66 @@ class RiwayatController extends Controller
                 && $utangList->isEmpty()
             ),
         ];
+    }
+
+    public function deleteTransaction($id)
+    {
+        try {
+            $transaction = \App\Models\Transaction::withTrashed()
+                ->with(['details.product.attributeValues'])
+                ->findOrFail($id);
+
+            $detailsData = [];
+
+            // 🧩 Kembalikan stok untuk setiap detail transaksi
+            if ($transaction->details()->exists()) {
+                foreach ($transaction->details as $detail) {
+
+                    $attr = $detail->product->attributeValues->first();
+
+                    if ($attr) {
+                        // Tambah stok kembali
+                        $attr->increment('stok', $detail->qty);
+                        $attr->update(['last_restock_date' => now()]);
+
+                        // Catat ke inventory history
+                        \App\Models\InventoryHistory::create([
+                            'product_id' => $detail->product_id,
+                            'product_attribute_value_id' => $attr->id,
+                            'type' => 'IN',
+                            'pcs' => $detail->qty,
+                            'keterangan' => 'RETUR: Pembatalan transaksi ' . $transaction->nomor_nota,
+                            'outlet_id' => \Illuminate\Support\Facades\Auth::user()->outlet_id,
+                        ]);
+
+                        // Kirim data ke frontend
+                        $detailsData[] = [
+                            'product_id' => $detail->product_id,
+                            'product_attribute_value_id' => $attr->id,
+                            'qty' => $detail->qty,
+                        ];
+                    }
+                }
+
+                // Soft delete semua detail
+                $transaction->details()->delete();
+            }
+
+            // Soft delete transaksi utama
+            $transaction->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaksi berhasil dihapus dan stok dikembalikan.',
+                'details' => $detailsData,
+            ]);
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus transaksi.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

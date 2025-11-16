@@ -114,7 +114,9 @@
         <!-- DATE RANGE FILTER (FLATPICKR) -->
         <div class="flex justify-center items-center mb-6">
             <input id="dateRangePicker" type="text"
-                class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:ring-1 focus:ring-blue-400 text-center w-64 cursor-pointer"
+                class="bg-[#0E1524] border border-[#1B2334] rounded-lg px-4 py-2 text-[15px] text-[#D8DFEA] 
+               focus:ring-1 focus:ring-blue-400 focus:border-blue-400 
+               text-center w-64 cursor-pointer placeholder-[#7A8292]"
                 readonly placeholder="Pilih rentang tanggal" />
         </div>
 
@@ -157,9 +159,9 @@
                 class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-6 text-[15px] text-[#D8DFEA] space-y-6 leading-normal">
 
                 <!-- HEADER -->
-                <div class="flex justify-between items-start">
+                <div class="flex justify-between items-center mb-1">
                     <div>
-                        <p class="text-[12px] uppercase tracking-wider text-[#7A8292]">Transaction Summary</p>
+                        <p class="text-[12px] uppercase tracking-wider text-[#7A8292]">Rincian Transaksi</p>
 
                         <h2 class="text-[20px] font-semibold text-white mt-1">
                             <template x-if="isRangeActive">
@@ -214,14 +216,14 @@
 
                 <!-- SUBTOTAL -->
                 <div class="flex justify-between pt-1">
-                    <span class="text-[#A3AEC0]">Subtotal (Pre-Debt)</span>
+                    <span class="text-[#A3AEC0]">Subtotal ( Belum Termasuk Utang )</span>
                     <span class="font-semibold text-white" x-text="formatCurrency(totalPenjualanSebelumUtang)"></span>
                 </div>
 
                 <!-- DEBT -->
                 <template x-if="utangList.length > 0">
                     <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
-                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">DEBT</p>
+                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">Utang : </p>
 
                         <template x-for="u in utangList" :key="u.name">
                             <div class="flex justify-between">
@@ -236,7 +238,7 @@
                 <!-- PAYMENT -->
                 <template x-if="pembayaranUtang.length > 0">
                     <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
-                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">PAYMENT</p>
+                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">Bayar Utang : </p>
 
                         <template x-for="u in pembayaranUtang" :key="u.name">
                             <div class="flex justify-between">
@@ -249,13 +251,13 @@
 
                 <!-- TOTAL SALES -->
                 <div class="bg-[#131B2C] rounded-xl px-4 py-3 flex justify-between font-semibold text-white">
-                    <span>Total Sales</span>
+                    <span>Total Penjualan</span>
                     <span x-text="formatCurrency(computedTotalPenjualan())"></span>
                 </div>
 
                 <!-- TRANSFERS -->
                 <div>
-                    <p class="uppercase text-[12px] text-[#7A8292] font-semibold mb-2">Transfers</p>
+                    <p class="uppercase text-[12px] text-[#7A8292] font-semibold mb-2">Transfer</p>
 
                     <div class="space-y-2">
 
@@ -316,23 +318,24 @@
             <!-- RIGHT SIDE -->
             <div class="flex flex-col gap-5 overflow-y-auto no-scrollbar" x-ref="rightSide"
                 style="max-height: calc(110vh - 100px);">
+
                 <!-- TABS -->
-                <div class="flex items-center border-b border-gray-700 w-full">
+                <div class="flex items-center border-b border-[#1B2334] w-full">
                     <button @click="activeTab = 'produk'"
-                        class="px-4 py-2 text-sm font-semibold transition-all flex-1 text-center"
+                        class="px-4 py-2 text-[15px] font-semibold transition-all flex-1 text-center"
                         :class="activeTab === 'produk'
                             ?
                             'text-blue-400 border-blue-400 border-b-2' :
-                            'text-gray-400 hover:text-gray-300'">
+                            'text-[#9BA8BF] hover:text-[#D8DFEA]'">
                         Produk Fisik
                     </button>
 
                     <button @click="activeTab = 'digital'"
-                        class="px-4 py-2 text-sm font-semibold transition-all flex-1 text-center"
+                        class="px-4 py-2 text-[15px] font-semibold transition-all flex-1 text-center"
                         :class="activeTab === 'digital'
                             ?
                             'text-blue-400 border-blue-400 border-b-2' :
-                            'text-gray-400 hover:text-gray-300'">
+                            'text-[#9BA8BF] hover:text-[#D8DFEA]'">
                         Produk Digital
                     </button>
                 </div>
@@ -341,63 +344,141 @@
                 <div x-show="activeTab === 'produk'" class="space-y-5">
 
                     <!-- CATEGORY SUMMARY -->
-                    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Ringkasan Kategori Produk</h3>
+                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
+                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Ringkasan Kategori Produk</h3>
 
                         <template x-if="categories.length > 0">
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                                 <template x-for="(c, index) in categories" :key="c.name + index">
-                                    <div class="bg-gray-700/60 rounded-xl py-3 transition hover:bg-gray-700/90">
-                                        <p class="text-sm font-semibold text-gray-100" x-text="c.name"></p>
-                                        <p class="text-sm text-gray-400" x-text="c.total_pcs + ' pcs'"></p>
+                                    <div class="bg-[#131B2C] rounded-xl py-3 transition hover:bg-[#1A2336]">
+                                        <p class="text-[15px] font-semibold text-white" x-text="c.name"></p>
+                                        <p class="text-[13px] text-[#9BA8BF]" x-text="c.total_pcs + ' pcs'"></p>
                                     </div>
                                 </template>
                             </div>
                         </template>
 
                         <template x-if="categories.length === 0">
-                            <p class="text-center text-gray-400 py-10">📭 Tidak ada data kategori produk.</p>
+                            <p class="text-center text-[#9BA8BF] py-10">📭 Tidak ada data kategori produk.</p>
                         </template>
                     </div>
 
                     <!-- PRODUCT HISTORY -->
-                    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Riwayat Transaksi Produk</h3>
+                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
+                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Riwayat Transaksi Produk</h3>
 
                         <template x-if="productTransactions.length > 0">
                             <div class="space-y-4">
                                 <template x-for="t in productTransactions" :key="t.transaction_id">
-                                    <div
-                                        class="bg-gray-700/60 rounded-xl p-4 hover:bg-gray-700/80 transition-all duration-200 space-y-3">
 
-                                        <!-- TAMPILKAN TANGGAL & JAM SEKALI SAJA -->
-                                        <div class="mb-2 flex items-center gap-2">
-                                            <span class="text-xs text-gray-400"
-                                                x-text="formatPrettyDate(t.datetime || t.date || t.created_at)">
-                                            </span>
+                                    <div x-data="{ openMenu: false, confirmDelete: false }"
+                                        class="bg-[#131B2C] rounded-xl p-4 hover:bg-[#1A2336] transition-all duration-200 space-y-3"
+                                        @keydown.escape.window="confirmDelete = false">
 
-                                            <span class="text-xs text-gray-400" x-text="getTransactionTime(t)">
-                                            </span>
+                                        <!-- MODAL BACKDROP -->
+                                        <div x-show="confirmDelete" x-transition.opacity @click="confirmDelete = false"
+                                            class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999]">
+
+                                            <!-- MODAL BOX -->
+                                            <div x-show="confirmDelete" x-transition.scale @click.stop
+                                                class="bg-[#1A2336] w-[420px] rounded-xl p-6 space-y-5 shadow-xl border border-white/10">
+
+                                                <h2 class="text-white text-xl font-semibold text-center leading-snug">
+                                                    Yakin retur <span class="text-blue-300"
+                                                        x-text="t.details[0].name"></span>?
+                                                </h2>
+
+                                                <p class="text-gray-300 text-[15px] text-center leading-relaxed">
+                                                    Transaksi ini akan dihapus dan stok akan dikembalikan.
+                                                </p>
+
+                                                <div class="flex justify-end gap-4 mt-4">
+
+                                                    <!-- BATAL -->
+                                                    <button @click="confirmDelete = false"
+                                                        class="px-5 py-2 text-sm rounded-lg bg-gray-600/30 hover:bg-gray-600/50 text-gray-200 transition">
+                                                        Batal
+                                                    </button>
+
+                                                    <!-- YA, RETUR -->
+                                                    <button
+                                                        @click="confirmDelete = false; deleteTransaction(t.transaction_id)"
+                                                        class="px-5 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition">
+                                                        Ya, Retur
+                                                    </button>
+
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <!-- LIST PRODUK DALAM TRANSAKSI -->
+                                        <!-- HEADER: TANGGAL/JAM + MENU 3 TITIK -->
+                                        <div class="flex justify-between items-center mb-1">
+
+                                            <!-- TANGGAL & JAM -->
+                                            <div class="flex flex-col leading-tight">
+                                                <span class="text-[13px] text-[#9BA8BF]"
+                                                    x-text="formatPrettyDate(t.datetime || t.date || t.created_at)">
+                                                </span>
+                                            </div>
+
+                                            <!-- MENU BUTTON -->
+                                            <div x-data="{ openMenu: false }" class="relative">
+
+                                                <button @click="openMenu = !openMenu"
+                                                    class="p-1 rounded hover:bg-[#1F2A44] transition">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300"
+                                                        fill="currentColor" viewBox="0 0 24 24">
+                                                        <circle cx="12" cy="5" r="2"></circle>
+                                                        <circle cx="12" cy="12" r="2"></circle>
+                                                        <circle cx="12" cy="19" r="2"></circle>
+                                                    </svg>
+                                                </button>
+
+                                                <!-- DROPDOWN -->
+                                                <div x-show="openMenu"
+                                                    x-transition:enter="transition ease-out duration-150"
+                                                    x-transition:enter-start="opacity-0 scale-95"
+                                                    x-transition:enter-end="opacity-100 scale-100"
+                                                    x-transition:leave="transition ease-in duration-100"
+                                                    x-transition:leave-start="opacity-100 scale-100"
+                                                    x-transition:leave-end="opacity-0 scale-95"
+                                                    @click.outside="openMenu = false"
+                                                    class="absolute right-0 mt-2 w-36 bg-[#1F2A44] rounded-xl shadow-xl shadow-black/30 z-30 overflow-hidden">
+
+                                                    <button @click="confirmDelete = true"
+                                                        class="w-full flex items-center gap-2 px-4 py-2.5 text-[14px] text-red-300 hover:bg-red-500/10 transition">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-4 w-4 text-red-300" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
+                                                                            1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                        </svg>
+                                                        Hapus
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- LIST PRODUK -->
                                         <template x-for="d in t.details" :key="d.name">
 
-                                            <div class="flex justify-between items-start">
+                                            <div class="flex justify-between items-start py-1">
 
-                                                <!-- KIRI (NAMA PRODUK) -->
-                                                <div class="flex flex-col">
-                                                    <span class="text-gray-100 font-semibold text-sm"
+                                                <!-- NAMA PRODUK -->
+                                                <div class="flex flex-col leading-tight">
+                                                    <span class="text-white font-semibold text-[15px]"
                                                         x-text="d.name"></span>
-
-                                                    <!-- pcs -->
-                                                    <span class="text-xs text-gray-400" x-text="d.qty + ' pcs'"></span>
+                                                    <span class="text-[13px] text-[#9BA8BF]"
+                                                        x-text="d.qty + ' pcs'"></span>
                                                 </div>
 
-                                                <!-- KANAN (HARGA) -->
+                                                <!-- HARGA -->
                                                 <div class="flex flex-col text-right">
-                                                    <span class="text-blue-400 font-semibold text-sm"
-                                                        x-text="formatCurrency(d.amount)"></span>
+                                                    <span class="text-blue-400 font-semibold text-[15px]"
+                                                        x-text="formatCurrency(d.amount)">
+                                                    </span>
                                                 </div>
 
                                             </div>
@@ -407,22 +488,33 @@
                                     </div>
 
                                 </template>
-
                             </div>
                         </template>
 
                         <template x-if="productTransactions.length === 0">
-                            <p class="text-gray-400 text-center py-8">📭 Tidak ada transaksi produk pada tanggal ini.</p>
+                            <p class="text-[#9BA8BF] text-center py-8">📭 Tidak ada transaksi produk pada tanggal ini.</p>
                         </template>
                     </div>
+                </div>
 
+                <!-- TOAST SUKSES -->
+                <div x-show="toastSuccess" x-transition.duration.300ms
+                    class="fixed bottom-6 right-6 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg 
+            text-sm font-medium z-[9999] flex items-center gap-2">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+
+                    <span x-text="toastMessage"></span>
                 </div>
 
                 <!-- TAB PRODUK DIGITAL -->
                 <div x-show="activeTab === 'digital'" class="space-y-5">
 
-                    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5">
-                        <h3 class="text-sm font-semibold text-gray-200 mb-3">Riwayat Produk Digital</h3>
+                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
+                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Riwayat Produk Digital</h3>
 
                         <template x-if="Object.keys(digitalTransactions).length > 0">
                             <div class="space-y-6">
@@ -430,8 +522,8 @@
                                 <!-- DEVICE LIST -->
                                 <template x-for="(apps, deviceName) in digitalTransactions" :key="deviceName">
                                     <div>
-                                        <h4 class="text-gray-200 font-semibold mb-3 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300"
+                                        <h4 class="text-[15px] font-semibold text-[#D8DFEA] mb-3 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#9BA8BF]"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 2h6a2 2 0 012 2v16a2 2 0 01-2 2H9a2 2 0 01-2-2V4a2 2 0 012-2z" />
@@ -439,24 +531,28 @@
                                             <span x-text="deviceName"></span>
                                         </h4>
 
-                                        <!-- APPS UNDER DEVICE -->
+                                        <!-- APPS -->
                                         <div class="space-y-3">
                                             <template x-for="(app, appName) in apps" :key="appName">
-                                                <div class="bg-gray-700/60 rounded-xl p-3">
+                                                <div class="bg-[#131B2C] rounded-xl p-3">
 
                                                     <!-- APP HEADER -->
                                                     <button @click="app.open = !app.open"
-                                                        class="w-full flex justify-between items-center px-2 py-1 text-left text-sm font-semibold text-gray-100 hover:text-blue-400">
+                                                        class="w-full flex justify-between items-center px-2 py-1 text-left text-[15px] font-semibold text-white hover:text-blue-400">
 
                                                         <div class="flex items-center gap-2">
                                                             <span x-text="appName"></span>
-                                                            <span class="text-xs text-gray-400"
-                                                                x-text="app.transactions.length + ' Trx'"></span>
+
+                                                            <span class="text-[13px] text-[#9BA8BF]"
+                                                                x-text="app.transactions.length + ' Trx'">
+                                                            </span>
                                                         </div>
 
                                                         <div class="flex items-center gap-2">
-                                                            <span class="text-blue-400 text-xs font-medium"
-                                                                x-text="formatCurrency(app.total)"></span>
+                                                            <span class="text-blue-400 text-[13px] font-medium"
+                                                                x-text="formatCurrency(app.total)">
+                                                            </span>
+
                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                 class="w-4 h-4 transition-transform"
                                                                 :class="app.open ? 'rotate-180' : ''" fill="none"
@@ -472,14 +568,17 @@
                                                     <div x-show="app.open" x-collapse class="mt-3 space-y-2">
                                                         <template x-for="t in app.transactions">
                                                             <div
-                                                                class="bg-gray-800/60 border border-gray-700 rounded-lg p-3 flex justify-between items-center">
+                                                                class="bg-[#0E1524] border border-[#1B2334] rounded-lg p-3 flex justify-between items-center">
+
                                                                 <div>
-                                                                    <p class="text-gray-100 text-sm font-semibold"
+                                                                    <p class="text-[15px] font-semibold text-white"
                                                                         x-text="t.name"></p>
-                                                                    <p class="text-xs text-gray-400" x-text="t.datetime">
-                                                                    </p>
+
+                                                                    <p class="text-[13px] text-[#9BA8BF]"
+                                                                        x-text="t.datetime"></p>
                                                                 </div>
-                                                                <span class="text-sm font-semibold"
+
+                                                                <span class="text-[15px] font-semibold"
                                                                     :class="{
                                                                         'text-green-400': t.category_id == 8,
                                                                         'text-red-400': t.category_id == 9,
@@ -488,6 +587,7 @@
                                                                     }"
                                                                     x-text="formatCurrency(t.amount)">
                                                                 </span>
+
                                                             </div>
                                                         </template>
                                                     </div>
@@ -503,7 +603,7 @@
                         </template>
 
                         <template x-if="Object.keys(digitalTransactions).length === 0">
-                            <p class="text-center text-gray-400 py-10">📭 Tidak ada transaksi digital.</p>
+                            <p class="text-center text-[#9BA8BF] py-10">📭 Tidak ada transaksi digital.</p>
                         </template>
 
                     </div>
@@ -511,7 +611,6 @@
                 </div>
 
             </div>
-
         </div>
     </div>
 
@@ -551,6 +650,48 @@
                 isRangeActive: false,
                 outletId: {{ Auth::user()->outlet_id }},
                 activeTab: 'produk',
+                toastSuccess: false,
+                toastMessage: "",
+
+                async deleteTransaction(id) {
+                    try {
+                        const res = await fetch(`/riwayat/transaction/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
+                            },
+                        });
+
+                        const data = await res.json();
+
+                        if (!data.success) {
+                            console.error("Gagal hapus:", data);
+                            return;
+                        }
+
+                        // 🔥 Hapus card dari UI
+                        this.productTransactions = this.productTransactions.filter(t => t.transaction_id !== id);
+
+                        // 🔄 Update summary kiri
+                        await this.fetchData();
+
+                        // ✅ Tampilkan toast sukses
+                        this.showToast("Transaksi berhasil diretur");
+
+                    } catch (e) {
+                        console.error("Error:", e);
+                    }
+                },
+
+                showToast(message) {
+                    this.toastMessage = message;
+                    this.toastSuccess = true;
+
+                    setTimeout(() => {
+                        this.toastSuccess = false;
+                    }, 2000);
+                },
 
                 get totalPenjualan() {
                     // Hitung total barang + semua digital apps

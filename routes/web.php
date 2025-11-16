@@ -56,7 +56,7 @@ Route::middleware([
     Route::get('/riwayat/data', [RiwayatController::class, 'getData'])->name('riwayat.data');
     Route::get('/riwayat/years', [RiwayatController::class, 'getAvailableYears'])->name('riwayat.years');
     Route::get('/riwayat/data-range', [RiwayatController::class, 'getDataRange']);
-
+    Route::delete('/riwayat/transaction/{id}', [RiwayatController::class, 'deleteTransaction']);
     // ===================================================
     // 📘 PEMBUKUAN
     // ===================================================
