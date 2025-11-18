@@ -2971,46 +2971,48 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         const result = await res.json();
 
                         if (res.ok && result.success) {
+
+                            // TUTUP MODAL
                             this.showReview = false;
                             this.showSuccess = true;
+
                             this.lastTransaction = {
                                 total: payload.subtotal,
                                 dibayar: payload.dibayar,
                                 kembalian: payload.kembalian
                             };
 
-                            // 🔄 Kosongkan keranjang TANPA nambah stok lagi
+                            // 🧹 KOSONGKAN CART
                             this.finalizeCheckout();
 
-                            // 🔁 Refresh stok dari backend
+                            // ================================
+                            // ⭐ FIX UTAMA:
+                            // Reload stok produk secara FULL
+                            // ================================
                             if (typeof this.loadProducts === 'function') {
-                                await this.loadProducts();
+                                this.products = []; // reset list produk
+                                this.hasMore = true; // reset infinite scroll
+                                await this.loadProducts(); // reload produk dari server
                             }
 
-                            // ✅ Toast sukses
+                            // TOAST
                             this.showToast = true;
                             this.toastMsg = "Transaksi berhasil! Stok diperbarui.";
                             setTimeout(() => this.showToast = false, 3000);
+
                         } else {
-                            // ⚠️ Tampilkan detail error
                             console.error("❌ Transaksi gagal:", {
                                 status: res.status,
                                 statusText: res.statusText,
                                 result,
                             });
 
-                            // Jika Laravel mengembalikan error validasi
                             if (result.errors) {
-                                console.table(result.errors);
                                 const firstError = Object.values(result.errors)[0][0];
                                 alert(`Validasi gagal: ${firstError}`);
-                            }
-                            // Jika ada pesan umum dari controller
-                            else if (result.message) {
+                            } else if (result.message) {
                                 alert(`Gagal: ${result.message}`);
-                            }
-                            // Jika tidak ada detail message
-                            else {
+                            } else {
                                 alert(`Terjadi kesalahan (HTTP ${res.status}): ${res.statusText}`);
                             }
                         }
