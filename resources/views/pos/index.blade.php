@@ -387,11 +387,11 @@
                     <div id="productScrollArea" class="relative min-h-[60vh] max-h-[70vh] overflow-y-auto pr-2">
                         {{-- Grid produk --}}
                         <div class="grid 
-            grid-cols-2 
-            sm:grid-cols-2 
-            md:grid-cols-2
-            xl:grid-cols-3 
-            gap-5"
+                                grid-cols-2 
+                                sm:grid-cols-2 
+                                md:grid-cols-2
+                                xl:grid-cols-3 
+                                gap-5"
                             x-show="!transitioning" x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0">
@@ -758,7 +758,8 @@
                                         'text-red-500 dark:text-red-400'"
                                     x-text="opt.stok > 0 ? ('Stok: ' + opt.stok) : 'Stok Habis'"></div>
                                 <div class="text-base font-bold text-blue-600"
-                                    x-text="'Rp ' + Number(selectedProduct.price).toLocaleString()"></div>
+                                    x-text="selectedProduct ? 'Rp ' + Number(selectedProduct.price).toLocaleString() : 'Rp 0'">
+                                </div>
                             </button>
                         </template>
                     </div>
@@ -2796,7 +2797,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     else this.cart.push({
                         id: p.id,
                         name: p.name,
-                        price: Number(p.jual),
+                        price: Number(p.price ?? 0),
                         qty: 1
                     });
 
@@ -3423,7 +3424,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.cart.push({
                                 id: product.id,
                                 name: itemName,
-                                price: Number(product.jual ?? product.price ?? 0), // pakai jual, fallback ke price
+                                price: Number(product.price ?? 0),
                                 qty: 1,
                                 variant: opt.attribute_value,
                                 variant_id: opt.id,
@@ -3474,7 +3475,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         this.cart.push({
                             id: this.selectedProduct.id,
                             name: itemName,
-                            price: Number(this.selectedProduct.jual),
+                            price: Number(this.selectedProduct.price),
                             qty: 1,
                             variant: opt.attribute_value,
                             variant_id: opt.id,
@@ -3513,7 +3514,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                             if (data.success) {
                                 found = data.data;
-                                console.log('🆕 Produk dimuat dari server:', found.name);
+                                console.log('🆕 Produk dimuat dari server:', found);
                             } else {
                                 this.toastMsg = `Produk dengan barcode ${code} tidak ditemukan.`;
                                 this.showToast = true;
@@ -3532,6 +3533,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         }
                     }
 
+                    // Normalisasi harga agar tidak NaN
+                    found.price = Number(found.price ?? 0);
+
                     // 3️⃣ Cek varian
                     const attrs = found.attribute_values || [];
 
@@ -3543,7 +3547,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         // --- VARIAN TUNGGAL ---
                         if (attrs.length === 1) {
                             const opt = attrs[0];
-                            const masterStock = opt.stok ?? 0;
+                            const masterStock = Number(opt.stok ?? 0);
 
                             if (masterStock <= 0) {
                                 this.toastMsg = `⚠️ Stok ${found.name} - ${opt.attribute_value} habis.`;
@@ -3553,7 +3557,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 return;
                             }
 
-                            // Push langsung varian ke cart
                             const itemName = `${found.name} - ${opt.attribute_value}`;
 
                             const existing = this.cart.find(
@@ -3573,7 +3576,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 this.cart.push({
                                     id: found.id,
                                     name: itemName,
-                                    price: Number(found.jual),
+                                    price: Number(found.price || 0),
                                     qty: 1,
                                     variant: opt.attribute_value,
                                     variant_id: opt.id,
@@ -3581,7 +3584,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             }
 
                             this.saveCart();
-                            this.updatePaymentTotals(); // FIX: update total
+                            this.updatePaymentTotals();
 
                             this.toastMsg = `${itemName} ditambahkan!`;
                             this.showToast = true;
@@ -3595,6 +3598,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         this.selectedProduct = found;
                         this.selectedProductOptions = attrs;
                         this.showOptionModal = true;
+
                         e.target.value = '';
                         return;
                     }
@@ -3606,7 +3610,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     const existing = this.cart.find(i => i.id === found.id);
                     const qtyInCart = existing ? existing.qty : 0;
 
-                    if (found.stock <= qtyInCart) {
+                    if (Number(found.stock) <= qtyInCart) {
                         this.toastMsg = `Stok ${found.name} tidak cukup (tersisa ${found.stock}).`;
                         this.showToast = true;
                         setTimeout(() => (this.showToast = false), 2500);
@@ -3621,13 +3625,13 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         this.cart.push({
                             id: found.id,
                             name: found.name,
-                            price: Number(found.jual), // FIX harga
+                            price: Number(found.price || 0),
                             qty: 1
                         });
                     }
 
                     this.saveCart();
-                    this.updatePaymentTotals(); // FIX: wajib biar total update
+                    this.updatePaymentTotals();
 
                     this.toastMsg = `${found.name} ditambahkan!`;
                     this.showToast = true;
