@@ -525,8 +525,8 @@
                             class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm flex justify-between items-center cursor-pointer">
                             <span
                                 x-text="selectedCustomer 
-            ? ('👤 ' + (customers.find(c => c.id == selectedCustomer)?.name || ''))
-            : '💵 Tunai'">
+                            ? ('👤 ' + (customers.find(c => c.id == selectedCustomer)?.name || ''))
+                            : '💵 Tunai'">
                             </span>
                             <i class="fa-solid fa-caret-down text-gray-500"></i>
                         </div>
@@ -625,7 +625,7 @@
                                     @blur="editingTotal = false; payment.editingPaid = false"
                                     @input="formatTotalInput($event)" @keydown.enter="$el.blur()"
                                     class="w-full text-center text-4xl font-bold border border-blue-500 bg-gray-900 
-                text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                 text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="Masukkan total bayar">
                             </template>
 
@@ -703,14 +703,14 @@
                         <div class="flex gap-3 mt-6">
                             <button @click="loadTodayTransactions()"
                                 class="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 
-            text-gray-200 py-3 rounded-lg font-semibold text-sm border border-gray-600">
+                 text-gray-200 py-3 rounded-lg font-semibold text-sm border border-gray-600">
                                 <i class="fa-solid fa-clock-rotate-left text-base"></i>
                                 <span>Riwayat</span>
                             </button>
 
                             <button @click="openReviewModal()"
                                 class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
-            text-white py-3 rounded-lg font-semibold text-sm transition">
+                 text-white py-3 rounded-lg font-semibold text-sm transition">
                                 <i class="fa-solid fa-cash-register text-base"></i>
                                 <span>Bayar</span>
                             </button>
@@ -2986,6 +2986,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                             // 🧹 KOSONGKAN CART
                             this.finalizeCheckout();
+                            this.selectedCustomer = '';
+                            this.customerSearch = '';
 
                             // ================================
                             // ⭐ FIX UTAMA:
@@ -3085,6 +3087,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.manualPrice = 0;
                             this.manualPriceDisplay = "";
                             this.manualPaid = 0;
+                            this.selectedCustomer = '';
+                            this.customerSearch = '';
 
                             // 🔥 Toast
                             this.toastMsg = "Transaksi jasa berhasil!";
@@ -3207,6 +3211,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedCategory = null;
                             this.selectedBrand = null;
                             this.selectedProduct = null;
+                            this.selectedCustomer = '';
+                            this.customerSearch = '';
                         } else {
                             console.error('%c💥 Server Error:', 'color:#dc2626;font-weight:bold', result.error ||
                                 '(no message)');
