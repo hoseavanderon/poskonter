@@ -3644,6 +3644,14 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     e.target.value = '';
                 },
 
+                updateManualTotal(e) {
+    let val = e.target.value.replace(/\D/g, ""); // keep numbers only
+
+    payment.total = Number(val);
+
+    // Update tampilan (tetep format Rp)
+    e.target.value = this.formatRupiah(val);
+},
 
                 async handleCloseBook() {
                     this.showCloseBookModal = true;
