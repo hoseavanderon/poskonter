@@ -96,7 +96,7 @@ class ProductResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('jual')
-                    ->label('Selling Price')
+                    ->label('Harga Jual')
                     ->required(),
 
                 Forms\Components\TextInput::make('minimal_stok')
