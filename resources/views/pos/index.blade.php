@@ -1452,16 +1452,16 @@
                                                                 </div>
                                                             </template>
 
-                                                            <!-- EDIT MODE -->
                                                             <template x-if="editingTotal">
-                                                                <input type="text" x-ref="totalInput"
-                                                                    @input="formatTotalInput($event)"
+                                                                <input type="tel" x-ref="totalInput"
+                                                                    @input="updateManualTotal($event)"
                                                                     @blur="editingTotal = false"
                                                                     @keydown.enter="$el.blur()"
                                                                     class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700
-               text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 
-               outline-none transition"
-                                                                    placeholder="Masukkan total bayar">
+                                                                    text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 
+                                                                    outline-none transition"
+                                                                    placeholder="Masukkan total bayar"
+                                                                    :value="formatRupiah(payment.total)">
                                                             </template>
 
                                                         </div>
@@ -2188,11 +2188,13 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             {{-- Modal Riwayat Transaksi Digital --}}
-            <div x-show="showHistoryDigital" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
-                x-transition>
+
+            <div x-show="showHistoryDigital" @click.self="showHistoryDigital = false"
+                @keydown.escape.window="showHistoryDigital = false"
+                class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" x-transition>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[850px] 
-        max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 ease-out">
+                 max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 ease-out">
 
                     {{-- Header --}}
                     <div class="flex justify-between items-center mb-5">

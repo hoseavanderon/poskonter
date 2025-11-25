@@ -100,7 +100,7 @@ class CetakBarcodeController extends Controller
         // === MODE 1: PREVIEW DI BROWSER ===
         if ($request->has('preview')) {
             // Bagi per 2 label satu baris
-            $chunks = array_chunk($labels, 2);
+            $chunks = array_chunk($labels, 3);
 
             return view('cetak_barcode.print', [
                 'chunks' => $chunks,
