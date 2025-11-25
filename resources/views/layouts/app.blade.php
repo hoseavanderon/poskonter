@@ -211,7 +211,7 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
     <div class="flex h-[calc(100vh-64px)] overflow-hidden">
         {{-- Sidebar floating --}}
         <aside
-            class="fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform transition-transform duration-300 ease-in-out z-0"
+            class="fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform transition-transform duration-300 ease-in-out z-30"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
 
