@@ -1452,16 +1452,16 @@
                                                                 </div>
                                                             </template>
 
+                                                            <!-- EDIT MODE -->
                                                             <template x-if="editingTotal">
-                                                                <input type="tel" x-ref="totalInput"
-                                                                    @input="updateManualTotal($event)"
+                                                                <input type="number" x-ref="totalInput"
+                                                                    @input="formatTotalInput($event)"
                                                                     @blur="editingTotal = false"
                                                                     @keydown.enter="$el.blur()"
                                                                     class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700
                                                                     text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 
                                                                     outline-none transition"
-                                                                    placeholder="Masukkan total bayar"
-                                                                    :value="formatRupiah(payment.total)">
+                                                                    placeholder="Masukkan total bayar">
                                                             </template>
 
                                                         </div>
@@ -3644,14 +3644,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     e.target.value = '';
                 },
 
-                updateManualTotal(e) {
-    let val = e.target.value.replace(/\D/g, ""); // keep numbers only
-
-    payment.total = Number(val);
-
-    // Update tampilan (tetep format Rp)
-    e.target.value = this.formatRupiah(val);
-},
 
                 async handleCloseBook() {
                     this.showCloseBookModal = true;
