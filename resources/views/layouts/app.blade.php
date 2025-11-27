@@ -14,30 +14,41 @@
     darkMode: localStorage.getItem('darkMode') === 'true',
     isFullscreen: false,
     sidebarOpen: JSON.parse(localStorage.getItem('sidebarOpen') ?? 'false'),
+
     toggleDarkMode() {
         this.darkMode = !this.darkMode;
         localStorage.setItem('darkMode', this.darkMode);
         document.documentElement.classList.toggle('dark', this.darkMode);
     },
+
     toggleFullscreen() {
+        const el = document.body;
+
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
+            if (el.requestFullscreen) {
+                el.requestFullscreen({ navigationUI: 'hide' });
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+            }
             this.isFullscreen = true;
         } else {
             document.exitFullscreen();
             this.isFullscreen = false;
         }
     },
+
     toggleSidebar() {
         this.sidebarOpen = !this.sidebarOpen;
         localStorage.setItem('sidebarOpen', this.sidebarOpen);
     }
 }" x-init="document.documentElement.classList.toggle('dark', darkMode);
-document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.fullscreenElement; });">
+document.addEventListener('fullscreenchange', () => {
+    isFullscreen = !!document.fullscreenElement;
+});">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#000000">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -65,11 +76,19 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
         body {
             margin: 0;
             padding: 0;
-            background: #000;
+            background: #000 !important;
             min-height: 100vh;
             height: 100%;
         }
 
+        :fullscreen {
+            background: #000 !important;
+        }
+
+        body:fullscreen {
+            background: #000 !important;
+            overscroll-behavior: none;
+        }
 
         :root {
             /* Hilangkan white-bottom area saat fullscreen */
