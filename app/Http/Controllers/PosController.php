@@ -722,7 +722,7 @@ class PosController extends Controller
         $today = now()->toDateString();
         $outletId = Auth::user()->outlet_id;
 
-        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129];
+        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129, 251];
         $tarikProducts    = [113, 116, 120];
 
         // --- TOTAL BARANG FISIK
