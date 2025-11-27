@@ -143,7 +143,7 @@ document.addEventListener('fullscreenchange', () => {
     @stack('head')
 </head>
 
-<body class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     {{-- NAVBAR --}}
     <header
         class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-10 relative">
@@ -241,7 +241,7 @@ document.addEventListener('fullscreenchange', () => {
     </header>
 
     {{-- LAYOUT --}}
-    <div class="flex h-[calc(100vh-64px)] overflow-hidden">
+    <div class="flex h-[calc(100vh-64px)] overflow-visible relative z-0">
         {{-- Sidebar floating --}}
         <aside
             class="fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform transition-transform duration-300 ease-in-out z-30"
