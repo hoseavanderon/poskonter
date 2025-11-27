@@ -219,7 +219,7 @@ document.addEventListener('fullscreenchange', () => {
 
                 {{-- Dropdown Menu --}}
                 <div x-show="openUserMenu" @click.outside="openUserMenu = false" x-transition.scale.origin.top.right
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 z-50">
+                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 z-[9999]">
 
                     <a href="#"
                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
