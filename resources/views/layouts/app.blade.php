@@ -76,7 +76,7 @@ document.addEventListener('fullscreenchange', () => {
         body {
             margin: 0;
             padding: 0;
-            background: #000 !important;
+            background: #000;
             min-height: 100vh;
             height: 100%;
         }
