@@ -309,7 +309,7 @@
                         <li>
                             <button @click="switchCategory(null)"
                                 :class="{
-                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory ===
+                                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategoryPhysical ===
                                         null
                                 }"
                                 class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
@@ -320,7 +320,7 @@
                             <li>
                                 <button @click="switchCategory(cat)"
                                     :class="{
-                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategory
+                                        'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': selectedCategoryPhysical
                                             ?.id === cat.id
                                     }"
                                     class="w-full text-left px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
@@ -2504,6 +2504,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 showManualConfirm: false,
                 showConfirmClose: false,
                 grandTotalAkhir: 0,
+                activeCategoryId: null,
 
                 // ======== INIT UTAMA ========
                 async init() {
@@ -2582,32 +2583,28 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         q = q.trim();
 
                         if (q === '') {
-                            // 🔙 Kosong → Kembali ke default 15 produk
-                            console.log('🔄 Query kosong, reset produk ke awal');
+                            // Search clear → balik ke kategori yang aktif
                             this.products = [];
                             this.hasMore = true;
-                            await this.loadProducts(); // muat ulang dari awal
+                            await this.loadProducts();
                             return;
                         }
 
-                        console.log('🔍 Mencari produk:', q);
-                        try {
-                            const res = await fetch(`/pos/search-products?q=${encodeURIComponent(q)}`);
-                            const data = await res.json();
+                        // Search override kategori
+                        this.activeCategoryId = null;
 
-                            if (data.success && Array.isArray(data.data)) {
-                                this.products = data.data;
-                                this.hasMore = false; // matikan infinite scroll sementara
-                                console.log(`✅ Ditemukan ${data.data.length} produk untuk '${q}'`);
-                            } else {
-                                this.products = [];
-                                console.log('⚠️ Tidak ada hasil untuk pencarian');
-                            }
-                        } catch (err) {
-                            console.error('❌ Gagal mencari produk:', err);
+                        const res = await fetch(`/pos/search-products?q=${encodeURIComponent(q)}`);
+                        const data = await res.json();
+
+                        if (data.success && Array.isArray(data.data)) {
+                            this.products = data.data;
+                            this.hasMore = false;
+                        } else {
                             this.products = [];
                         }
+
                     }, 400));
+
 
                     this.$watch('editingTotal', (value) => {
                         if (value === true) {
@@ -2654,44 +2651,59 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     try {
                         const q = this.searchQuery.trim();
 
-                        // 🧠 Kalau sedang mencari produk (searchQuery tidak kosong)
+                        // 🔍 SEARCH MODE (prioritas tertinggi)
                         if (q !== '') {
                             console.log("🔍 Mencari produk:", q);
+
+                            // search override kategori
+                            this.activeCategoryId = null;
 
                             const res = await fetch(`/pos/search-products?q=${encodeURIComponent(q)}`);
                             const data = await res.json();
 
                             if (data.success && Array.isArray(data.data)) {
-                                this.products = data.data; // tampilkan semua hasil pencarian
-                                this.hasMore = false; // matikan infinite scroll
+                                this.products = data.data;
+                                this.hasMore = false; // disable infinite scroll saat search
                                 console.log(`✅ Ditemukan ${data.data.length} produk`);
                             } else {
                                 this.products = [];
                                 this.hasMore = false;
                                 console.log("⚠️ Tidak ada hasil ditemukan");
                             }
-                            return; // keluar biar gak lanjut ke bagian offset-load
+
+                            return;
                         }
 
-                        // 📦 Kalau bukan mode pencarian → lanjut pakai offset biasa
+                        // 📂 KATEGORI MODE
                         const offset = this.products.length;
                         const limit = 15;
 
                         console.log("📦 Fetching products offset:", offset);
 
-                        const res = await fetch(`/pos/load-more?offset=${offset}&limit=${limit}`);
+                        let url = `/pos/load-more?offset=${offset}&limit=${limit}`;
+
+                        // kalau kategori sedang dipilih → load by category
+                        if (this.activeCategoryId) {
+                            url += `&category_id=${this.activeCategoryId}`;
+                        }
+
+                        const res = await fetch(url);
                         const data = await res.json();
 
                         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+
                             const newItems = data.data.filter(
                                 newP => !this.products.some(p => p.id === newP.id)
                             );
+
                             this.products.push(...newItems);
                             console.log(`✅ Loaded ${newItems.length} new items`);
+
                         } else {
                             console.log("⚠️ No more products to load.");
                             this.hasMore = false;
                         }
+
                     } catch (err) {
                         console.error("❌ Gagal memuat produk:", err);
                         this.hasMore = false;
@@ -2908,11 +2920,29 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
 
                 // ======== FILTER PRODUK FISIK ========
-                switchCategory(cat) {
+                async switchCategory(cat) {
                     this.transitioning = true;
-                    setTimeout(() => {
+
+                    setTimeout(async () => {
+
+                        // Set kategori yang dipilih
                         this.selectedCategoryPhysical = cat;
+                        this.activeCategoryId = cat ? cat.id : null;
+
+                        // Reset produk & scroll state
+                        this.products = [];
+                        this.hasMore = true;
+
+                        // Kalau search sedang aktif → kosongkan dulu
+                        if (this.searchQuery.trim() !== '') {
+                            this.searchQuery = '';
+                        }
+
+                        // Load produk pertama untuk kategori ini
+                        await this.loadProducts();
+
                         this.transitioning = false;
+
                     }, 150);
                 },
                 get filteredProducts() {

@@ -88,11 +88,19 @@ class PosController extends Controller
         $limit = (int) $request->get('limit', 15);
 
         // query produk sesuai offset
-        $productsRaw = Product::with([
+        $categoryId = $request->get('category_id');
+
+        $query = Product::with([
             'category:id,kode_category,name',
             'attributeValues:id,product_id,product_attribute_id,attribute_value,stok',
         ])
-            ->where('outlet_id', $outletId)
+            ->where('outlet_id', $outletId);
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $productsRaw = $query
             ->orderBy('id', 'desc')
             ->skip($offset)
             ->take($limit)
