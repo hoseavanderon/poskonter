@@ -39,6 +39,8 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{{ $title ?? 'POS App' }}</title>
 
     {{-- Tailwind --}}
@@ -57,6 +59,22 @@ document.addEventListener('fullscreenchange', () => { isFullscreen = !!document.
     <style>
         * {
             transition: background-color .25s ease, color .25s ease;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+
+        :root {
+            /* Hilangkan white-bottom area saat fullscreen */
+            padding-bottom: env(safe-area-inset-bottom);
+            background-color: #000 !important;
         }
 
         body {
