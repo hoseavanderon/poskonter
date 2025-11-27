@@ -81,7 +81,8 @@ class RiwayatController extends Controller
             125,
             127,
             128,
-            129
+            129,
+            251
         ];
 
         $tarikProducts = [
