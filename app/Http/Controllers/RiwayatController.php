@@ -109,6 +109,7 @@ class RiwayatController extends Controller
             ->where('transactions.outlet_id', $outletId)
             ->leftJoin('detail_transaction', 'detail_transaction.transaction_id', '=', 'transactions.id')
             ->leftJoin('products', 'products.id', '=', 'detail_transaction.product_id')
+            ->leftJoin('product_attribute_values', 'product_attribute_values.id', '=', 'detail_transaction.product_attribute_value_id')
             ->whereDate('transactions.created_at', $tanggal)
             ->whereNull('transactions.deleted_at')
             ->select([
@@ -118,35 +119,40 @@ class RiwayatController extends Controller
                 DB::raw("GROUP_CONCAT(products.name SEPARATOR '||') as product_names"),
                 DB::raw("GROUP_CONCAT(detail_transaction.qty SEPARATOR '||') as product_qtys"),
                 DB::raw("GROUP_CONCAT(detail_transaction.subtotal SEPARATOR '||') as product_amounts"),
+                DB::raw("GROUP_CONCAT(product_attribute_values.attribute_value SEPARATOR '||') as product_attrs"),
             ])
             ->groupBy('transactions.id', 'transactions.subtotal', 'transactions.created_at')
             ->orderByDesc('transactions.created_at')
             ->get()
             ->map(function ($t) {
-                $names = explode('||', $t->product_names ?? '');
-                $qtys = explode('||', $t->product_qtys ?? '');
+                $names   = explode('||', $t->product_names ?? '');
+                $qtys    = explode('||', $t->product_qtys ?? '');
                 $amounts = explode('||', $t->product_amounts ?? '');
+                $attrs   = explode('||', $t->product_attrs ?? '');
 
                 $details = [];
                 foreach ($names as $i => $name) {
                     if (!$name) continue;
+
                     $details[] = [
-                        'name' => $name,
-                        'qty' => $qtys[$i] ?? 0,
-                        'amount' => $amounts[$i] ?? 0,
-                        'created_at' => $t->created_at, // ⬅️ ikut timestamp transaksi
+                        'name'      => $name,
+                        'qty'       => $qtys[$i] ?? 0,
+                        'amount'    => $amounts[$i] ?? 0,
+                        'attribute' => $attrs[$i] ?? null,
+                        'created_at' => $t->created_at,
                     ];
                 }
 
                 return [
                     'transaction_id' => $t->transaction_id,
-                    'total' => $t->total,
-                    'datetime' => date('Y-m-d H:i:s', strtotime($t->created_at)), // ⬅️ WAJIB TAMBAH
-                    'date' => date('Y-m-d', strtotime($t->created_at)),
-                    'details' => $details,
+                    'total'          => $t->total,
+                    'datetime'       => date('Y-m-d H:i:s', strtotime($t->created_at)),
+                    'date'           => date('Y-m-d', strtotime($t->created_at)),
+                    'details'        => $details,
                 ];
             })
             ->values();
+
 
         // --- DIGITAL TRANSACTIONS
         $digitalTransactions = DB::table('digital_transactions')
