@@ -81,10 +81,6 @@ document.addEventListener('fullscreenchange', () => {
             height: 100%;
         }
 
-        :fullscreen {
-            background: #000 !important;
-        }
-
         body:fullscreen {
             overscroll-behavior: none;
         }
@@ -92,7 +88,6 @@ document.addEventListener('fullscreenchange', () => {
         :root {
             /* Hilangkan white-bottom area saat fullscreen */
             padding-bottom: env(safe-area-inset-bottom);
-            background-color: #000 !important;
         }
 
         body {
