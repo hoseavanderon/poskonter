@@ -1454,8 +1454,8 @@
 
                                                             <!-- EDIT MODE -->
                                                             <template x-if="editingTotal">
-                                                                <input type="number" x-ref="totalInput"
-                                                                    @input="formatTotalInput($event)"
+                                                                <input type="text" inputmode="numeric"
+                                                                    x-ref="totalInput" @input="formatTotalInput($event)"
                                                                     @blur="editingTotal = false"
                                                                     @keydown.enter="$el.blur()"
                                                                     class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700
@@ -2625,12 +2625,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                     // sync paid dengan total() ketika cart berubah, kecuali saat sedang edit manual
                     this.$watch(() => this.total(), (newTotal) => {
-                        // Total otomatis ikut keranjang selama TIDAK sedang edit manual
-                        if (!this.editingTotal) {
+                        // HANYA sync otomatis kalau sedang di tab PHYSICAL
+                        if (this.activeTab === 'physical' && !this.editingTotal) {
                             this.payment.total = newTotal;
                         }
 
-                        // Dibayar ikut total selama tidak sedang edit "dibayar"
+                        // Dibayar tetap ikut total kecuali sedang edit
                         if (!this.payment.editingPaid) {
                             this.payment.paid = this.payment.total;
                         }
@@ -2741,9 +2741,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
 
                 updatePaymentTotals() {
-                    if (!this.editingTotal) {
+                    // 🔥 Hanya produk fisik yang boleh sync otomatis
+                    if (this.activeTab === 'physical' && !this.editingTotal) {
                         this.payment.total = this.total();
                     }
+
+                    // Dibayar ikut total selama tidak edit dibayar
                     if (!this.payment.editingPaid) {
                         this.payment.paid = this.payment.total;
                     }
@@ -2860,7 +2863,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                     this.cart[i].qty++;
                     this.saveCart();
-                    this.updatePaymentTotals(); // 🔥
+                    this.updatePaymentTotals();
                 },
                 decreaseQty(i) {
                     const item = this.cart[i];
@@ -2872,7 +2875,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     }
 
                     this.saveCart();
-                    this.updatePaymentTotals(); // 🔥
+                    this.updatePaymentTotals();
                 },
                 total() {
                     return this.cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -3672,11 +3675,13 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         alert("Gagal memuat data tutup buku.");
                     }
                 },
+
                 formatRupiah(angka) {
                     angka = Number(angka);
                     if (isNaN(angka)) angka = 0;
                     return 'Rp ' + angka.toLocaleString('id-ID');
                 },
+
                 formatLebihInput(event) {
                     let raw = event.target.value.replace(/\D/g, "");
                     if (!raw) raw = "0";
@@ -3798,7 +3803,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         console.error('💥 Gagal mengirim data ke pembukuan:', error);
                         alert('❌ Terjadi kesalahan jaringan.');
                     }
-                }
+                },
             }
         }
 
