@@ -459,7 +459,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                    1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -476,8 +476,13 @@
 
                                                 <!-- NAMA PRODUK -->
                                                 <div class="flex flex-col leading-tight">
-                                                    <span class="text-white font-semibold text-[15px]"
-                                                        x-text="d.name"></span>
+                                                    <span class="text-white font-semibold text-[15px]">
+                                                        <span x-text="d.name"></span>
+                                                        <template x-if="d.attribute">
+                                                            <span class="text-gray-300">(<span
+                                                                    x-text="d.attribute"></span>)</span>
+                                                        </template>
+                                                    </span>
                                                     <span class="text-[13px] text-[#9BA8BF]"
                                                         x-text="d.qty + ' pcs'"></span>
                                                 </div>
