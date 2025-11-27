@@ -109,7 +109,8 @@
                 class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 p-4" x-cloak>
 
                 <div
-                    class="relative bg-[#0e1420] text-gray-200 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-700">
+                    class="relative bg-[#0e1420] text-gray-200 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-700
+                        max-h-[90vh] overflow-y-auto">
 
                     <!-- CLOSE BUTTON -->
                     <button @click="showCloseBookModal = false"
