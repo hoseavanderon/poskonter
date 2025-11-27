@@ -218,21 +218,23 @@ document.addEventListener('fullscreenchange', () => {
                 </button>
 
                 {{-- Dropdown Menu --}}
-                <div x-show="openUserMenu" @click.outside="openUserMenu = false" x-transition.scale.origin.top.right
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 z-[9999]">
+                <div class="relative z-[9999]">
+                    <div x-show="openUserMenu" @click.outside="openUserMenu = false" x-transition.scale.origin.top.right
+                        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 z-[9999]">
 
-                    <a href="#"
-                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        Profil
-                    </a>
+                        <a href="#"
+                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            Profil
+                        </a>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" @click.stop
-                            class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700">
-                            Keluar
-                        </button>
-                    </form>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" @click.stop
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700">
+                                Keluar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -314,7 +316,7 @@ document.addEventListener('fullscreenchange', () => {
             x-transition.opacity></div>
 
         {{-- Konten utama --}}
-        <main class="flex-1 p-4 overflow-y-auto relative z-10">
+        <main class="flex-1 p-4 overflow-y-auto relative z-0">
             @yield('content')
         </main>
     </div>
