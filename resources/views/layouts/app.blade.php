@@ -86,7 +86,6 @@ document.addEventListener('fullscreenchange', () => {
         }
 
         body:fullscreen {
-            background: #000 !important;
             overscroll-behavior: none;
         }
 
