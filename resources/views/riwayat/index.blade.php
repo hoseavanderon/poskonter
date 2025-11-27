@@ -476,13 +476,8 @@
 
                                                 <!-- NAMA PRODUK -->
                                                 <div class="flex flex-col leading-tight">
-                                                    <span class="text-white font-semibold text-[15px]">
-                                                        <span x-text="d.name"></span>
-                                                        <template x-if="d.attribute">
-                                                            <span class="text-gray-300">(<span
-                                                                    x-text="d.attribute"></span>)</span>
-                                                        </template>
-                                                    </span>
+                                                    <span class="text-white font-semibold text-[15px]"
+                                                        x-text="d.name"></span>
                                                     <span class="text-[13px] text-[#9BA8BF]"
                                                         x-text="d.qty + ' pcs'"></span>
                                                 </div>
