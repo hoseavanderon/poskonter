@@ -392,7 +392,8 @@
                                 md:grid-cols-2
                                 xl:grid-cols-3 
                                 gap-5"
-                            x-show="!transitioning" x-transition:enter="transition ease-out duration-300"
+                            x-show="!transitioning && !isCategoryLoading"
+                            x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0">
 
@@ -486,7 +487,7 @@
                         </div>
 
                         {{-- Jika kosong --}}
-                        <template x-if="filteredProducts.length === 0">
+                        <template x-if="!isCategoryLoading && filteredProducts.length === 0">
                             <div class="text-center text-gray-500 dark:text-gray-400 py-10">
                                 Tidak ada produk untuk kategori ini.
                             </div>
@@ -496,6 +497,18 @@
                         <template x-if="loadingMore">
                             <div class="text-center text-gray-400 py-4 animate-pulse text-sm">
                                 Memuat produk tambahan...
+                            </div>
+                        </template>
+                        <!-- 🌀 LOADING SAAT PINDAH KATEGORI -->
+                        <template x-if="isCategoryLoading">
+                            <div class="flex justify-center items-center py-10">
+                                <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 000 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"></path>
+                                </svg>
                             </div>
                         </template>
                     </div>
@@ -2505,6 +2518,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 showConfirmClose: false,
                 grandTotalAkhir: 0,
                 activeCategoryId: null,
+                isCategoryLoading: false,
 
                 // ======== INIT UTAMA ========
                 async init() {
@@ -2921,29 +2935,24 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                 // ======== FILTER PRODUK FISIK ========
                 async switchCategory(cat) {
+                    this.selectedCategoryPhysical = cat;
+                    this.activeCategoryId = cat ? cat.id : null;
+
+                    this.products = [];
+                    this.hasMore = true;
+                    this.isCategoryLoading = true;
+
+                    // hentikan dulu infinite scroll
                     this.transitioning = true;
 
-                    setTimeout(async () => {
+                    // delay kecil biar animasi terasa smooth
+                    await this.$nextTick();
 
-                        // Set kategori yang dipilih
-                        this.selectedCategoryPhysical = cat;
-                        this.activeCategoryId = cat ? cat.id : null;
+                    // load ulang dari offset 0
+                    await this.loadProducts();
 
-                        // Reset produk & scroll state
-                        this.products = [];
-                        this.hasMore = true;
-
-                        // Kalau search sedang aktif → kosongkan dulu
-                        if (this.searchQuery.trim() !== '') {
-                            this.searchQuery = '';
-                        }
-
-                        // Load produk pertama untuk kategori ini
-                        await this.loadProducts();
-
-                        this.transitioning = false;
-
-                    }, 150);
+                    this.transitioning = false;
+                    this.isCategoryLoading = false;
                 },
                 get filteredProducts() {
                     if (!this.selectedCategoryPhysical) return this.products;
