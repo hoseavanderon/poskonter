@@ -52,7 +52,7 @@ class CetakBarcodeController extends Controller
 
         $labels = [];
 
-        // 🔹 Ambil data produk
+        // Ambil produk sesuai input (tetap clone supaya aman)
         foreach ($items as $item) {
             $id = $item['id'] ?? null;
             $qty = (int) ($item['qty'] ?? 0);
@@ -80,68 +80,101 @@ class CetakBarcodeController extends Controller
             }
         }
 
+        // Normalisasi: hapus item kosong & yang tidak punya barcode
+        $labels = array_values(array_filter($labels, function ($l) {
+            return !empty($l) && !empty($l->barcode);
+        }));
+
         if (!count($labels)) {
             return back()->with('error', 'Tidak ada produk untuk dicetak.');
         }
 
-        // 🔹 Buat Barcode Base64 untuk preview
-
+        // Buat Barcode SVG (Milon)
         $d = new \Milon\Barcode\DNS1D();
         $d->setStorPath(storage_path('framework/barcodes'));
 
         foreach ($labels as &$lbl) {
             try {
-                $lbl->barcode_svg = $d->getBarcodeSVG($lbl->barcode, 'C128', 0.8, 25, 'black', false);
+                // tweak scale (3rd param) & height (4th param) sesuai kebutuhan
+                $lbl->barcode_svg = $d->getBarcodeSVG($lbl->barcode, 'C128', 1.0, 30, 'black', false);
             } catch (\Exception $e) {
                 $lbl->barcode_svg = null;
             }
         }
+        unset($lbl);
 
-        // === MODE 1: PREVIEW DI BROWSER ===
+        // CONFIG: columns & page size (mm)
+        $columns = 3;
+        $pageWidth = 100;
+        $pageHeight = 15;
+
+        // Build rows (robust chunking)
+        $rows = [];
+        for ($i = 0; $i < count($labels); $i += $columns) {
+            $slice = array_slice($labels, $i, $columns);
+            if (count($slice) > 0) {
+                $rows[] = $slice;
+            }
+        }
+
+        // Logging untuk debug
+        \Log::info('BarcodePrint: labels=' . count($labels) . ' rows=' . count($rows) . ' columns=' . $columns);
+
+        // === MODE PREVIEW BROWSER ===
         if ($request->has('preview')) {
-            // Bagi per 2 label satu baris
-            $chunks = array_chunk($labels, 3);
-
+            // buat chunks sesuai rows (view expects $chunks)
+            $chunks = $rows;
             return view('cetak_barcode.print', [
                 'chunks' => $chunks,
-                'pageWidth' => 60, // 2x30mm
-                'pageHeight' => 15
+                'pageWidth' => $pageWidth,
+                'pageHeight' => $pageHeight,
+                'columns' => $columns,
             ]);
         }
 
-        // === MODE 2: EXPORT .PRN UNTUK PRINTER TSPL ===
+        // === MODE EXPORT .PRN TSPL ===
+        // Buat PRN unik agar tidak ditimpa job sebelumnya
+        $uniqueName = 'label_' . uniqid();
+        $filePath = storage_path('app/' . $uniqueName . '.prn');
+
+        // Header TSPL: CLS sekali di awal (lebih stabil)
         $tspl = "";
+        $tspl .= "CLS\n";
+        $tspl .= "SIZE {$pageWidth} mm, {$pageHeight} mm\n";
+        $tspl .= "GAP 0 mm, 0 mm\n";
+        $tspl .= "DIRECTION 1\n";
 
-        foreach ($labels as $index => $lbl) {
-            if ($index === 0) {
-                $tspl .= "SIZE 60 mm, 15 mm\n";
-                $tspl .= "GAP 0 mm, 0 mm\n";
-                $tspl .= "DIRECTION 1\n";
-                $tspl .= "CLS\n";
+        // Koordinat X untuk kolom: start offset dan step antar kolom (kalibrasi mungkin dibutuhkan)
+        $xStart = 10;
+        $xStep = 330; // adjust jika perlu (± nilai ini sampai pas)
+        $baseY = 10;
+
+        foreach ($rows as $rowIndex => $row) {
+            // Draw each column in this row (tanpa CLS di sini)
+            foreach ($row as $colIndex => $lbl) {
+                $x = $xStart + ($colIndex * $xStep);
+                $y = $baseY;
+
+                $name = addslashes($lbl->name ?? '');
+                $barcode = $lbl->barcode ?? '';
+                $priceText = "Rp " . number_format($lbl->jual ?? 0, 0, ',', '.');
+
+                // TEXT & BARCODE per label (sesuaikan ukuran & offset jika perlu)
+                $tspl .= "TEXT {$x},{$y},\"3\",0,1,1,\"{$name}\"\n";
+                $tspl .= "BARCODE {$x}," . ($y + 30) . ",\"128\",60,1,0,2,2,\"{$barcode}\"\n";
+                $tspl .= "TEXT {$x}," . ($y + 100) . ",\"3\",0,1,1,\"{$priceText}\"\n";
+                $tspl .= "TEXT {$x}," . ($y + 120) . ",\"3\",0,1,1,\"{$barcode}\"\n";
             }
 
-            // Kolom kiri atau kanan
-            $x = ($index % 2 == 0) ? 10 : 310;
-            $y = 10;
-
-            $name = addslashes($lbl->name); // hindari karakter spesial error di TSPL
-
-            // Cetak teks dan barcode
-            $tspl .= "TEXT {$x},10,\"3\",0,1,1,\"{$name}\"\n";
-            $tspl .= "BARCODE {$x},40,\"128\",60,1,0,2,2,\"{$lbl->barcode}\"\n";
-            $tspl .= "TEXT {$x},120,\"3\",0,1,1,\"Rp " . number_format($lbl->jual, 0, ',', '.') . "\"\n";
-            $tspl .= "TEXT {$x},140,\"3\",0,1,1,\"{$lbl->barcode}\"\n";
-
-            // Setiap 2 label = 1 baris
-            if ($index % 2 == 1 || $index == count($labels) - 1) {
-                $tspl .= "PRINT 1,1\nCLS\n";
-            }
+            // Cetak sekali untuk seluruh kolom di row ini
+            $tspl .= "PRINT 1,1\n";
         }
 
-        // Simpan & kirim file TSPL
-        $filePath = storage_path('app/label.prn');
+        // Simpan file PRN unik
         file_put_contents($filePath, $tspl);
+        \Log::info('BarcodePrint: generated_prn=' . $filePath);
 
-        return response()->download($filePath, 'label.prn')->deleteFileAfterSend(true);
+        // Return file download dan hapus setelah dikirim
+        return response()->download($filePath, $uniqueName . '.prn')->deleteFileAfterSend(true);
     }
 }

@@ -6,9 +6,9 @@
     <title>Preview Barcode</title>
 
     <style>
-        /* Page size: tiap page = 100mm x 15mm */
+        /* Page dimensions (mm) - dikontrol dari controller via $pageWidth & $pageHeight */
         @page {
-            size: 100mm 15mm;
+            size: {{ $pageWidth ?? 100 }}mm {{ $pageHeight ?? 15 }}mm;
             margin: 0;
         }
 
@@ -16,39 +16,39 @@
         body {
             margin: 0;
             padding: 0;
-            width: 100mm;
-            height: 15mm;
+            width: {{ $pageWidth ?? 100 }}mm;
+            height: {{ $pageHeight ?? 15 }}mm;
             font-family: Arial, sans-serif;
             -webkit-print-color-adjust: exact;
         }
 
-        /* Each row becomes a page */
         .page {
             box-sizing: border-box;
-            width: 100mm;
-            height: 15mm;
+            width: {{ $pageWidth ?? 100 }}mm;
+            height: {{ $pageHeight ?? 15 }}mm;
             display: flex;
             align-items: flex-start;
-            /* align top inside the 15mm */
             justify-content: space-between;
+            gap: 2mm;
+            /* <--- TAMBAHKAN INI */
             page-break-after: always;
-            /* force page break after each row */
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
 
-        /* Prevent browsers from splitting this block across pages */
+        /* Hindari pemecahan block saat print */
         .page,
         .cell {
             -webkit-page-break-inside: avoid;
             page-break-inside: avoid;
         }
 
+        /* Lebar cell dihitung otomatis berdasarkan kolom */
         .cell {
-            width: 33mm;
-            height: 15mm;
-            padding: 0;
+            width: calc({{ $pageWidth ?? 100 }}mm / {{ $columns ?? 3 }});
+            height: {{ $pageHeight ?? 15 }}mm;
+            padding: 0 2mm;
             box-sizing: border-box;
             text-align: center;
             vertical-align: top;
@@ -56,45 +56,58 @@
         }
 
         .label-wrapper {
-            padding-top: 2mm;
-            /* jarak dari atas */
             display: block;
         }
 
         .name {
             font-size: 6px;
-            font-weight: 700;
+            font-weight: 1000;
             margin: 0 0 1px 0;
-            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-transform: uppercase;
         }
 
+        /* pastikan container barcode menggunakan box-sizing */
         .barcode {
-            width: 28mm;
-            margin: 0 auto;
+            width: calc(100% + 4mm);
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* override atribut width di SVG (paksa responsive) */
+        .barcode svg {
+            width: 100% !important;
+            /* paksa svg mengikuti container */
+            height: auto !important;
+            max-width: 100% !important;
             display: block;
-            line-height: 1;
+            margin: 0 auto;
+            shape-rendering: crispEdges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: pixelated;
         }
 
         .price {
             font-size: 6px;
-            font-weight: 800;
-            margin-top: 1px;
+            font-weight: 1000;
             text-align: center;
         }
 
-        /* Print-specific hints */
+        /* Print adjustments */
         @media print {
 
             html,
             body {
-                width: 100mm;
-                height: 15mm;
+                width: {{ $pageWidth ?? 100 }}mm;
+                height: {{ $pageHeight ?? 15 }}mm;
             }
 
-            /* Remove any default margins from printing */
             body {
                 margin: 0;
             }
@@ -103,24 +116,34 @@
 </head>
 
 <body>
-    @foreach ($chunks as $row)
-        <div class="page">
-            @foreach ($row as $item)
-                <div class="cell">
-                    <div class="label-wrapper">
-                        <div class="name">{{ Str::limit($item->name, 20) }}</div>
-                        <div class="barcode">{!! $item->barcode_svg !!}</div>
-                        <div class="price">Rp {{ number_format($item->jual, 0, ',', '.') }}</div>
-                    </div>
-                </div>
-            @endforeach
+    {{-- Safety: pastikan $chunks valid dan berisi array of rows --}}
+    @if (!empty($chunks) && is_array($chunks))
+        @foreach ($chunks as $row)
+            @if (is_array($row) && count($row) > 0)
+                <div class="page">
+                    @foreach ($row as $item)
+                        <div class="cell">
+                            <div class="label-wrapper">
+                                <div class="name">{{ Str::limit($item->name ?? '', 40) }}</div>
+                                <div class="barcode">{!! $item->barcode_svg ?? '' !!}</div>
+                                <div class="price">Rp {{ number_format($item->jual ?? 0, 0, ',', '.') }}</div>
+                            </div>
+                        </div>
+                    @endforeach
 
-            {{-- fill empty cells so layout tetap 3 kolom --}}
-            @for ($i = count($row); $i < 3; $i++)
-                <div class="cell"></div>
-            @endfor
+                    {{-- Fill empty cells supaya layout tetap rapi --}}
+                    @for ($i = count($row); $i < ($columns ?? 3); $i++)
+                        <div class="cell"></div>
+                    @endfor
+                </div>
+            @endif
+        @endforeach
+    @else
+        {{-- Jika kosong, tampilkan pesan ringan --}}
+        <div style="padding:12px; font-family: Arial, sans-serif;">
+            <strong>Tidak ada label untuk ditampilkan.</strong>
         </div>
-    @endforeach
+    @endif
 </body>
 
 </html>
