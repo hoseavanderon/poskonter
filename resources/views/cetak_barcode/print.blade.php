@@ -6,7 +6,7 @@
     <title>Preview Barcode</title>
 
     <style>
-        /* Page dimensions (mm) - dikontrol dari controller via $pageWidth & $pageHeight */
+        /* PAGE SIZE DIKONTROL DARI CONTROLLER via $pageWidth & $pageHeight */
         @page {
             size: {{ $pageWidth ?? 100 }}mm {{ $pageHeight ?? 15 }}mm;
             margin: 0;
@@ -22,15 +22,41 @@
             -webkit-print-color-adjust: exact;
         }
 
+        /* ========== CONFIG (ubah angka di bawah jika perlu) ========== */
+        /* gap antar kolom dalam mm */
+        /* padding horizontal per cell dalam mm (left+right = 2 * padMm) */
+    </style>
+
+    {{-- Hitung nilai CSS dinamis dengan PHP supaya total width selalu pas --}}
+    @php
+        $pw = $pageWidth ?? 100; // page width mm
+        $ph = $pageHeight ?? 15; // page height mm
+        $cols = $columns ?? 3; // jumlah kolom
+        $gapMm = 2; // gap antar cell (mm) - tweak di sini
+        $padMm = 2; // padding kiri & kanan per cell (mm) - tweak di sini
+
+        // Total gap dan available width untuk semua cell
+        $totalGap = ($cols - 1) * $gapMm; // mm
+        $availableForCells = max(0, $pw - $totalGap); // mm
+        // width per cell termasuk padding
+        // kita akan menetapkan width cell = availableForCells/cols
+        // isi internal (content) = cellWidth - 2*padMm
+        $cellWidthMm = $availableForCells / $cols;
+        $cellContentWidthMm = max(0, $cellWidthMm - 2 * $padMm);
+    @endphp
+
+    <style>
+        /* ========== LAYOUT ========== */
         .page {
             box-sizing: border-box;
-            width: {{ $pageWidth ?? 100 }}mm;
-            height: {{ $pageHeight ?? 15 }}mm;
+            width: {{ $pw }}mm;
+            height: {{ $ph }}mm;
             display: flex;
             align-items: flex-start;
-            justify-content: space-between;
-            gap: 2mm;
-            /* <--- TAMBAHKAN INI */
+            justify-content: center;
+            /* center group of cells supaya kiri/kanan simetris */
+            gap: {{ $gapMm }}mm;
+            /* gap antar kolom */
             page-break-after: always;
             margin: 0;
             padding: 0;
@@ -44,24 +70,30 @@
             page-break-inside: avoid;
         }
 
-        /* Lebar cell dihitung otomatis berdasarkan kolom */
+        /* Lebar cell sudah dihitung agar jumlah total = pageWidth */
         .cell {
-            width: calc({{ $pageWidth ?? 100 }}mm / {{ $columns ?? 3 }});
-            height: {{ $pageHeight ?? 15 }}mm;
-            padding: 0 2mm;
+            width: calc(({{ $pw }}mm - {{ $totalGap }}mm) / {{ $cols }});
+            height: {{ $ph }}mm;
+            padding: 0 {{ $padMm }}mm;
+            /* ruang kiri/kanan di dalam cell */
             box-sizing: border-box;
             text-align: center;
             vertical-align: top;
             display: inline-block;
         }
 
+        .cell:last-child .barcode {
+            transform: translateX(4mm);
+        }
+
         .label-wrapper {
             display: block;
+            padding-top: 1.5mm;
         }
 
         .name {
             font-size: 6px;
-            font-weight: 1000;
+            font-weight: 700;
             margin: 0 0 1px 0;
             white-space: nowrap;
             overflow: hidden;
@@ -69,20 +101,22 @@
             text-transform: uppercase;
         }
 
-        /* pastikan container barcode menggunakan box-sizing */
+        /* Barcode container: isi sesuai lebar konten cell (tidak melebihi cell) */
         .barcode {
-            width: calc(100% + 4mm);
-            padding: 0;
+            width: 100%;
+            max-width: {{ $cellContentWidthMm }}mm;
+            /* pastikan barcode tidak melewati content area */
             box-sizing: border-box;
+            padding: 0;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* override atribut width di SVG (paksa responsive) */
+        /* Paksa SVG responsif supaya ikut menyesuaikan ukuran .barcode */
         .barcode svg {
             width: 100% !important;
-            /* paksa svg mengikuti container */
             height: auto !important;
             max-width: 100% !important;
             display: block;
@@ -95,8 +129,9 @@
 
         .price {
             font-size: 6px;
-            font-weight: 1000;
+            font-weight: 700;
             text-align: center;
+            margin-top: 1px;
         }
 
         /* Print adjustments */
@@ -104,8 +139,8 @@
 
             html,
             body {
-                width: {{ $pageWidth ?? 100 }}mm;
-                height: {{ $pageHeight ?? 15 }}mm;
+                width: {{ $pw }}mm;
+                height: {{ $ph }}mm;
             }
 
             body {
@@ -116,7 +151,7 @@
 </head>
 
 <body>
-    {{-- Safety: pastikan $chunks valid dan berisi array of rows --}}
+    {{-- Pastikan $chunks valid & berisi array of rows --}}
     @if (!empty($chunks) && is_array($chunks))
         @foreach ($chunks as $row)
             @if (is_array($row) && count($row) > 0)
@@ -132,14 +167,13 @@
                     @endforeach
 
                     {{-- Fill empty cells supaya layout tetap rapi --}}
-                    @for ($i = count($row); $i < ($columns ?? 3); $i++)
+                    @for ($i = count($row); $i < ($cols ?? 3); $i++)
                         <div class="cell"></div>
                     @endfor
                 </div>
             @endif
         @endforeach
     @else
-        {{-- Jika kosong, tampilkan pesan ringan --}}
         <div style="padding:12px; font-family: Arial, sans-serif;">
             <strong>Tidak ada label untuk ditampilkan.</strong>
         </div>
