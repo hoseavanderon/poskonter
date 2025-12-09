@@ -45,11 +45,13 @@ class RiwayatController extends Controller
 
         $yearsProduct = DB::table('transactions')
             ->where('outlet_id', $outletId)
+            ->whereNull('deleted_at')
             ->select(DB::raw('YEAR(created_at) as year'))
             ->groupBy('year');
 
         $yearsDigital = DB::table('digital_transactions')
             ->where('outlet_id', $outletId)
+            ->whereNull('deleted_at')
             ->select(DB::raw('YEAR(created_at) as year'))
             ->groupBy('year');
 
@@ -241,6 +243,7 @@ class RiwayatController extends Controller
             ->whereDate('transactions.created_at', $tanggal)
             ->whereNotNull('transactions.customer_id')
             ->whereNull('transactions.paid_at')
+            ->whereNull('transactions.deleted_at') // <- tambahkan ini
             ->select('customers.name', 'transactions.subtotal')
             ->get();
 
@@ -269,10 +272,10 @@ class RiwayatController extends Controller
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
             ->whereDate('transactions.paid_at', $tanggal)
+            ->whereNull('transactions.deleted_at') // <- tambahkan ini
             ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
             ->get()
             ->filter(function ($row) {
-                // ⛔ Skip kalau dibuat & dibayar di tanggal yang sama
                 return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
             });
 
@@ -498,6 +501,7 @@ class RiwayatController extends Controller
             ->whereBetween('transactions.created_at', [$from, $to])
             ->whereNotNull('transactions.customer_id')
             ->whereNull('transactions.paid_at')
+            ->whereNull('transactions.deleted_at') // <- tambahkan ini
             ->select('customers.name', 'transactions.subtotal')
             ->get();
 
@@ -528,6 +532,7 @@ class RiwayatController extends Controller
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
             ->whereBetween('transactions.paid_at', [$from, $to])
+            ->whereNull('transactions.deleted_at') // <- tambahkan ini
             ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
             ->get()
             ->filter(function ($row) {
