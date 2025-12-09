@@ -83,7 +83,7 @@
         }
 
         .cell:last-child .barcode {
-            transform: translateX(4mm);
+            transform: translateX(3mm);
         }
 
         .label-wrapper {
