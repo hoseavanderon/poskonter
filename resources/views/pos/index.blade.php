@@ -3727,12 +3727,37 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     this.lebih = Number(raw) || 0;
                     event.target.value = this.lebih.toLocaleString("id-ID");
                 },
-                async copyCloseBook() {
+               async copyCloseBook() {
                     if (!this.closeBookData) return;
 
                     const d = this.closeBookData;
-                    const totalAkhir = (Number(d.grandTotal ?? 0) + Number(this.lebih || 0));
-                    const lebihText = this.lebih > 0 ? `Lebih => Rp ${this.lebih.toLocaleString('id-ID')}\n` : '';
+
+                    // 🔒 Helper aman angka
+                    const toNumber = v => Number.isFinite(Number(v)) ? Number(v) : 0;
+
+                    // 🧮 HITUNG DARI DATA ASLI (SOURCE OF TRUTH)
+
+                    // Total Utang
+                    const totalUtang = (d.utangList || [])
+                        .reduce((sum, u) => sum + toNumber(u.subtotal), 0);
+
+                    // Total setelah utang
+                    const totalSetelahUtang = toNumber(d.totalPenjualan) - totalUtang;
+
+                    // Total Transfer
+                    const totalTF = (d.transferDetail || [])
+                        .reduce((sum, i) => sum + toNumber(i.total), 0);
+
+                    // Total Tarik
+                    const totalTarik = (d.tarikDetail || [])
+                        .reduce((sum, i) => sum + toNumber(i.total), 0);
+
+                    // Total akhir + lebih
+                    const totalAkhir = totalSetelahUtang + toNumber(this.lebih);
+
+                    const lebihText = this.lebih > 0
+                        ? `Lebih => Rp ${toNumber(this.lebih).toLocaleString('id-ID')}\n`
+                        : '';
 
                     let text = '';
 
@@ -3740,35 +3765,38 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     text += `${d.tanggal}\n\n`;
 
                     // 📦 Barang & Digital
-                    text += `Barang : Rp ${Number(d.barangTotal).toLocaleString('id-ID')}\n`;
-                    d.digitalPerApp.forEach(app => {
-                        text += `${app.name} : Rp ${Number(app.total).toLocaleString('id-ID')}\n`;
+                    text += `Barang : Rp ${toNumber(d.barangTotal).toLocaleString('id-ID')}\n`;
+                    (d.digitalPerApp || []).forEach(app => {
+                        text += `${app.name} : Rp ${toNumber(app.total).toLocaleString('id-ID')}\n`;
                     });
 
                     // 🔸 Total Penjualan
                     text += `---------------------------\n`;
-                    text += `Total : Rp ${Number(d.totalPenjualan).toLocaleString('id-ID')}\n\n`;
+                    text += `Total : Rp ${toNumber(d.totalPenjualan).toLocaleString('id-ID')}\n\n`;
 
                     // 💸 Utang
-                    if (d.utangList.length > 0) {
+                    if ((d.utangList || []).length > 0) {
                         text += `Utang :\n`;
                         d.utangList.forEach(u => {
-                            text += `- ${u.name}: (Rp ${Number(u.subtotal).toLocaleString('id-ID')})\n`;
+                            text += `- ${u.name}: (Rp ${toNumber(u.subtotal).toLocaleString('id-ID')})\n`;
                         });
                         text += `---------------------------\n`;
                     }
 
-                    // 🧾 Total dan Lebih
-                    text += `Total => Rp ${Number(d.totalSetelahUtang).toLocaleString('id-ID')}\n`;
+                    // 🧾 Total setelah utang
+                    text += `Total => Rp ${totalSetelahUtang.toLocaleString('id-ID')}\n`;
                     if (this.lebih > 0) text += lebihText;
 
-                    // 💰 Grand Total (pakai total akhir!)
+                    // 💰 Total akhir
                     text += `Total => Rp ${totalAkhir.toLocaleString('id-ID')}\n`;
                     text += `---------------------------\n`;
 
                     // 🏦 Transfer & Tarik
-                    text += `*Total TF : Rp ${Number(d.totalTransfer).toLocaleString('id-ID')}*\n`;
-                    text += `*Total Tarik : Rp ${Number(d.totalTarik).toLocaleString('id-ID')}*`;
+                    text += `*Total TF : Rp ${totalTF.toLocaleString('id-ID')}*\n`;
+                    text += `*Total Tarik : Rp ${totalTarik.toLocaleString('id-ID')}*`;
+
+                    // Debug (aman dihapus kalau sudah yakin)
+                    console.log('closeBookData FINAL:', JSON.parse(JSON.stringify(this.closeBookData)));
 
                     // 📋 Copy ke clipboard
                     await navigator.clipboard.writeText(text);
@@ -3777,6 +3805,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     this.copied = true;
                     setTimeout(() => this.copied = false, 2000);
                 },
+
                 async handleFinalCloseBook() {
                     try {
                         this.showConfirmCloseBook = false;
