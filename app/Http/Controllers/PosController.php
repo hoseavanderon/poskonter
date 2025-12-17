@@ -647,26 +647,37 @@ class PosController extends Controller
 
             $detailsData = [];
 
-            // 🧩 Soft delete detail transaksi + kembalikan stok
             if ($transaction->details()->exists()) {
                 foreach ($transaction->details as $detail) {
+
+                    // 🔥 1. SKIP SERVICE / MANUAL
+                    if ($detail->item_type !== 'product') {
+                        continue;
+                    }
+
+                    // 🔥 2. SAFETY CHECK
+                    if (!$detail->product) {
+                        continue;
+                    }
+
                     $attr = $detail->product->attributeValues->first();
 
                     if ($attr) {
+                        // Kembalikan stok
                         $attr->increment('stok', $detail->qty);
                         $attr->update(['last_restock_date' => now()]);
 
-                        // Catat retur di inventory_histories
+                        // Inventory history
                         \App\Models\InventoryHistory::create([
                             'product_id' => $detail->product_id,
                             'product_attribute_value_id' => $attr->id,
                             'type' => 'IN',
                             'pcs' => $detail->qty,
                             'keterangan' => 'RETUR: Pembatalan transaksi ' . $transaction->nomor_nota,
-                            'outlet_id' => \Illuminate\Support\Facades\Auth::user()->outlet_id ?? 1,
+                            'outlet_id' => Auth::user()->outlet_id ?? 1,
                         ]);
 
-                        // 🧾 Simpan data detail untuk dikirim ke frontend
+                        // Kirim ke frontend
                         $detailsData[] = [
                             'product_id' => $detail->product_id,
                             'product_attribute_value_id' => $attr->id,
@@ -679,15 +690,14 @@ class PosController extends Controller
                 $transaction->details()->delete();
             }
 
-            // 🧩 Soft delete transaksi utama
+            // Soft delete transaksi utama
             $transaction->delete();
 
-            // ✅ Kirim data detail ke frontend biar stok UI bisa disinkron
             return response()->json([
                 'success' => true,
-                'message' => 'Transaksi berhasil dihapus dan stok dikembalikan.',
-                'details' => $detailsData, // ⬅️ data produk yang stoknya dikembalikan
-            ], 200, ['Content-Type' => 'application/json']);
+                'message' => 'Transaksi berhasil dihapus.',
+                'details' => $detailsData,
+            ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
@@ -696,7 +706,6 @@ class PosController extends Controller
             ], 500);
         }
     }
-
 
     public function deleteDigitalTransaction($id)
     {

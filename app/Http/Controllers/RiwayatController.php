@@ -117,7 +117,16 @@ class RiwayatController extends Controller
                 'transactions.id as transaction_id',
                 'transactions.subtotal as total',
                 'transactions.created_at',
-                DB::raw("GROUP_CONCAT(products.name SEPARATOR '||') as product_names"),
+                DB::raw("
+                    GROUP_CONCAT(
+                        CASE
+                            WHEN detail_transaction.item_type = 'service'
+                                THEN detail_transaction.manual_name
+                            ELSE products.name
+                        END
+                        SEPARATOR '||'
+                    ) as product_names
+                "),
                 DB::raw("GROUP_CONCAT(detail_transaction.qty SEPARATOR '||') as product_qtys"),
                 DB::raw("GROUP_CONCAT(detail_transaction.subtotal SEPARATOR '||') as product_amounts"),
             ])
@@ -342,7 +351,7 @@ class RiwayatController extends Controller
         $from = Carbon::parse($from)->startOfDay();
         $to   = Carbon::parse($to)->endOfDay();
 
-        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129];
+        $transferProducts = [112, 114, 115, 119, 123, 124, 125, 127, 128, 129, 203, 251];
         $tarikProducts    = [113, 116, 120];
 
         /**
