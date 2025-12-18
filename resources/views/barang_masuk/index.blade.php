@@ -259,11 +259,40 @@
             </div>
         </div>
 
+        <!-- 🚨 Confirm Leave Modal -->
+        <div x-show="showConfirmLeaveModal" x-transition
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-[#1B2332] w-full max-w-md rounded-2xl p-6 border border-[#2A3242]">
+                <h3 class="text-lg font-semibold text-gray-200 mb-3">
+                    Data belum disimpan
+                </h3>
+                <p class="text-gray-400 mb-5">
+                    Kamu masih punya data barang masuk.  
+                    Kalau keluar sekarang, semua data akan hilang.
+                </p>
+
+                <div class="flex justify-end gap-3">
+                    <button
+                        @click="showConfirmLeaveModal = false"
+                        class="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600">
+                        Batal
+                    </button>
+
+                    <button
+                        @click="confirmLeave()"
+                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400">
+                        Keluar & Hapus Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- ✅ Toast Notification -->
         <div x-show="toast.show" x-transition x-text="toast.message"
             :class="toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
             class="fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg text-sm z-50">
         </div>
+
     </div>
 
     <script>
@@ -298,6 +327,11 @@
                     message: '',
                     type: 'success'
                 },
+                    isDirty: false,
+                pendingNavigation: null,
+                showConfirmLeaveModal: false,
+                hasInitialized: false,
+                draftKey: 'barangMasukDraft',
 
                 init() {
                     // 🔹 Ketika modal supplier dibuka → fokus input
@@ -313,6 +347,109 @@
                             this.$nextTick(() => this.$refs.productInput?.focus());
                         }
                     });
+
+                    this.$watch('products', () => {
+                        if (!this.hasInitialized) return;
+                        this.isDirty = true;
+                    }, { deep: true });
+
+                    this.$watch('selectedSupplier', () => {
+                        if (!this.hasInitialized) return;
+                        this.isDirty = true;
+                    });
+
+                    this.$nextTick(() => {
+                        this.hasInitialized = true;
+                    });
+
+                    this.interceptLinks();
+
+                    this.$watch('products', () => {
+                        if (!this.hasInitialized) return;
+                        this.isDirty = true;
+                        this.saveDraft();
+                    }, { deep: true });
+
+                    this.$watch('selectedSupplier', () => {
+                        if (!this.hasInitialized) return;
+                        this.isDirty = true;
+                        this.saveDraft();
+                    });
+
+                    this.$watch('addToBookkeeping', () => {
+                        if (!this.hasInitialized) return;
+                        this.saveDraft();
+                    });
+
+                    this.loadDraft();
+
+                    window.addEventListener('beforeunload', (e) => {
+                        if (this.isDirty) {
+                            e.preventDefault();
+                            e.returnValue = '';
+                        }
+                    });
+                },
+
+                saveDraft() {
+                    const payload = {
+                        selectedSupplier: this.selectedSupplier,
+                        products: this.products,
+                        addToBookkeeping: this.addToBookkeeping,
+                    };
+
+                    localStorage.setItem(this.draftKey, JSON.stringify(payload));
+                },
+
+                loadDraft() {
+                    const raw = localStorage.getItem(this.draftKey);
+                    if (!raw) return;
+
+                    try {
+                        const data = JSON.parse(raw);
+
+                        this.selectedSupplier = data.selectedSupplier ?? null;
+                        this.products = data.products ?? this.products;
+                        this.addToBookkeeping = data.addToBookkeeping ?? false;
+
+                        this.isDirty = true;
+                    } catch (e) {
+                        console.error('Draft rusak, diabaikan');
+                    }
+                },
+
+                clearDraft() {
+                    localStorage.removeItem(this.draftKey);
+                },
+
+                interceptLinks() {
+                    document.addEventListener('click', (e) => {
+                        const link = e.target.closest('a');
+                        if (!link) return;
+
+                        // skip anchor & external
+                        if (
+                            link.target === '_blank' ||
+                            link.href.startsWith('javascript') ||
+                            link.href.startsWith('#') ||
+                            !link.href.startsWith(window.location.origin)
+                        ) return;
+
+                        if (this.isDirty) {
+                            e.preventDefault();
+                            this.pendingNavigation = link.href;
+                            this.showConfirmLeaveModal = true;
+                        }
+                    });
+                },
+
+                confirmLeave() {
+                    this.isDirty = false;
+                    this.showConfirmLeaveModal = false;
+
+                    if (this.pendingNavigation) {
+                        window.location.href = this.pendingNavigation;
+                    }
                 },
 
                 formatRupiah(value) {
@@ -447,9 +584,14 @@
                         });
 
                         const data = await res.json();
+
                         if (res.ok) {
+                            // ✅ INI PENTING
+                            this.isDirty = false;
+
                             this.showToast(data.message, 'success');
 
+                            // reset form
                             this.products = [{
                                 product_id: null,
                                 product_name: '',
@@ -461,10 +603,17 @@
                                 showDropdown: false,
                                 showHargaDropdown: false
                             }];
+
                             this.selectedSupplier = null;
                             this.addToBookkeeping = false;
+
+                            this.clearDraft();
+
                         } else {
-                            this.showToast('Gagal menyimpan barang masuk.', 'error');
+                            this.showToast(
+                                data?.message || 'Gagal menyimpan barang masuk.',
+                                'error'
+                            );
                         }
                     } catch (e) {
                         console.error(e);
