@@ -222,10 +222,33 @@
                         d="M12 9v2m0 4h.01m-.01-9a9 9 0 110 18 9 9 0 010-18z" />
                 </svg>
                 <p class="text-sm leading-relaxed" x-text="warningMessage"></p>
-                <button @click="showWarning = false"
-                    class="mt-4 px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md text-xs transition">
-                    Tutup
-                </button>
+                <div class="mt-4 flex justify-center gap-3">
+                    <!-- Batal -->
+                    <button
+                        @click="
+                            showWarning = false;
+                            confirmMode = false;
+                            pendingNavigation = null;
+                        "
+                        class="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md text-xs transition">
+                        Batal
+                    </button>
+
+                    <!-- Keluar -->
+                    <button
+                        x-show="confirmMode"
+                        @click="
+                            isDirty = false;
+                            showWarning = false;
+                            confirmMode = false;
+                            window.location.href = pendingNavigation;
+                        "
+                        class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs transition">
+                        Keluar
+                    </button>
+
+                </div>
+
             </div>
         </div>
     </div>
@@ -239,7 +262,53 @@
                 modalSearch: '',
                 showWarning: false,
                 warningMessage: '',
-                init() {},
+                isDirty: false,
+                hasInitialized: false,
+                draftKey: 'barcodePrintDraft',
+                pendingNavigation: null,
+                confirmMode: false,
+
+                init() {
+                    // 🔹 Watch cart → tandai dirty + autosave
+                    this.$watch('cart', () => {
+                        if (!this.hasInitialized) return;
+                        this.isDirty = this.cart.length > 0;
+                        this.saveDraft();
+                    }, { deep: true });
+
+                    // 🔹 Tandai selesai init (hindari dirty saat load pertama)
+                    this.$nextTick(() => {
+                        this.hasInitialized = true;
+                    });
+
+                    // 🔹 Load draft cart jika ada
+                    this.loadDraft();
+
+                    // 🔹 Intercept navigasi internal (link menu/sidebar)
+                    this.interceptLinks();
+
+                    // 🔹 Warning browser untuk refresh / back / close tab
+                    window.addEventListener('beforeunload', (e) => {
+                        if (this.isDirty) {
+                            e.preventDefault();
+                            e.returnValue = '';
+                        }
+                    });
+
+                    // 🟡 (OPSIONAL tapi cakep) Intercept Ctrl+R & F5 → popup custom
+                    window.addEventListener('keydown', (e) => {
+                        if (
+                            this.isDirty &&
+                            (
+                                (e.ctrlKey && e.key === 'r') ||
+                                e.key === 'F5'
+                            )
+                        ) {
+                            e.preventDefault();
+                            this.showPopup('Data cetak belum disimpan. Jika refresh, data akan hilang.');
+                        }
+                    });
+                },
 
                 // 🔹 Filter produk
                 get availableProducts() {
@@ -271,6 +340,28 @@
                         qty: 1
                     });
                 },
+
+                interceptLinks() {
+                    document.addEventListener('click', (e) => {
+                        const link = e.target.closest('a');
+                        if (!link) return;
+
+                        if (
+                            link.target === '_blank' ||
+                            link.href.startsWith('#') ||
+                            link.href.startsWith('javascript') ||
+                            !link.href.startsWith(window.location.origin)
+                        ) return;
+
+                        if (this.isDirty) {
+                            e.preventDefault();
+                            this.pendingNavigation = link.href;
+                            this.confirmMode = true;
+                            this.showPopup('Data cetak belum disimpan. Jika keluar, data akan hilang.');
+                        }
+                    });
+                },
+
                 removeFromCart(id) {
                     this.cart = this.cart.filter(i => i.id !== id);
                 },
@@ -284,7 +375,36 @@
                 showPopup(msg) {
                     this.warningMessage = msg;
                     this.showWarning = true;
-                    setTimeout(() => this.showWarning = false, 3500);
+
+                    // kalau bukan mode konfirmasi → auto close
+                    if (!this.confirmMode) {
+                        setTimeout(() => this.showWarning = false, 3500);
+                    }
+                },
+
+                saveDraft() {
+                    localStorage.setItem(this.draftKey, JSON.stringify({
+                        cart: this.cart
+                    }));
+                },
+
+                loadDraft() {
+                    const raw = localStorage.getItem(this.draftKey);
+                    if (!raw) return;
+
+                    try {
+                        const data = JSON.parse(raw);
+                        if (Array.isArray(data.cart)) {
+                            this.cart = data.cart;
+                            this.isDirty = this.cart.length > 0;
+                        }
+                    } catch (e) {
+                        console.error('Draft barcode rusak, diabaikan');
+                    }
+                },
+
+                clearDraft() {
+                    localStorage.removeItem(this.draftKey);
                 },
 
                 // 🔹 Cetak Barcode dengan validasi stok
