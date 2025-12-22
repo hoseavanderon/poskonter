@@ -240,7 +240,7 @@
                     <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
                         <p class="uppercase text-[12px] text-[#7A8292] font-semibold">Bayar Utang : </p>
 
-                        <template x-for="u in pembayaranUtang" :key="u.name">
+                        <template x-for="(u, index) in pembayaranUtang" :key="u.name + '-' + index">
                             <div class="flex justify-between">
                                 <span class="text-[#7CFF99]" x-text="u.name"></span>
                                 <span class="text-[#7CFF99] font-semibold" x-text="formatCurrency(u.subtotal)"></span>
@@ -459,7 +459,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                                1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                                        1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -908,42 +908,6 @@
 
                             // 🔥 WAJIB
                             this.pembayaranUtang = data.pembayaranUtang || [];
-                            console.group('🧾 PEMBAYARAN UTANG DEBUG');
-                            console.group('%c🧾 DEBUG PEMBAYARAN UTANG', 'color:#22c55e;font-weight:bold');
-
-                            if (!Array.isArray(this.pembayaranUtang)) {
-                                console.error('❌ pembayaranUtang BUKAN ARRAY:', this.pembayaranUtang);
-                            } else if (this.pembayaranUtang.length === 0) {
-                                console.warn('⚠️ pembayaranUtang kosong (length = 0)');
-                            } else {
-                                this.pembayaranUtang.forEach((u, i) => {
-                                    console.group(`Item #${i}`);
-
-                                    if (!u) {
-                                        console.error('❌ Item NULL / UNDEFINED');
-                                    } else {
-                                        console.log('name:', u.name);
-                                        console.log('subtotal:', u.subtotal);
-                                        console.log('created_at:', u.created_at);
-                                        console.log('paid_at:', u.paid_at);
-
-                                        if (!u.name) {
-                                            console.warn('⚠️ NAME KOSONG');
-                                        }
-                                        if (u.subtotal === null || u.subtotal === undefined) {
-                                            console.warn('⚠️ SUBTOTAL NULL / UNDEFINED');
-                                        }
-                                        if (Number(u.subtotal) <= 0) {
-                                            console.warn('⚠️ SUBTOTAL <= 0');
-                                        }
-                                    }
-
-                                    console.groupEnd();
-                                });
-                            }
-
-                            console.groupEnd();
-
                             this.totalPembayaranUtang = data.totalPembayaranUtang || 0;
                         }
 
