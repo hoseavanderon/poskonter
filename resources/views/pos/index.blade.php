@@ -3802,7 +3802,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     if ((d.bayarUtangList || []).length > 0) {
                         text += `Bayar Utang :\n`;
                         d.bayarUtangList.forEach(u => {
-                            text += `+ ${u.name}: Rp ${toNumber(u.subtotal).toLocaleString('id-ID')}\n`;
+                            text += `* ${u.name}: Rp ${toNumber(u.subtotal).toLocaleString('id-ID')}\n`;
                         });
                         text += `---------------------------\n`;
                     }
