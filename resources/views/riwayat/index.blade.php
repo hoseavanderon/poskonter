@@ -471,7 +471,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                                            1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                                                1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -965,61 +965,40 @@
                             this.digitalTransactions = [];
                             this.groupedDigitalTransactions = [];
 
-                            this.total = 0;
-                            this.extra = 0;
                             this.barangTotal = 0;
-
                             this.digitalPerApp = [];
+
                             this.totalTransfer = 0;
                             this.totalTarik = 0;
+                            this.tfTarikByApp = {}; // 🔥 INI WAJIB
 
                             this.utangList = [];
                             this.pembayaranUtang = [];
                             this.totalPembayaranUtang = 0;
+
                         } else {
                             this.emptyData = false;
 
-                            this.categories = data.categories;
-
+                            this.categories = data.categories || [];
                             this.productTransactions = (data.productTransactions || []).map(t => ({
                                 ...t,
                                 open: false
                             }));
-
                             this.digitalTransactions = data.digitalTransactions || [];
                             this.groupedDigitalTransactions = data.digitalTransactions || [];
 
-                            this.total = data.total || 0;
-                            this.extra = data.extra || 0;
                             this.barangTotal = data.barangTotal || 0;
-
                             this.digitalPerApp = data.digitalPerApp || [];
 
                             this.totalTransfer = data.totalTransfer || 0;
                             this.totalTarik = data.totalTarik || 0;
 
-                            this.utangList = data.utangList || [];
+                            this.tfTarikByApp = data.tfTarikByApp || {}; // 🔥 INI PENENTU
 
-                            // 🔥 WAJIB
+                            this.utangList = data.utangList || [];
                             this.pembayaranUtang = data.pembayaranUtang || [];
                             this.totalPembayaranUtang = data.totalPembayaranUtang || 0;
                         }
-
-                        this.rangeDisplay = this.formatRangeTanggal(this.fromDate, this.toDate);
-                        this.setSelectedFromIso(this.toDate);
-
-                        this.$nextTick(() => {
-                            const container = document.querySelector('.smooth-scroll');
-                            const activeBtn = container?.querySelector('.bg-blue-600');
-                            if (activeBtn && container) {
-                                const offsetLeft = activeBtn.offsetLeft - container.clientWidth / 2 + activeBtn
-                                    .clientWidth / 2;
-                                container.scrollTo({
-                                    left: offsetLeft,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        });
 
                     } catch (err) {
                         console.error("Gagal memuat data rentang tanggal:", err);
