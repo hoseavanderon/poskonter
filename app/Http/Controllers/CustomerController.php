@@ -7,6 +7,7 @@ use App\Models\Outlet;
 use App\Models\Transaction;
 use App\Models\DigitalTransaction;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
@@ -27,10 +28,12 @@ class CustomerController extends Controller
         $transactionsDebt = Transaction::whereNull('paid_at')
             ->whereNotNull('customer_id')
             ->where('outlet_id', $outlet->id)
-            ->with(['details.product' => function ($q) {
-                $q->select('id', 'name');
-            }])
-            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at']);
+            ->with(['details.product:id,name'])
+            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at'])
+            ->map(function ($t) {
+                $t->type = 'physical';
+                return $t;
+            });
 
         /**
          * Ambil utang dari transaksi digital
@@ -39,10 +42,12 @@ class CustomerController extends Controller
         $digitalDebt = DigitalTransaction::whereNull('paid_at')
             ->whereNotNull('customer_id')
             ->where('outlet_id', $outlet->id)
-            ->with(['product.category' => function ($q) {
-                $q->select('id', 'name'); // name dari tabel digital_categories
-            }])
-            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at', 'digital_product_id']);
+            ->with(['product.category:id,name'])
+            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at'])
+            ->map(function ($d) {
+                $d->type = 'digital';
+                return $d;
+            });
 
         // Gabungkan semua utang ke masing-masing customer
         $customers->map(function ($customer) use ($transactionsDebt, $digitalDebt) {
@@ -64,24 +69,20 @@ class CustomerController extends Controller
         return view('customers.index', compact('outlet', 'customers'));
     }
 
-    public function payDebt($id)
+    public function payDebt(Request $request, $id)
     {
-        $transaction = \App\Models\Transaction::find($id);
-        $digital = \App\Models\DigitalTransaction::find($id);
-
-        $debt = $transaction ?? $digital;
+        if ($request->type === 'physical') {
+            $debt = Transaction::find($id);
+        } elseif ($request->type === 'digital') {
+            $debt = DigitalTransaction::find($id);
+        } else {
+            return response()->json(['error' => 'Tipe transaksi tidak valid'], 400);
+        }
 
         if (!$debt) {
             return response()->json(['error' => 'Transaksi tidak ditemukan'], 404);
         }
 
-        // 🔍 Ambil customer terkait sebelum dihapus dari transaksi
-        $customer = \App\Models\Customer::find($debt->customer_id);
-
-        // 💰 Total nominal utang yang dibayar
-        $nominal = $debt->subtotal ?? 0;
-
-        // ✅ Tandai transaksi lunas
         $debt->update([
             'paid_at' => now(),
         ]);

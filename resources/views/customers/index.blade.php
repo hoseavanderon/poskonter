@@ -115,7 +115,7 @@
                         <h3 class="text-sm font-semibold mb-2 text-gray-300 uppercase tracking-wide">Utang Pelanggan</h3>
                         <template x-if="selectedCustomer.debts.length > 0">
                             <div class="space-y-2">
-                                <template x-for="debt in selectedCustomer.debts" :key="debt.id">
+                                <template x-for="debt in selectedCustomer.debts" :key="debt.type + '-' + debt.id">
                                     <div
                                         class="bg-gray-800 border border-gray-700 rounded-lg p-3 hover:border-yellow-500 transition">
                                         <div class="flex justify-between text-sm">
@@ -226,12 +226,18 @@
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            }
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                type: this.debtToPay.type
+                            })
                         })
                         .then(res => {
                             if (!res.ok) throw new Error('Gagal memperbarui status');
-                            customer.debts = customer.debts.filter(d => d.id !== debtId);
+                            customer.debts = customer.debts.filter(d =>
+                                !(d.id === debtId && d.type === this.debtToPay.type)
+                            );
                             this.showPayConfirm = false;
                             this.debtToPay = null;
                             this.customerOfDebt = null;
