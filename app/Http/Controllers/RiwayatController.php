@@ -552,6 +552,12 @@ class RiwayatController extends Controller
             ->merge($pembayaranUtangDigital)
             ->values();
 
+        $totalTransfer = collect($tfTarikByApp)
+            ->sum(fn($item) => $item['tf'] ?? 0);
+
+        $totalTarik = collect($tfTarikByApp)
+            ->sum(fn($item) => $item['tarik'] ?? 0);
+
         /**
          * ========== FINAL ==========
          */
@@ -565,8 +571,8 @@ class RiwayatController extends Controller
             'pembayaranUtang' => $pembayaranUtang,
             'totalPembayaranUtang' => $pembayaranUtang->sum('subtotal'),
             'tfTarikByApp' => $tfTarikByApp,
-            'totalTransfer' => collect($tfTarikByApp)->sum('tf'),
-            'totalTarik' => collect($tfTarikByApp)->sum('tarik'),
+            'totalTransfer' => $totalTransfer,
+            'totalTarik' => $totalTarik,
             'empty' => (
                 $categorySummary->isEmpty()
                 && $productTransactions->isEmpty()
