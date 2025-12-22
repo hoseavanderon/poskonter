@@ -268,7 +268,10 @@ class RiwayatController extends Controller
             ->join('customers', 'customers.id', '=', 'transactions.customer_id')
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
-            ->whereDate('transactions.paid_at', $tanggal)
+            ->whereBetween('transactions.paid_at', [
+                Carbon::parse($tanggal)->startOfDay(),
+                Carbon::parse($tanggal)->endOfDay()
+            ])
             ->whereNull('transactions.deleted_at')
             ->whereRaw('DATE(transactions.created_at) <> DATE(transactions.paid_at)')
             ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
@@ -278,7 +281,10 @@ class RiwayatController extends Controller
             ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereNotNull('digital_transactions.paid_at')
-            ->whereDate('digital_transactions.paid_at', $tanggal)
+            ->whereBetween('digital_transactions.paid_at', [
+                Carbon::parse($tanggal)->startOfDay(),
+                Carbon::parse($tanggal)->endOfDay()
+            ])
             ->whereNull('digital_transactions.deleted_at')
             ->whereRaw('DATE(digital_transactions.created_at) <> DATE(digital_transactions.paid_at)')
             ->select('customers.name', 'digital_transactions.subtotal', 'digital_transactions.created_at', 'digital_transactions.paid_at')
@@ -521,28 +527,26 @@ class RiwayatController extends Controller
         /**
          * ========== PEMBAYARAN UTANG (paid_at) ==========
          */
+
         $pembayaranUtangFisik = DB::table('transactions')
             ->join('customers', 'customers.id', '=', 'transactions.customer_id')
             ->where('transactions.outlet_id', $outletId)
             ->whereNotNull('transactions.paid_at')
             ->whereBetween('transactions.paid_at', [$from, $to])
-            ->whereNull('transactions.deleted_at') // <- tambahkan ini
+            ->whereNull('transactions.deleted_at')
+            ->whereRaw('DATE(transactions.created_at) <> DATE(transactions.paid_at)')
             ->select('customers.name', 'transactions.subtotal', 'transactions.created_at', 'transactions.paid_at')
-            ->get()
-            ->filter(function ($row) {
-                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
-            });
+            ->get();
 
         $pembayaranUtangDigital = DB::table('digital_transactions')
             ->join('customers', 'customers.id', '=', 'digital_transactions.customer_id')
             ->where('digital_transactions.outlet_id', $outletId)
             ->whereNotNull('digital_transactions.paid_at')
             ->whereBetween('digital_transactions.paid_at', [$from, $to])
+            ->whereNull('digital_transactions.deleted_at')
+            ->whereRaw('DATE(digital_transactions.created_at) <> DATE(digital_transactions.paid_at)')
             ->select('customers.name', 'digital_transactions.subtotal', 'digital_transactions.created_at', 'digital_transactions.paid_at')
-            ->get()
-            ->filter(function ($row) {
-                return date('Y-m-d', strtotime($row->created_at)) !== date('Y-m-d', strtotime($row->paid_at));
-            });
+            ->get();
 
         $pembayaranUtang = $pembayaranUtangFisik
             ->merge($pembayaranUtangDigital)
