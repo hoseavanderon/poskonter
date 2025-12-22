@@ -261,57 +261,69 @@
 
                     <div class="space-y-2">
 
+                        <!-- Brilink -->
                         <template x-if="tfTarikByApp[7]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">Brilink TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[7].tf)"></span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[7]?.tf)">
+                                </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[7]?.tarik > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#FF6B6B]">Brilink Tarik</span>
-                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[7].tarik)"></span>
+                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[7]?.tarik)">
+                                </span>
                             </div>
                         </template>
 
-                        <template x-if="tfTarikByApp[7]?.tf > 0">
+                        <!-- Seabank -->
+                        <template x-if="tfTarikByApp[6]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">Seabank TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[6].tf)"></span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[6]?.tf)">
+                                </span>
                             </div>
                         </template>
 
+                        <!-- MyBCA -->
                         <template x-if="tfTarikByApp[9]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">MyBCA TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[9].tf)"></span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[9]?.tf)">
+                                </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[9]?.tarik > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#FF6B6B]">MyBCA Tarik</span>
-                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[9].tarik)"></span>
+                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[9]?.tarik)">
+                                </span>
                             </div>
                         </template>
 
+                        <!-- Shopee -->
                         <template x-if="tfTarikByApp[10]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">SHP Pay TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[10].tf)"></span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[10]?.tf)">
+                                </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[12]?.tf > 0">
                             <div class="flex justify-between">
                                 <span class="text-[#9BA8BF]">ShopeePay TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[12].tf)"></span>
+                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[12]?.tf)">
+                                </span>
                             </div>
                         </template>
 
                     </div>
                 </div>
+
 
                 @if (Auth::user()->outlet_id == 3)
                     <div class="flex justify-between items-center font-semibold text-white text-lg mt-4">
@@ -459,7 +471,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                                        1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                                            1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
