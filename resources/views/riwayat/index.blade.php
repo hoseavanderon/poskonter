@@ -459,7 +459,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                    1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                            1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -908,6 +908,24 @@
 
                             // 🔥 WAJIB
                             this.pembayaranUtang = data.pembayaranUtang || [];
+                            console.group('🧾 PEMBAYARAN UTANG DEBUG');
+                            console.log('Raw data:', data.pembayaranUtang);
+                            console.log('Is Array:', Array.isArray(data.pembayaranUtang));
+                            console.log('Length:', data.pembayaranUtang?.length);
+
+                            (data.pembayaranUtang || []).forEach((u, i) => {
+                                console.log(`Row ${i}`, {
+                                    name: u.name,
+                                    subtotal: u.subtotal,
+                                    created_at: u.created_at,
+                                    paid_at: u.paid_at,
+                                    type_name: typeof u.name,
+                                    type_subtotal: typeof u.subtotal,
+                                });
+                            });
+
+                            console.groupEnd();
+
                             this.totalPembayaranUtang = data.totalPembayaranUtang || 0;
                         }
 
