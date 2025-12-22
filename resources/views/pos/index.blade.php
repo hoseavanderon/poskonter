@@ -3727,7 +3727,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     this.lebih = Number(raw) || 0;
                     event.target.value = this.lebih.toLocaleString("id-ID");
                 },
-               async copyCloseBook() {
+                async copyCloseBook() {
                     if (!this.closeBookData) return;
 
                     const d = this.closeBookData;
@@ -3735,14 +3735,23 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     // 🔒 Helper aman angka
                     const toNumber = v => Number.isFinite(Number(v)) ? Number(v) : 0;
 
-                    // 🧮 HITUNG DARI DATA ASLI (SOURCE OF TRUTH)
+                    // =========================
+                    // 🧮 HITUNG (SOURCE OF TRUTH)
+                    // =========================
 
-                    // Total Utang
+                    // Total Utang (belum dibayar)
                     const totalUtang = (d.utangList || [])
                         .reduce((sum, u) => sum + toNumber(u.subtotal), 0);
 
-                    // Total setelah utang
-                    const totalSetelahUtang = toNumber(d.totalPenjualan) - totalUtang;
+                    // Total Bayar Utang (dibayar hari ini)
+                    const totalBayarUtang = (d.bayarUtangList || [])
+                        .reduce((sum, u) => sum + toNumber(u.subtotal), 0);
+
+                    // Total setelah utang (SAMA DENGAN UI)
+                    const totalSetelahUtang =
+                        toNumber(d.totalPenjualan) +
+                        totalBayarUtang -
+                        totalUtang;
 
                     // Total Transfer
                     const totalTF = (d.transferDetail || [])
@@ -3753,55 +3762,78 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         .reduce((sum, i) => sum + toNumber(i.total), 0);
 
                     // Total akhir + lebih
-                    const totalAkhir = totalSetelahUtang + toNumber(this.lebih);
-
-                    const lebihText = this.lebih > 0
-                        ? `Lebih => Rp ${toNumber(this.lebih).toLocaleString('id-ID')}\n`
-                        : '';
+                    const totalAkhir = totalSetelahUtang + toNumber(this.lebih || 0);
 
                     let text = '';
 
-                    // 🗓️ Tanggal
+                    // =========================
+                    // 🗓️ HEADER
+                    // =========================
                     text += `${d.tanggal}\n\n`;
 
-                    // 📦 Barang & Digital
+                    // =========================
+                    // 📦 BARANG & DIGITAL
+                    // =========================
                     text += `Barang : Rp ${toNumber(d.barangTotal).toLocaleString('id-ID')}\n`;
                     (d.digitalPerApp || []).forEach(app => {
                         text += `${app.name} : Rp ${toNumber(app.total).toLocaleString('id-ID')}\n`;
                     });
 
-                    // 🔸 Total Penjualan
+                    // =========================
+                    // 🔸 TOTAL PENJUALAN
+                    // =========================
                     text += `---------------------------\n`;
-                    text += `Total : Rp ${toNumber(d.totalPenjualan).toLocaleString('id-ID')}\n\n`;
+                    text += `Total Penjualan : Rp ${toNumber(d.totalPenjualan).toLocaleString('id-ID')}\n\n`;
 
-                    // 💸 Utang
+                    // =========================
+                    // 💸 UTANG
+                    // =========================
                     if ((d.utangList || []).length > 0) {
                         text += `Utang :\n`;
                         d.utangList.forEach(u => {
-                            text += `- ${u.name}: (Rp ${toNumber(u.subtotal).toLocaleString('id-ID')})\n`;
+                            text += `- ${u.name}: Rp ${toNumber(u.subtotal).toLocaleString('id-ID')}\n`;
                         });
                         text += `---------------------------\n`;
                     }
 
-                    // 🧾 Total setelah utang
-                    text += `Total => Rp ${totalSetelahUtang.toLocaleString('id-ID')}\n`;
-                    if (this.lebih > 0) text += lebihText;
+                    // =========================
+                    // 💵 BAYAR UTANG
+                    // =========================
+                    if ((d.bayarUtangList || []).length > 0) {
+                        text += `Bayar Utang :\n`;
+                        d.bayarUtangList.forEach(u => {
+                            text += `+ ${u.name}: Rp ${toNumber(u.subtotal).toLocaleString('id-ID')}\n`;
+                        });
+                        text += `---------------------------\n`;
+                    }
 
-                    // 💰 Total akhir
-                    text += `Total => Rp ${totalAkhir.toLocaleString('id-ID')}\n`;
+                    // =========================
+                    // 🧾 TOTAL SETELAH UTANG
+                    // =========================
+                    text += `Total => Rp ${totalSetelahUtang.toLocaleString('id-ID')}\n`;
+
+                    if (toNumber(this.lebih) > 0) {
+                        text += `Lebih => Rp ${toNumber(this.lebih).toLocaleString('id-ID')}\n`;
+                    }
+
+                    // =========================
+                    // 💰 TOTAL AKHIR
+                    // =========================
+                    text += `Total Akhir => Rp ${totalAkhir.toLocaleString('id-ID')}\n`;
                     text += `---------------------------\n`;
 
-                    // 🏦 Transfer & Tarik
+                    // =========================
+                    // 🏦 TRANSFER & TARIK
+                    // =========================
                     text += `*Total TF : Rp ${totalTF.toLocaleString('id-ID')}*\n`;
                     text += `*Total Tarik : Rp ${totalTarik.toLocaleString('id-ID')}*`;
 
-                    // Debug (aman dihapus kalau sudah yakin)
-                    console.log('closeBookData FINAL:', JSON.parse(JSON.stringify(this.closeBookData)));
-
-                    // 📋 Copy ke clipboard
+                    // =========================
+                    // 📋 COPY TO CLIPBOARD
+                    // =========================
                     await navigator.clipboard.writeText(text);
 
-                    // ✨ Animasi tombol Copy
+                    // ✨ FEEDBACK UI
                     this.copied = true;
                     setTimeout(() => this.copied = false, 2000);
                 },
