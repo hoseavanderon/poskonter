@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div x-data="barangMasuk()" class="w-full mx-auto py-10 px-8 text-gray-100">
+    <div x-data="barangMasuk()" class="w-full mx-auto py-6 px-4 sm:px-8 text-gray-100">
         <!-- 🏷️ Header -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold flex items-center gap-2 text-blue-400">
@@ -25,22 +25,46 @@
         </div>
 
         <!-- 📦 Product Form -->
-        <div class="bg-[#1B2332] rounded-2xl p-8 shadow-lg border border-[#2A3242] w-full">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-semibold text-gray-300">Barang</h2>
+        <div class="relative bg-[#1B2332] rounded-2xl p-5 sm:p-8 shadow-lg border border-[#2A3242] w-full">
+            <div class="flex items-center justify-between mb-6">
 
-                <div class="flex gap-3">
+                <h2 class="text-lg font-semibold text-gray-300">
+                    Barang
+                </h2>
+
+                <div class="flex items-center gap-3">
+
+                    <!-- Add -->
                     <button @click="addProduct"
-                        class="bg-blue-500 text-white text-sm px-4 py-2 rounded-xl hover:bg-blue-400 transition">
-                        ＋ Tambah Barang
+                        class="w-10 h-10 flex items-center justify-center
+                   rounded-full
+                   bg-blue-500/15 text-blue-400
+                   hover:bg-blue-500/25 hover:scale-105
+                   transition duration-200 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
                     </button>
 
+                    <!-- History -->
                     <button @click="openHistoryModal"
-                        class="bg-purple-500 text-white text-sm px-4 py-2 rounded-xl hover:bg-purple-400 transition">
-                        📜 Riwayat
+                        class="w-10 h-10 flex items-center justify-center
+                   rounded-full
+                   bg-purple-500/15 text-purple-400
+                   hover:bg-purple-500/25 hover:scale-105
+                   transition duration-200 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10m-11 9h12a2 2 0 002-2V7H3v11a2 2 0 002 2z" />
+                        </svg>
                     </button>
+
                 </div>
+
             </div>
+
 
             <template x-for="(item, index) in products" :key="index">
                 <div class="flex flex-wrap items-center gap-4 mb-5 border border-[#2A3242] rounded-xl p-5 bg-[#222B3A]">
@@ -384,11 +408,6 @@
 
                                         <!-- LEFT -->
                                         <div class="flex items-center gap-4">
-                                            <div
-                                                class="w-12 h-12 flex items-center justify-center
-                                                rounded-xl bg-[#334155] text-gray-300 text-xl">
-                                                📱
-                                            </div>
 
                                             <div>
                                                 <div class="text-gray-200 font-semibold" x-text="item.product">
