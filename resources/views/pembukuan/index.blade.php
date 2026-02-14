@@ -339,7 +339,7 @@
                     </div>
 
                     <!-- LIST TRANSAKSI (ini aja yang scrollable) -->
-                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll uppercase">
+                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll text-uppercase">
                         <div class="flex flex-col gap-4">
                             <template x-if="filteredTransactions.length > 0">
                                 <template x-for="t in filteredTransactions" :key="t.id">
@@ -350,7 +350,7 @@
                                         <button @click="toggleTransaction(t.id)"
                                             class="w-full flex items-center justify-between text-left transition-all duration-300">
                                             <div>
-                                                <p class="font-medium text-gray-100 uppercase">
+                                                <p class="font-medium text-gray-100 text-uppercase">
                                                     <span
                                                         x-text="new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' })"></span>
                                                     -
