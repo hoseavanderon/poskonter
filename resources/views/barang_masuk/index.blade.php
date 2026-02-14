@@ -361,7 +361,7 @@
                                         <button @click="openHistoryDetail(item.date)"
                                             class="bg-blue-500 hover:bg-blue-400 text-white
                                            text-sm px-4 py-2 rounded-xl transition">
-                                            Lihat Detail
+                                            Detail
                                         </button>
 
                                     </div>
