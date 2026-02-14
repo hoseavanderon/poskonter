@@ -84,12 +84,9 @@
                 </div>
 
                 <!-- ✅ MODAL INPUT PEMBUKUAN -->
-                <div x-show="showModal"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 scale-90"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 scale-100"
+                <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
                     x-transition:leave-end="opacity-0 scale-90"
                     class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
                     @click.self="closeModal">
@@ -123,9 +120,7 @@
 
                             <div>
                                 <label class="text-sm text-gray-300">Nominal</label>
-                                <input type="text"
-                                    x-model="form.nominalDisplay"
-                                    @input="formatNominal"
+                                <input type="text" x-model="form.nominalDisplay" @input="formatNominal"
                                     inputmode="numeric"
                                     class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
                                     placeholder="Rp Masukkan jumlah uang" />
@@ -142,7 +137,7 @@
                             </div>
                         </div>
 
-                       <!-- ACTION BUTTONS -->
+                        <!-- ACTION BUTTONS -->
                         <div class="flex justify-end gap-3 mt-6">
                             <button @click="closeModal"
                                 class="px-4 py-2.5 text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-200">
@@ -151,7 +146,8 @@
 
                             <button @click="submitTransaction"
                                 :class="[
-                                    modalType === 'IN' ? 'bg-blue-600 hover:bg-blue-500' : 'bg-purple-600 hover:bg-purple-500',
+                                    modalType === 'IN' ? 'bg-blue-600 hover:bg-blue-500' :
+                                    'bg-purple-600 hover:bg-purple-500',
                                     'px-5 py-2.5 text-sm font-medium text-white rounded-lg shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.97]'
                                 ]">
                                 Simpan
@@ -262,9 +258,7 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
                     class="my-3">
-                    <input type="search" 
-                        x-model="filter"
-                        placeholder="Cari transaksi..."
+                    <input type="search" x-model="filter" placeholder="Cari transaksi..."
                         class="w-full rounded-lg p-2 border border-gray-600 bg-gray-700 text-gray-200 focus:ring focus:ring-blue-400 text-sm placeholder-gray-400" />
                 </div>
 
@@ -289,26 +283,24 @@
                             </div>
 
                             <!-- DROPDOWN YEAR -->
-                            <div x-show="showDropdown"
-                                x-transition:enter="transition ease-out duration-400"
+                            <div x-show="showDropdown" x-transition:enter="transition ease-out duration-400"
                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-300"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-95"
                                 class="absolute top-[100%] left-0 right-0 mt-2 bg-gray-800 rounded-xl p-5 border border-gray-700 space-y-4 shadow-lg z-40 max-h-[380px] overflow-y-auto no-scrollbar">
-                                
+
                                 <template x-for="year in years" :key="year">
                                     <div>
                                         <p class="text-xl font-bold text-gray-100 mb-3" x-text="year"></p>
                                         <div class="grid grid-cols-4 gap-3">
                                             <template x-for="m in months" :key="m.index">
-                                                <button
-                                                    @click="selectYear(year); selectMonth(m.index)"
+                                                <button @click="selectYear(year); selectMonth(m.index)"
                                                     class="h-10 rounded-lg text-sm font-medium transition-all duration-300"
-                                                    :class="isMonthActive(m.index, year)
-                                                        ? 'bg-blue-600 text-white scale-105 shadow'
-                                                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                                    :class="isMonthActive(m.index, year) ?
+                                                        'bg-blue-600 text-white scale-105 shadow' :
+                                                        'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
                                                     <span x-text="m.name"></span>
                                                 </button>
                                             </template>
@@ -320,12 +312,11 @@
                             <!-- SLIDER MONTH -->
                             <div class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll pb-1">
                                 <template x-for="m in months" :key="m.index">
-                                    <button 
-                                        @click="selectMonth(m.index)" 
+                                    <button @click="selectMonth(m.index)"
                                         class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-out"
-                                        :class="selectedMonthIndex === m.index && selectedYear === currentYear
-                                            ? 'bg-blue-600 text-white scale-105 shadow-md'
-                                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                        :class="selectedMonthIndex === m.index && selectedYear === currentYear ?
+                                            'bg-blue-600 text-white scale-105 shadow-md' :
+                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
                                         <span x-text="m.name"></span>
                                     </button>
                                 </template>
@@ -336,11 +327,10 @@
                         <div class="py-4 border-b border-gray-700">
                             <div x-ref="dateContainer" class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll px-1">
                                 <template x-for="day in days" :key="day">
-                                    <button 
-                                        @click="selectDay(day)"
-                                        :data-day="day"
+                                    <button @click="selectDay(day)" :data-day="day"
                                         class="min-w-[48px] h-9 flex items-center justify-center rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ease-out"
-                                        :class="selectedDate === day ? 'bg-blue-600 text-white scale-105 shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                        :class="selectedDate === day ? 'bg-blue-600 text-white scale-105 shadow-md' :
+                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
                                         <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
                                     </button>
                                 </template>
@@ -349,7 +339,7 @@
                     </div>
 
                     <!-- LIST TRANSAKSI (ini aja yang scrollable) -->
-                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll">
+                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll uppercase">
                         <div class="flex flex-col gap-4">
                             <template x-if="filteredTransactions.length > 0">
                                 <template x-for="t in filteredTransactions" :key="t.id">
@@ -434,15 +424,13 @@
             </section>
 
             <!-- MODAL KONFIRMASI -->
-            <div x-show="showConfirmModal"
-                x-transition.opacity.duration.300ms
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
-                x-cloak>
-                
+            <div x-show="showConfirmModal" x-transition.opacity.duration.300ms
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" x-cloak>
+
                 <div @click.away="cancelDelete()"
                     class="bg-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-lg border border-gray-700 transform transition-all duration-300"
                     x-transition.scale.duration.250ms>
-                    
+
                     <h2 class="text-lg font-semibold text-white mb-2">
                         Konfirmasi Hapus
                     </h2>
@@ -468,449 +456,506 @@
     </div>
 
     <script>
-    function ledgerApp() {
-        return {
-            // === STATE ===
-            showSearch: false,
-            showDropdown: false,
-            filter: '',
-            selectedWallet: 0, // default: Semua Wallet
-            selectedDate: new Date().getDate(),
-            selectedMonthIndex: new Date().getMonth(),
-            selectedYear: new Date().getFullYear(),
-            currentYear: new Date().getFullYear(),
-            days: [],
-            wallets: @json($wallets),
-            transactions: @json($transactions),
-            years: @json($years),
-            totalSaldo: {{ $totalSaldo ?? 0 }},
-            lastUpdated: '{{ $lastUpdate ? $lastUpdate->format('d M Y H:i') : '-' }}',
-            activeTransaction: null,
+        function ledgerApp() {
+            return {
+                // === STATE ===
+                showSearch: false,
+                showDropdown: false,
+                filter: '',
+                selectedWallet: 0, // default: Semua Wallet
+                selectedDate: new Date().getDate(),
+                selectedMonthIndex: new Date().getMonth(),
+                selectedYear: new Date().getFullYear(),
+                currentYear: new Date().getFullYear(),
+                days: [],
+                wallets: @json($wallets),
+                transactions: @json($transactions),
+                years: @json($years),
+                totalSaldo: {{ $totalSaldo ?? 0 }},
+                lastUpdated: '{{ $lastUpdate ? $lastUpdate->format('d M Y H:i') : '-' }}',
+                activeTransaction: null,
 
-            // === LIST BULAN ===
-            months: [
-                { name: 'Jan', index: 0 },
-                { name: 'Feb', index: 1 },
-                { name: 'Mar', index: 2 },
-                { name: 'Apr', index: 3 },
-                { name: 'May', index: 4 },
-                { name: 'Jun', index: 5 },
-                { name: 'Jul', index: 6 },
-                { name: 'Aug', index: 7 },
-                { name: 'Sep', index: 8 },
-                { name: 'Oct', index: 9 },
-                { name: 'Nov', index: 10 },
-                { name: 'Dec', index: 11 },
-            ],
-            showModal: false,
-            modalType: null,
-            form: {
-                deskripsi: '',
-                nominalRaw: 0,
-                nominalDisplay: '',
-                cashbook_wallet_id: '',
-            },
-            showConfirmModal: false,
-            deleteTargetId: null,
+                // === LIST BULAN ===
+                months: [{
+                        name: 'Jan',
+                        index: 0
+                    },
+                    {
+                        name: 'Feb',
+                        index: 1
+                    },
+                    {
+                        name: 'Mar',
+                        index: 2
+                    },
+                    {
+                        name: 'Apr',
+                        index: 3
+                    },
+                    {
+                        name: 'May',
+                        index: 4
+                    },
+                    {
+                        name: 'Jun',
+                        index: 5
+                    },
+                    {
+                        name: 'Jul',
+                        index: 6
+                    },
+                    {
+                        name: 'Aug',
+                        index: 7
+                    },
+                    {
+                        name: 'Sep',
+                        index: 8
+                    },
+                    {
+                        name: 'Oct',
+                        index: 9
+                    },
+                    {
+                        name: 'Nov',
+                        index: 10
+                    },
+                    {
+                        name: 'Dec',
+                        index: 11
+                    },
+                ],
+                showModal: false,
+                modalType: null,
+                form: {
+                    deskripsi: '',
+                    nominalRaw: 0,
+                    nominalDisplay: '',
+                    cashbook_wallet_id: '',
+                },
+                showConfirmModal: false,
+                deleteTargetId: null,
 
-            // === INIT ===
-            init() {
-                // set days sesuai bulan dan tahun saat ini
-                this.updateDaysInMonth();
+                // === INIT ===
+                init() {
+                    // set days sesuai bulan dan tahun saat ini
+                    this.updateDaysInMonth();
 
-                // pastikan selectedDate default valid (jika hari > jumlah hari di bulan, set ke last day)
-                const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
-                if (this.selectedDate > daysInMonth) this.selectedDate = daysInMonth;
+                    // pastikan selectedDate default valid (jika hari > jumlah hari di bulan, set ke last day)
+                    const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
+                    if (this.selectedDate > daysInMonth) this.selectedDate = daysInMonth;
 
-                // tunggu Alpine render, lalu gunakan kombinasi observer + retry fallback
-                this.$nextTick(() => {
-                    // 1) MutationObserver: trigger saat DOM berubah sehingga dateContainer muncul
-                    let observer;
-                    try {
-                        observer = new MutationObserver(() => {
-                            const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
+                    // tunggu Alpine render, lalu gunakan kombinasi observer + retry fallback
+                    this.$nextTick(() => {
+                        // 1) MutationObserver: trigger saat DOM berubah sehingga dateContainer muncul
+                        let observer;
+                        try {
+                            observer = new MutationObserver(() => {
+                                const el = this.$refs.dateContainer?.querySelector(
+                                    `[data-day='${this.selectedDate}']`);
+                                if (el) {
+                                    // scroll sekali elemen ada
+                                    this.scrollSelectedDayIntoView();
+                                    observer.disconnect();
+                                    if (retryTimer) clearInterval(retryTimer);
+                                }
+                            });
+                            observer.observe(this.$el, {
+                                childList: true,
+                                subtree: true
+                            });
+                        } catch (e) {
+                            // ignore if MutationObserver unsupported
+                        }
+
+                        // 2) Fallback retry: jika observer gagal/terlambat, coba berkali2 selama max 2s
+                        const start = Date.now();
+                        const retryTimer = setInterval(() => {
+                            const el = this.$refs.dateContainer?.querySelector(
+                                `[data-day='${this.selectedDate}']`);
                             if (el) {
-                                // scroll sekali elemen ada
                                 this.scrollSelectedDayIntoView();
-                                observer.disconnect();
-                                if (retryTimer) clearInterval(retryTimer);
+                                clearInterval(retryTimer);
+                                if (observer) observer.disconnect();
+                            } else if (Date.now() - start > 2000) { // timeout 2 detik
+                                clearInterval(retryTimer);
+                                if (observer) observer.disconnect();
                             }
-                        });
-                        observer.observe(this.$el, { childList: true, subtree: true });
-                    } catch (e) {
-                        // ignore if MutationObserver unsupported
+                        }, 80); // cek tiap 80ms
+
+                        // 3) as last resort, jalankan sekali lagi setelah 300ms untuk keamanan
+                        setTimeout(() => {
+                            const el = this.$refs.dateContainer?.querySelector(
+                                `[data-day='${this.selectedDate}']`);
+                            if (el) this.scrollSelectedDayIntoView();
+                        }, 300);
+                    });
+                },
+
+                // === UPDATE JUMLAH HARI ===
+                updateDaysInMonth() {
+                    const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
+                    this.days = Array.from({
+                        length: daysInMonth
+                    }, (_, i) => i + 1);
+                },
+
+                // === FORMAT RUPIAH ===
+                formatCurrency(v) {
+                    if (!v || isNaN(v)) v = 0;
+                    return 'Rp ' + Number(v).toLocaleString('id-ID');
+                },
+
+                // === TAMPILKAN / SEMBUNYIKAN DETAIL TRANSAKSI ===
+                toggleTransaction(id) {
+                    this.activeTransaction = this.activeTransaction === id ? null : id;
+                },
+
+                openModal(type) {
+                    this.modalType = type;
+                    this.showModal = true;
+                    this.form = {
+                        deskripsi: '',
+                        nominal: '',
+                        cashbook_wallet_id: this.wallets[1]?.id || ''
+                    };
+                },
+
+                closeModal() {
+                    this.showModal = false;
+                },
+
+                formatNominal(e) {
+                    // Ambil angka murni
+                    let raw = e.target.value.replace(/\D/g, '');
+                    if (raw === '') raw = '0';
+
+                    // Simpan nilai numeriknya
+                    this.form.nominal = parseInt(raw);
+
+                    // Format tampilan Rp 100.000
+                    this.form.nominalDisplay = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.form.nominal);
+                },
+
+                // === FILTER TRANSAKSI ===
+                get filteredTransactions() {
+                    let filtered = this.transactions;
+
+                    // Filter berdasarkan wallet
+                    if (this.selectedWallet !== 0) {
+                        filtered = filtered.filter(t => t.cashbook_wallet_id === this.selectedWallet);
                     }
 
-                    // 2) Fallback retry: jika observer gagal/terlambat, coba berkali2 selama max 2s
-                    const start = Date.now();
-                    const retryTimer = setInterval(() => {
-                        const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
-                        if (el) {
-                            this.scrollSelectedDayIntoView();
-                            clearInterval(retryTimer);
-                            if (observer) observer.disconnect();
-                        } else if (Date.now() - start > 2000) { // timeout 2 detik
-                            clearInterval(retryTimer);
-                            if (observer) observer.disconnect();
-                        }
-                    }, 80); // cek tiap 80ms
-
-                    // 3) as last resort, jalankan sekali lagi setelah 300ms untuk keamanan
-                    setTimeout(() => {
-                        const el = this.$refs.dateContainer?.querySelector(`[data-day='${this.selectedDate}']`);
-                        if (el) this.scrollSelectedDayIntoView();
-                    }, 300);
-                });
-            },
-
-            // === UPDATE JUMLAH HARI ===
-            updateDaysInMonth() {
-                const daysInMonth = new Date(this.selectedYear, this.selectedMonthIndex + 1, 0).getDate();
-                this.days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-            },
-
-            // === FORMAT RUPIAH ===
-            formatCurrency(v) {
-                if (!v || isNaN(v)) v = 0;
-                return 'Rp ' + Number(v).toLocaleString('id-ID');
-            },
-
-            // === TAMPILKAN / SEMBUNYIKAN DETAIL TRANSAKSI ===
-            toggleTransaction(id) {
-                this.activeTransaction = this.activeTransaction === id ? null : id;
-            },
-
-            openModal(type) {
-                this.modalType = type;
-                this.showModal = true;
-                this.form = { deskripsi: '', nominal: '', cashbook_wallet_id: this.wallets[1]?.id || '' };
-            },
-
-            closeModal() {
-                this.showModal = false;
-            },
-
-            formatNominal(e) {
-                // Ambil angka murni
-                let raw = e.target.value.replace(/\D/g, '');
-                if (raw === '') raw = '0';
-
-                // Simpan nilai numeriknya
-                this.form.nominal = parseInt(raw);
-
-                // Format tampilan Rp 100.000
-                this.form.nominalDisplay = 'Rp ' + new Intl.NumberFormat('id-ID').format(this.form.nominal);
-            },  
-
-            // === FILTER TRANSAKSI ===
-            get filteredTransactions() {
-                let filtered = this.transactions;
-
-                // Filter berdasarkan wallet
-                if (this.selectedWallet !== 0) {
-                    filtered = filtered.filter(t => t.cashbook_wallet_id === this.selectedWallet);
-                }
-
-                // Filter berdasarkan tahun & bulan
-                filtered = filtered.filter(t => {
-                    const d = new Date(t.created_at);
-                    return d.getFullYear() === this.selectedYear && d.getMonth() === this.selectedMonthIndex;
-                });
-
-                // Filter berdasarkan tanggal
-                filtered = filtered.filter(t => {
-                    const d = new Date(t.created_at);
-                    return d.getDate() === this.selectedDate;
-                });
-
-                // Filter berdasarkan keyword pencarian
-                if (this.filter) {
-                    const q = this.filter.toLowerCase();
-                    filtered = filtered.filter(t =>
-                        (t.deskripsi?.toLowerCase().includes(q) || '') ||
-                        t.nominal?.toString().includes(q)
-                    );
-                }
-
-                return filtered;
-            },
-
-            // === EVENT HANDLER FILTER ===
-            selectWallet(id) {
-                this.selectedWallet = id;
-            },
-            selectYear(year) {
-                this.selectedYear = year;
-                this.updateDaysInMonth();
-                this.showDropdown = false;
-                this.scrollSelectedDayIntoView();
-            },
-            selectMonth(index) {
-                this.selectedMonthIndex = index;
-                this.updateDaysInMonth();
-                this.showDropdown = false;
-                this.scrollSelectedDayIntoView();
-            },
-            selectDay(day) {
-                this.selectedDate = day;
-                this.scrollSelectedDayIntoView();
-            },
-
-            // === DROPDOWN & SEARCH ===
-            toggleSearch() {
-                this.showSearch = !this.showSearch;
-                if (!this.showSearch) this.filter = '';
-                else this.$nextTick(() => document.querySelector('input[type=search]')?.focus());
-            },
-            toggleDropdown() {
-                this.showDropdown = !this.showDropdown;
-            },
-
-            // === AUTO SCROLL KE TANGGAL AKTIF ===
-            scrollSelectedDayIntoView() {
-                // extra $nextTick supaya Alpine benar-benar menyelesaikan binding
-                this.$nextTick(() => {
-                    const container = this.$refs.dateContainer;
-                    if (!container) return;
-
-                    const el = container.querySelector(`[data-day='${this.selectedDate}']`);
-                    if (!el) return;
-
-                    // scroll - gunakan smooth
-                    el.scrollIntoView({
-                        behavior: 'smooth',
-                        inline: 'center',
-                        block: 'nearest'
+                    // Filter berdasarkan tahun & bulan
+                    filtered = filtered.filter(t => {
+                        const d = new Date(t.created_at);
+                        return d.getFullYear() === this.selectedYear && d.getMonth() === this
+                        .selectedMonthIndex;
                     });
 
-                    // opsional: beri highlight sementara agar visual terlihat
-                    el.classList.add('ring-2', 'ring-blue-400', 'ring-offset-2');
-                    setTimeout(() => {
-                        el.classList.remove('ring-2', 'ring-blue-400', 'ring-offset-2');
-                    }, 700);
-                });
-            },
-
-            async submitTransaction() {
-                if (!this.form.deskripsi || !this.form.nominal) {
-                    this.showToast('Harap isi semua field.', 'error');
-                    return;
-                }
-
-                try {
-                    const response = await fetch('{{ route('cashbooks.store') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: JSON.stringify({
-                            deskripsi: this.form.deskripsi,
-                            nominal: this.form.nominal,
-                            cashbook_wallet_id: this.form.cashbook_wallet_id,
-                            type: this.modalType,
-                        }),
+                    // Filter berdasarkan tanggal
+                    filtered = filtered.filter(t => {
+                        const d = new Date(t.created_at);
+                        return d.getDate() === this.selectedDate;
                     });
 
-                    if (response.ok) {
-                        const newData = await response.json(); // 🆕 Ambil data baru dari response
+                    // Filter berdasarkan keyword pencarian
+                    if (this.filter) {
+                        const q = this.filter.toLowerCase();
+                        filtered = filtered.filter(t =>
+                            (t.deskripsi?.toLowerCase().includes(q) || '') ||
+                            t.nominal?.toString().includes(q)
+                        );
+                    }
 
-                        // 🆕 Tambahkan ke daftar transaksi
-                        this.transactions.unshift({
-                            id: newData.id,
-                            deskripsi: newData.deskripsi,
-                            nominal: parseFloat(newData.nominal),
-                            type: newData.type,
-                            cashbook_wallet_id: parseInt(newData.cashbook_wallet_id),
-                            created_at: newData.created_at,
+                    return filtered;
+                },
+
+                // === EVENT HANDLER FILTER ===
+                selectWallet(id) {
+                    this.selectedWallet = id;
+                },
+                selectYear(year) {
+                    this.selectedYear = year;
+                    this.updateDaysInMonth();
+                    this.showDropdown = false;
+                    this.scrollSelectedDayIntoView();
+                },
+                selectMonth(index) {
+                    this.selectedMonthIndex = index;
+                    this.updateDaysInMonth();
+                    this.showDropdown = false;
+                    this.scrollSelectedDayIntoView();
+                },
+                selectDay(day) {
+                    this.selectedDate = day;
+                    this.scrollSelectedDayIntoView();
+                },
+
+                // === DROPDOWN & SEARCH ===
+                toggleSearch() {
+                    this.showSearch = !this.showSearch;
+                    if (!this.showSearch) this.filter = '';
+                    else this.$nextTick(() => document.querySelector('input[type=search]')?.focus());
+                },
+                toggleDropdown() {
+                    this.showDropdown = !this.showDropdown;
+                },
+
+                // === AUTO SCROLL KE TANGGAL AKTIF ===
+                scrollSelectedDayIntoView() {
+                    // extra $nextTick supaya Alpine benar-benar menyelesaikan binding
+                    this.$nextTick(() => {
+                        const container = this.$refs.dateContainer;
+                        if (!container) return;
+
+                        const el = container.querySelector(`[data-day='${this.selectedDate}']`);
+                        if (!el) return;
+
+                        // scroll - gunakan smooth
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            inline: 'center',
+                            block: 'nearest'
                         });
 
-                        // 🆕 Update saldo total
-                        if (newData.type === 'IN') {
-                            this.totalSaldo += parseFloat(newData.nominal);
+                        // opsional: beri highlight sementara agar visual terlihat
+                        el.classList.add('ring-2', 'ring-blue-400', 'ring-offset-2');
+                        setTimeout(() => {
+                            el.classList.remove('ring-2', 'ring-blue-400', 'ring-offset-2');
+                        }, 700);
+                    });
+                },
+
+                async submitTransaction() {
+                    if (!this.form.deskripsi || !this.form.nominal) {
+                        this.showToast('Harap isi semua field.', 'error');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('{{ route('cashbooks.store') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                            body: JSON.stringify({
+                                deskripsi: this.form.deskripsi,
+                                nominal: this.form.nominal,
+                                cashbook_wallet_id: this.form.cashbook_wallet_id,
+                                type: this.modalType,
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const newData = await response.json(); // 🆕 Ambil data baru dari response
+
+                            // 🆕 Tambahkan ke daftar transaksi
+                            this.transactions.unshift({
+                                id: newData.id,
+                                deskripsi: newData.deskripsi,
+                                nominal: parseFloat(newData.nominal),
+                                type: newData.type,
+                                cashbook_wallet_id: parseInt(newData.cashbook_wallet_id),
+                                created_at: newData.created_at,
+                            });
+
+                            // 🆕 Update saldo total
+                            if (newData.type === 'IN') {
+                                this.totalSaldo += parseFloat(newData.nominal);
+                            } else {
+                                this.totalSaldo -= parseFloat(newData.nominal);
+                            }
+
+                            // 🆕 Update saldo wallet yang bersangkutan
+                            const targetWallet = this.wallets.find(w => w.id == newData.cashbook_wallet_id);
+                            if (targetWallet) {
+                                const currentBalance = parseFloat(targetWallet.balance) || 0;
+                                const amount = parseFloat(newData.nominal) || 0;
+
+                                // Update saldo wallet spesifik
+                                if (newData.type === 'IN') {
+                                    targetWallet.balance = currentBalance + amount;
+                                } else {
+                                    targetWallet.balance = currentBalance - amount;
+                                }
+
+                                targetWallet.note = 'Aktif';
+                            }
+
+                            // 🆕 Update saldo wallet "Semua Wallet" (gabungan)
+                            const mainWallet = this.wallets.find(w => w.id === 0);
+                            if (mainWallet) {
+                                const mainBalance = parseFloat(mainWallet.balance) || 0;
+                                const amount = parseFloat(newData.nominal) || 0;
+                                if (newData.type === 'IN') {
+                                    mainWallet.balance = mainBalance + amount;
+                                } else {
+                                    mainWallet.balance = mainBalance - amount;
+                                }
+                            }
+
+                            // 🆕 Update total saldo global
+                            const totalInWallets = this.wallets
+                                .filter(w => w.id !== 0)
+                                .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
+
+                            this.totalSaldo = totalInWallets;
+                            this.lastUpdated = new Date().toLocaleString('id-ID', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            this.showToast('Transaksi berhasil disimpan!', 'success');
+                            this.closeModal();
+                            this.form = {
+                                deskripsi: '',
+                                nominal: '',
+                                cashbook_wallet_id: ''
+                            };
                         } else {
-                            this.totalSaldo -= parseFloat(newData.nominal);
+                            this.showToast('Gagal menyimpan transaksi.', 'error');
                         }
+                    } catch (e) {
+                        console.error('Error:', e);
+                        this.showToast('Terjadi kesalahan koneksi.', 'error');
+                    }
+                },
 
-                        // 🆕 Update saldo wallet yang bersangkutan
-                        const targetWallet = this.wallets.find(w => w.id == newData.cashbook_wallet_id);
-                        if (targetWallet) {
-                            const currentBalance = parseFloat(targetWallet.balance) || 0;
-                            const amount = parseFloat(newData.nominal) || 0;
+                // Step 1: Tampilkan modal
+                requestDelete(id) {
+                    this.deleteTargetId = id;
+                    this.showConfirmModal = true;
+                },
 
-                            // Update saldo wallet spesifik
-                            if (newData.type === 'IN') {
-                                targetWallet.balance = currentBalance + amount;
-                            } else {
-                                targetWallet.balance = currentBalance - amount;
-                            }
+                // Step 2: Batalkan
+                cancelDelete() {
+                    this.showConfirmModal = false;
+                    this.deleteTargetId = null;
+                },
 
-                            targetWallet.note = 'Aktif';
-                        }
+                // Step 3: Konfirmasi dan eksekusi delete
+                async confirmDelete() {
+                    const id = this.deleteTargetId;
+                    if (!id) return;
 
-                        // 🆕 Update saldo wallet "Semua Wallet" (gabungan)
-                        const mainWallet = this.wallets.find(w => w.id === 0);
-                        if (mainWallet) {
-                            const mainBalance = parseFloat(mainWallet.balance) || 0;
-                            const amount = parseFloat(newData.nominal) || 0;
-                            if (newData.type === 'IN') {
-                                mainWallet.balance = mainBalance + amount;
-                            } else {
-                                mainWallet.balance = mainBalance - amount;
-                            }
-                        }
+                    this.showConfirmModal = false;
 
-                        // 🆕 Update total saldo global
-                        const totalInWallets = this.wallets
-                            .filter(w => w.id !== 0)
-                            .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
-
-                        this.totalSaldo = totalInWallets;
-                        this.lastUpdated = new Date().toLocaleString('id-ID', {
-                            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    try {
+                        const response = await fetch(`{{ url('cashbook') }}/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
                         });
 
-                        this.showToast('Transaksi berhasil disimpan!', 'success');
-                        this.closeModal();
-                        this.form = { deskripsi: '', nominal: '', cashbook_wallet_id: '' };
-                    } else {
-                        this.showToast('Gagal menyimpan transaksi.', 'error');
-                    }
-                } catch (e) {
-                    console.error('Error:', e);
-                    this.showToast('Terjadi kesalahan koneksi.', 'error');
-                }
-            },
-
-            // Step 1: Tampilkan modal
-            requestDelete(id) {
-                this.deleteTargetId = id;
-                this.showConfirmModal = true;
-            },
-
-            // Step 2: Batalkan
-            cancelDelete() {
-                this.showConfirmModal = false;
-                this.deleteTargetId = null;
-            },
-
-            // Step 3: Konfirmasi dan eksekusi delete
-            async confirmDelete() {
-                const id = this.deleteTargetId;
-                if (!id) return;
-
-                this.showConfirmModal = false;
-
-                try {
-                    const response = await fetch(`{{ url('cashbook') }}/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        },
-                    });
-
-                    if (response.ok) {
-                        // Efek fade-out + hapus data
-                        const card = document.querySelector(`[data-transaction-id="${id}"]`);
-                        if (card) {
-                            card.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
-                            setTimeout(() => {
+                        if (response.ok) {
+                            // Efek fade-out + hapus data
+                            const card = document.querySelector(`[data-transaction-id="${id}"]`);
+                            if (card) {
+                                card.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
+                                setTimeout(() => {
+                                    this.transactions = this.transactions.filter(t => t.id !== id);
+                                    this.recalculateWallets();
+                                }, 250);
+                            } else {
                                 this.transactions = this.transactions.filter(t => t.id !== id);
                                 this.recalculateWallets();
-                            }, 250);
+                            }
+
+                            this.showToast('Transaksi berhasil dihapus!', 'success');
                         } else {
-                            this.transactions = this.transactions.filter(t => t.id !== id);
-                            this.recalculateWallets();
+                            this.showToast('Gagal menghapus transaksi.', 'error');
                         }
-
-                        this.showToast('Transaksi berhasil dihapus!', 'success');
-                    } else {
-                        this.showToast('Gagal menghapus transaksi.', 'error');
+                    } catch (e) {
+                        console.error(e);
+                        this.showToast('Terjadi kesalahan koneksi.', 'error');
+                    } finally {
+                        this.deleteTargetId = null;
                     }
-                } catch (e) {
-                    console.error(e);
-                    this.showToast('Terjadi kesalahan koneksi.', 'error');
-                } finally {
-                    this.deleteTargetId = null;
-                }
-            },
+                },
 
-            recalculateWallets() {
-                // Reset saldo semua wallet (kecuali gabungan)
-                this.wallets.forEach(w => {
-                    if (w.id !== 0) w.balance = 0;
-                });
+                recalculateWallets() {
+                    // Reset saldo semua wallet (kecuali gabungan)
+                    this.wallets.forEach(w => {
+                        if (w.id !== 0) w.balance = 0;
+                    });
 
-                // Hitung ulang berdasarkan transaksi yang tersisa
-                this.transactions.forEach(t => {
-                    const wallet = this.wallets.find(w => w.id === t.cashbook_wallet_id);
-                    if (wallet) {
-                        const nominal = parseFloat(t.nominal) || 0;
-                        wallet.balance += (t.type === 'IN' ? nominal : -nominal);
+                    // Hitung ulang berdasarkan transaksi yang tersisa
+                    this.transactions.forEach(t => {
+                        const wallet = this.wallets.find(w => w.id === t.cashbook_wallet_id);
+                        if (wallet) {
+                            const nominal = parseFloat(t.nominal) || 0;
+                            wallet.balance += (t.type === 'IN' ? nominal : -nominal);
+                        }
+                    });
+
+                    // 🔹 Hitung total semua wallet aktif (bukan gabungan)
+                    const total = this.wallets
+                        .filter(w => w.id !== 0)
+                        .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
+
+                    // 🔹 Update totalSaldo global
+                    this.totalSaldo = total;
+
+                    // 🔹 Update wallet gabungan (id: 0)
+                    const mainWallet = this.wallets.find(w => w.id === 0);
+                    if (mainWallet) {
+                        mainWallet.balance = total;
                     }
-                });
 
-                // 🔹 Hitung total semua wallet aktif (bukan gabungan)
-                const total = this.wallets
-                    .filter(w => w.id !== 0)
-                    .reduce((sum, w) => sum + (parseFloat(w.balance) || 0), 0);
+                    // 🔹 Update waktu terakhir
+                    this.lastUpdated = new Date().toLocaleString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
 
-                // 🔹 Update totalSaldo global
-                this.totalSaldo = total;
-
-                // 🔹 Update wallet gabungan (id: 0)
-                const mainWallet = this.wallets.find(w => w.id === 0);
-                if (mainWallet) {
-                    mainWallet.balance = total;
-                }
-
-                // 🔹 Update waktu terakhir
-                this.lastUpdated = new Date().toLocaleString('id-ID', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            },
-
-            showToast(message, type = 'success') {
-                const toast = document.createElement('div');
-                toast.textContent = message;
-                toast.className = `
+                showToast(message, type = 'success') {
+                    const toast = document.createElement('div');
+                    toast.textContent = message;
+                    toast.className = `
                     fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-sm font-medium
                     text-white z-50 transition-all duration-500 transform
                     ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}
                     translate-y-5 opacity-0
                 `;
 
-                document.body.appendChild(toast);
+                    document.body.appendChild(toast);
 
-                // animasi masuk
-                requestAnimationFrame(() => {
-                    toast.classList.remove('translate-y-5', 'opacity-0');
-                    toast.classList.add('translate-y-0', 'opacity-100');
-                });
+                    // animasi masuk
+                    requestAnimationFrame(() => {
+                        toast.classList.remove('translate-y-5', 'opacity-0');
+                        toast.classList.add('translate-y-0', 'opacity-100');
+                    });
 
-                // animasi keluar
-                setTimeout(() => {
-                    toast.classList.remove('translate-y-0', 'opacity-100');
-                    toast.classList.add('translate-y-5', 'opacity-0');
-                    setTimeout(() => toast.remove(), 500);
-                }, 2500);
-            },
+                    // animasi keluar
+                    setTimeout(() => {
+                        toast.classList.remove('translate-y-0', 'opacity-100');
+                        toast.classList.add('translate-y-5', 'opacity-0');
+                        setTimeout(() => toast.remove(), 500);
+                    }, 2500);
+                },
 
-            // === UTILITAS ===
-            isMonthActive(monthIndex, year) {
-                return this.selectedMonthIndex === monthIndex && this.selectedYear === year;
-            },
-            get displayMonth() {
-                return new Intl.DateTimeFormat('id-ID', { month: 'long' })
-                    .format(new Date(this.selectedYear, this.selectedMonthIndex));
-            },
-        };
-    }
+                // === UTILITAS ===
+                isMonthActive(monthIndex, year) {
+                    return this.selectedMonthIndex === monthIndex && this.selectedYear === year;
+                },
+                get displayMonth() {
+                    return new Intl.DateTimeFormat('id-ID', {
+                            month: 'long'
+                        })
+                        .format(new Date(this.selectedYear, this.selectedMonthIndex));
+                },
+            };
+        }
     </script>
-
 @endsection

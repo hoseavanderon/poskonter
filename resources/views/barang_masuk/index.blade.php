@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div x-data="barangMasuk()" class="w-full mx-auto py-10 px-8 text-gray-100">
         <!-- 🏷️ Header -->
         <div class="mb-8">
@@ -29,10 +28,18 @@
         <div class="bg-[#1B2332] rounded-2xl p-8 shadow-lg border border-[#2A3242] w-full">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-semibold text-gray-300">Barang</h2>
-                <button @click="addProduct"
-                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded-xl hover:bg-blue-400 transition flex items-center gap-1">
-                    <span>＋</span> Tambah Barang
-                </button>
+
+                <div class="flex gap-3">
+                    <button @click="addProduct"
+                        class="bg-blue-500 text-white text-sm px-4 py-2 rounded-xl hover:bg-blue-400 transition">
+                        ＋ Tambah Barang
+                    </button>
+
+                    <button @click="openHistoryModal"
+                        class="bg-purple-500 text-white text-sm px-4 py-2 rounded-xl hover:bg-purple-400 transition">
+                        📜 Riwayat
+                    </button>
+                </div>
             </div>
 
             <template x-for="(item, index) in products" :key="index">
@@ -170,18 +177,11 @@
         </div>
 
         <!-- 🔍 Supplier Modal -->
-        <div 
-            x-show="showSupplierModal" 
-            x-transition 
-            @keydown.escape.window="showSupplierModal = false"
+        <div x-show="showSupplierModal" x-transition @keydown.escape.window="showSupplierModal = false"
             @click.self="showSupplierModal = false"
-            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
-        >
-            <div 
-                class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]" 
-                x-trap.inert.noscroll="showSupplierModal"
-                @click.stop
-            >
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]"
+                x-trap.inert.noscroll="showSupplierModal" @click.stop>
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-200">Select Supplier</h3>
                     <button @click="showSupplierModal = false" class="text-gray-400 hover:text-gray-200">✖</button>
@@ -193,10 +193,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z" />
                     </svg>
-                    <input type="text" placeholder="Search suppliers..." 
-                        x-model="supplierSearch"
-                        x-ref="supplierInput"
-                        @input.debounce.400ms="searchSuppliers"
+                    <input type="text" placeholder="Search suppliers..." x-model="supplierSearch"
+                        x-ref="supplierInput" @input.debounce.400ms="searchSuppliers"
                         class="w-full border border-[#2A3242] rounded-lg px-10 py-2 bg-[#222B3A] text-gray-100 focus:border-blue-400 focus:ring-blue-400" />
                 </div>
 
@@ -215,18 +213,11 @@
         </div>
 
         <!-- 🔍 Product Modal -->
-        <div 
-            x-show="showProductModal" 
-            x-transition 
-            @keydown.escape.window="showProductModal = false"
+        <div x-show="showProductModal" x-transition @keydown.escape.window="showProductModal = false"
             @click.self="showProductModal = false"
-            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
-        >
-            <div 
-                class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]"
-                x-trap.inert.noscroll="showProductModal"
-                @click.stop
-            >
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-[#1B2332] w-full max-w-lg rounded-2xl p-6 shadow-xl border border-[#2A3242]"
+                x-trap.inert.noscroll="showProductModal" @click.stop>
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-200">Select Product</h3>
                     <button @click="showProductModal = false" class="text-gray-400 hover:text-gray-200">✖</button>
@@ -238,9 +229,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M5 11a6 6 0 1112 0 6 6 0 01-12 0z" />
                     </svg>
-                    <input type="text" placeholder="Search products..." 
-                        x-model="productSearch"
-                        x-ref="productInput"
+                    <input type="text" placeholder="Search products..." x-model="productSearch" x-ref="productInput"
                         @input.debounce.400ms="searchProducts"
                         class="w-full border border-[#2A3242] rounded-lg px-10 py-2 bg-[#222B3A] text-gray-100 focus:border-blue-400 focus:ring-blue-400" />
                 </div>
@@ -267,454 +256,705 @@
                     Data belum disimpan
                 </h3>
                 <p class="text-gray-400 mb-5">
-                    Kamu masih punya data barang masuk.  
+                    Kamu masih punya data barang masuk.
                     Kalau keluar sekarang, semua data akan hilang.
                 </p>
 
                 <div class="flex justify-end gap-3">
-                    <button
-                        @click="showConfirmLeaveModal = false"
+                    <button @click="showConfirmLeaveModal = false"
                         class="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600">
                         Batal
                     </button>
 
-                    <button
-                        @click="confirmLeave()"
-                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400">
+                    <button @click="confirmLeave()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400">
                         Keluar & Hapus Data
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ✅ Toast Notification -->
-        <div x-show="toast.show" x-transition x-text="toast.message"
-            :class="toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
-            class="fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg text-sm z-50">
+        <!-- 📜 HISTORY MODAL -->
+        <div x-show="showHistoryModal" x-transition.opacity @click.self="showHistoryModal = false"
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+            <div
+                class="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl
+               bg-gradient-to-b from-[#1B2332] to-[#111827]
+               border border-[#2A3242] shadow-2xl">
+
+                <!-- HEADER -->
+                <div class="flex items-center justify-between px-6 py-5 border-b border-[#2A3242]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-500/20">
+                            📦
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-200">
+                            Riwayat Barang Masuk
+                        </h3>
+                    </div>
+
+                    <button @click="showHistoryModal = false" class="text-gray-400 hover:text-gray-200 text-xl">
+                        ✕
+                    </button>
+                </div>
+
+
+                <!-- SLIDE CONTAINER -->
+                <div class="relative h-[65vh] overflow-hidden">
+
+                    <!-- ================= STEP 1 ================= -->
+                    <div class="absolute inset-0 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+                        :class="historyStep === 1 ?
+                            'translate-x-0' :
+                            '-translate-x-full'">
+
+                        <div class="px-6 py-6 overflow-y-auto h-full">
+
+                            <div class="space-y-4">
+
+                                <template x-for="item in historyDates" :key="item.date">
+                                    <div
+                                        class="flex items-center justify-between p-4 rounded-2xl
+                                       bg-[#1E293B] hover:bg-[#243244]
+                                       border border-[#2A3242] transition">
+
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-10 h-10 flex items-center justify-center
+                                                rounded-xl bg-[#334155] text-gray-300">
+                                                📅
+                                            </div>
+
+                                            <div class="text-gray-200 font-medium"
+                                                x-text="new Date(item.date).toLocaleDateString('id-ID', {
+                                             day:'2-digit',
+                                             month:'long',
+                                             year:'numeric'
+                                         })">
+                                            </div>
+                                        </div>
+
+                                        <button @click="openHistoryDetail(item.date)"
+                                            class="bg-blue-500 hover:bg-blue-400 text-white
+                                           text-sm px-4 py-2 rounded-xl transition">
+                                            Lihat Detail
+                                        </button>
+
+                                    </div>
+                                </template>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <!-- ================= STEP 2 ================= -->
+                    <div class="absolute inset-0 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+                        :class="historyStep === 2 ?
+                            'translate-x-0' :
+                            'translate-x-full'">
+
+                        <div class="px-6 py-6 overflow-y-auto h-full">
+
+                            <!-- DETAIL HEADER -->
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold text-gray-200">
+                                    Riwayat Barang Masuk
+                                </h3>
+                                <p class="text-sm text-gray-400 mt-1"
+                                    x-text="'Detail Tanggal ' + new Date(selectedHistoryDate).toLocaleDateString('id-ID', {
+                               day:'2-digit',
+                               month:'long',
+                               year:'numeric'
+                           })">
+                                </p>
+                            </div>
+
+                            <!-- ITEM LIST -->
+                            <div class="space-y-4 mb-6">
+
+                                <template x-for="item in historyData" :key="item.product">
+                                    <div
+                                        class="p-5 rounded-2xl
+                                       bg-gradient-to-r from-[#1E293B] to-[#1B2332]
+                                       border border-[#2A3242]
+                                       flex justify-between items-center">
+
+                                        <!-- LEFT -->
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-12 h-12 flex items-center justify-center
+                                                rounded-xl bg-[#334155] text-gray-300 text-xl">
+                                                📱
+                                            </div>
+
+                                            <div>
+                                                <div class="text-gray-200 font-semibold" x-text="item.product">
+                                                </div>
+
+                                                <div class="text-sm text-gray-400 mt-1 flex gap-4">
+                                                    <span>Qty: <span x-text="item.qty"></span></span>
+                                                    <span>
+                                                        Rp
+                                                        <span x-text="item.harga.toLocaleString('id-ID')"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- RIGHT -->
+                                        <div class="text-right">
+                                            <div class="text-xs text-gray-400 mb-1">
+                                                Subtotal
+                                            </div>
+                                            <div class="text-blue-400 font-semibold text-lg"
+                                                x-text="'Rp ' + (item.qty * item.harga).toLocaleString('id-ID')">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </template>
+
+                            </div>
+
+
+                            <!-- TOTAL BOX -->
+                            <div
+                                class="p-6 rounded-2xl
+                               bg-gradient-to-r from-blue-900/40 to-blue-700/20
+                               border border-blue-500/30 mb-6">
+
+                                <div class="text-sm text-gray-400 mb-2">
+                                    Total Pembelian
+                                </div>
+
+                                <div class="text-2xl sm:text-3xl font-bold text-blue-400"
+                                    x-text="'Rp ' + historyData.reduce((t,i)=>t+(i.qty*i.harga),0).toLocaleString('id-ID')">
+                                </div>
+                            </div>
+
+
+                            <!-- BUTTONS -->
+                            <div class="flex gap-4">
+
+                                <button @click="historyStep = 1"
+                                    class="flex-1 py-3 rounded-2xl
+                                   bg-[#334155] hover:bg-[#3f4f65]
+                                   text-gray-200 transition font-medium">
+                                    ← Kembali
+                                </button>
+
+                                <button @click="showHistoryModal = false"
+                                    class="flex-1 py-3 rounded-2xl
+                                   bg-blue-600 hover:bg-blue-500
+                                   text-white transition font-medium">
+                                    Tutup
+                                </button>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
 
-    </div>
 
-    <script>
-        function barangMasuk() {
-            return {
-                selectedSupplier: null,
-                showSupplierModal: false,
-                showProductModal: false,
-                showConfirmModal: false,
-                addToBookkeeping: false,
-                supplierSearch: '',
-                productSearch: '',
-                activeProductIndex: null,
-                suppliers: [],
-                allProducts: [],
-                attributeValues: {}, // key = product_id : array of values
-                products: [{
-                    product_id: null,
-                    product_name: '',
-                    product_attribute: '',
-                    attribute_value: '',
-                    harga: '',
-                    hargaDisplay: '', // 👈 tambahan
-                    pcs: 0,
-                    is_manual: false,
-                    showDropdown: false,
-                    showHargaDropdown: false
-                }],
-                hargaValues: {}, // key = product_id : [harga lama]
-                toast: {
-                    show: false,
-                    message: '',
-                    type: 'success'
-                },
-                    isDirty: false,
-                pendingNavigation: null,
-                showConfirmLeaveModal: false,
-                hasInitialized: false,
-                draftKey: 'barangMasukDraft',
 
-                init() {
-                    // 🔹 Ketika modal supplier dibuka → fokus input
-                    this.$watch('showSupplierModal', (value) => {
-                        if (value) {
-                            this.$nextTick(() => this.$refs.supplierInput?.focus());
-                        }
-                    });
 
-                    // 🔹 Ketika modal product dibuka → fokus input
-                    this.$watch('showProductModal', (value) => {
-                        if (value) {
-                            this.$nextTick(() => this.$refs.productInput?.focus());
-                        }
-                    });
-
-                    this.$watch('products', () => {
-                        if (!this.hasInitialized) return;
-                        this.isDirty = true;
-                    }, { deep: true });
-
-                    this.$watch('selectedSupplier', () => {
-                        if (!this.hasInitialized) return;
-                        this.isDirty = true;
-                    });
-
-                    this.$nextTick(() => {
-                        this.hasInitialized = true;
-                    });
-
-                    this.interceptLinks();
-
-                    this.$watch('products', () => {
-                        if (!this.hasInitialized) return;
-                        this.isDirty = true;
-                        this.saveDraft();
-                    }, { deep: true });
-
-                    this.$watch('selectedSupplier', () => {
-                        if (!this.hasInitialized) return;
-                        this.isDirty = true;
-                        this.saveDraft();
-                    });
-
-                    this.$watch('addToBookkeeping', () => {
-                        if (!this.hasInitialized) return;
-                        this.saveDraft();
-                    });
-
-                    this.loadDraft();
-
-                    window.addEventListener('beforeunload', (e) => {
-                        if (this.isDirty) {
-                            e.preventDefault();
-                            e.returnValue = '';
-                        }
-                    });
-                },
-
-                saveDraft() {
-                    const payload = {
-                        selectedSupplier: this.selectedSupplier,
-                        products: this.products,
-                        addToBookkeeping: this.addToBookkeeping,
-                    };
-
-                    localStorage.setItem(this.draftKey, JSON.stringify(payload));
-                },
-
-                loadDraft() {
-                    const raw = localStorage.getItem(this.draftKey);
-                    if (!raw) return;
-
-                    try {
-                        const data = JSON.parse(raw);
-
-                        this.selectedSupplier = data.selectedSupplier ?? null;
-                        this.products = data.products ?? this.products;
-                        this.addToBookkeeping = data.addToBookkeeping ?? false;
-
-                        this.isDirty = true;
-                    } catch (e) {
-                        console.error('Draft rusak, diabaikan');
-                    }
-                },
-
-                clearDraft() {
-                    localStorage.removeItem(this.draftKey);
-                },
-
-                interceptLinks() {
-                    document.addEventListener('click', (e) => {
-                        const link = e.target.closest('a');
-                        if (!link) return;
-
-                        // skip anchor & external
-                        if (
-                            link.target === '_blank' ||
-                            link.href.startsWith('javascript') ||
-                            link.href.startsWith('#') ||
-                            !link.href.startsWith(window.location.origin)
-                        ) return;
-
-                        if (this.isDirty) {
-                            e.preventDefault();
-                            this.pendingNavigation = link.href;
-                            this.showConfirmLeaveModal = true;
-                        }
-                    });
-                },
-
-                confirmLeave() {
-                    this.isDirty = false;
-                    this.showConfirmLeaveModal = false;
-
-                    if (this.pendingNavigation) {
-                        window.location.href = this.pendingNavigation;
-                    }
-                },
-
-                formatRupiah(value) {
-                    if (!value) return 'Rp 0';
-                    return 'Rp ' + parseInt(value).toLocaleString('id-ID');
-                },
-                availableHargaValues(product_id) {
-                    const vals = this.hargaValues[product_id];
-                    return Array.isArray(vals) ? vals : [];
-                },
-                totalSubtotal() {
-                    return this.products.reduce((total, item) => {
-                        const harga = parseInt(item.harga || 0);
-                        const pcs = parseInt(item.pcs || 0);
-                        return total + (harga * pcs);
-                    }, 0);
-                },
-
-                // 🧾 SUPPLIER
-                async searchSuppliers() {
-                    if (this.supplierSearch.trim().length < 2) {
-                        this.suppliers = [];
-                        return;
-                    }
-                    try {
-                        const res = await fetch(
-                            `/api/suppliers?q=${encodeURIComponent(this.supplierSearch)}&t=${Date.now()}`);
-                        this.suppliers = await res.json();
-                    } catch (error) {
-                        console.error('Supplier fetch failed:', error);
-                        this.suppliers = [];
-                    }
-                },
-                openSupplierModal() {
-                    this.supplierSearch = '';
-                    this.suppliers = [];
-                    this.showSupplierModal = true;
-                },
-                selectSupplier(supplier) {
-                    this.selectedSupplier = supplier;
-                    this.showSupplierModal = false;
-                },
-
-                // 📦 PRODUCT
-                async searchProducts() {
-                    if (this.productSearch.trim().length < 2) {
-                        this.allProducts = [];
-                        return;
-                    }
-                    try {
-                        const res = await fetch(
-                            `/api/products?q=${encodeURIComponent(this.productSearch)}&t=${Date.now()}`);
-                        this.allProducts = await res.json();
-                    } catch (error) {
-                        console.error('Product fetch failed:', error);
-                        this.allProducts = [];
-                    }
-                },
-                openProductModal(index) {
-                    this.activeProductIndex = index;
-                    this.productSearch = '';
-                    this.allProducts = [];
-                    this.showProductModal = true;
-                },
-                async selectProduct(product) {
-                    if (this.activeProductIndex !== null) {
-                        const target = this.products[this.activeProductIndex];
-
-                        // Reset data sebelumnya
-                        target.product_id = product.id;
-                        target.product_name = product.name;
-                        target.product_attribute = product.attribute_name ?? '-';
-                        target.attribute_value = '';
-                        target.harga = '';
-                        target.pcs = 0;
-                        target.showDropdown = false;
-                        target.showHargaDropdown = false;
-                    }
-
-                    // 🚀 Tutup modal langsung dulu
-                    this.showProductModal = false;
-
-                    // Lanjutkan ambil data di background
-                    try {
-                        const [attrRes, hargaRes] = await Promise.all([
-                            fetch(`/api/attribute-values/${product.id}`),
-                            fetch(`/api/harga-values/${product.id}`)
-                        ]);
-
-                        if (attrRes.ok) {
-                            this.attributeValues[product.id] = await attrRes.json();
-                        } else {
-                            this.attributeValues[product.id] = [];
-                        }
-
-                        if (hargaRes.ok) {
-                            this.hargaValues[product.id] = await hargaRes.json();
-                        } else {
-                            this.hargaValues[product.id] = [];
-                        }
-                    } catch (error) {
-                        console.error('Gagal mengambil data product:', error);
-                        this.attributeValues[product.id] = [];
-                        this.hargaValues[product.id] = [];
-                    }
-                },
-
-                // 📋 UTILS
-                filteredSuppliers() {
-                    return this.suppliers;
-                },
-                filteredProducts() {
-                    return this.allProducts;
-                },
-
-                async confirmSubmit() {
-                    this.showConfirmModal = false;
-
-                    try {
-                        const res = await fetch('/barangmasuk/submit', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
-                            },
-                            body: JSON.stringify({
-                                supplier: this.selectedSupplier,
-                                addToBookkeeping: this.addToBookkeeping,
-                                products: this.products,
-                                subtotal: this.totalSubtotal()
-                            })
-                        });
-
-                        const data = await res.json();
-
-                        if (res.ok) {
-                            // ✅ INI PENTING
-                            this.isDirty = false;
-
-                            this.showToast(data.message, 'success');
-
-                            // reset form
-                            this.products = [{
-                                product_id: null,
-                                product_name: '',
-                                product_attribute: '',
-                                attribute_value: '',
-                                harga: '',
-                                hargaDisplay: '',
-                                pcs: 0,
-                                showDropdown: false,
-                                showHargaDropdown: false
-                            }];
-
-                            this.selectedSupplier = null;
-                            this.addToBookkeeping = false;
-
-                            this.clearDraft();
-
-                        } else {
-                            this.showToast(
-                                data?.message || 'Gagal menyimpan barang masuk.',
-                                'error'
-                            );
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        this.showToast('Terjadi kesalahan saat mengirim data.', 'error');
-                    }
-                },
-
-                // ✏️ Dynamic Input
-                availableAttributeValues(product_id) {
-                    return this.attributeValues[product_id] || [];
-                },
-                addProduct() {
-                    this.products.push({
+        <script>
+            function barangMasuk() {
+                return {
+                    selectedSupplier: null,
+                    showSupplierModal: false,
+                    showProductModal: false,
+                    showConfirmModal: false,
+                    addToBookkeeping: false,
+                    supplierSearch: '',
+                    productSearch: '',
+                    activeProductIndex: null,
+                    suppliers: [],
+                    allProducts: [],
+                    attributeValues: {}, // key = product_id : array of values
+                    products: [{
                         product_id: null,
                         product_name: '',
                         product_attribute: '',
                         attribute_value: '',
-                        harga: '', // ← tambahkan ini juga
-                        hargaDisplay: '',
+                        harga: '',
+                        hargaDisplay: '', // 👈 tambahan
                         pcs: 0,
                         is_manual: false,
                         showDropdown: false,
-                        showHargaDropdown: false // ← tambahkan ini juga
-                    });
-                },
-                removeProduct(index) {
-                    this.products.splice(index, 1);
-                },
-                showToast(message, type = 'success') {
-                    this.toast.message = message;
-                    this.toast.type = type;
-                    this.toast.show = true;
-                    setTimeout(() => this.toast.show = false, 3000);
-                },
-                onHargaInput(item) {
-                    // hapus semua karakter non-digit
-                    const cleaned = item.hargaDisplay.replace(/[^\d]/g, '');
-                    item.harga = cleaned ? parseInt(cleaned) : 0;
+                        showHargaDropdown: false
+                    }],
+                    hargaValues: {}, // key = product_id : [harga lama]
+                    toast: {
+                        show: false,
+                        message: '',
+                        type: 'success'
+                    },
+                    isDirty: false,
+                    pendingNavigation: null,
+                    showConfirmLeaveModal: false,
+                    hasInitialized: false,
+                    draftKey: 'barangMasukDraft',
+                    showHistoryModal: false,
+                    historyStep: 1,
+                    selectedDate: '',
+                    historyData: [],
+                    historyDates: [{
+                            date: '2026-02-08'
+                        },
+                        {
+                            date: '2026-02-02'
+                        },
+                        {
+                            date: '2026-01-29'
+                        },
+                        {
+                            date: '2026-01-24'
+                        }
+                    ],
+                    selectedHistoryDate: null,
 
-                    // tampilkan kembali dalam format Rupiah
-                    item.hargaDisplay = item.harga ? 'Rp ' + item.harga.toLocaleString('id-ID') : '';
-                },
+                    init() {
+                        // 🔹 Ketika modal supplier dibuka → fokus input
+                        this.$watch('showSupplierModal', (value) => {
+                            if (value) {
+                                this.$nextTick(() => this.$refs.supplierInput?.focus());
+                            }
+                        });
+
+                        // 🔹 Ketika modal product dibuka → fokus input
+                        this.$watch('showProductModal', (value) => {
+                            if (value) {
+                                this.$nextTick(() => this.$refs.productInput?.focus());
+                            }
+                        });
+
+                        this.$watch('products', () => {
+                            if (!this.hasInitialized) return;
+                            this.isDirty = true;
+                        }, {
+                            deep: true
+                        });
+
+                        this.$watch('selectedSupplier', () => {
+                            if (!this.hasInitialized) return;
+                            this.isDirty = true;
+                        });
+
+                        this.$nextTick(() => {
+                            this.hasInitialized = true;
+                        });
+
+                        this.interceptLinks();
+
+                        this.$watch('products', () => {
+                            if (!this.hasInitialized) return;
+                            this.isDirty = true;
+                            this.saveDraft();
+                        }, {
+                            deep: true
+                        });
+
+                        this.$watch('selectedSupplier', () => {
+                            if (!this.hasInitialized) return;
+                            this.isDirty = true;
+                            this.saveDraft();
+                        });
+
+                        this.$watch('addToBookkeeping', () => {
+                            if (!this.hasInitialized) return;
+                            this.saveDraft();
+                        });
+
+                        this.loadDraft();
+
+                        window.addEventListener('beforeunload', (e) => {
+                            if (this.isDirty) {
+                                e.preventDefault();
+                                e.returnValue = '';
+                            }
+                        });
+                    },
+
+                    saveDraft() {
+                        const payload = {
+                            selectedSupplier: this.selectedSupplier,
+                            products: this.products,
+                            addToBookkeeping: this.addToBookkeeping,
+                        };
+
+                        localStorage.setItem(this.draftKey, JSON.stringify(payload));
+                    },
+
+                    loadDraft() {
+                        const raw = localStorage.getItem(this.draftKey);
+                        if (!raw) return;
+
+                        try {
+                            const data = JSON.parse(raw);
+
+                            this.selectedSupplier = data.selectedSupplier ?? null;
+                            this.products = data.products ?? this.products;
+                            this.addToBookkeeping = data.addToBookkeeping ?? false;
+
+                            this.isDirty = true;
+                        } catch (e) {
+                            console.error('Draft rusak, diabaikan');
+                        }
+                    },
+
+                    openHistoryDetail(date) {
+                        this.selectedHistoryDate = date;
+
+                        // dummy data dulu
+                        this.historyData = [{
+                                product: 'Oppo A18',
+                                qty: 5,
+                                harga: 1500000
+                            },
+                            {
+                                product: 'Vivo Y02',
+                                qty: 3,
+                                harga: 1200000
+                            }
+                        ];
+
+                        this.historyStep = 2;
+                    },
+
+                    clearDraft() {
+                        localStorage.removeItem(this.draftKey);
+                    },
+
+                    interceptLinks() {
+                        document.addEventListener('click', (e) => {
+                            const link = e.target.closest('a');
+                            if (!link) return;
+
+                            // skip anchor & external
+                            if (
+                                link.target === '_blank' ||
+                                link.href.startsWith('javascript') ||
+                                link.href.startsWith('#') ||
+                                !link.href.startsWith(window.location.origin)
+                            ) return;
+
+                            if (this.isDirty) {
+                                e.preventDefault();
+                                this.pendingNavigation = link.href;
+                                this.showConfirmLeaveModal = true;
+                            }
+                        });
+                    },
+
+                    openHistoryModal() {
+                        this.historyStep = 1;
+                        this.selectedDate = '';
+                        this.showHistoryModal = true;
+                    },
+
+                    loadHistory() {
+                        // sementara data statis dulu
+                        this.historyData = [{
+                                product: 'Oppo A18',
+                                qty: 5,
+                                harga: 1500000
+                            },
+                            {
+                                product: 'Vivo Y02',
+                                qty: 3,
+                                harga: 1200000
+                            }
+                        ];
+                        this.historyStep = 2;
+                    },
+
+                    confirmLeave() {
+                        this.isDirty = false;
+                        this.showConfirmLeaveModal = false;
+
+                        if (this.pendingNavigation) {
+                            window.location.href = this.pendingNavigation;
+                        }
+                    },
+
+                    formatRupiah(value) {
+                        if (!value) return 'Rp 0';
+                        return 'Rp ' + parseInt(value).toLocaleString('id-ID');
+                    },
+                    availableHargaValues(product_id) {
+                        const vals = this.hargaValues[product_id];
+                        return Array.isArray(vals) ? vals : [];
+                    },
+                    totalSubtotal() {
+                        return this.products.reduce((total, item) => {
+                            const harga = parseInt(item.harga || 0);
+                            const pcs = parseInt(item.pcs || 0);
+                            return total + (harga * pcs);
+                        }, 0);
+                    },
+
+                    // 🧾 SUPPLIER
+                    async searchSuppliers() {
+                        if (this.supplierSearch.trim().length < 2) {
+                            this.suppliers = [];
+                            return;
+                        }
+                        try {
+                            const res = await fetch(
+                                `/api/suppliers?q=${encodeURIComponent(this.supplierSearch)}&t=${Date.now()}`);
+                            this.suppliers = await res.json();
+                        } catch (error) {
+                            console.error('Supplier fetch failed:', error);
+                            this.suppliers = [];
+                        }
+                    },
+                    openSupplierModal() {
+                        this.supplierSearch = '';
+                        this.suppliers = [];
+                        this.showSupplierModal = true;
+                    },
+                    selectSupplier(supplier) {
+                        this.selectedSupplier = supplier;
+                        this.showSupplierModal = false;
+                    },
+
+                    // 📦 PRODUCT
+                    async searchProducts() {
+                        if (this.productSearch.trim().length < 2) {
+                            this.allProducts = [];
+                            return;
+                        }
+                        try {
+                            const res = await fetch(
+                                `/api/products?q=${encodeURIComponent(this.productSearch)}&t=${Date.now()}`);
+                            this.allProducts = await res.json();
+                        } catch (error) {
+                            console.error('Product fetch failed:', error);
+                            this.allProducts = [];
+                        }
+                    },
+                    openProductModal(index) {
+                        this.activeProductIndex = index;
+                        this.productSearch = '';
+                        this.allProducts = [];
+                        this.showProductModal = true;
+                    },
+                    async selectProduct(product) {
+                        if (this.activeProductIndex !== null) {
+                            const target = this.products[this.activeProductIndex];
+
+                            // Reset data sebelumnya
+                            target.product_id = product.id;
+                            target.product_name = product.name;
+                            target.product_attribute = product.attribute_name ?? '-';
+                            target.attribute_value = '';
+                            target.harga = '';
+                            target.pcs = 0;
+                            target.showDropdown = false;
+                            target.showHargaDropdown = false;
+                        }
+
+                        // 🚀 Tutup modal langsung dulu
+                        this.showProductModal = false;
+
+                        // Lanjutkan ambil data di background
+                        try {
+                            const [attrRes, hargaRes] = await Promise.all([
+                                fetch(`/api/attribute-values/${product.id}`),
+                                fetch(`/api/harga-values/${product.id}`)
+                            ]);
+
+                            if (attrRes.ok) {
+                                this.attributeValues[product.id] = await attrRes.json();
+                            } else {
+                                this.attributeValues[product.id] = [];
+                            }
+
+                            if (hargaRes.ok) {
+                                this.hargaValues[product.id] = await hargaRes.json();
+                            } else {
+                                this.hargaValues[product.id] = [];
+                            }
+                        } catch (error) {
+                            console.error('Gagal mengambil data product:', error);
+                            this.attributeValues[product.id] = [];
+                            this.hargaValues[product.id] = [];
+                        }
+                    },
+
+                    // 📋 UTILS
+                    filteredSuppliers() {
+                        return this.suppliers;
+                    },
+                    filteredProducts() {
+                        return this.allProducts;
+                    },
+
+                    async confirmSubmit() {
+                        this.showConfirmModal = false;
+
+                        try {
+                            const res = await fetch('/barangmasuk/submit', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                },
+                                body: JSON.stringify({
+                                    supplier: this.selectedSupplier,
+                                    addToBookkeeping: this.addToBookkeeping,
+                                    products: this.products,
+                                    subtotal: this.totalSubtotal()
+                                })
+                            });
+
+                            const data = await res.json();
+
+                            if (res.ok) {
+                                // ✅ INI PENTING
+                                this.isDirty = false;
+
+                                this.showToast(data.message, 'success');
+
+                                // reset form
+                                this.products = [{
+                                    product_id: null,
+                                    product_name: '',
+                                    product_attribute: '',
+                                    attribute_value: '',
+                                    harga: '',
+                                    hargaDisplay: '',
+                                    pcs: 0,
+                                    showDropdown: false,
+                                    showHargaDropdown: false
+                                }];
+
+                                this.selectedSupplier = null;
+                                this.addToBookkeeping = false;
+
+                                this.clearDraft();
+
+                            } else {
+                                this.showToast(
+                                    data?.message || 'Gagal menyimpan barang masuk.',
+                                    'error'
+                                );
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            this.showToast('Terjadi kesalahan saat mengirim data.', 'error');
+                        }
+                    },
+
+                    // ✏️ Dynamic Input
+                    availableAttributeValues(product_id) {
+                        return this.attributeValues[product_id] || [];
+                    },
+                    addProduct() {
+                        this.products.push({
+                            product_id: null,
+                            product_name: '',
+                            product_attribute: '',
+                            attribute_value: '',
+                            harga: '', // ← tambahkan ini juga
+                            hargaDisplay: '',
+                            pcs: 0,
+                            is_manual: false,
+                            showDropdown: false,
+                            showHargaDropdown: false // ← tambahkan ini juga
+                        });
+                    },
+                    removeProduct(index) {
+                        this.products.splice(index, 1);
+                    },
+                    showToast(message, type = 'success') {
+                        this.toast.message = message;
+                        this.toast.type = type;
+                        this.toast.show = true;
+                        setTimeout(() => this.toast.show = false, 3000);
+                    },
+                    onHargaInput(item) {
+                        // hapus semua karakter non-digit
+                        const cleaned = item.hargaDisplay.replace(/[^\d]/g, '');
+                        item.harga = cleaned ? parseInt(cleaned) : 0;
+
+                        // tampilkan kembali dalam format Rupiah
+                        item.hargaDisplay = item.harga ? 'Rp ' + item.harga.toLocaleString('id-ID') : '';
+                    },
+                }
             }
-        }
-    </script>
-    <style>
-        /* Hilangkan spinner pada input type=number di Chrome, Edge, Safari */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        </script>
+        <style>
+            /* Hilangkan spinner pada input type=number di Chrome, Edge, Safari */
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
 
-        /* Hilangkan spinner pada Firefox */
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-/* 🧩 Cegah overflow dari elemen fixed/modal Alpine */
-body {
-    position: relative;
-    overflow: hidden;
-    height: 100vh;
-}
+            /* Hilangkan spinner pada Firefox */
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
 
-/* ✅ Scroll hanya pada konten utama (main) */
-main {
-    height: calc(100vh - 64px);
-    overflow-y: auto;
-}
+            /* 🧩 Cegah overflow dari elemen fixed/modal Alpine */
+            body {
+                position: relative;
+                overflow: hidden;
+                height: 100vh;
+            }
 
-/* 🚀 Fix tambahan: pastikan modal & toast tidak menambah tinggi halaman */
-.fixed,
-[ x-show ] {
-    overscroll-behavior: contain !important;
-}
+            /* ✅ Scroll hanya pada konten utama (main) */
+            main {
+                height: calc(100vh - 64px);
+                overflow-y: auto;
+            }
 
-/* 🧭 Pastikan tidak ada padding global dari html/body */
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    scrollbar-gutter: stable both-edges;
-}
+            /* 🚀 Fix tambahan: pastikan modal & toast tidak menambah tinggi halaman */
+            .fixed,
+            [ x-show] {
+                overscroll-behavior: contain !important;
+            }
 
-/* 🌙 Scrollbar custom theme */
-main::-webkit-scrollbar {
-    width: 10px;
-}
-main::-webkit-scrollbar-track {
-    background: #0f172a;
-}
-main::-webkit-scrollbar-thumb {
-    background-color: #334155;
-    border-radius: 10px;
-    border: 2px solid #0f172a;
-}
-main::-webkit-scrollbar-thumb:hover {
-    background-color: #475569;
-}
-main {
-    scrollbar-width: thin;
-    scrollbar-color: #334155 #0f172a;
-}
-    </style>
-@endsection
+            /* 🧭 Pastikan tidak ada padding global dari html/body */
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                scrollbar-gutter: stable both-edges;
+            }
+
+            /* 🌙 Scrollbar custom theme */
+            main::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            main::-webkit-scrollbar-track {
+                background: #0f172a;
+            }
+
+            main::-webkit-scrollbar-thumb {
+                background-color: #334155;
+                border-radius: 10px;
+                border: 2px solid #0f172a;
+            }
+
+            main::-webkit-scrollbar-thumb:hover {
+                background-color: #475569;
+            }
+
+            main {
+                scrollbar-width: thin;
+                scrollbar-color: #334155 #0f172a;
+            }
+        </style>
+    @endsection
