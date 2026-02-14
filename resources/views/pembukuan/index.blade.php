@@ -358,7 +358,7 @@
                                                 </p>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <p class="text-sm font-semibold"
+                                                <p class="text-sm font-semibold text-uppercase"
                                                     :class="t.type === 'IN' ? 'text-green-400' : 'text-red-400'"
                                                     x-text="formatCurrency(t.nominal)"></p>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
