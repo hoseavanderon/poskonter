@@ -350,7 +350,7 @@
                                         <button @click="toggleTransaction(t.id)"
                                             class="w-full flex items-center justify-between text-left transition-all duration-300">
                                             <div>
-                                                <p class="font-medium text-gray-100">
+                                                <p class="font-medium text-gray-100 uppercase">
                                                     <span
                                                         x-text="new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' })"></span>
                                                     -
@@ -650,7 +650,7 @@
                     filtered = filtered.filter(t => {
                         const d = new Date(t.created_at);
                         return d.getFullYear() === this.selectedYear && d.getMonth() === this
-                        .selectedMonthIndex;
+                            .selectedMonthIndex;
                     });
 
                     // Filter berdasarkan tanggal
