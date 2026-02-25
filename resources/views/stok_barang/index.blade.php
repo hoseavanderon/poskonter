@@ -93,9 +93,14 @@
 
                                         <!-- 🔵 Tombol Copy -->
                                         <button 
-                                            @click="copyProduct(product)"
-                                            class="text-xs px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 hover:text-white transition font-medium">
-                                            Copy
+                                            @click="copyProduct(product, i)"
+                                            :class="copiedId === i 
+                                                ? 'bg-green-500 text-white scale-105' 
+                                                : 'bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'"
+                                            class="text-xs px-3 py-1 rounded-lg transition-all duration-300 font-medium">
+
+                                            <span x-show="copiedId !== i">Copy</span>
+                                            <span x-show="copiedId === i">Copied ✓</span>
                                         </button>
                                     </div>
 
@@ -112,8 +117,8 @@
 
                                         <span
                                             class="text-xs px-3 py-1 rounded-md bg-green-50 dark:bg-green-900/40 border border-green-200 dark:border-green-700 text-green-600 dark:text-green-300 font-medium">
-                                            Harga: <span x-text="'Rp ' + product.price"></span>
-                                        </span>
+                                            Harga: <span x-text="formatRupiah(product.price)"></span>
+                                        </span>                                        
                                     </div>
 
                                     <!-- Loop Attribute -->
@@ -161,6 +166,7 @@
                     selectedRack: null,
                     searchQuery: '',
                     isLoading: true, // 🔹 Tambahkan flag loading
+                    copiedId: null,
 
                     async init() {
                         try {
@@ -189,11 +195,15 @@
                         }
                     },
 
-                    copyProduct(product) {
-                        const text = `${product.name} - Rp ${product.price}`;
+                    copyProduct(product, index) {
+                        const text = `${product.name} - ${this.formatRupiah(product.price)}`;
                         navigator.clipboard.writeText(text);
 
-                        alert('Berhasil dicopy!');
+                        this.copiedId = index;
+
+                        setTimeout(() => {
+                            this.copiedId = null;
+                        }, 1500);
                     },
 
                     get filteredProducts() {
@@ -205,6 +215,16 @@
                             p.name.toLowerCase().includes(q) ||
                             p.barcode.toLowerCase().includes(q)
                         );
+                    },
+
+                    formatRupiah(value) {
+                        if (!value) return 'Rp 0';
+
+                        return new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                        }).format(value);
                     },
 
                     openShelf(rack) {
