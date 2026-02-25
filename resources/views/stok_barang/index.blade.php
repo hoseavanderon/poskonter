@@ -87,8 +87,17 @@
                                     class="rounded-2xl bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-700 p-5">
 
                                     <!-- Nama Produk -->
-                                    <h4 class="text-[15px] font-semibold text-gray-800 dark:text-gray-100 mb-3"
-                                        x-text="product.name"></h4>
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h4 class="text-[15px] font-semibold text-gray-800 dark:text-gray-100"
+                                            x-text="product.name"></h4>
+
+                                        <!-- 🔵 Tombol Copy -->
+                                        <button 
+                                            @click="copyProduct(product)"
+                                            class="text-xs px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 hover:text-white transition font-medium">
+                                            Copy
+                                        </button>
+                                    </div>
 
                                     <!-- Barcode dan Total Stok -->
                                     <div class="flex flex-wrap gap-2 mb-4">
