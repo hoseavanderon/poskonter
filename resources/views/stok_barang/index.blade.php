@@ -177,6 +177,7 @@
                                     barcode: p.barcode,
                                     stok: p.stok,
                                     minimal_stok: p.minimal_stok,
+                                    price: p.jual, // 🔥 tambahkan ini
                                     attributes: p.attributes
                                 })),
                                 lowStock: shelf.products.filter(p => p.stok < p.minimal_stok).length
