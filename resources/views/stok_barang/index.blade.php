@@ -29,8 +29,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <template x-for="(rack, i) in shelves" :key="i">
                     <div 
+                        :data-rack-id="rack.id"
                         @click="openShelf(rack)"
-                        :class="targetRackId === rack.id ? 'ring-4 ring-green-400 scale-105' : ''"
                         class="relative bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-300 cursor-pointer text-center">
 
                         <!-- 🔢 Jumlah Items -->
@@ -230,6 +230,26 @@
                             if (found) {
                                 this.targetRackId = rack.id;
                                 this.targetProductName = found.name;
+
+                                this.$nextTick(() => {
+                                    const rackEl = document.querySelector(
+                                        `[data-rack-id="${rack.id}"]`
+                                    );
+
+                                    if (rackEl) {
+                                        rackEl.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'center'
+                                        });
+
+                                        rackEl.classList.add('ring-4', 'ring-green-400');
+
+                                        setTimeout(() => {
+                                            rackEl.classList.remove('ring-4', 'ring-green-400');
+                                        }, 2000);
+                                    }
+                                });
+
                                 return;
                             }
                         }
