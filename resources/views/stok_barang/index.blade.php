@@ -109,6 +109,11 @@
                                             class="text-xs px-3 py-1 rounded-md bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-300 font-medium">
                                             Total Stok: <span x-text="product.stok + ' pcs'"></span>
                                         </span>
+
+                                        <span
+                                            class="text-xs px-3 py-1 rounded-md bg-green-50 dark:bg-green-900/40 border border-green-200 dark:border-green-700 text-green-600 dark:text-green-300 font-medium">
+                                            Harga: <span x-text="'Rp ' + product.price"></span>
+                                        </span>
                                     </div>
 
                                     <!-- Loop Attribute -->
@@ -181,6 +186,13 @@
                         } finally {
                             this.isLoading = false; // 🔹 Selesai loading
                         }
+                    },
+
+                    copyProduct(product) {
+                        const text = `${product.name} - Rp ${product.price}`;
+                        navigator.clipboard.writeText(text);
+
+                        alert('Berhasil dicopy!');
                     },
 
                     get filteredProducts() {
