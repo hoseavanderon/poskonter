@@ -37,6 +37,7 @@ class StokBarangController extends Controller
 
             foreach ($shelf->products as $product) {
                 // Ambil attribute + value + stok
+                $product->price = $product->jual;
                 $rawAttributes = ProductAttributeValue::where('product_id', $product->id)
                     ->join('product_attributes', 'product_attribute_values.product_attribute_id', '=', 'product_attributes.id')
                     ->select(
