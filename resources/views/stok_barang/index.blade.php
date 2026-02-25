@@ -174,6 +174,7 @@
                     copiedId: null,
                     targetRackId: null,
                     targetProductName: null,
+                    searchTimeout: null,
 
                     async init() {
                         try {
@@ -214,47 +215,52 @@
                     },
 
                     searchRack() {
-                        if (!this.searchQuery) {
-                            this.targetRackId = null;
-                            return;
-                        }
+                        clearTimeout(this.searchTimeout);
 
-                        const q = this.searchQuery.toLowerCase();
-
-                        for (const rack of this.shelves) {
-                            const found = rack.products.find(p =>
-                                p.name.toLowerCase().includes(q) ||
-                                p.barcode.toLowerCase().includes(q)
-                            );
-
-                            if (found) {
-                                this.targetRackId = rack.id;
-                                this.targetProductName = found.name;
-
-                                this.$nextTick(() => {
-                                    const rackEl = document.querySelector(
-                                        `[data-rack-id="${rack.id}"]`
-                                    );
-
-                                    if (rackEl) {
-                                        rackEl.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'center'
-                                        });
-
-                                        rackEl.classList.add('ring-4', 'ring-green-400');
-
-                                        setTimeout(() => {
-                                            rackEl.classList.remove('ring-4', 'ring-green-400');
-                                        }, 2000);
-                                    }
-                                });
-
+                        this.searchTimeout = setTimeout(() => {
+                            if (!this.searchQuery) {
+                                this.targetRackId = null;
                                 return;
                             }
-                        }
 
-                        this.targetRackId = null;
+                            const q = this.searchQuery.toLowerCase();
+
+                            for (const rack of this.shelves) {
+                                const found = rack.products.find(p =>
+                                    p.name.toLowerCase().includes(q) ||
+                                    p.barcode.toLowerCase().includes(q)
+                                );
+
+                                if (found) {
+                                    this.targetRackId = rack.id;
+                                    this.targetProductName = found.name;
+
+                                    this.$nextTick(() => {
+                                        const rackEl = document.querySelector(
+                                            `[data-rack-id="${rack.id}"]`
+                                        );
+
+                                        if (rackEl) {
+                                            rackEl.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'center'
+                                            });
+
+                                            rackEl.classList.add('ring-4', 'ring-green-400');
+
+                                            setTimeout(() => {
+                                                rackEl.classList.remove('ring-4', 'ring-green-400');
+                                            }, 2000);
+                                        }
+                                    });
+
+                                    return;
+                                }
+                            }
+
+                            this.targetRackId = null;
+
+                        }, 500); // tunggu 500ms setelah user berhenti ketik
                     },
 
                     get filteredProducts() {
