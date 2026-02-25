@@ -21,7 +21,7 @@ class StokBarangController extends Controller
         $outletId = Auth::user()->outlet_id;
 
         $shelves = Shelf::with(['products' => function ($q) {
-            $q->select('id', 'shelf_id', 'name', 'barcode', 'minimal_stok', 'outlet_id');
+            $q->select('id', 'shelf_id', 'name', 'barcode', 'minimal_stok', 'outlet_id', 'jual');
         }])
             ->where('outlet_id', $outletId)
             ->get();
