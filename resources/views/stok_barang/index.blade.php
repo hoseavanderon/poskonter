@@ -13,9 +13,11 @@
                 <div class="relative max-w-md">
                     <input 
                         type="text"
+                        x-model="searchQuery"
+                        @input="searchRack"
                         placeholder="Cari produk... (contoh: LCD Samsung A02)"
                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
-                    >
+                    />
                     
                     <!-- Icon Search -->
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -26,7 +28,9 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <template x-for="(rack, i) in shelves" :key="i">
-                    <div @click="openShelf(rack)"
+                    <div 
+                        @click="openShelf(rack)"
+                        :class="targetRackId === rack.id ? 'ring-4 ring-green-400 scale-105' : ''"
                         class="relative bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-300 cursor-pointer text-center">
 
                         <!-- 🔢 Jumlah Items -->
@@ -84,7 +88,8 @@
                         <div class="space-y-5">
                             <template x-for="(product, i) in filteredProducts" :key="i">
                                 <div
-                                    class="rounded-2xl bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-700 p-5">
+                                    :data-product-name="product.name"
+                                    class="rounded-2xl bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-700 p-5 transition">
 
                                     <!-- Nama Produk -->
                                     <div class="flex justify-between items-start mb-3">
@@ -167,6 +172,8 @@
                     searchQuery: '',
                     isLoading: true, // 🔹 Tambahkan flag loading
                     copiedId: null,
+                    targetRackId: null,
+                    targetProductName: null,
 
                     async init() {
                         try {
@@ -206,6 +213,30 @@
                         }, 1500);
                     },
 
+                    searchRack() {
+                        if (!this.searchQuery) {
+                            this.targetRackId = null;
+                            return;
+                        }
+
+                        const q = this.searchQuery.toLowerCase();
+
+                        for (const rack of this.shelves) {
+                            const found = rack.products.find(p =>
+                                p.name.toLowerCase().includes(q) ||
+                                p.barcode.toLowerCase().includes(q)
+                            );
+
+                            if (found) {
+                                this.targetRackId = rack.id;
+                                this.targetProductName = found.name;
+                                return;
+                            }
+                        }
+
+                        this.targetRackId = null;
+                    },
+
                     get filteredProducts() {
                         if (!this.selectedRack) return [];
                         if (!this.searchQuery) return this.selectedRack.products;
@@ -229,9 +260,25 @@
 
                     openShelf(rack) {
                         this.selectedRack = rack;
-                        this.searchQuery = '';
                         this.showModal = true;
                         document.body.classList.add('overflow-hidden');
+
+                        this.$nextTick(() => {
+                            if (this.targetProductName) {
+                                const el = document.querySelector(
+                                    `[data-product-name="${this.targetProductName}"]`
+                                );
+
+                                if (el) {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    el.classList.add('ring-4', 'ring-green-400');
+
+                                    setTimeout(() => {
+                                        el.classList.remove('ring-4', 'ring-green-400');
+                                    }, 2000);
+                                }
+                            }
+                        });
                     },
 
                     closeModal() {
