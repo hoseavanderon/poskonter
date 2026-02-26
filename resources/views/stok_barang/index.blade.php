@@ -226,10 +226,16 @@
                             const q = this.searchQuery.toLowerCase();
 
                             for (const rack of this.shelves) {
-                                const found = rack.products.find(p =>
-                                    p.name.toLowerCase().includes(q) ||
-                                    p.barcode.toLowerCase().includes(q)
-                                );
+                                const keywords = q.split(' ').filter(k => k.length > 0);
+
+                                const found = rack.products.find(p => {
+                                    const name = p.name.toLowerCase();
+                                    const barcode = p.barcode.toLowerCase();
+
+                                    return keywords.every(word =>
+                                        name.includes(word) || barcode.includes(word)
+                                    );
+                                });
 
                                 if (found) {
                                     this.targetRackId = rack.id;
@@ -268,10 +274,16 @@
                         if (!this.searchQuery) return this.selectedRack.products;
 
                         const q = this.searchQuery.toLowerCase();
-                        return this.selectedRack.products.filter(p =>
-                            p.name.toLowerCase().includes(q) ||
-                            p.barcode.toLowerCase().includes(q)
-                        );
+                        const keywords = q.split(' ').filter(k => k.length > 0);
+
+                        return this.selectedRack.products.filter(p => {
+                            const name = p.name.toLowerCase();
+                            const barcode = p.barcode.toLowerCase();
+
+                            return keywords.every(word =>
+                                name.includes(word) || barcode.includes(word)
+                            );
+                        });
                     },
 
                     formatRupiah(value) {
