@@ -30,7 +30,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h2>Selamat Datang Nigga</h2>
+                <h2>Pagi Yang Jaga Pagi</h2>
                 <p>Semangat Sebelum Mulai Jualan Bang !!!</p>
                 <p>CEK DULU PENJUALAN & PIS BRI PAS ATAU NGGA !!!</p>
             </div>
@@ -46,7 +46,20 @@
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required placeholder="Enter your password">
+
+                    <div class="password-wrapper">
+                        <input id="password" type="password" name="password" required
+                            placeholder="Enter your password">
+
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path id="eyePath" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+
                     <span class="error-message" id="password-error"></span>
                 </div>
 
@@ -59,7 +72,7 @@
                 </div>
 
                 <button type="submit" class="submit-btn">
-                    <span class="btn-text">Log in</span>
+                    <span class="btn-text">Login</span>
                     <span class="btn-loader"></span>
                 </button>
             </form>

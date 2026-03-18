@@ -310,3 +310,44 @@ body {
     height: 40px;
   }
 }
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.toggle-password:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+  transition: all 0.2s ease;
+}
+
+.password-wrapper input:focus + .toggle-password {
+  color: var(--primary-color);
+}

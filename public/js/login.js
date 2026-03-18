@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
   const submitBtn = form.querySelector('.submit-btn');
   const themeToggle = document.getElementById('themeToggle');
 
@@ -93,6 +94,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   passwordInput.addEventListener('input', () => {
     clearError('password');
+  });
+
+  const eyeIcon = document.getElementById('eyePath');
+
+  togglePassword.addEventListener('click', () => {
+    const isHidden = passwordInput.type === 'password';
+
+    passwordInput.type = isHidden ? 'text' : 'password';
+
+    if (isHidden) {
+      // eye off (kasih garis)
+      eyeIcon.setAttribute(
+        "d",
+        "M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a21.77 21.77 0 0 1 5.06-6.94M1 1l22 22"
+      );
+    } else {
+      // eye normal
+      eyeIcon.setAttribute(
+        "d",
+        "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+      );
+    }
   });
 
   function showError(field, message) {
