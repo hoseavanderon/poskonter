@@ -471,7 +471,7 @@
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                                                1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                                                                                    1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -785,30 +785,16 @@
                 formatPrettyDate(dateValue) {
                     if (!dateValue) return '-';
 
-                    // Case: "YYYY-MM-DD HH:MM:SS" atau "YYYY-MM-DD HH:MM"
                     if (typeof dateValue === 'string' && dateValue.includes(' ')) {
                         const [datePart, timePart] = dateValue.split(' ');
-                        const dateObj = new Date(datePart + 'T' + (timePart || '00:00'));
-                        if (!isNaN(dateObj)) {
-                            const cleanTime = timePart?.substring(0, 5) || '';
-                            return `${this.formatIndo(datePart)} ${cleanTime}`;
-                        }
+                        const cleanTime = timePart?.substring(0, 5) || '';
+                        return `${this.formatIndo(datePart)} ${cleanTime}`;
                     }
 
-                    // Case: lengkap ISO: "2025-11-15T14:30:00"
-                    const tryISO = new Date(dateValue);
-                    if (!isNaN(tryISO)) {
-                        const jam = String(tryISO.getHours()).padStart(2, '0');
-                        const menit = String(tryISO.getMinutes()).padStart(2, '0');
-                        return `${this.formatIndo(tryISO)} ${jam}:${menit}`;
-                    }
-
-                    // Case fallback: "YYYY-MM-DD"
                     if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
                         return this.formatIndo(dateValue);
                     }
 
-                    // Kalau semua gagal → tampilkan apa adanya
                     return dateValue;
                 },
 
