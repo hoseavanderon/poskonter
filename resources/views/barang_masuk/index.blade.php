@@ -558,14 +558,14 @@
 
                         this.$watch('products', () => {
                             if (!this.hasInitialized) return;
-                            this.isDirty = true;
+                            this.isDirty = !this.isFormEmpty();
                         }, {
                             deep: true
                         });
 
                         this.$watch('selectedSupplier', () => {
                             if (!this.hasInitialized) return;
-                            this.isDirty = true;
+                            this.isDirty = !this.isFormEmpty();
                         });
 
                         this.$nextTick(() => {
@@ -576,15 +576,14 @@
 
                         this.$watch('products', () => {
                             if (!this.hasInitialized) return;
-                            this.isDirty = true;
-                            this.saveDraft();
+                            this.isDirty = !this.isFormEmpty();
                         }, {
                             deep: true
                         });
 
                         this.$watch('selectedSupplier', () => {
                             if (!this.hasInitialized) return;
-                            this.isDirty = true;
+                            this.isDirty = !this.isFormEmpty();
                             this.saveDraft();
                         });
 
@@ -600,6 +599,18 @@
                                 e.preventDefault();
                                 e.returnValue = '';
                             }
+                        });
+                    },
+
+                    isFormEmpty() {
+                        if (this.selectedSupplier) return false;
+
+                        return this.products.every(item => {
+                            return !item.product_id &&
+                                !item.product_name &&
+                                !item.attribute_value &&
+                                !item.harga &&
+                                (!item.pcs || item.pcs == 0);
                         });
                     },
 
@@ -624,7 +635,7 @@
                             this.products = data.products ?? this.products;
                             this.addToBookkeeping = data.addToBookkeeping ?? false;
 
-                            this.isDirty = true;
+                            this.isDirty = !this.isFormEmpty();
                         } catch (e) {
                             console.error('Draft rusak, diabaikan');
                         }
