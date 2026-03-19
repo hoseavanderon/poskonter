@@ -30,12 +30,6 @@
                 <!-- TOP -->
                 <div class="flex items-center justify-between">
 
-                    <!-- LEFT -->
-                    <div>
-                        <h1 class="text-xl font-semibold">Dashboard</h1>
-                        <p class="text-xs text-gray-400">Multi-outlet system</p>
-                    </div>
-
                     <!-- RIGHT (TAB TEXT STYLE) -->
                     <div class="relative">
 
