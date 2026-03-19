@@ -12,7 +12,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#0f172a] text-white">
+<body class="bg-[#020617] text-white">
 
     <div x-data="{
         page: 'home',
@@ -20,11 +20,11 @@
     }" class="min-h-screen pb-28">
 
         <!-- CONTENT -->
-        <div class="px-5 pt-5">
+        <div class="px-4 sm:px-6 pt-4 pb-24">
 
             <div x-data="tabNav()" x-init="init()" class="mb-6">
 
-                <div class="flex gap-6 text-sm font-medium relative">
+                <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
 
                     <template x-for="tab in tabs" :key="tab">
                         <button @click="select(tab, $event)" class="relative pb-1"
@@ -71,14 +71,14 @@
                 this.left = (elRect.left - parentRect.left) + (elRect.width / 2) - (inner.offsetWidth / 2)
             }
         }" x-init="init()"
-            class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
+            class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[94%] max-w-md z-50 px-1">
 
             <div
                 class="relative 
-            bg-[#0b1220]/80 backdrop-blur-xl 
-            border border-white/10 
+            bg-[#020617]/90 backdrop-blur-2xl 
+            border border-white/5 
             rounded-2xl px-2 py-2 
-            flex items-center shadow-2xl">
+            flex items-center shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
 
                 <!-- HOME -->
                 <button @click="select('home', $event)" class="relative z-10 flex justify-center w-full">
@@ -177,7 +177,15 @@
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
 
+        body {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
 </body>
 
 </html>
