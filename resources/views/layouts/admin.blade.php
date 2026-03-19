@@ -42,7 +42,10 @@
             </div>
 
             <!-- 🔥 PAGE CONTENT -->
-            @yield('content')
+            <div x-show="page === 'home'">HOME PAGE</div>
+            <div x-show="page === 'product'">PRODUCT PAGE</div>
+            <div x-show="page === 'insight'">INSIGHT PAGE</div>
+            <div x-show="page === 'settings'">SETTINGS PAGE</div>
 
         </div>
 
@@ -54,65 +57,76 @@
                 class="relative 
         bg-[#0b1220]/80 backdrop-blur-xl 
         border border-white/10 
-        rounded-2xl px-3 py-2 
-        flex justify-between items-center shadow-2xl">
+        rounded-2xl px-2 py-2 
+        flex items-center shadow-2xl">
 
                 <!-- ACTIVE INDICATOR -->
-                <div class="absolute top-1 bottom-1 rounded-xl bg-white/10 transition-all duration-300"
+                <div class="absolute top-1 bottom-1 rounded-xl bg-white/10 
+            transition-[transform,width] duration-300 ease-out will-change-transform"
                     :style="`width:${width}px; transform:translateX(${left}px)`">
                 </div>
 
                 <!-- HOME -->
-                <button @click="select('home', $event)" class="relative z-10 flex flex-col items-center text-xs w-full"
-                    :class="page === 'home' ? 'text-white' : 'text-gray-400'">
+                <button @click="select('home', $event)" class="relative z-10 flex justify-center w-full">
 
-                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5" />
-                    </svg>
+                    <div class="flex flex-col items-center text-xs px-4 py-1"
+                        :class="$root.page === 'home' ? 'text-white' : 'text-gray-400'">
 
-                    Home
+                        <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5" />
+                        </svg>
+
+                        Home
+                    </div>
                 </button>
 
-                <!-- PRODUK (KERANJANG) -->
-                <button @click="select('product', $event)"
-                    class="relative z-10 flex flex-col items-center text-xs w-full"
-                    :class="page === 'product' ? 'text-white' : 'text-gray-400'">
+                <!-- PRODUK -->
+                <button @click="select('product', $event)" class="relative z-10 flex justify-center w-full">
 
-                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h11M9 19a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z" />
-                    </svg>
+                    <div class="flex flex-col items-center text-xs px-4 py-1"
+                        :class="$root.page === 'product' ? 'text-white' : 'text-gray-400'">
 
-                    Produk
+                        <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h11M9 19a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z" />
+                        </svg>
+
+                        Produk
+                    </div>
                 </button>
 
                 <!-- INSIGHT -->
-                <button @click="select('insight', $event)"
-                    class="relative z-10 flex flex-col items-center text-xs w-full"
-                    :class="page === 'insight' ? 'text-white' : 'text-gray-400'">
+                <button @click="select('insight', $event)" class="relative z-10 flex justify-center w-full">
 
-                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
-                    </svg>
+                    <div class="flex flex-col items-center text-xs px-4 py-1"
+                        :class="$root.page === 'insight' ? 'text-white' : 'text-gray-400'">
 
-                    Insight
+                        <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
+                        </svg>
+
+                        Insight
+                    </div>
                 </button>
 
                 <!-- SETTINGS -->
-                <button @click="select('settings', $event)"
-                    class="relative z-10 flex flex-col items-center text-xs w-full"
-                    :class="page === 'settings' ? 'text-white' : 'text-gray-400'">
+                <button @click="select('settings', $event)" class="relative z-10 flex justify-center w-full">
 
-                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
-                    </svg>
+                    <div class="flex flex-col items-center text-xs px-4 py-1"
+                        :class="$root.page === 'settings' ? 'text-white' : 'text-gray-400'">
 
-                    Menu
+                        <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
+                        </svg>
+
+                        Menu
+                    </div>
                 </button>
 
             </div>
@@ -149,7 +163,6 @@
 
         function bottomNav() {
             return {
-                page: 'home',
                 width: 0,
                 left: 0,
 
@@ -161,13 +174,15 @@
                 },
 
                 select(page, event) {
-                    this.page = page
+                    this.$root.page = page
                     this.setIndicator(event.currentTarget)
                 },
 
                 setIndicator(el) {
-                    this.width = el.offsetWidth
-                    this.left = el.offsetLeft
+                    let inner = el.querySelector('div')
+
+                    this.width = inner.offsetWidth
+                    this.left = inner.offsetLeft + el.offsetLeft
                 }
             }
         }
