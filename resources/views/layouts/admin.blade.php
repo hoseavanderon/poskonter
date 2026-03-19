@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin POS</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine -->
     <script src="//unpkg.com/alpinejs" defer></script>
-    @vite('resources/css/app.css')
 </head>
 
 <body class="bg-[#0f172a] text-white">
