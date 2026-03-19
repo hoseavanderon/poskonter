@@ -20,7 +20,7 @@
     }" class="min-h-screen pb-28">
 
         <!-- CONTENT -->
-        <div class="p-5">
+        <div class="px-5 pt-5">
 
             <div x-data="tabNav()" x-init="init()" class="mb-6">
 
