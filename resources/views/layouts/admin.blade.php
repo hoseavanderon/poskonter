@@ -17,10 +17,10 @@
     <div x-data="{
         page: 'home',
         selectedOutlet: 'all'
-    }" class="min-h-screen pb-28 max-w-md mx-auto w-full relative">
+    }" class="min-h-screen pb-28">
 
         <!-- CONTENT -->
-        <div class="px-4 sm:px-6 pt-4 pb-24 w-full">
+        <div class="px-4 sm:px-6 pt-4 pb-24">
 
             <div x-data="tabNav()" x-init="init()" class="mb-6">
 
