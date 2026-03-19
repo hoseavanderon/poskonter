@@ -65,7 +65,7 @@ class PembukuanController extends Controller
         // === Ambil semua transaksi outlet ini ===
         $transactions = Cashbook::where('outlet_id', $outletId)
             ->select('id', 'cashbook_wallet_id', 'deskripsi', 'type', 'nominal', 'created_at')
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(fn($t) => [
                 'id' => $t->id,
