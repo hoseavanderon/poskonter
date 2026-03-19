@@ -12,7 +12,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#020617] text-white">
+<body class="h-screen bg-[#020617] text-white">
 
     <main>
         <div x-data="{
