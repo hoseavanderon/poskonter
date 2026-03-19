@@ -22,45 +22,43 @@
         <!-- CONTENT -->
         <div class="p-5">
 
-            <!-- 🔥 TOP NAV -->
-            <div class="flex items-center justify-between mb-6">
+            <div x-data="{
+                selectedOutlet: 'all',
+                tabs: ['all', 'santuy', 'tian']
+            }" class="mb-6">
 
-                <!-- LEFT -->
-                <div>
-                    <h1 class="text-xl font-semibold">Dashboard</h1>
-                    <p class="text-xs text-gray-400">Multi-outlet system</p>
-                </div>
+                <!-- TOP -->
+                <div class="flex items-center justify-between">
 
-                <!-- RIGHT -->
-                <div class="flex items-center gap-3">
-
-                    <!-- OUTLET SWITCH -->
-                    <div class="bg-[#1a2336] rounded-full px-1 py-1 flex gap-1 text-sm">
-
-                        <button @click="selectedOutlet = 'all'"
-                            :class="selectedOutlet === 'all' ? 'bg-blue-500 text-white' : 'text-gray-400'"
-                            class="px-3 py-1 rounded-full transition">
-                            All
-                        </button>
-
-                        <button @click="selectedOutlet = 'santuy'"
-                            :class="selectedOutlet === 'santuy' ? 'bg-blue-500 text-white' : 'text-gray-400'"
-                            class="px-3 py-1 rounded-full transition">
-                            Santuy
-                        </button>
-
-                        <button @click="selectedOutlet = 'tian'"
-                            :class="selectedOutlet === 'tian' ? 'bg-blue-500 text-white' : 'text-gray-400'"
-                            class="px-3 py-1 rounded-full transition">
-                            Tian
-                        </button>
-
+                    <!-- LEFT -->
+                    <div>
+                        <h1 class="text-xl font-semibold">Dashboard</h1>
+                        <p class="text-xs text-gray-400">Multi-outlet system</p>
                     </div>
 
-                    <!-- PROFILE -->
-                    <div
-                        class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-300 flex items-center justify-center text-sm font-bold">
-                        A
+                    <!-- RIGHT (TAB TEXT STYLE) -->
+                    <div class="relative">
+
+                        <!-- TAB TEXT -->
+                        <div class="flex gap-6 text-sm font-medium">
+                            <template x-for="tab in tabs" :key="tab">
+                                <button @click="selectedOutlet = tab" class="relative pb-1"
+                                    :class="selectedOutlet === tab ? 'text-white' : 'text-gray-400'"
+                                    x-text="tab === 'all' ? 'All' : (tab === 'santuy' ? 'Santuy Cell' : 'Tian Cell')">
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- UNDERLINE -->
+                        <div class="absolute bottom-0 left-0 h-[2px] bg-blue-500 transition-all duration-300"
+                            :style="{
+                                width: selectedOutlet === 'all' ? '30px' : selectedOutlet === 'santuy' ? '90px' :
+                                    '70px',
+                                transform: selectedOutlet === 'all' ? 'translateX(0px)' :
+                                    selectedOutlet === 'santuy' ? 'translateX(50px)' : 'translateX(160px)'
+                            }">
+                        </div>
+
                     </div>
 
                 </div>
