@@ -62,12 +62,13 @@
             },
             set(el) {
                 let inner = el.querySelector('div')
+        
                 this.width = inner.offsetWidth
         
-                // Penyesuaian agar benar-benar di tengah:
-                // Kita ambil offsetLeft dari tombol, lalu tambah setengah lebar tombol, 
-                // dan dikurangi setengah lebar indikator.
-                this.left = el.offsetLeft + (el.offsetWidth / 2) - (inner.offsetWidth / 2)
+                let parentRect = this.$el.getBoundingClientRect()
+                let elRect = el.getBoundingClientRect()
+        
+                this.left = (elRect.left - parentRect.left) + (elRect.width / 2) - (inner.offsetWidth / 2)
             }
         }" x-init="init()"
             class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
@@ -176,34 +177,6 @@
                 setIndicator(el) {
                     this.width = el.offsetWidth
                     this.left = el.offsetLeft
-                }
-            }
-        }
-
-        function bottomNav() {
-            return {
-                width: 0,
-                left: 0,
-
-                init() {
-                    this.$nextTick(() => {
-                        let el = this.$el.querySelector('button')
-                        this.set(el)
-                    })
-                },
-
-                select(page, event) {
-                    this.$root.page = page
-                    this.set(event.currentTarget)
-                },
-
-                set(el) {
-                    let inner = el.querySelector('div');
-                    this.width = inner.offsetWidth;
-
-                    // Menghitung posisi tengah: 
-                    // (Posisi button) + (Setengah lebar button) - (Setengah lebar indikator)
-                    this.left = el.offsetLeft + (el.offsetWidth / 2) - (inner.offsetWidth / 2);
                 }
             }
         }
