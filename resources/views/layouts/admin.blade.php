@@ -194,14 +194,12 @@
                 },
 
                 set(el) {
-                    let inner = el.querySelector('div')
+                    let inner = el.querySelector('div');
+                    this.width = inner.offsetWidth;
 
-                    this.width = inner.offsetWidth
-
-                    let parentRect = this.$el.getBoundingClientRect()
-                    let elRect = el.getBoundingClientRect()
-
-                    this.left = elRect.left - parentRect.left + (elRect.width / 2) - (inner.offsetWidth / 2)
+                    // Menghitung posisi tengah: 
+                    // (Posisi button) + (Setengah lebar button) - (Setengah lebar indikator)
+                    this.left = el.offsetLeft + (el.offsetWidth / 2) - (inner.offsetWidth / 2);
                 }
             }
         }
