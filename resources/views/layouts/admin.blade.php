@@ -161,16 +161,16 @@
 
                 init() {
                     this.$nextTick(() => {
-                        requestAnimationFrame(() => {
-                            let el = this.$el.querySelector('button')
-                            this.set(el)
-                        })
+                        setTimeout(() => {
+                            let el = this.$el.querySelectorAll('button')[0]
+                            this.setIndicator(el)
+                        }, 50)
                     })
                 },
 
                 select(tab, event) {
                     this.selected = tab
-                    this.setIndicator(event.target)
+                    this.setIndicator(event.currentTarget)
                 },
 
                 setIndicator(el) {
