@@ -49,44 +49,59 @@
         <!-- 🔥 BOTTOM NAV (MOBILE STYLE) -->
         <div
             class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md 
-                bg-[#111827]/90 backdrop-blur-md 
-                border border-white/10 
-                rounded-2xl px-4 py-2 
-                flex justify-between items-center 
-                shadow-xl z-50">
+    bg-[#111827]/90 backdrop-blur-md 
+    border border-white/10 
+    rounded-2xl px-4 py-2 
+    flex justify-between items-center 
+    shadow-xl z-50">
 
-            <!-- DASHBOARD -->
-            <button @click="page = 'dashboard'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'dashboard' ? 'text-blue-400' : 'text-gray-400'">
-                <span>🏠</span>
-                <span>Home</span>
+            <!-- HOME -->
+            <button @click="page = 'home'" class="flex flex-col items-center text-xs transition"
+                :class="page === 'home' ? 'text-white' : 'text-gray-500'">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5" />
+                </svg>
+
+                Home
             </button>
 
-            <!-- ANALYTICS -->
-            <button @click="page = 'analytics'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'analytics' ? 'text-blue-400' : 'text-gray-400'">
-                <span>📊</span>
-                <span>Stats</span>
+            <!-- PRODUK -->
+            <button @click="page = 'product'" class="flex flex-col items-center text-xs transition"
+                :class="page === 'product' ? 'text-white' : 'text-gray-500'">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M6 7v13m12-13v13M4 20h16" />
+                </svg>
+
+                Produk
             </button>
 
-            <!-- CENTER BUTTON -->
-            <button
-                class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg shadow-lg -mt-6 active:scale-95 transition">
-                +
-            </button>
+            <!-- INSIGHT -->
+            <button @click="page = 'insight'" class="flex flex-col items-center text-xs transition"
+                :class="page === 'insight' ? 'text-white' : 'text-gray-500'">
 
-            <!-- OUTLET -->
-            <button @click="page = 'outlet'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'outlet' ? 'text-blue-400' : 'text-gray-400'">
-                <span>🏪</span>
-                <span>Outlet</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
+                </svg>
+
+                Insight
             </button>
 
             <!-- SETTINGS -->
             <button @click="page = 'settings'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'settings' ? 'text-blue-400' : 'text-gray-400'">
-                <span>⚙️</span>
-                <span>Menu</span>
+                :class="page === 'settings' ? 'text-white' : 'text-gray-500'">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
+                </svg>
+
+                Menu
             </button>
 
         </div>
