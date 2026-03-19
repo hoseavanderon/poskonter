@@ -47,63 +47,75 @@
         </div>
 
         <!-- 🔥 BOTTOM NAV (MOBILE STYLE) -->
-        <div
-            class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md 
-    bg-[#111827]/90 backdrop-blur-md 
-    border border-white/10 
-    rounded-2xl px-4 py-2 
-    flex justify-between items-center 
-    shadow-xl z-50">
+        <div x-data="bottomNav()" x-init="init()"
+            class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
 
-            <!-- HOME -->
-            <button @click="page = 'home'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'home' ? 'text-white' : 'text-gray-500'">
+            <div
+                class="relative 
+        bg-[#0b1220]/80 backdrop-blur-xl 
+        border border-white/10 
+        rounded-2xl px-3 py-2 
+        flex justify-between items-center shadow-2xl">
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5" />
-                </svg>
+                <!-- ACTIVE INDICATOR -->
+                <div class="absolute top-1 bottom-1 rounded-xl bg-white/10 transition-all duration-300"
+                    :style="`width:${width}px; transform:translateX(${left}px)`">
+                </div>
 
-                Home
-            </button>
+                <!-- HOME -->
+                <button @click="select('home', $event)" class="relative z-10 flex flex-col items-center text-xs w-full"
+                    :class="page === 'home' ? 'text-white' : 'text-gray-400'">
 
-            <!-- PRODUK -->
-            <button @click="page = 'product'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'product' ? 'text-white' : 'text-gray-500'">
+                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 4l9 6.5M5 9.5V20h14V9.5" />
+                    </svg>
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M6 7v13m12-13v13M4 20h16" />
-                </svg>
+                    Home
+                </button>
 
-                Produk
-            </button>
+                <!-- PRODUK (KERANJANG) -->
+                <button @click="select('product', $event)"
+                    class="relative z-10 flex flex-col items-center text-xs w-full"
+                    :class="page === 'product' ? 'text-white' : 'text-gray-400'">
 
-            <!-- INSIGHT -->
-            <button @click="page = 'insight'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'insight' ? 'text-white' : 'text-gray-500'">
+                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h11M9 19a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z" />
+                    </svg>
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
-                </svg>
+                    Produk
+                </button>
 
-                Insight
-            </button>
+                <!-- INSIGHT -->
+                <button @click="select('insight', $event)"
+                    class="relative z-10 flex flex-col items-center text-xs w-full"
+                    :class="page === 'insight' ? 'text-white' : 'text-gray-400'">
 
-            <!-- SETTINGS -->
-            <button @click="page = 'settings'" class="flex flex-col items-center text-xs transition"
-                :class="page === 'settings' ? 'text-white' : 'text-gray-500'">
+                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
+                    </svg>
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mb-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
-                </svg>
+                    Insight
+                </button>
 
-                Menu
-            </button>
+                <!-- SETTINGS -->
+                <button @click="select('settings', $event)"
+                    class="relative z-10 flex flex-col items-center text-xs w-full"
+                    :class="page === 'settings' ? 'text-white' : 'text-gray-400'">
 
+                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
+                    </svg>
+
+                    Menu
+                </button>
+
+            </div>
         </div>
 
     </div>
@@ -126,6 +138,31 @@
                 select(tab, event) {
                     this.selected = tab
                     this.setIndicator(event.target)
+                },
+
+                setIndicator(el) {
+                    this.width = el.offsetWidth
+                    this.left = el.offsetLeft
+                }
+            }
+        }
+
+        function bottomNav() {
+            return {
+                page: 'home',
+                width: 0,
+                left: 0,
+
+                init() {
+                    this.$nextTick(() => {
+                        let el = this.$el.querySelector('button')
+                        this.setIndicator(el)
+                    })
+                },
+
+                select(page, event) {
+                    this.page = page
+                    this.setIndicator(event.currentTarget)
                 },
 
                 setIndicator(el) {
