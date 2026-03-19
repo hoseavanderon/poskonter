@@ -58,10 +58,7 @@
             },
             select(page, event) {
                 this.page = page
-        
-                this.$nextTick(() => {
-                    this.set(event.currentTarget)
-                })
+                this.set(event.currentTarget)
             },
             set(el) {
                 let inner = el.querySelector('div')
@@ -82,12 +79,6 @@
             border border-white/10 
             rounded-2xl px-2 py-2 
             flex items-center shadow-2xl">
-
-                <!-- ACTIVE INDICATOR -->
-                <div class="absolute top-1 bottom-1 rounded-xl bg-white/10 
-            transition-[transform,width] duration-300 ease-out will-change-transform"
-                    :style="`width:${width}px; transform:translateX(${left}px)`">
-                </div>
 
                 <!-- HOME -->
                 <button @click="select('home', $event)" class="relative z-10 flex justify-center w-full">
