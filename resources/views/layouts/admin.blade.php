@@ -13,9 +13,10 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#020617] text-white">
+<body class="bg-[#020617] md:bg-gradient-to-br md:from-slate-900 md:to-slate-800 text-white">
 
-    <main class="w-full max-w-md min-h-screen bg-[#020617] relative overflow-hidden">
+    <main
+        class="w-full max-w-md min-h-screen bg-[#020617] relative overflow-hidden md:mt-6 md:rounded-2xl md:shadow-2xl">
         <div x-data="{
             page: 'home',
             selectedOutlet: 'all'
