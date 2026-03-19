@@ -373,7 +373,16 @@ class RiwayatController extends Controller
                 'transactions.id as transaction_id',
                 'transactions.subtotal as total',
                 'transactions.created_at',
-                DB::raw("GROUP_CONCAT(products.name SEPARATOR '||') as product_names"),
+                DB::raw("
+                    GROUP_CONCAT(
+                        CASE
+                            WHEN detail_transaction.item_type = 'service'
+                                THEN detail_transaction.manual_name
+                            ELSE products.name
+                        END
+                        SEPARATOR '||'
+                    ) as product_names
+                "),
                 DB::raw("GROUP_CONCAT(detail_transaction.qty SEPARATOR '||') as product_qtys"),
                 DB::raw("GROUP_CONCAT(detail_transaction.subtotal SEPARATOR '||') as product_amounts"),
             ])
