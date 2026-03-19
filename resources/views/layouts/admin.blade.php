@@ -22,37 +22,20 @@
         <!-- CONTENT -->
         <div class="p-5">
 
-            <div x-data="{
-                selectedOutlet: 'all',
-                tabs: ['all', 'santuy', 'tian']
-            }" class="mb-6">
+            <div x-data="tabNav()" x-init="init()" class="mb-6">
 
-                <!-- TOP -->
-                <div class="flex items-center justify-between">
+                <div class="flex gap-6 text-sm font-medium relative">
 
-                    <!-- RIGHT (TAB TEXT STYLE) -->
-                    <div class="relative">
+                    <template x-for="tab in tabs" :key="tab">
+                        <button @click="select(tab, $event)" class="relative pb-1"
+                            :class="selected === tab ? 'text-white' : 'text-gray-400'"
+                            x-text="tab === 'all' ? 'All' : (tab === 'santuy' ? 'Santuy Cell' : 'Tian Cell')">
+                        </button>
+                    </template>
 
-                        <!-- TAB TEXT -->
-                        <div class="flex gap-6 text-sm font-medium">
-                            <template x-for="tab in tabs" :key="tab">
-                                <button @click="selectedOutlet = tab" class="relative pb-1"
-                                    :class="selectedOutlet === tab ? 'text-white' : 'text-gray-400'"
-                                    x-text="tab === 'all' ? 'All' : (tab === 'santuy' ? 'Santuy Cell' : 'Tian Cell')">
-                                </button>
-                            </template>
-                        </div>
-
-                        <!-- UNDERLINE -->
-                        <div class="absolute bottom-0 left-0 h-[2px] bg-blue-500 transition-all duration-300"
-                            :style="{
-                                width: selectedOutlet === 'all' ? '30px' : selectedOutlet === 'santuy' ? '90px' :
-                                    '70px',
-                                transform: selectedOutlet === 'all' ? 'translateX(0px)' :
-                                    selectedOutlet === 'santuy' ? 'translateX(50px)' : 'translateX(160px)'
-                            }">
-                        </div>
-
+                    <!-- UNDERLINE -->
+                    <div class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300"
+                        :style="`width:${width}px; transform:translateX(${left}px)`">
                     </div>
 
                 </div>
@@ -109,6 +92,34 @@
         </div>
 
     </div>
+
+    <script>
+        function tabNav() {
+            return {
+                tabs: ['all', 'santuy', 'tian'],
+                selected: 'all',
+                width: 0,
+                left: 0,
+
+                init() {
+                    this.$nextTick(() => {
+                        let el = this.$el.querySelector('button')
+                        this.setIndicator(el)
+                    })
+                },
+
+                select(tab, event) {
+                    this.selected = tab
+                    this.setIndicator(event.target)
+                },
+
+                setIndicator(el) {
+                    this.width = el.offsetWidth
+                    this.left = el.offsetLeft
+                }
+            }
+        }
+    </script>
 
 </body>
 
