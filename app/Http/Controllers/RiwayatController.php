@@ -550,6 +550,13 @@ class RiwayatController extends Controller
 
         $pembayaranUtang = $pembayaranUtangFisik
             ->merge($pembayaranUtangDigital)
+            ->groupBy('name')
+            ->map(function ($items) {
+                return [
+                    'name' => $items->first()->name,
+                    'subtotal' => $items->sum('subtotal'),
+                ];
+            })
             ->values();
 
         $totalTransfer = collect($tfTarikByApp)

@@ -402,7 +402,7 @@
                                             <div class="flex justify-between">
                                                 <span class="text-gray-400">Tipe</span>
                                                 <span class="font-medium text-gray-100"
-                                                    x-text="t.type === 'IN' ? 'Pemasukan' : 'Pengeluaran'"></span>
+                                                    x-text="t.type === 'IN' ? 'Masuk' : 'Keluar'"></span>
                                             </div>
 
                                             <div class="pt-3 border-t border-gray-700 flex justify-end">
