@@ -384,7 +384,13 @@
 
                                             <div class="flex justify-between">
                                                 <span class="text-gray-400">Created</span>
-                                                <span class="font-medium text-gray-100" x-text="t.created_at"></span>
+                                                <span class="font-medium text-gray-100"
+                                                    x-text="new Date(t.created_at).toLocaleTimeString('id-ID', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        timeZone: 'Asia/Makassar'
+                                                    }) + ' WITA'">
+                                                </span>
                                             </div>
 
                                             <div class="flex justify-between">
