@@ -15,7 +15,7 @@
 <body class="bg-[#0f172a] text-white">
 
     <div x-data="{
-        page: 'dashboard',
+        page: 'home',
         selectedOutlet: 'all'
     }" class="min-h-screen pb-28">
 
@@ -47,8 +47,25 @@
         </div>
 
         <!-- 🔥 BOTTOM NAV (MOBILE STYLE) -->
-        <div x-data="bottomNav()" x-init="init()"
-            class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
+        <div x-data="{
+            width: 0,
+            left: 0,
+            init() {
+                this.$nextTick(() => {
+                    let el = this.$el.querySelector('button')
+                    this.set(el)
+                })
+            },
+            select(page, event) {
+                this.page = page
+                this.set(event.currentTarget)
+            },
+            set(el) {
+                let inner = el.querySelector('div')
+                this.width = inner.offsetWidth
+                this.left = inner.offsetLeft + el.offsetLeft
+            }
+        }" x-init="init()">
 
             <div
                 class="relative 
@@ -67,7 +84,7 @@
                 <button @click="select('home', $event)" class="relative z-10 flex justify-center w-full">
 
                     <div class="flex flex-col items-center text-xs px-4 py-1"
-                        :class="$root.page === 'home' ? 'text-white' : 'text-gray-400'">
+                        :class="page === 'home' ? 'text-white' : 'text-gray-400'">
 
                         <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                             viewBox="0 0 24 24">
