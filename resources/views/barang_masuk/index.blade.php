@@ -594,12 +594,6 @@
 
                         this.loadDraft();
 
-                        window.addEventListener('beforeunload', (e) => {
-                            if (this.isDirty) {
-                                e.preventDefault();
-                                e.returnValue = '';
-                            }
-                        });
                     },
 
                     isFormEmpty() {
