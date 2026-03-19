@@ -13,7 +13,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#020617] text-white flex justify-center">
+<body class="bg-[#020617] text-white">
 
     <main class="w-full max-w-md min-h-screen bg-[#020617] relative overflow-hidden">
         <div x-data="{
