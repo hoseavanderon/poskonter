@@ -7,7 +7,7 @@
         <div x-show="page === 'home'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="absolute inset-0 overflow-y-auto px-4 pb-24 space-y-6">
+            x-transition:leave-end="opacity-0 -translate-y-2" class="px-4 pb-24 space-y-6">
 
             <!-- 🔥 ALL OUTLETS -->
             <div class="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-5 shadow-xl">
