@@ -258,7 +258,7 @@
                         .finally(() => {
                             this.isPaying = false;
                         });
-                }
+                },
 
                 formatLongDate(dateString) {
                     if (!dateString) return '-';
