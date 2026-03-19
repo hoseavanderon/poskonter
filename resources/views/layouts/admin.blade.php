@@ -65,7 +65,8 @@
                 this.width = inner.offsetWidth
                 this.left = inner.offsetLeft + el.offsetLeft
             }
-        }" x-init="init()">
+        }" x-init="init()"
+            class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
 
             <div
                 class="relative 
@@ -196,7 +197,7 @@
                     let inner = el.querySelector('div')
 
                     this.width = inner.offsetWidth
-                    this.left = inner.offsetLeft + el.offsetLeft
+                    this.left = el.offsetLeft + (el.offsetWidth / 2) - (inner.offsetWidth / 2)
                 }
             }
         }
