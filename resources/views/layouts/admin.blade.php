@@ -184,20 +184,24 @@
                 init() {
                     this.$nextTick(() => {
                         let el = this.$el.querySelector('button')
-                        this.setIndicator(el)
+                        this.set(el)
                     })
                 },
 
                 select(page, event) {
                     this.$root.page = page
-                    this.setIndicator(event.currentTarget)
+                    this.set(event.currentTarget)
                 },
 
-                setIndicator(el) {
+                set(el) {
                     let inner = el.querySelector('div')
 
                     this.width = inner.offsetWidth
-                    this.left = el.offsetLeft + (el.offsetWidth / 2) - (inner.offsetWidth / 2)
+
+                    let parentRect = this.$el.getBoundingClientRect()
+                    let elRect = el.getBoundingClientRect()
+
+                    this.left = elRect.left - parentRect.left + (elRect.width / 2) - (inner.offsetWidth / 2)
                 }
             }
         }
