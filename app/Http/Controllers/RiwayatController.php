@@ -407,6 +407,7 @@ class RiwayatController extends Controller
                 return [
                     'transaction_id' => $t->transaction_id,
                     'total' => $t->total,
+                    'datetime' => date('Y-m-d H:i:s', strtotime($t->created_at)), // ✅ TAMBAH INI
                     'date' => date('Y-m-d', strtotime($t->created_at)),
                     'details' => $details,
                 ];
