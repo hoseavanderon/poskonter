@@ -47,7 +47,30 @@
         </div>
 
         <!-- 🔥 BOTTOM NAV (MOBILE STYLE) -->
-        <div x-data="bottomNav()" x-init="init()"
+        <div x-data="{
+            width: 0,
+            left: 0,
+            init() {
+                this.$nextTick(() => {
+                    let el = this.$el.querySelector('button')
+                    this.set(el)
+                })
+            },
+            select(page, event) {
+                this.page = page
+                this.set(event.currentTarget)
+            },
+            set(el) {
+                let inner = el.querySelector('div')
+        
+                this.width = inner.offsetWidth
+        
+                let parentRect = this.$el.getBoundingClientRect()
+                let elRect = el.getBoundingClientRect()
+        
+                this.left = (elRect.left - parentRect.left) + (elRect.width / 2) - (inner.offsetWidth / 2)
+            }
+        }" x-init="init()"
             class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50">
 
             <div
@@ -142,7 +165,7 @@
                 init() {
                     this.$nextTick(() => {
                         requestAnimationFrame(() => {
-                            let el = this.$el.querySelector(`[data-page="${this.page}"]`)
+                            let el = this.$el.querySelector('button')
                             this.set(el)
                         })
                     })
@@ -156,38 +179,6 @@
                 setIndicator(el) {
                     this.width = el.offsetWidth
                     this.left = el.offsetLeft
-                }
-            }
-        }
-
-        function bottomNav() {
-            return {
-                width: 0,
-                left: 0,
-
-                init() {
-                    this.$nextTick(() => {
-                        requestAnimationFrame(() => {
-                            let el = this.$el.querySelector(`[data-page="${this.$root.page}"]`)
-                            if (el) this.set(el)
-                        })
-                    })
-                },
-
-                select(page, event) {
-                    this.$root.page = page
-                    this.set(event.currentTarget)
-                },
-
-                set(el) {
-                    let inner = el.querySelector('div')
-
-                    this.width = inner.offsetWidth
-
-                    let parentRect = this.$el.getBoundingClientRect()
-                    let elRect = el.getBoundingClientRect()
-
-                    this.left = (elRect.left - parentRect.left) + (elRect.width / 2) - (inner.offsetWidth / 2)
                 }
             }
         }
