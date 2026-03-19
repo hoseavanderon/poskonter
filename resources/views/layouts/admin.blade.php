@@ -13,17 +13,16 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#020617] md:bg-gradient-to-br md:from-slate-900 md:to-slate-800 text-white">
+<body class="bg-[#020617] text-white">
 
-    <main
-        class="w-full max-w-md min-h-screen bg-[#020617] relative overflow-hidden md:mt-6 md:rounded-2xl md:shadow-2xl">
+    <main class="w-full min-h-screen bg-[#020617] relative overflow-hidden md:max-w-none md:mx-0">
         <div x-data="{
             page: 'home',
             selectedOutlet: 'all'
         }" class="min-h-screen pb-28">
 
             <!-- CONTENT -->
-            <div class="px-4 pt-4 pb-24">
+            <div class="px-4 md:px-8 lg:px-12 pt-4 pb-24 max-w-7xl mx-auto">
 
                 <div x-data="tabNav()" x-init="init()" class="mb-6">
 
