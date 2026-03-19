@@ -1,11 +1,41 @@
-<div class="p-6">
-    <h1 class="text-2xl font-bold mb-4 text-white">Halaman Admin</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-    <!-- Tombol Logout -->
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
-            🚪 Logout
-        </button>
-    </form>
-</div>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin POS</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    @vite('resources/css/app.css')
+</head>
+
+<body class="bg-[#0f172a] text-white">
+
+    <div x-data="{ page: 'dashboard' }" class="min-h-screen pb-20">
+
+        <!-- CONTENT -->
+        <div class="p-5">
+            @yield('content')
+        </div>
+
+        <!-- 🔥 BOTTOM NAV -->
+        <div class="fixed bottom-0 left-0 right-0 bg-[#0E1524] border-t border-gray-700 flex justify-around py-2">
+
+            <button @click="page = 'dashboard'" :class="page === 'dashboard' ? 'text-blue-400' : 'text-gray-400'">
+                🏠 Dashboard
+            </button>
+
+            <button @click="page = 'analytics'" :class="page === 'analytics' ? 'text-blue-400' : 'text-gray-400'">
+                📊 Analytics
+            </button>
+
+            <button @click="page = 'outlet'" :class="page === 'outlet' ? 'text-blue-400' : 'text-gray-400'">
+                🏪 Outlet
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
