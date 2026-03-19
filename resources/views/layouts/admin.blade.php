@@ -42,10 +42,7 @@
             </div>
 
             <!-- 🔥 PAGE CONTENT -->
-            <div x-show="page === 'home'">HOME PAGE</div>
-            <div x-show="page === 'product'">PRODUCT PAGE</div>
-            <div x-show="page === 'insight'">INSIGHT PAGE</div>
-            <div x-show="page === 'settings'">SETTINGS PAGE</div>
+            @yield('content')
 
         </div>
 
