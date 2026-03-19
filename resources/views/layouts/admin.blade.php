@@ -12,16 +12,16 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="h-screen bg-[#020617] text-white">
+<body class="bg-[#020617] text-white flex justify-center">
 
-    <main>
+    <main class="w-full max-w-md min-h-screen bg-[#020617] relative overflow-hidden">
         <div x-data="{
             page: 'home',
             selectedOutlet: 'all'
         }" class="min-h-screen pb-28">
 
             <!-- CONTENT -->
-            <div class="px-4 sm:px-6 pt-4 pb-24">
+            <div class="px-4 pt-4 pb-24">
 
                 <div x-data="tabNav()" x-init="init()" class="mb-6">
 
