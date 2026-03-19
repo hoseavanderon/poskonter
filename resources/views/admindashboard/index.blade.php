@@ -1,30 +1,39 @@
 @extends('layouts.admin')
 
 @section('content')
-    <!-- DASHBOARD -->
-    <div x-show="page === 'dashboard'" x-transition.opacity.duration.300ms>
-        <h1 class="text-xl font-bold mb-4">Dashboard</h1>
+    <!-- 🏠 HOME -->
+    <div x-show="page === 'home'" x-transition.opacity.duration.300ms>
+        <h1 class="text-xl font-bold mb-4">Home</h1>
 
         <div class="bg-gray-800 p-4 rounded-xl">
-            Dashboard content
+            Overview All Outlet + Grafik + Live Activity
         </div>
     </div>
 
-    <!-- ANALYTICS -->
-    <div x-show="page === 'analytics'" x-transition.opacity.duration.300ms>
-        <h1 class="text-xl font-bold mb-4">Analytics</h1>
+    <!-- 🛒 PRODUK -->
+    <div x-show="page === 'product'" x-transition.opacity.duration.300ms>
+        <h1 class="text-xl font-bold mb-4">Produk</h1>
 
         <div class="bg-gray-800 p-4 rounded-xl">
-            Analytics content
+            Produk Terlaris + Stok Hampir Habis
         </div>
     </div>
 
-    <!-- OUTLET -->
-    <div x-show="page === 'outlet'" x-transition.opacity.duration.300ms>
-        <h1 class="text-xl font-bold mb-4">Outlet Detail</h1>
+    <!-- 📊 INSIGHT -->
+    <div x-show="page === 'insight'" x-transition.opacity.duration.300ms>
+        <h1 class="text-xl font-bold mb-4">Insight</h1>
 
         <div class="bg-gray-800 p-4 rounded-xl">
-            Outlet content
+            Jam Rame + Hari Terlaris + Bulan Terbaik
+        </div>
+    </div>
+
+    <!-- ⚙️ SETTINGS -->
+    <div x-show="page === 'settings'" x-transition.opacity.duration.300ms>
+        <h1 class="text-xl font-bold mb-4">Menu</h1>
+
+        <div class="bg-gray-800 p-4 rounded-xl">
+            Settings / Config / Master Data
         </div>
     </div>
 @endsection

@@ -52,10 +52,10 @@
 
             <div
                 class="relative 
-        bg-[#0b1220]/80 backdrop-blur-xl 
-        border border-white/10 
-        rounded-2xl px-2 py-2 
-        flex items-center shadow-2xl">
+            bg-[#0b1220]/80 backdrop-blur-xl 
+            border border-white/10 
+            rounded-2xl px-2 py-2 
+            flex items-center shadow-2xl">
 
                 <!-- ACTIVE INDICATOR -->
                 <div class="absolute top-1 bottom-1 rounded-xl bg-white/10 
