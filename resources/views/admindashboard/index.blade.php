@@ -35,10 +35,7 @@
             </div>
 
             <!-- PAGE -->
-            <div class="text-center mt-20">
-                <h1 class="text-2xl mb-4">Current Page: <span x-text="page"></span></h1>
-                <p class="text-gray-400">Click bottom navigation to test</p>
-            </div>
+            @yield('content')
 
         </div>
 
@@ -115,27 +112,27 @@
 
                 changePage(page, event) {
                     this.page = page
-                    this.updateIndicator()
+                    this.updateIndicator(event?.currentTarget)
                 },
 
-                updateIndicator() {
-                    this.$nextTick(() => {
-                        const activeIndex = this.navItems.findIndex(item => item.page === this.page)
-                        if (activeIndex === -1) return
+                updateIndicator(el = null) {
+                    if (!el) {
+                        let buttons = this.$el.querySelectorAll('button')
+                        el = Array.from(buttons).find(btn =>
+                            btn.innerText.toLowerCase().includes(this.page)
+                        )
+                    }
 
-                        const container = this.$el.querySelector('.relative.bg-\\[\\#0b1220\\]\\/80')
-                        if (!container) return
+                    if (!el) return
 
-                        const buttons = container.querySelectorAll('button')
-                        if (buttons.length === 0) return
+                    let inner = el.querySelector('div')
 
-                        const activeButton = buttons[activeIndex]
-                        const containerRect = container.getBoundingClientRect()
-                        const buttonRect = activeButton.getBoundingClientRect()
+                    let parent = el.closest('.relative')
+                    let parentRect = parent.getBoundingClientRect()
+                    let elRect = el.getBoundingClientRect()
 
-                        this.navWidth = buttonRect.width
-                        this.navLeft = buttonRect.left - containerRect.left
-                    })
+                    this.navWidth = inner.offsetWidth
+                    this.navLeft = (elRect.left - parentRect.left) + (elRect.width / 2) - (inner.offsetWidth / 2)
                 }
             }
         }
