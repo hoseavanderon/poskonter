@@ -168,10 +168,9 @@
                         class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
                         Batal
                     </button>
-                    <button @click="confirmPayDebt()"
+                    <button @click="confirmPayDebt()" :disabled="isPaying"
+                        :class="isPaying ? 'opacity-50 cursor-not-allowed' : ''"
                         class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 active:scale-[0.97] transition shadow-md">
-                        Lunaskan
-                    </button>
                 </div>
             </div>
         </div>
@@ -199,6 +198,7 @@
                     show: false,
                     message: ''
                 },
+                isPaying: false,
 
                 get filteredCustomers() {
                     if (!this.search) return this.customers;
@@ -219,6 +219,9 @@
 
                 confirmPayDebt() {
                     if (!this.debtToPay) return;
+
+                    this.isPaying = true;
+
                     const debtId = this.debtToPay.id;
                     const customer = this.customerOfDebt;
 
@@ -235,16 +238,27 @@
                         })
                         .then(res => {
                             if (!res.ok) throw new Error('Gagal memperbarui status');
+
                             customer.debts = customer.debts.filter(d =>
                                 !(d.id === debtId && d.type === this.debtToPay.type)
                             );
-                            this.showPayConfirm = false;
-                            this.debtToPay = null;
-                            this.customerOfDebt = null;
+
                             this.showToast('Utang berhasil dilunaskan ✅');
+
+                            // ⏳ delay dikit biar user lihat feedback
+                            setTimeout(() => {
+                                this.showPayConfirm = false;
+                                this.debtToPay = null;
+                                this.customerOfDebt = null;
+                            }, 800);
                         })
-                        .catch(err => alert('Terjadi kesalahan: ' + err.message));
-                },
+                        .catch(err => {
+                            alert('Terjadi kesalahan: ' + err.message);
+                        })
+                        .finally(() => {
+                            this.isPaying = false;
+                        });
+                }
 
                 formatLongDate(dateString) {
                     if (!dateString) return '-';
