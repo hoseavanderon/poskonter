@@ -429,7 +429,7 @@ class RiwayatController extends Controller
                 'digital_products.digital_category_id',
                 'digital_transactions.nominal as qty',
                 'digital_transactions.subtotal as amount',
-                DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime"),
+                'digital_transactions.created_at',
             ])
             ->orderBy('apps.name')
             ->orderByDesc('digital_transactions.created_at')
@@ -445,7 +445,8 @@ class RiwayatController extends Controller
                             'name' => $t->product_name,
                             'qty' => $t->qty,
                             'amount' => $t->amount,
-                            'datetime' => $t->datetime,
+                            'datetime' => Carbon::parse($t->created_at)
+                                ->format('Y-m-d H:i'),
                             'category_id' => $t->digital_category_id,
                         ];
                     })->values(),
