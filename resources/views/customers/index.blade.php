@@ -66,7 +66,7 @@
         <div x-show="selectedCustomer" x-transition.opacity.duration.300ms
             class="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3">
 
-            <div @click.outside="selectedCustomer = null" x-transition.scale.duration.300ms
+            <div @click.outside="if (!showPayConfirm) selectedCustomer = null" x-transition.scale.duration.300ms
                 class="bg-gray-900 text-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-3xl border border-gray-700 relative
                 max-h-[80vh] overflow-y-auto">
 
