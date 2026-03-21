@@ -24,7 +24,7 @@
             <!-- CONTENT -->
             <div class="px-4 md:px-8 lg:px-12 pt-4 pb-24 max-w-7xl mx-auto">
 
-                <div x-data="tabNav()" x-init="init()" class="mb-6">
+                <div x-data="tabNav()" x-init="init()" class="mb-6 mt-3">
 
                     <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
 
