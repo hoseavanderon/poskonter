@@ -28,12 +28,12 @@
         <div x-show="page === 'home'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="px-4 pb-24 space-y-6">
+            x-transition:leave-end="opacity-0 -translate-y-2" class="px-4 pb-24 space-y-6 text-xs md:text-sm">
 
             <!-- 🔥 ALL OUTLETS -->
             <div class="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-semibold text-base md:text-lg font-semibold flex items-center gap-2">
+                    <h2 class="font-semibold text-base md:text-lg lg:text-xl flex items-center gap-2">
                         <!-- icon -->
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M3 7h18M3 12h18M3 17h18" />
@@ -46,19 +46,19 @@
                 <div class="grid grid-cols-2 gap-3 text-xs">
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Today's Sales</p>
-                        <p class="font-semibold text-base md:text-lg font-semibold">Rp 84.000.000</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 84.000.000</p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Transactions</p>
-                        <p class="font-semibold text-base md:text-lg font-semibold">270</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">270</p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Monthly Sales</p>
-                        <p class="font-semibold text-base md:text-lg font-semibold">Rp 1.648.000.000</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 1.648.000.000</p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Total Profit</p>
-                        <p class="font-semibold text-base md:text-lg font-semibold">Rp 22.200.000</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 22.200.000</p>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                         <span class="text-green-400 text-xs">+12.5%</span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
                         <div class="bg-black/30 rounded-xl p-3">
                             <p class="text-gray-400">Today's Sales</p>
                             <p class="font-semibold">Rp 45.800.000</p>
@@ -97,7 +97,6 @@
                         <!-- header kecil -->
                         <div class="flex justify-between items-center mb-2">
                             <p class="text-[10px] text-gray-400">7-Day Sales Trend</p>
-                            <p class="text-[10px] text-gray-500">Total Assets: Rp 245.000.000</p>
                         </div>
 
                         <!-- chart -->
