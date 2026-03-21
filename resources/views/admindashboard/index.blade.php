@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div class="relative min-h-[300px]">
 
         <!-- 🏠 HOME -->
@@ -69,6 +70,11 @@
                             <p class="text-gray-400">Profit</p>
                             <p class="font-semibold">Rp 12.400.000</p>
                         </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="text-[10px] text-gray-400 mb-1">7-Day Sales Trend</p>
+                        <canvas id="salesChartSantuy" height="60"></canvas>
                     </div>
                 </div>
 
@@ -156,4 +162,46 @@
         </div>
 
     </div>
+
+    <script>
+        const ctxSantuy = document.getElementById('salesChartSantuy');
+
+        new Chart(ctxSantuy, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    data: [12, 19, 8, 15, 10, 18, 14],
+                    borderRadius: 6,
+                    barThickness: 18,
+                    backgroundColor: '#3b82f6',
+                    hoverBackgroundColor: '#60a5fa',
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        display: false,
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 @endsection
