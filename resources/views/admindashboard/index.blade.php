@@ -73,8 +73,17 @@
                     </div>
 
                     <div class="mt-4">
-                        <p class="text-[10px] text-gray-400 mb-1">7-Day Sales Trend</p>
-                        <canvas id="salesChartSantuy" height="60"></canvas>
+                        <p class="text-[10px] text-gray-400 mb-2">7-Day Sales Trend</p>
+
+                        <div class="flex items-end justify-between h-20 gap-2">
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:40%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:65%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:30%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:55%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:45%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:70%"></div>
+                            <div class="w-full bg-blue-500/80 rounded-md" style="height:50%"></div>
+                        </div>
                     </div>
                 </div>
 
