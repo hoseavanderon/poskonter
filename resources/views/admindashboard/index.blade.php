@@ -43,7 +43,7 @@
                     <span class="text-xs text-green-200">+11.2%</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Today's Sales</p>
                         <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 84.000.000</p>
@@ -69,26 +69,26 @@
                 <!-- 🟦 SANTUY CELL -->
                 <div class="bg-[#111827] rounded-2xl p-4 border border-white/5">
                     <div class="flex justify-between mb-4">
-                        <h3 class="font-semibold text-base md:text-lg font-semibold">Santuy Cell</h3>
+                        <h3 class="font-semibold text-base md:text-lg lg:text-xl">Santuy Cell</h3>
                         <span class="text-green-400 text-xs">+12.5%</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
                         <div class="bg-black/30 rounded-xl p-3">
                             <p class="text-gray-400">Today's Sales</p>
-                            <p class="font-semibold">Rp 45.800.000</p>
+                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 45.800.000</p>
                         </div>
                         <div class="bg-black/30 rounded-xl p-3">
                             <p class="text-gray-400">Transactions</p>
-                            <p class="font-semibold">147</p>
+                            <p class="font-semibold text-sm md:text-lg lg:text-xl">147</p>
                         </div>
                         <div class="bg-black/30 rounded-xl p-3">
                             <p class="text-gray-400">Monthly</p>
-                            <p class="font-semibold">Rp 892.000.000</p>
+                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 892.000.000</p>
                         </div>
                         <div class="bg-black/30 rounded-xl p-3">
                             <p class="text-gray-400">Profit</p>
-                            <p class="font-semibold">Rp 12.400.000</p>
+                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 12.400.000</p>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@
 
                         <!-- header kecil -->
                         <div class="flex justify-between items-center mb-2">
-                            <p class="text-[10px] text-gray-400">7-Day Sales Trend</p>
+                            <p class="text-[10px] md:text-xs lg:text-sm text-gray-400">7-Day Sales Trend</p>
                         </div>
 
                         <!-- chart -->
@@ -115,7 +115,7 @@
 
                 <!-- 🟩 LIVE ACTIVITY -->
                 <div class="bg-[#111827] rounded-2xl p-4 border border-white/5">
-                    <h3 class="font-semibold text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
+                    <h3 class="font-semibold text-base md:text-lg lg:text-xl mb-4 flex items-center gap-2">
                         <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M4 12h4l2-5 4 10 2-5h4" />
@@ -123,31 +123,31 @@
                         Live Activity
                     </h3>
 
-                    <div class="space-y-3 text-xs">
+                    <div class="space-y-3 text-xs md:text-sm">
 
                         <!-- ITEM -->
                         <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
                             <div>
                                 <p class="font-medium">iPhone 15 Pro Max</p>
-                                <p class="text-gray-400 text-[10px]">Santuy Cell • 2 min ago</p>
+                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Santuy Cell • 2 min ago</p>
                             </div>
-                            <p class="text-green-400 font-semibold">Rp 8.500.000</p>
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 8.500.000</p>
                         </div>
 
                         <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
                             <div>
                                 <p class="font-medium">Samsung S24</p>
-                                <p class="text-gray-400 text-[10px]">Tian Cell • 5 min ago</p>
+                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Tian Cell • 5 min ago</p>
                             </div>
-                            <p class="text-green-400 font-semibold">Rp 4.200.000</p>
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 4.200.000</p>
                         </div>
 
                         <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
                             <div>
                                 <p class="font-medium">AirPods Pro</p>
-                                <p class="text-gray-400 text-[10px]">Santuy Cell • 12 min ago</p>
+                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Santuy Cell • 12 min ago</p>
                             </div>
-                            <p class="text-green-400 font-semibold">Rp 2.100.000</p>
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 2.100.000</p>
                         </div>
 
                     </div>
