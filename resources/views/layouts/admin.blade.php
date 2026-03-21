@@ -114,18 +114,18 @@
                         </div>
                     </button>
 
-                    <!-- INSIGHT -->
-                    <button @click="select('insight', $event)" class="relative z-10 flex justify-center w-full">
+                    <!-- DETAIL -->
+                    <button @click="select('detail', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'insight' ? 'text-white' : 'text-gray-400'">
+                            :class="page === 'detail' ? 'text-white' : 'text-gray-400'">
 
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 3v18M4 12h16" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6h6v6M5 21h14" />
                             </svg>
 
-                            Insight
+                            Detail
                         </div>
                     </button>
 
