@@ -72,50 +72,93 @@
             <div class="grid md:grid-cols-2 gap-4">
 
                 <!-- 🟦 SANTUY CELL -->
-                <div class="bg-[#111827] rounded-2xl p-4 border border-white/5">
-                    <div class="flex justify-between mb-4">
-                        <h3 class="font-semibold text-base md:text-lg lg:text-xl">Santuy Cell</h3>
-                        <span class="text-green-400 text-xs">+12.5%</span>
+                <div class="bg-[#111827] rounded-2xl p-4 md:p-5 border border-white/5">
+
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-base md:text-lg lg:text-xl tracking-tight">
+                            Santuy Cell
+                        </h3>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-green-400 text-xs md:text-sm font-medium">+12.5%</span>
+
+                            <!-- 🔥 BUTTON DETAIL -->
+                            <button @click="page = 'insight'"
+                                class="text-[10px] md:text-xs px-2.5 py-1 rounded-lg 
+                       bg-white/5 hover:bg-white/10 
+                       text-gray-300 hover:text-white 
+                       transition-all duration-200">
+                                Detail
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- STATS -->
                     <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
-                        <div class="bg-black/30 rounded-xl p-3">
-                            <p class="text-gray-400">Today's Sales</p>
-                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 45.800.000</p>
+
+                        <div class="bg-black/30 rounded-xl p-3 md:p-4">
+                            <p class="text-gray-400 tracking-wide text-[10px] md:text-xs">Today's Sales</p>
+                            <p class="font-medium text-sm md:text-lg lg:text-xl tracking-tight">
+                                Rp 45.800.000
+                            </p>
                         </div>
-                        <div class="bg-black/30 rounded-xl p-3">
-                            <p class="text-gray-400">Transactions</p>
-                            <p class="font-semibold text-sm md:text-lg lg:text-xl">147</p>
+
+                        <div class="bg-black/30 rounded-xl p-3 md:p-4">
+                            <p class="text-gray-400 tracking-wide text-[10px] md:text-xs">Transactions</p>
+                            <p class="font-medium text-sm md:text-lg lg:text-xl tracking-tight">
+                                147
+                            </p>
                         </div>
-                        <div class="bg-black/30 rounded-xl p-3">
-                            <p class="text-gray-400">Monthly</p>
-                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 892.000.000</p>
+
+                        <div class="bg-black/30 rounded-xl p-3 md:p-4">
+                            <p class="text-gray-400 tracking-wide text-[10px] md:text-xs">Monthly</p>
+                            <p class="font-medium text-sm md:text-lg lg:text-xl tracking-tight">
+                                Rp 892.000.000
+                            </p>
                         </div>
-                        <div class="bg-black/30 rounded-xl p-3">
-                            <p class="text-gray-400">Profit</p>
-                            <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 12.400.000</p>
+
+                        <div class="bg-black/30 rounded-xl p-3 md:p-4">
+                            <p class="text-gray-400 tracking-wide text-[10px] md:text-xs">Profit</p>
+                            <p class="font-medium text-sm md:text-lg lg:text-xl tracking-tight">
+                                Rp 12.400.000
+                            </p>
                         </div>
+
                     </div>
 
-                    <div class="mt-4 bg-black/20 border border-white/5 rounded-xl p-3">
+                    <!-- CHART -->
+                    <div class="mt-4 bg-black/20 border border-white/5 rounded-xl p-3 md:p-4">
 
-                        <!-- header kecil -->
+                        <!-- HEADER -->
                         <div class="flex justify-between items-center mb-2">
-                            <p class="text-[10px] md:text-xs lg:text-sm text-gray-400">7-Day Sales Trend</p>
+                            <p class="text-[10px] md:text-xs lg:text-sm text-gray-400 tracking-wide">
+                                7-Day Sales Trend
+                            </p>
                         </div>
 
-                        <!-- chart -->
-                        <div class="flex items-end justify-between h-16 gap-2">
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:30%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:45%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:25%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:60%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:50%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:70%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm" style="height:45%"></div>
+                        <!-- BAR CHART -->
+                        <div class="flex items-end justify-between h-16 md:h-20 gap-2">
+
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:30%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:45%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:25%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:60%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:50%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:70%"></div>
+                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                                style="height:45%"></div>
+
                         </div>
 
                     </div>
+
                 </div>
 
                 <!-- 🟩 LIVE ACTIVITY -->
