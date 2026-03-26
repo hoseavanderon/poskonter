@@ -48,7 +48,7 @@
             x-transition:leave-end="opacity-0 -translate-y-2" class="pb-24 space-y-6 text-xs md:text-sm">
 
             <!-- 🔥 ALL OUTLETS -->
-            <div class="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-5 shadow-xl">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="font-semibold text-base md:text-lg lg:text-xl flex items-center gap-2">
                         <!-- icon -->
@@ -57,7 +57,7 @@
                         </svg>
                         All Outlets Combined
                     </h2>
-                    <span class="text-xs text-green-200">+11.2%</span>
+                    <span class="text-xs text-white/70">+11.2%</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
@@ -93,7 +93,7 @@
                         </h3>
 
                         <div class="flex items-center gap-2">
-                            <span class="text-green-400 text-xs md:text-sm font-medium">+12.5%</span>
+                            <span class="text-white/70 text-xs md:text-sm font-medium">+12.5%</span>
 
                             <!-- 🔥 BUTTON DETAIL -->
                             <button @click="page = 'insight'"
@@ -152,19 +152,19 @@
                         <!-- BAR CHART -->
                         <div class="flex items-end justify-between h-16 md:h-20 gap-2">
 
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:30%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:45%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:25%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:60%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:50%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:70%"></div>
-                            <div class="w-full bg-[#3b82f6] rounded-sm opacity-80 hover:opacity-100 transition"
+                            <div class="w-full bg-white/30 hover:bg-white/60 rounded-sm opacity-80 hover:opacity-100 transition"
                                 style="height:45%"></div>
 
                         </div>
@@ -178,7 +178,7 @@
 
                     <!-- TITLE -->
                     <h3 class="font-semibold text-base md:text-lg lg:text-xl mb-4 flex items-center gap-2 text-white">
-                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2"
+                        <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M4 12h4l2-5 4 10 2-5h4" />
                         </svg>
@@ -194,9 +194,9 @@
                             <div class="flex items-center gap-3">
 
                                 <!-- ICON -->
-                                <div class="bg-green-500/20 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
@@ -212,7 +212,7 @@
                             </div>
 
                             <!-- PRICE -->
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                            <p class="text-white/70 font-semibold text-sm md:text-lg">
                                 Rp 8.500.000
                             </p>
                         </div>
@@ -221,9 +221,9 @@
                         <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
 
                             <div class="flex items-center gap-3">
-                                <div class="bg-green-500/20 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
@@ -236,7 +236,7 @@
                                 </div>
                             </div>
 
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                            <p class="text-white/70 font-semibold text-sm md:text-lg">
                                 Rp 4.200.000
                             </p>
                         </div>
@@ -245,8 +245,8 @@
                         <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
 
                             <div class="flex items-center gap-3">
-                                <div class="bg-green-500/20 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
@@ -260,7 +260,7 @@
                                 </div>
                             </div>
 
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                            <p class="text-white/70 font-semibold text-sm md:text-lg">
                                 Rp 2.100.000
                             </p>
                         </div>
@@ -269,8 +269,8 @@
                         <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
 
                             <div class="flex items-center gap-3">
-                                <div class="bg-blue-500/20 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M20 7l-8-4-8 4 8 4 8-4zM4 11l8 4 8-4M4 15l8 4 8-4" />
                                     </svg>
@@ -341,7 +341,7 @@
 
                         <!-- INDICATOR -->
                         <span x-ref="indicator"
-                            class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300 ease-out">
+                            class="absolute bottom-0 h-[2px] bg-white/70 transition-all duration-300 ease-out">
                         </span>
 
                         <!-- YEAR -->
@@ -396,7 +396,7 @@
 
                     <!-- TITLE -->
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2"
+                        <svg class="w-5 h-5 text-white-70" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path
                                 d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004.09 18h15.82a1 1 0 00.89-1.84l-7.09-12.3a1 1 0 00-1.78 0z" />
@@ -411,7 +411,7 @@
 
                             <!-- INDICATOR -->
                             <span x-ref="indicator"
-                                class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300">
+                                class="absolute bottom-0 h-[2px] bg-white/70 transition-all duration-300">
                             </span>
 
                             <!-- BUTTON -->
@@ -455,8 +455,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-blue-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path
                                             d="M12 18h.01M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2z" />
@@ -468,7 +468,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 3 left
                             </span>
                         </div>
@@ -479,8 +479,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-orange-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M13 7h8m0 0v8m0-8L10 18l-4-4" />
                                     </svg>
@@ -491,7 +491,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 8 left
                             </span>
                         </div>
@@ -502,8 +502,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <rect x="4" y="3" width="16" height="18" rx="2" />
                                     </svg>
@@ -514,7 +514,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 1 left
                             </span>
                         </div>
@@ -525,8 +525,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-cyan-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <rect x="3" y="4" width="18" height="12" rx="2" />
                                         <path d="M2 20h20" />
@@ -538,7 +538,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 2 left
                             </span>
                         </div>
@@ -574,7 +574,7 @@
 
                     <!-- TITLE -->
                     <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2"
+                        <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M3 17l6-6 4 4 7-7" />
                         </svg>
@@ -588,7 +588,7 @@
 
                             <!-- INDICATOR -->
                             <span x-ref="indicator"
-                                class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300">
+                                class="absolute bottom-0 h-[2px] bg-white/70 transition-all duration-300">
                             </span>
 
                             <!-- CATEGORY -->
@@ -620,8 +620,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-blue-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path
                                             d="M12 18h.01M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2z" />
@@ -634,7 +634,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 120 sold
                             </span>
                         </div>
@@ -645,8 +645,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M9 18V5l12-2v13" />
                                         <circle cx="6" cy="18" r="3" />
@@ -660,7 +660,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 210 sold
                             </span>
                         </div>
@@ -670,8 +670,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M9 18V5l12-2v13" />
                                         <circle cx="6" cy="18" r="3" />
@@ -685,7 +685,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 210 sold
                             </span>
                         </div>
@@ -695,8 +695,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M9 18V5l12-2v13" />
                                         <circle cx="6" cy="18" r="3" />
@@ -710,7 +710,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 210 sold
                             </span>
                         </div>
@@ -720,8 +720,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M9 18V5l12-2v13" />
                                         <circle cx="6" cy="18" r="3" />
@@ -735,7 +735,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 210 sold
                             </span>
                         </div>
@@ -745,8 +745,8 @@
                             class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-purple-500/20 p-2 rounded-lg">
-                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                <div class="bg-white/5 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor"
                                         stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M9 18V5l12-2v13" />
                                         <circle cx="6" cy="18" r="3" />
@@ -760,7 +760,7 @@
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                            <span class="text-[10px] bg-white/5 text-white/70 px-2 py-1 rounded-full">
                                 210 sold
                             </span>
                         </div>
@@ -776,12 +776,210 @@
         <div x-show="page === 'detail'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="absolute inset-0">
+            x-transition:leave-end="opacity-0 -translate-y-2" class="min-h-screen bg-[#020617] text-white p-4 space-y-6">
 
-            <h1 class="text-xl font-bold mb-4">Detail</h1>
+            <div class="px-1 py-4 space-y-4">
 
-            <div class="bg-gray-800 p-4 rounded-xl">
-                Jam Rame + Hari Terlaris + Bulan Terbaik
+                <!-- TOTAL ASSET -->
+                <div>
+                    <div class="flex items-center gap-2">
+                        <!-- Wallet Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-5" />
+                        </svg>
+
+                        <p class="text-[11px] text-gray-400/60 tracking-wide font-medium">
+                            Santuy Cell's Asset
+                        </p>
+                    </div>
+
+                    <h1 class="text-3xl font-semibold text-white mt-2 tracking-tight">
+                        Rp 2.456.800.000
+                    </h1>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 📊 BEST SELLING PERIOD -->
+                <div x-data="{
+                    tab: 'year',
+                    data: {
+                        year: [30, 50, 40, 60, 45, 70, 55, 50, 65, 75, 60, 80],
+                        month: [10, 20, 15, 25, 18, 30, 22],
+                        week: [5, 10, 8, 12, 9, 14, 11]
+                    }
+                }" class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
+
+                    <!-- HEADER -->
+                    <div class="flex items-center justify-between">
+
+                        <!-- LEFT -->
+                        <div class="flex items-center gap-2">
+
+                            <!-- Icon (monochrome) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white/70" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3v18h18M7 13v4M12 9v8M17 5v12" />
+                            </svg>
+
+                            <p class="text-sm font-medium text-white/90">
+                                Best Selling Period
+                            </p>
+                        </div>
+
+                        <!-- TABS -->
+                        <div class="bg-white/5 rounded-xl p-1 flex text-xs">
+
+                            <button @click="tab='year'"
+                                :class="tab === 'year'
+                                    ?
+                                    'bg-white/10 text-white' :
+                                    'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Year
+                            </button>
+
+                            <button @click="tab='month'"
+                                :class="tab === 'month'
+                                    ?
+                                    'bg-white/10 text-white' :
+                                    'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Month
+                            </button>
+
+                            <button @click="tab='week'"
+                                :class="tab === 'week'
+                                    ?
+                                    'bg-white/10 text-white' :
+                                    'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Week
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="flex justify-between items-end gap-4">
+
+                        <!-- LEFT INFO -->
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white/90"
+                                x-text="tab === 'year' ? '2025' : tab === 'month' ? 'July' : 'This Week'">
+                            </h2>
+
+                            <div class="mt-3 space-y-1 text-sm">
+
+                                <p class="text-white/40">
+                                    Transactions
+                                    <span class="text-white/80 font-medium ml-2"
+                                        x-text="tab === 'year' ? '1840' : tab === 'month' ? '420' : '98'">
+                                    </span>
+                                </p>
+
+                                <p class="text-white/40">
+                                    Revenue
+                                    <span class="text-white font-medium ml-2 tabular-nums"
+                                        x-text="tab === 'year' ? 'Rp 1.200.000.000' : tab === 'month' ? 'Rp 320.000.000' : 'Rp 75.000.000'">
+                                    </span>
+                                </p>
+
+                            </div>
+                        </div>
+
+                        <!-- CHART -->
+                        <div class="flex items-end gap-1 h-20">
+                            <template x-for="(val, i) in data[tab]" :key="i">
+                                <div class="w-2 rounded bg-white/30 transition-all duration-500 hover:bg-white/60"
+                                    :style="'height:' + val + 'px'">
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 🕒 JAM RAME (MONOCHROME) -->
+                <div x-data="{
+                    tab: 'today',
+                    data: {
+                        today: [4, 8, 12, 18, 25, 35, 50, 40, 22, 15, 28, 32, 20, 12, 8, 4],
+                        month: [10, 20, 30, 25, 35, 45, 40, 50, 38, 28, 32, 36],
+                        year: [15, 25, 35, 30, 40, 55, 45, 60, 50, 35, 30, 40]
+                    },
+                    labels: {
+                        today: ['06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'],
+                        month: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'],
+                        year: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    }
+                }" class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
+
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center">
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 6v6l4 2M6 2h12v4H6zM6 22h12v-4H6z" />
+                            </svg>
+                            <p class="text-sm text-white/90 font-medium">Jam Rame</p>
+                        </div>
+
+                        <!-- TABS -->
+                        <div class="bg-white/5 rounded-xl p-1 flex text-xs">
+                            <button @click="tab='year'"
+                                :class="tab === 'year' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Year
+                            </button>
+                            <button @click="tab='month'"
+                                :class="tab === 'month' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Month
+                            </button>
+                            <button @click="tab='today'"
+                                :class="tab === 'today' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'"
+                                class="px-3 py-1 rounded-lg transition">
+                                Today
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PEAK -->
+                    <div>
+                        <span class="text-xs bg-white/5 text-white/70 px-3 py-1 rounded-full">
+                            Peak: 12:00
+                        </span>
+                    </div>
+
+                    <!-- CHART -->
+                    <div class="flex justify-center">
+                        <div class="flex items-end gap-2 h-32 w-full max-w-md">
+
+                            <template x-for="(val, i) in data[tab]" :key="i">
+                                <div class="flex flex-col items-center justify-end h-full">
+
+                                    <!-- BAR -->
+                                    <div class="w-3 rounded bg-white/30 hover:bg-white/60 transition-all duration-500"
+                                        :style="'height:' + val + 'px'">
+                                    </div>
+
+                                    <!-- LABEL -->
+                                    <span class="text-[10px] text-white/40 mt-1" x-text="labels[tab][i]">
+                                    </span>
+
+                                </div>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

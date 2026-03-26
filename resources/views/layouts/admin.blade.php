@@ -30,13 +30,13 @@
 
                         <template x-for="tab in tabs" :key="tab">
                             <button @click="select(tab, $event)" class="relative pb-1"
-                                :class="selected === tab ? 'text-white' : 'text-gray-400'"
+                                :class="selected === tab ? 'text-white' : 'text-white/40'"
                                 x-text="tab === 'all' ? 'All' : (tab === 'santuy' ? 'Santuy Cell' : 'Tian Cell')">
                             </button>
                         </template>
 
                         <!-- UNDERLINE -->
-                        <div class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300"
+                        <div class="absolute bottom-0 h-[2px] bg-white/70 rounded-full transition-all duration-300"
                             :style="`width:${width}px; transform:translateX(${left}px)`">
                         </div>
 
@@ -86,7 +86,7 @@
                     <button @click="select('home', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'home' ? 'text-white' : 'text-gray-400'">
+                            :class="page === 'home' ? 'text-white' : 'text-white/40'">
 
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
@@ -102,7 +102,7 @@
                     <button @click="select('product', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'product' ? 'text-white' : 'text-gray-400'">
+                            :class="page === 'product' ? 'text-white' : 'text-white/40'">
 
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
@@ -118,11 +118,13 @@
                     <button @click="select('detail', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'detail' ? 'text-white' : 'text-gray-400'">
+                            :class="page === 'detail' ? 'text-white' : 'text-white/40'">
 
+                            <!-- Store Icon -->
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6h6v6M5 21h14" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 9l1-4h16l1 4M4 9h16v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9z" />
                             </svg>
 
                             Detail
@@ -133,7 +135,7 @@
                     <button @click="select('settings', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'settings' ? 'text-white' : 'text-gray-400'">
+                            :class="page === 'settings' ? 'text-white' : 'text-white/40'">
 
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
