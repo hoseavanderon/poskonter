@@ -26,8 +26,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(100, 116, 139, 0.6);
         }
+
+        /* sembunyiin scrollbar tapi tetap bisa scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE & Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
     </style>
-    <div class="relative min-h-[300px]">
+    <div class="relative min-h-[300px] overflow-x-hidden">
 
         <!-- 🏠 HOME -->
         <div x-show="page === 'home'" x-transition:enter="transition ease-out duration-200"
@@ -286,86 +298,172 @@
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2"
-            class="absolute inset-0 p-4 md:p-6 space-y-6 bg-[#020617] text-white">
+            class="min-h-screen overflow-y-auto p-4 md:p-6 space-y-6 bg-[#020617] text-white">
 
             <!-- HEADER -->
             <div class="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
                 <div>
                     <h1 class="text-lg md:text-2xl font-semibold tracking-tight">
-                        Inventory Insights
+                        Info Produk Outlet
                     </h1>
                     <p class="text-gray-400 text-xs md:text-sm">
-                        Monitor low stock and best-selling products
+                        Monitor Produk Laris dan Produk Habis
                     </p>
                 </div>
 
-                <!-- FILTER -->
-                <div class="flex gap-2 bg-white/5 p-1 rounded-xl w-fit">
-                    <button class="px-3 py-1 text-xs rounded-lg bg-blue-500 text-white">
-                        Today
-                    </button>
-                    <button class="px-3 py-1 text-xs rounded-lg text-gray-400 hover:text-white">
-                        Weekly
-                    </button>
-                    <button class="px-3 py-1 text-xs rounded-lg text-gray-400 hover:text-white">
-                        Monthly
-                    </button>
-                </div>
-            </div>
+                <div x-data="{
+                    active: 'year',
+                    move(el) {
+                        const indicator = this.$refs.indicator
+                        if (!el || !indicator) return
+                
+                        indicator.style.width = el.offsetWidth + 'px'
+                        indicator.style.left = el.offsetLeft + 'px'
+                    },
+                    init() {
+                        // initial (kalau kebetulan sudah visible)
+                        this.$nextTick(() => {
+                            setTimeout(() => this.move(this.$refs.year), 50)
+                        })
+                
+                        // 🔥 FIX UTAMA
+                        this.$watch('page', value => {
+                            if (value === 'product') {
+                                setTimeout(() => {
+                                    this.move(this.$refs.year)
+                                }, 50)
+                            }
+                        })
+                    }
+                }" x-init="init()" class="relative overflow-x-auto">
 
-            <!-- CATEGORY -->
-            <div class="flex gap-2 overflow-x-auto pb-1">
-                <button class="px-4 py-1.5 rounded-full text-xs bg-blue-500 text-white whitespace-nowrap">
-                    All
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 text-gray-300 whitespace-nowrap">
-                    Smartphone
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 text-gray-300 whitespace-nowrap">
-                    Accessories
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 text-gray-300 whitespace-nowrap">
-                    Tablet
-                </button>
-                <button class="px-4 py-1.5 rounded-full text-xs bg-white/5 text-gray-300 whitespace-nowrap">
-                    Laptop
-                </button>
+                    <div class="flex gap-6 relative min-w-max">
+
+                        <!-- INDICATOR -->
+                        <span x-ref="indicator"
+                            class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300 ease-out">
+                        </span>
+
+                        <!-- YEAR -->
+                        <button x-ref="year" @click="active='year'; move($el)"
+                            :class="active === 'year' ? 'text-white' : 'text-gray-400'"
+                            class="pb-2 text-xs whitespace-nowrap transition">
+                            Year
+                        </button>
+
+                        <!-- MONTH -->
+                        <button x-ref="month" @click="active='month'; move($el)"
+                            :class="active === 'month' ? 'text-white' : 'text-gray-400'"
+                            class="pb-2 text-xs whitespace-nowrap transition">
+                            Month
+                        </button>
+
+                        <!-- TODAY -->
+                        <button x-ref="today" @click="active='today'; move($el)"
+                            :class="active === 'today' ? 'text-white' : 'text-gray-400'"
+                            class="pb-2 text-xs whitespace-nowrap transition">
+                            Today
+                        </button>
+
+                    </div>
+                </div>
             </div>
 
             <!-- CONTENT -->
             <div class="grid md:grid-cols-2 gap-5">
 
                 <!-- 🔴 LOW STOCK -->
-                <div class="space-y-4">
+                <div class="space-y-4" x-data="{
+                    active: 'all',
+                    move(el) {
+                        const indicator = this.$refs.indicator
+                        if (!el || !indicator) return
+                        indicator.style.width = el.offsetWidth + 'px'
+                        indicator.style.left = el.offsetLeft + 'px'
+                    },
+                    init() {
+                        this.$nextTick(() => {
+                            setTimeout(() => this.move(this.$refs.all), 50)
+                        })
+                
+                        this.$watch('page', val => {
+                            if (val === 'product') {
+                                setTimeout(() => this.move(this.$refs.all), 50)
+                            }
+                        })
+                    }
+                }" x-init="init()">
 
+                    <!-- TITLE -->
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
+                            <path
                                 d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004.09 18h15.82a1 1 0 00.89-1.84l-7.09-12.3a1 1 0 00-1.78 0z" />
                         </svg>
-                        <h2 class="font-semibold text-sm md:text-base">
-                            Low Stock Alert
-                        </h2>
-                        <span class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
-                            NEEDS ATTENTION
-                        </span>
+                        <h2 class="font-semibold text-sm">Stok Habis</h2>
+                    </div>
+
+                    <div
+                        class="relative max-w-full overflow-x-auto no-scrollbar touch-pan-x overscroll-x-contain snap-x snap-mandatory scroll-smooth">
+
+                        <div class="flex gap-4 whitespace-nowrap px-1 relative">
+
+                            <!-- INDICATOR -->
+                            <span x-ref="indicator"
+                                class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300">
+                            </span>
+
+                            <!-- BUTTON -->
+                            <button x-ref="all" @click="active='all'; move($el)"
+                                :class="active === 'all' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0 snap-start">
+                                All
+                            </button>
+
+                            <button @click="active='smartphone'; move($el)"
+                                :class="active === 'smartphone' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0 snap-start">
+                                Smartphone
+                            </button>
+
+                            <button @click="active='accessories'; move($el)"
+                                :class="active === 'accessories' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0 snap-start">
+                                Accessories
+                            </button>
+
+                            <button @click="active='tablet'; move($el)"
+                                :class="active === 'tablet' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0 snap-start">
+                                Tablet
+                            </button>
+
+                            <button @click="active='laptop'; move($el)"
+                                :class="active === 'laptop' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0 snap-start">
+                                Laptop
+                            </button>
+                        </div>
                     </div>
 
                     <!-- CARD -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 overflow-x-hidden touch-pan-y overscroll-y-contain">
 
-                        <!-- ITEM -->
-                        <div
-                            class="bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+                        <!-- SMARTPHONE -->
+                        <div x-show="active==='all'||active==='smartphone'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-white/10 p-2 rounded-lg">
-                                    📦
+                                <div class="bg-blue-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 18h.01M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                    </svg>
                                 </div>
-
                                 <div>
-                                    <p class="text-sm font-medium">Samsung Galaxy S24 Ultra</p>
+                                    <p class="text-sm font-medium">Samsung S24 Ultra</p>
                                     <p class="text-xs text-gray-400">Smartphone</p>
                                 </div>
                             </div>
@@ -375,15 +473,41 @@
                             </span>
                         </div>
 
-                        <!-- ITEM -->
-                        <div
-                            class="bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-white/10 p-2 rounded-lg">
-                                    📦
+                                <div class="bg-orange-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M13 7h8m0 0v8m0-8L10 18l-4-4" />
+                                    </svg>
                                 </div>
+                                <div>
+                                    <p class="text-sm font-medium">USB-C Cable</p>
+                                    <p class="text-xs text-gray-400">Accessories</p>
+                                </div>
+                            </div>
 
+                            <span class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full">
+                                8 left
+                            </span>
+                        </div>
+
+
+                        <!-- TABLET -->
+                        <div x-show="active==='all'||active==='tablet'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
+
+                            <div class="flex gap-3 items-center">
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <rect x="4" y="3" width="16" height="18" rx="2" />
+                                    </svg>
+                                </div>
                                 <div>
                                     <p class="text-sm font-medium">iPad Air M2</p>
                                     <p class="text-xs text-gray-400">Tablet</p>
@@ -395,23 +519,27 @@
                             </span>
                         </div>
 
-                        <!-- ITEM -->
-                        <div
-                            class="bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                        <!-- LAPTOP -->
+                        <div x-show="active==='all'||active==='laptop'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-white/10 p-2 rounded-lg">
-                                    📦
+                                <div class="bg-cyan-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <rect x="3" y="4" width="18" height="12" rx="2" />
+                                        <path d="M2 20h20" />
+                                    </svg>
                                 </div>
-
                                 <div>
-                                    <p class="text-sm font-medium">USB-C Cable 2m</p>
-                                    <p class="text-xs text-gray-400">Accessories</p>
+                                    <p class="text-sm font-medium">MacBook Air M2</p>
+                                    <p class="text-xs text-gray-400">Laptop</p>
                                 </div>
                             </div>
 
-                            <span class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full">
-                                8 left
+                            <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
+                                2 left
                             </span>
                         </div>
 
@@ -419,78 +547,221 @@
 
                 </div>
 
-                <!-- 🟢 BEST SELLER -->
-                <div class="space-y-4">
 
+                <!-- 🟢 BEST SELLER -->
+                <div class="space-y-4" x-data="{
+                    active: 'all',
+                    move(el) {
+                        const indicator = this.$refs.indicator
+                        if (!el || !indicator) return
+                
+                        indicator.style.width = el.offsetWidth + 'px'
+                        indicator.style.left = el.offsetLeft + 'px'
+                
+                        // 🔥 auto scroll ke tengah
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            inline: 'center',
+                            block: 'nearest'
+                        })
+                    },
+                    init() {
+                        this.$nextTick(() => {
+                            setTimeout(() => this.move(this.$refs.all), 50)
+                        })
+                    }
+                }" x-init="init()">
+
+                    <!-- TITLE -->
                     <div class="flex items-center gap-2">
-                        <span class="text-green-400 text-lg">📈</span>
-                        <h2 class="font-semibold text-sm md:text-base">
-                            Top Selling Products
-                        </h2>
-                        <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                            TRENDING
-                        </span>
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M3 17l6-6 4 4 7-7" />
+                        </svg>
+                        <h2 class="font-semibold text-sm">Produk Terlaris</h2>
+                    </div>
+
+                    <div
+                        class="relative max-w-full overflow-x-auto no-scrollbar touch-pan-x overscroll-x-contain snap-x snap-mandatory scroll-smooth">
+
+                        <div class="flex gap-4 whitespace-nowrap px-1 relative">
+
+                            <!-- INDICATOR -->
+                            <span x-ref="indicator"
+                                class="absolute bottom-0 h-[2px] bg-blue-500 transition-all duration-300">
+                            </span>
+
+                            <!-- CATEGORY -->
+                            <button x-ref="all" @click="active='all'; move($el)"
+                                :class="active === 'all' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0">
+                                All
+                            </button>
+
+                            <button @click="active='smartphone'; move($el)"
+                                :class="active === 'smartphone' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0">
+                                Smartphone
+                            </button>
+
+                            <button @click="active='accessories'; move($el)"
+                                :class="active === 'accessories' ? 'text-white' : 'text-gray-400'"
+                                class="pb-2 text-xs flex-shrink-0">
+                                Accessories
+                            </button>
+
+                        </div>
                     </div>
 
                     <div class="space-y-3">
 
-                        <!-- ITEM -->
-                        <div
-                            class="bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+                        <!-- SMARTPHONE -->
+                        <div x-show="active==='all'||active==='smartphone'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-green-500/20 p-2 rounded-lg text-green-400">
-                                    🛒
+                                <div class="bg-blue-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 18h.01M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                    </svg>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm font-medium">Samsung Galaxy S24</p>
+                                    <p class="text-sm font-medium">iPhone 15 Pro</p>
                                     <p class="text-xs text-gray-400">Smartphone</p>
                                 </div>
                             </div>
 
-                            <span class="text-xs text-green-400 font-medium">
-                                ↑ 120 sold
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                120 sold
                             </span>
                         </div>
 
-                        <!-- ITEM -->
-                        <div
-                            class="bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
 
                             <div class="flex gap-3 items-center">
-                                <div class="bg-green-500/20 p-2 rounded-lg text-green-400">
-                                    🛒
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm font-medium">iPad Pro M4</p>
-                                    <p class="text-xs text-gray-400">Tablet</p>
-                                </div>
-                            </div>
-
-                            <span class="text-xs text-green-400 font-medium">
-                                ↑ 62 sold
-                            </span>
-                        </div>
-
-                        <!-- ITEM -->
-                        <div
-                            class="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 flex justify-between items-center hover:bg-green-500/20 transition">
-
-                            <div class="flex gap-3 items-center">
-                                <div class="bg-green-500/20 p-2 rounded-lg text-green-400">
-                                    🛒
-                                </div>
-
-                                <div>
-                                    <p class="text-sm font-medium">MagSafe Charger</p>
+                                    <p class="text-sm font-medium">AirPods Pro</p>
                                     <p class="text-xs text-gray-400">Accessories</p>
                                 </div>
                             </div>
 
-                            <span class="text-xs text-green-400 font-medium">
-                                ↑ 210 sold
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                210 sold
+                            </span>
+                        </div>
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                            <div class="flex gap-3 items-center">
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium">AirPods Pro</p>
+                                    <p class="text-xs text-gray-400">Accessories</p>
+                                </div>
+                            </div>
+
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                210 sold
+                            </span>
+                        </div>
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                            <div class="flex gap-3 items-center">
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium">AirPods Pro</p>
+                                    <p class="text-xs text-gray-400">Accessories</p>
+                                </div>
+                            </div>
+
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                210 sold
+                            </span>
+                        </div>
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                            <div class="flex gap-3 items-center">
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium">AirPods Pro</p>
+                                    <p class="text-xs text-gray-400">Accessories</p>
+                                </div>
+                            </div>
+
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                210 sold
+                            </span>
+                        </div>
+
+                        <!-- ACCESSORIES -->
+                        <div x-show="active==='all'||active==='accessories'"
+                            class="bg-white/5 rounded-2xl p-4 flex justify-between items-center hover:bg-white/10 transition">
+
+                            <div class="flex gap-3 items-center">
+                                <div class="bg-purple-500/20 p-2 rounded-lg">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-medium">AirPods Pro</p>
+                                    <p class="text-xs text-gray-400">Accessories</p>
+                                </div>
+                            </div>
+
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
+                                210 sold
                             </span>
                         </div>
 
@@ -499,7 +770,6 @@
                 </div>
 
             </div>
-
         </div>
 
         <!-- 📊 DETAIL -->
