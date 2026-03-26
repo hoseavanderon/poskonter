@@ -162,8 +162,10 @@
                 </div>
 
                 <!-- 🟩 LIVE ACTIVITY -->
-                <div class="bg-[#111827] rounded-2xl p-4 border border-white/5">
-                    <h3 class="font-semibold text-base md:text-lg lg:text-xl mb-4 flex items-center gap-2">
+                <div class="bg-[#111827] rounded-2xl p-4 border border-white/5 w-full max-w-md">
+
+                    <!-- TITLE -->
+                    <h3 class="font-semibold text-base md:text-lg lg:text-xl mb-4 flex items-center gap-2 text-white">
                         <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
                             <path d="M4 12h4l2-5 4 10 2-5h4" />
@@ -174,28 +176,102 @@
                     <div class="space-y-3 text-xs md:text-sm">
 
                         <!-- ITEM -->
-                        <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
-                            <div>
-                                <p class="font-medium">iPhone 15 Pro Max</p>
-                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Santuy Cell • 2 min ago</p>
+                        <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+
+                            <!-- LEFT -->
+                            <div class="flex items-center gap-3">
+
+                                <!-- ICON -->
+                                <div class="bg-green-500/20 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
+                                    </svg>
+                                </div>
+
+                                <!-- TEXT -->
+                                <div>
+                                    <p class="font-medium text-white">iPhone 15 Pro Max</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs">
+                                        Santuy Cell • 2 min ago
+                                    </p>
+                                </div>
+
                             </div>
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 8.500.000</p>
+
+                            <!-- PRICE -->
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                                Rp 8.500.000
+                            </p>
                         </div>
 
-                        <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
-                            <div>
-                                <p class="font-medium">Samsung S24</p>
-                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Tian Cell • 5 min ago</p>
+                        <!-- ITEM -->
+                        <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+
+                            <div class="flex items-center gap-3">
+                                <div class="bg-green-500/20 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="font-medium text-white">Samsung Galaxy S24</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs">
+                                        Tian Cell • 5 min ago
+                                    </p>
+                                </div>
                             </div>
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 4.200.000</p>
+
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                                Rp 4.200.000
+                            </p>
                         </div>
 
-                        <div class="flex justify-between items-center bg-black/30 rounded-xl p-3">
-                            <div>
-                                <p class="font-medium">AirPods Pro</p>
-                                <p class="text-gray-400 text-[10px] md:text-xs lg:text-sm">Santuy Cell • 12 min ago</p>
+                        <!-- ITEM -->
+                        <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+
+                            <div class="flex items-center gap-3">
+                                <div class="bg-green-500/20 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="font-medium text-white">AirPods Pro 2nd Gen</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs">
+                                        Santuy Cell • 12 min ago
+                                    </p>
+                                </div>
                             </div>
-                            <p class="text-green-400 font-semibold text-sm md:text-lg">Rp 2.100.000</p>
+
+                            <p class="text-green-400 font-semibold text-sm md:text-lg">
+                                Rp 2.100.000
+                            </p>
+                        </div>
+
+                        <!-- ITEM (RESTOCK - beda icon biru) -->
+                        <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+
+                            <div class="flex items-center gap-3">
+                                <div class="bg-blue-500/20 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M20 7l-8-4-8 4 8 4 8-4zM4 11l8 4 8-4M4 15l8 4 8-4" />
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="font-medium text-white">Restocked iPhone accessories</p>
+                                    <p class="text-gray-400 text-[10px] md:text-xs">
+                                        Tian Cell • 18 min ago
+                                    </p>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
