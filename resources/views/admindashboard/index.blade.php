@@ -339,7 +339,11 @@
                 <div class="space-y-4">
 
                     <div class="flex items-center gap-2">
-                        <span class="text-yellow-400 text-lg">⚠️</span>
+                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v2m0 4h.01M10.29 3.86l-7.09 12.3A1 1 0 004.09 18h15.82a1 1 0 00.89-1.84l-7.09-12.3a1 1 0 00-1.78 0z" />
+                        </svg>
                         <h2 class="font-semibold text-sm md:text-base">
                             Low Stock Alert
                         </h2>
