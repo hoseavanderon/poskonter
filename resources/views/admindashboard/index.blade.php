@@ -162,7 +162,7 @@
                 </div>
 
                 <!-- 🟩 LIVE ACTIVITY -->
-                <div class="bg-[#111827] rounded-2xl p-4 border border-white/5 w-full max-w-md">
+                <div class="bg-[#111827] rounded-2xl p-4 border border-white/5">
 
                     <!-- TITLE -->
                     <h3 class="font-semibold text-base md:text-lg lg:text-xl mb-4 flex items-center gap-2 text-white">
