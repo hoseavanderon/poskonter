@@ -286,7 +286,7 @@
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2"
-            class="absolute inset-0 overflow-y-auto p-4 md:p-6 space-y-6 bg-[#020617] text-white">
+            class="absolute inset-0 p-4 md:p-6 space-y-6 bg-[#020617] text-white">
 
             <!-- HEADER -->
             <div class="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
