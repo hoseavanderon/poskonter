@@ -1354,7 +1354,39 @@
             <h1 class="text-xl font-bold text-white/90">Asset Calculator</h1>
 
             <!-- TOTAL CARD -->
-            <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center space-y-3">
+            <div class="relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center space-y-3">
+
+                <!-- COPY BUTTON -->
+                <button @click="copy()"
+                    class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg 
+    hover:bg-white/10 active:scale-90 transition overflow-hidden">
+
+                    <div class="relative w-5 h-5">
+
+                        <!-- ICON COPY -->
+                        <svg :class="copied
+                            ?
+                            'opacity-0 scale-75 rotate-[-20deg]' :
+                            'opacity-100 scale-100 rotate-0'"
+                            class="absolute inset-0 w-5 h-5 text-white/60 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                        </svg>
+
+                        <!-- ICON CHECK -->
+                        <svg :class="copied
+                            ?
+                            'opacity-100 scale-110 rotate-0' :
+                            'opacity-0 scale-50 rotate-[20deg]'"
+                            class="absolute inset-0 w-5 h-5 text-green-400 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M5 13l4 4L19 7"></path>
+                        </svg>
+
+                    </div>
+
+                </button>
 
                 <!-- BADGE -->
                 <div class="inline-flex px-3 py-1 rounded-full bg-white/10 text-xs text-white/70">
@@ -1365,8 +1397,8 @@
                     Total Assets
                 </p>
 
-                <h2 class="text-4xl font-semibold text-white tracking-tight">
-                    Rp 33.000.000
+                <!-- TOTAL DINAMIS -->
+                <h2 class="text-4xl font-semibold text-white tracking-tight" x-text="format(totalAssets())">
                 </h2>
 
             </div>
@@ -1424,6 +1456,8 @@
         <script>
             function assetApp() {
                 return {
+                    copied: false,
+
                     items: [{
                             label: 'Bank BCA',
                             value: 15000000,
@@ -1474,6 +1508,31 @@
 
                     formatNumber(number) {
                         return new Intl.NumberFormat('id-ID').format(number || 0);
+                    },
+
+                    // 🔥 COPY FUNCTION (DYNAMIC)
+                    copy() {
+                        let text = `Santuy Cell
+
+Total Assets
+${this.format(this.totalAssets())}
+
+Assets:
+`;
+
+                        this.items.forEach(item => {
+                            if (item.label) {
+                                text += `${item.label}: ${this.format(item.value)}\n`;
+                            }
+                        });
+
+                        navigator.clipboard.writeText(text);
+
+                        this.copied = true;
+
+                        setTimeout(() => {
+                            this.copied = false;
+                        }, 1200);
                     }
                 }
             }
