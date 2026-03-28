@@ -146,7 +146,7 @@
                                     d="M9 7h6M9 11h2m2 0h2M9 15h2m2 0h2" />
                             </svg>
 
-                            Asset Calc
+                            Asset
                         </div>
                     </button>
 
