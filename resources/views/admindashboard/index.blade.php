@@ -38,6 +38,13 @@
             scrollbar-width: none;
             /* Firefox */
         }
+
+        /* remove spinner (just in case) */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
     <div class="relative min-h-[300px] overflow-x-hidden">
 
@@ -1256,51 +1263,8 @@
                     { type: 'sale', text: 'Sold Samsung Charger 25W (×3)', time: '2 hours ago' },
                     { type: 'restock', text: 'Restocked Lightning Cable (×50)', time: '3 hours ago' },
                     { type: 'new', text: 'New product added: Xiaomi Buds 5', time: '4 hours ago' },
-                ],
-            
-                icon(type) {
-                    switch (type) {
-                        case 'sale':
-                            return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
-                viewBox="0 0 24 24">
-                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
-                <circle cx="7" cy="21" r="1" />
-                <circle cx="17" cy="21" r="1" />
-                </svg>`
-
-                case 'restock':
-                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
-                    viewBox="0 0 24 24">
-                    <path d="M3 7l9-4 9 4-9 4-9-4z" />
-                    <path d="M3 17l9 4 9-4" />
-                    <path d="M3 12l9 4 9-4" />
-                </svg>`
-
-                case 'price':
-                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
-                    viewBox="0 0 24 24">
-                    <path d="M7 7h5l5 5-5 5H7z" />
-                </svg>`
-
-                case 'return':
-                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
-                    viewBox="0 0 24 24">
-                    <path d="M9 14l-4-4 4-4" />
-                    <path d="M20 20a8 8 0 00-8-8H5" />
-                </svg>`
-
-                case 'new':
-                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
-                    viewBox="0 0 24 24">
-                    <path
-                        d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" />
-                </svg>`
-
-                default:
-                return `<span class="w-2 h-2 bg-white/40 rounded-full"></span>`
-                }
-                }
-                }" class="bg-white/5 border border-white/10 rounded-2xl p-5 mt-4">
+                ]
+            }" class="bg-white/5 border border-white/10 rounded-2xl p-5 mt-4">
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center mb-5">
@@ -1328,7 +1292,44 @@
 
                                 <!-- ICON -->
                                 <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-sm">
-                                    <span x-text="icon(item.type)"></span>
+
+                                    <!-- SALE -->
+                                    <svg x-show="item.type === 'sale'" class="w-4 h-4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+                                        <circle cx="7" cy="21" r="1" />
+                                        <circle cx="17" cy="21" r="1" />
+                                    </svg>
+
+                                    <!-- RESTOCK -->
+                                    <svg x-show="item.type === 'restock'" class="w-4 h-4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9-4 9 4-9 4-9-4z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l9 4 9-4" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9 4 9-4" />
+                                    </svg>
+
+                                    <!-- PRICE -->
+                                    <svg x-show="item.type === 'price'" class="w-4 h-4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h6l4 4-6 6-4-4V7z" />
+                                    </svg>
+
+                                    <!-- RETURN -->
+                                    <svg x-show="item.type === 'return'" class="w-4 h-4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 14l-4-4 4-4" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 20a8 8 0 00-8-8H5" />
+                                    </svg>
+
+                                    <!-- NEW -->
+                                    <svg x-show="item.type === 'new'" class="w-4 h-4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 3v6m0 6v6m-6-6h6m6 0h-6" />
+                                    </svg>
+
                                 </div>
 
                                 <!-- TEXT -->
@@ -1343,64 +1344,178 @@
                     </template>
 
                 </div>
-
             </div>
         </div>
 
-        <!-- ⚙️ SETTINGS -->
-        <div x-show="page === 'calculator'" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="absolute inset-0">
+        <!-- ⚙️ CALCULATOR -->
+        <div x-show="page === 'calculator'" x-data="assetApp()" class="h-full overflow-y-auto p-4 space-y-4">
 
-            <h1 class="text-xl font-bold mb-4">Menu</h1>
+            <!-- TITLE -->
+            <h1 class="text-xl font-bold text-white/90">Asset Calculator</h1>
 
-            <div class="bg-gray-800 p-4 rounded-xl">
-                Settings / Config / Master Data
+            <!-- TOTAL CARD -->
+            <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center space-y-3">
+
+                <!-- BADGE -->
+                <div class="inline-flex px-3 py-1 rounded-full bg-white/10 text-xs text-white/70">
+                    Santuy Cell
+                </div>
+
+                <p class="text-xs tracking-widest text-white/40 uppercase">
+                    Total Assets
+                </p>
+
+                <h2 class="text-4xl font-semibold text-white tracking-tight">
+                    Rp 33.000.000
+                </h2>
+
             </div>
+
+            <!-- FORM CARD -->
+            <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center">
+                    <p class="text-sm font-semibold text-white/80">Assets</p>
+
+                    <button @click="addField()"
+                        class="text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 transition">
+                        + Add
+                    </button>
+                </div>
+
+                <!-- LIST -->
+                <div class="space-y-3">
+
+                    <template x-for="(item, index) in items" :key="index">
+                        <div class="flex items-center justify-between gap-3">
+
+                            <!-- LABEL -->
+                            <div class="flex-1">
+                                <!-- VIEW -->
+                                <p x-show="!item.editing" @click="item.editing = true"
+                                    class="text-sm text-white/70 cursor-text">
+                                    <span x-text="item.label || 'Unnamed'"></span>
+                                </p>
+
+                                <!-- EDIT -->
+                                <input x-show="item.editing" x-model="item.label" @blur="item.editing = false"
+                                    @keydown.enter="item.editing = false" type="text" placeholder="Label..."
+                                    class="w-full bg-transparent border-none outline-none text-sm text-white/90 placeholder-white/30">
+                            </div>
+
+                            <!-- VALUE -->
+                            <input type="text" inputmode="numeric" :value="formatNumber(item.value)"
+                                @input="updateValue($event, item)"
+                                class="w-40 text-right px-3 py-2 rounded-xl 
+                        bg-white/[0.05] border border-white/10 text-white 
+                        focus:outline-none 
+                        focus:border-white/40 
+                        focus:ring-2 focus:ring-white/20 
+                        transition">
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+
         </div>
 
-    </div>
+        <script>
+            function assetApp() {
+                return {
+                    items: [{
+                            label: 'Bank BCA',
+                            value: 15000000,
+                            editing: false
+                        },
+                        {
+                            label: 'Bank Mandiri',
+                            value: 8500000,
+                            editing: false
+                        },
+                        {
+                            label: 'E-Wallet (GoPay)',
+                            value: 2300000,
+                            editing: false
+                        },
+                        {
+                            label: 'E-Wallet (OVO)',
+                            value: 1200000,
+                            editing: false
+                        },
+                        {
+                            label: 'Cash on Hand',
+                            value: 5000000,
+                            editing: false
+                        },
+                    ],
 
-    <script>
-        const ctxSantuy = document.getElementById('salesChartSantuy');
+                    addField() {
+                        this.items.push({
+                            label: '',
+                            value: 0,
+                            editing: true
+                        });
+                    },
 
-        new Chart(ctxSantuy, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    data: [12, 19, 8, 15, 10, 18, 14],
-                    borderRadius: 6,
-                    barThickness: 18,
-                    backgroundColor: '#3b82f6',
-                    hoverBackgroundColor: '#60a5fa',
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: {
-                        display: false
+                    updateValue(e, item) {
+                        let raw = e.target.value.replace(/\D/g, '');
+                        item.value = parseInt(raw || 0);
                     },
-                    tooltip: {
-                        enabled: false
-                    }
-                },
-                scales: {
-                    x: {
-                        display: false,
-                        grid: {
-                            display: false
-                        }
+
+                    totalAssets() {
+                        return this.items.reduce((sum, item) => sum + (item.value || 0), 0);
                     },
-                    y: {
-                        display: false,
-                        grid: {
-                            display: false
-                        }
+
+                    format(number) {
+                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(number || 0);
+                    },
+
+                    formatNumber(number) {
+                        return new Intl.NumberFormat('id-ID').format(number || 0);
                     }
                 }
             }
-        });
-    </script>
-@endsection
+
+            const ctxSantuy = document.getElementById('salesChartSantuy');
+
+            new Chart(ctxSantuy, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        data: [12, 19, 8, 15, 10, 18, 14],
+                        borderRadius: 6,
+                        barThickness: 18,
+                        backgroundColor: '#3b82f6',
+                        hoverBackgroundColor: '#60a5fa',
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    @endsection
