@@ -131,19 +131,22 @@
                         </div>
                     </button>
 
-                    <!-- SETTINGS -->
-                    <button @click="select('settings', $event)" class="relative z-10 flex justify-center w-full">
+                    <!-- ASSET CALCULATOR -->
+                    <button @click="select('calculator', $event)" class="relative z-10 flex justify-center w-full">
 
                         <div class="flex flex-col items-center text-xs px-4 py-1"
-                            :class="page === 'settings' ? 'text-white' : 'text-white/40'">
+                            :class="page === 'calculator' ? 'text-white' : 'text-white/40'">
 
+                            <!-- ICON CALCULATOR -->
                             <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M10.325 4.317a1 1 0 011.35-.936l1.7.98a1 1 0 001.1 0l1.7-.98a1 1 0 011.35.936l.325 1.89a1 1 0 00.757.77l1.89.325a1 1 0 01.936 1.35l-.98 1.7a1 1 0 000 1.1l.98 1.7a1 1 0 01-.936 1.35l-1.89.325a1 1 0 00-.77.757l-.325 1.89a1 1 0 01-1.35.936l-1.7-.98a1 1 0 00-1.1 0l-1.7.98a1 1 0 01-1.35-.936l-.325-1.89a1 1 0 00-.757-.77l-1.89-.325a1 1 0 01-.936-1.35l.98-1.7a1 1 0 000-1.1l-.98-1.7a1 1 0 01.936-1.35l1.89-.325a1 1 0 00.77-.757l.325-1.89z" />
+                                    d="M9 2h6a2 2 0 012 2v16a2 2 0 01-2 2H9a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 7h6M9 11h2m2 0h2M9 15h2m2 0h2" />
                             </svg>
 
-                            Menu
+                            Asset Calc
                         </div>
                     </button>
 

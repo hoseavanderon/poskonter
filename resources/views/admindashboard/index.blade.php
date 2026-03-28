@@ -981,10 +981,374 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+                <!-- 💰 PROFIT OVERVIEW -->
+                <div x-data="{
+                    tab: 'month',
+                    data: {
+                        year: [40, 60, 55, 70, 65, 80, 75, 90, 85, 95, 88, 100],
+                        month: [20, 35, 50, 45],
+                        week: [10, 15, 20, 18, 25, 30, 28],
+                        today: [5, 10, 15, 12, 18, 22]
+                    },
+                    profit: {
+                        year: 'Rp 2.400.000.000',
+                        month: 'Rp 182.400.000',
+                        week: 'Rp 48.200.000',
+                        today: 'Rp 8.500.000'
+                    }
+                }" class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-5">
+
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center">
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M3 17l6-6 4 4 8-8" />
+                            </svg>
+                            <p class="text-sm font-medium text-white/90">Profit Overview</p>
+                        </div>
+
+                        <!-- TABS -->
+                        <div class="bg-white/5 rounded-xl p-1 flex text-xs">
+                            <button @click="tab='year'"
+                                :class="tab === 'year' ? 'bg-white/10 text-white' : 'text-white/40'"
+                                class="px-3 py-1 rounded-lg transition">Year</button>
+                            <button @click="tab='month'"
+                                :class="tab === 'month' ? 'bg-white/10 text-white' : 'text-white/40'"
+                                class="px-3 py-1 rounded-lg transition">Month</button>
+                            <button @click="tab='week'"
+                                :class="tab === 'week' ? 'bg-white/10 text-white' : 'text-white/40'"
+                                class="px-3 py-1 rounded-lg transition">Week</button>
+                            <button @click="tab='today'"
+                                :class="tab === 'today' ? 'bg-white/10 text-white' : 'text-white/40'"
+                                class="px-3 py-1 rounded-lg transition">Today</button>
+                        </div>
+
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="flex justify-between items-end">
+
+                        <!-- LEFT -->
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white" x-text="profit[tab]"></h2>
+
+                            <div class="mt-4 text-sm space-y-1">
+                                <p class="text-white/40">
+                                    Transactions
+                                    <span class="text-white ml-2">2.340</span>
+                                </p>
+                                <p class="text-white/40">
+                                    Avg / Txn
+                                    <span class="text-white ml-2">Rp 77.900</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- CHART -->
+                        <div class="flex items-end gap-2 h-20">
+                            <template x-for="(val,i) in data[tab]" :key="i">
+                                <div class="w-3 rounded bg-white/30 hover:bg-white/60 transition-all duration-500"
+                                    :style="'height:' + val + 'px'">
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- 🧠 SMART INSIGHTS -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+
+                    <!-- HEADER -->
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12c.5.5 1 1.5 1 2h6c0-.5.5-1.5 1-2a7 7 0 00-4-12z" />
+                        </svg>
+                        <p class="text-sm font-medium text-white/90">Smart Insights</p>
+                    </div>
+
+                    <!-- LIST -->
+                    <div class="space-y-3 text-sm">
+
+                        <!-- ITEM -->
+                        <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                            <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="text-white">Accessories sales increased <span class="font-semibold">+32%</span>
+                                </p>
+                                <p class="text-white/40 text-xs">vs last week</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                            <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+                                ↓
+                            </div>
+                            <div>
+                                <p class="text-white">Sales dropped <span class="font-semibold">-12%</span></p>
+                                <p class="text-white/40 text-xs">vs yesterday</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                            <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+                                •
+                            </div>
+                            <div>
+                                <p class="text-white">Top category this month</p>
+                                <p class="text-white/40 text-xs">Smartphone</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                            <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="text-white">Average transaction value up <span class="font-semibold">+18%</span>
+                                </p>
+                                <p class="text-white/40 text-xs">vs last month</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                            <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+                                ↑
+                            </div>
+                            <div>
+                                <p class="text-white">New customers acquired <span class="font-semibold">+8%</span></p>
+                                <p class="text-white/40 text-xs">vs last week</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 🏷️ PRODUCTS BY CATEGORY -->
+            <div x-data="{
+                data: [
+                    { name: 'Smartphone', value: 320, opacity: 0.3 },
+                    { name: 'Accessories', value: 580, opacity: 0.45 },
+                    { name: 'Tablet', value: 120, opacity: 0.6 },
+                    { name: 'Laptop', value: 85, opacity: 0.75 },
+                    { name: 'Audio', value: 210, opacity: 0.9 },
+                ],
+                total: 0,
+                radius: 70,
+                circumference: 0,
+            
+                init() {
+                    this.total = this.data.reduce((a, b) => a + b.value, 0)
+                    this.circumference = 2 * Math.PI * this.radius
+                },
+            
+                getDash(val) {
+                    return (val / this.total) * this.circumference
+                },
+            
+                getOffset(index) {
+                    let sum = 0
+                    for (let i = 0; i < index; i++) {
+                        sum += this.data[i].value
+                    }
+                    return (sum / this.total) * this.circumference
+                }
+            }" x-init="init()"
+                class="bg-white/5 border border-white/10 rounded-2xl p-5 mt-4">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M11 3a9 9 0 100 18V3z" />
+                        </svg>
+                        <p class="text-sm font-medium text-white/90">
+                            Products by Category
+                        </p>
+                    </div>
+
+                    <span class="text-xs text-white/40">
+                        Total: <span class="text-white font-medium" x-text="total"></span>
+                    </span>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="flex flex-col md:flex-row items-center gap-6">
+
+                    <!-- DONUT -->
+                    <div class="relative w-44 h-44">
+
+                        <svg viewBox="0 0 160 160" class="rotate-[-90deg]">
+
+                            <!-- BASE -->
+                            <circle cx="80" cy="80" r="70" stroke="rgba(255,255,255,0.08)"
+                                stroke-width="14" fill="none" />
+
+                            <!-- SEGMENTS -->
+                            <template x-for="(item, i) in data" :key="i">
+                                <circle cx="80" cy="80" r="70" fill="none"
+                                    :stroke="'rgba(255,255,255,' + (0.25 + i * 0.12) + ')'" stroke-width="14"
+                                    stroke-linecap="round" :stroke-dasharray="getDash(item.value) + ' ' + circumference"
+                                    :stroke-dashoffset="-getOffset(i)"
+                                    class="opacity-90 hover:opacity-100 transition-all duration-700"
+                                    x-init="$nextTick(() => {
+                                        $el.style.strokeDasharray = getDash(item.value) + ' ' + circumference
+                                    })"></circle>
+                            </template>
+
+                        </svg>
+
+                        <!-- CENTER -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-2xl font-semibold text-white" x-text="total"></span>
+                            <span class="text-xs text-white/40">Products</span>
+                        </div>
+
+                    </div>
+
+                    <!-- LEGEND -->
+                    <div class="flex-1 space-y-3 w-full">
+
+                        <template x-for="(item, i) in data" :key="i">
+                            <div class="flex justify-between items-center text-sm">
+
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full"
+                                        :style="'background: rgba(255,255,255,' + (0.25 + i * 0.12) + ')'"></span>
+
+                                    <span class="text-white/70" x-text="item.name"></span>
+                                </div>
+
+                                <span class="text-white font-medium tabular-nums" x-text="item.value"></span>
+
+                            </div>
+                        </template>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 🕒 RECENT ACTIVITY -->
+            <div x-data="{
+                limit: 6,
+                activities: [
+                    { type: 'sale', text: 'Sold iPhone 15 Pro Max', time: '2 mins ago' },
+                    { type: 'restock', text: 'Restocked Samsung Galaxy A54 (×10)', time: '15 mins ago' },
+                    { type: 'price', text: 'Price updated: AirPods Pro 2', time: '32 mins ago' },
+                    { type: 'sale', text: 'Sold Anker PowerBank 20K', time: '1 hour ago' },
+                    { type: 'return', text: 'Returned: Screen Protector iPhone 14', time: '1.5 hours ago' },
+                    { type: 'sale', text: 'Sold Samsung Charger 25W (×3)', time: '2 hours ago' },
+                    { type: 'restock', text: 'Restocked Lightning Cable (×50)', time: '3 hours ago' },
+                    { type: 'new', text: 'New product added: Xiaomi Buds 5', time: '4 hours ago' },
+                ],
+            
+                icon(type) {
+                    switch (type) {
+                        case 'sale':
+                            return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+                <circle cx="7" cy="21" r="1" />
+                <circle cx="17" cy="21" r="1" />
+                </svg>`
+
+                case 'restock':
+                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    viewBox="0 0 24 24">
+                    <path d="M3 7l9-4 9 4-9 4-9-4z" />
+                    <path d="M3 17l9 4 9-4" />
+                    <path d="M3 12l9 4 9-4" />
+                </svg>`
+
+                case 'price':
+                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    viewBox="0 0 24 24">
+                    <path d="M7 7h5l5 5-5 5H7z" />
+                </svg>`
+
+                case 'return':
+                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    viewBox="0 0 24 24">
+                    <path d="M9 14l-4-4 4-4" />
+                    <path d="M20 20a8 8 0 00-8-8H5" />
+                </svg>`
+
+                case 'new':
+                return `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" />
+                </svg>`
+
+                default:
+                return `<span class="w-2 h-2 bg-white/40 rounded-full"></span>`
+                }
+                }
+                }" class="bg-white/5 border border-white/10 rounded-2xl p-5 mt-4">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-5">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4l3 3M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                        </svg>
+                        <p class="text-sm font-medium text-white/90">Recent Activity</p>
+                    </div>
+
+                    <span class="text-xs text-white/40">
+                        <span x-text="activities.length"></span> items
+                    </span>
+                </div>
+
+                <!-- LIST -->
+                <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+
+                    <template x-for="(item, i) in activities.slice(0, limit)" :key="i">
+                        <div class="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 transition">
+
+                            <!-- LEFT -->
+                            <div class="flex items-center gap-3">
+
+                                <!-- ICON -->
+                                <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-sm">
+                                    <span x-text="icon(item.type)"></span>
+                                </div>
+
+                                <!-- TEXT -->
+                                <p class="text-sm text-white/80" x-text="item.text"></p>
+
+                            </div>
+
+                            <!-- TIME -->
+                            <span class="text-xs text-white/40" x-text="item.time"></span>
+
+                        </div>
+                    </template>
+
+                </div>
+
+            </div>
         </div>
 
         <!-- ⚙️ SETTINGS -->
-        <div x-show="page === 'settings'" x-transition:enter="transition ease-out duration-200"
+        <div x-show="page === 'calculator'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2" class="absolute inset-0">
