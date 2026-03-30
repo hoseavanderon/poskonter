@@ -256,6 +256,22 @@
                 /* ❗ penting */
             }
 
+            .container {
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 420px;
+                /* 🔥 tadinya 400 → naik dikit */
+                margin: 40px auto;
+                /* 🔥 kasih jarak atas bawah */
+                border-radius: 20px;
+            }
+
         }
     </style>
 </head>
