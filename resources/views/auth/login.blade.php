@@ -6,76 +6,240 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <style>
+        :root {
+            --bg: #0b1220;
+            --card: #1e293b;
+            --text: #e5e7eb;
+            /* lebih terang */
+            --muted: #94a3b8;
+            /* abu secondary */
+            --input: #334155;
+            --primary: #3b82f6;
+        }
+
+        body.light {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --input: #e2e8f0;
+            --primary: #3b82f6;
+        }
+
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* container */
+        .container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* card */
+        .card {
+            width: 900px;
+            height: 520px;
+            display: flex;
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--card);
+        }
+
+        /* LEFT */
+        .left {
+            width: 50%;
+            background: linear-gradient(135deg, #0b3c88, #0a1f44);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .left-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .left-content img {
+            width: 70%;
+        }
+
+        .left-footer {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .left-footer h2 {
+            margin: 0;
+        }
+
+        .left-footer p {
+            opacity: 0.7;
+        }
+
+        /* RIGHT */
+        .right {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header h2 {
+            margin-bottom: 10px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #f8fafc;
+            /* terang banget */
+        }
+
+        .login-header p {
+            color: var(--muted);
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .login-header span {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* FORM */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #cbd5f5;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: var(--input);
+            color: #f1f5f9;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* password */
+        .password-box {
+            display: flex;
+            align-items: center;
+            background: var(--input);
+            border-radius: 10px;
+        }
+
+        .password-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+        }
+
+        .password-box span {
+            padding: 0 10px;
+            cursor: pointer;
+        }
+
+        /* options */
+        .options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .options a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .options a:hover {
+            text-decoration: underline;
+        }
+
+        /* button */
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </button>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h2>Pagi Yang Jaga Pagi</h2>
-                <p>Semangat Sebelum Mulai Jualan Bang !!!</p>
-                <p>CEK DULU PENJUALAN & PIS BRI PAS ATAU NGGA !!!</p>
+    <div class="container">
+        <div class="card">
+
+            <!-- LEFT -->
+            <div class="left">
+                <div class="left-content">
+                    <img src="{{ asset('img/tri.jpeg') }}" alt="illustration">
+                </div>
+
+                <div class="left-footer">
+                    <h2>Ciaelah Jaga Sendiri</h2>
+                    <p>Semangat Bos Tanggal Tua !!!</p>
+                </div>
             </div>
 
-            <form id="loginForm" class="login-form" method="POST" action="{{ route('login') }}">
-                @csrf
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email" type="email" name="email" required autofocus
-                        placeholder="Enter your email">
-                    <span class="error-message" id="email-error"></span>
+            <!-- RIGHT -->
+            <div class="right">
+                <div class="login-header">
+                    <h2>Login</h2>
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
-                    <div class="password-wrapper">
-                        <input id="password" type="password" name="password" required
-                            placeholder="Enter your password">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Enter your email">
 
-                        <button type="button" class="toggle-password" id="togglePassword">
-                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path id="eyePath" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                            </svg>
-                        </button>
+                    <label>Password</label>
+                    <div class="password-box">
+                        <input type="password" name="password" placeholder="Enter your password">
+                        <span>👁️</span>
                     </div>
 
-                    <span class="error-message" id="password-error"></span>
-                </div>
+                    <div class="options">
+                        <label><input type="checkbox"> Remember me</label>
+                        <a href="#">Forgot password?</a>
+                    </div>
 
-                <div class="form-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="remember" id="remember_me">
-                        <span>Remember me</span>
-                    </label>
-                    <a href="#" class="forgot-link">Forgot password?</a>
-                </div>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
 
-                <button type="submit" class="submit-btn">
-                    <span class="btn-text">Login</span>
-                    <span class="btn-loader"></span>
-                </button>
-            </form>
         </div>
     </div>
 
