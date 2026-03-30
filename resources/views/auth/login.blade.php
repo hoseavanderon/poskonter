@@ -247,6 +247,15 @@
                 align-items: flex-start;
             }
 
+            .container {
+                height: auto;
+                /* ❌ jangan full layar */
+                min-height: 100vh;
+                padding: 20px;
+                align-items: flex-start;
+                /* ❗ penting */
+            }
+
         }
     </style>
 </head>
