@@ -215,10 +215,10 @@
                 display: none;
             }
 
-            /* ✅ FULL WIDTH FORM */
             .right {
-                width: 100%;
-                padding: 24px;
+                padding: 22px 20px;
+                /* 🔥 lebih padat */
+                justify-content: center;
             }
 
             /* biar lebih enak di mobile */
@@ -227,18 +227,22 @@
                 text-align: center;
             }
 
+            label {
+                margin-top: 12px;
+                margin-bottom: 4px;
+            }
+
             form {
-                margin-top: 10px;
+                gap: 4px;
+            }
+
+            button {
+                margin-top: 16px;
             }
 
             input {
                 padding: 14px;
                 font-size: 14px;
-            }
-
-            button {
-                padding: 14px;
-                font-size: 15px;
             }
 
             .options {
@@ -257,19 +261,22 @@
             }
 
             .container {
-                padding: 20px;
+                height: 100dvh;
+                /* 🔥 pakai dynamic viewport (anti scroll iOS juga) */
+                padding: 16px;
                 display: flex;
                 justify-content: center;
-                align-items: flex-start;
+                align-items: center;
+                /* 🔥 center beneran */
             }
 
             .card {
                 width: 100%;
-                max-width: 420px;
-                /* 🔥 tadinya 400 → naik dikit */
-                margin: 40px auto;
-                /* 🔥 kasih jarak atas bawah */
-                border-radius: 20px;
+                max-width: 380px;
+                /* 🔥 sedikit lebih compact */
+                margin: 0;
+                /* ❌ HAPUS margin 40px */
+                border-radius: 18px;
             }
 
         }
