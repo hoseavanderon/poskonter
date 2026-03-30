@@ -194,6 +194,60 @@
             right: 20px;
             cursor: pointer;
         }
+
+        /* ================= MOBILE ================= */
+        @media (max-width: 768px) {
+
+            .container {
+                padding: 20px;
+                align-items: stretch;
+            }
+
+            .card {
+                flex-direction: column;
+                width: 100%;
+                height: auto;
+                border-radius: 16px;
+            }
+
+            /* ❌ HILANGKAN PANEL KIRI */
+            .left {
+                display: none;
+            }
+
+            /* ✅ FULL WIDTH FORM */
+            .right {
+                width: 100%;
+                padding: 24px;
+            }
+
+            /* biar lebih enak di mobile */
+            .login-header h2 {
+                font-size: 22px;
+                text-align: center;
+            }
+
+            form {
+                margin-top: 10px;
+            }
+
+            input {
+                padding: 14px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .options {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+        }
     </style>
 </head>
 
