@@ -45,6 +45,64 @@
             -webkit-appearance: none;
             margin: 0;
         }
+
+        .category-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* ✅ center horizontal */
+            justify-content: center;
+            /* ✅ center vertical */
+            text-align: center;
+
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+
+            transition: all 0.3s ease;
+        }
+
+        .category-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            background: #334155;
+        }
+
+        .icon {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 8px;
+            stroke: #94a3b8;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .title {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* animasi lebih smooth */
+        @keyframes fadeUpScale {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
     </style>
     <div class="relative min-h-[300px] overflow-x-hidden">
 
@@ -805,6 +863,164 @@
                     <h1 class="text-3xl font-semibold text-white mt-2 tracking-tight">
                         Rp 2.456.800.000
                     </h1>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+
+                <!-- FULL CARD -->
+                <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow w-full">
+
+                    <h2 class="text-sm text-slate-400 mb-6">Product Categories</h2>
+
+                    <!-- GRID CATEGORY -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+
+                        <!-- Mobile Phones -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M7 4h10v16H7z" />
+                            </svg>
+                            <span class="title">Mobile Phones</span>
+                            <span class="value">128 pcs</span>
+                        </div>
+
+                        <!-- SIM Cards -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6 2h9l5 5v15H6z" />
+                            </svg>
+                            <span class="title">SIM Cards</span>
+                            <span class="value">342 pcs</span>
+                        </div>
+
+                        <!-- Vouchers -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M4 7h16v10H4z" />
+                            </svg>
+                            <span class="title">Vouchers</span>
+                            <span class="value">580 pcs</span>
+                        </div>
+
+                        <!-- Cables -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6 12h12M12 6v12" />
+                            </svg>
+                            <span class="title">Cables</span>
+                            <span class="value">215 pcs</span>
+                        </div>
+
+                        <!-- Earphones -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6 18v-6a6 6 0 0112 0v6" />
+                            </svg>
+                            <span class="title">Earphones</span>
+                            <span class="value">96 pcs</span>
+                        </div>
+
+                        <!-- Power Bank -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M7 7h10v10H7zM17 10h2v4h-2z" />
+                            </svg>
+                            <span class="title">Power Bank</span>
+                            <span class="value">64 pcs</span>
+                        </div>
+
+                        <!-- Screen Guard -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M5 4h14v16H5z" />
+                            </svg>
+                            <span class="title">Screen Guard</span>
+                            <span class="value">410 pcs</span>
+                        </div>
+
+                        <!-- Phone Case -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M8 2h8v20H8z" />
+                            </svg>
+                            <span class="title">Phone Case</span>
+                            <span class="value">375 pcs</span>
+                        </div>
+
+                        <!-- Bluetooth -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6 8l6 4-6 4V8zm6-4v16l6-8-6-8z" />
+                            </svg>
+                            <span class="title">Bluetooth</span>
+                            <span class="value">52 pcs</span>
+                        </div>
+
+                        <!-- Charger -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M9 2v6h6V2M7 8h10v14H7z" />
+                            </svg>
+                            <span class="title">Charger</span>
+                            <span class="value">188 pcs</span>
+                        </div>
+
+                        <!-- Memory Card -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6 2h8l4 4v16H6z" />
+                            </svg>
+                            <span class="title">Memory Card</span>
+                            <span class="value">230 pcs</span>
+                        </div>
+
+                        <!-- Smartwatch -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M8 2h8l1 4H7l1-4zm0 16h8l1 4H7l1-4zM7 6h10v12H7z" />
+                            </svg>
+                            <span class="title">Smartwatch</span>
+                            <span class="value">38 pcs</span>
+                        </div>
+
+                        <!-- Speaker -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M5 8h6l5-4v16l-5-4H5z" />
+                            </svg>
+                            <span class="title">Speaker</span>
+                            <span class="value">72 pcs</span>
+                        </div>
+
+                        <!-- Tablet -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M4 3h16v18H4z" />
+                            </svg>
+                            <span class="title">Tablet</span>
+                            <span class="value">45 pcs</span>
+                        </div>
+
+                        <!-- Adapter -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M8 7h8v10H8zM10 2v5M14 2v5" />
+                            </svg>
+                            <span class="title">Adapter</span>
+                            <span class="value">33 pcs</span>
+                        </div>
+
+                        <!-- Others -->
+                        <div class="category-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <span class="title">Others</span>
+                            <span class="value">20 pcs</span>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
@@ -1575,6 +1791,15 @@ Assets:
                         }
                     }
                 }
+            });
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const items = document.querySelectorAll('.category-item');
+
+                items.forEach((el, i) => {
+                    el.style.animation = `fadeUpScale 0.5s ease forwards`;
+                    el.style.animationDelay = `${i * 80}ms`; // 👉 ini bikin satu-satu muncul
+                });
             });
         </script>
     @endsection
