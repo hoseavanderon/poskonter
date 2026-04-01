@@ -24,6 +24,73 @@
             <!-- CONTENT -->
             <div class="px-4 md:px-8 lg:px-12 pt-4 pb-24 max-w-7xl mx-auto">
 
+                <!-- TOP RIGHT USER DROPDOWN -->
+                <div class="flex justify-end mb-4" x-data="{ open: false }">
+
+                    <div class="relative">
+
+                        <!-- BUTTON -->
+                        <button @click="open = !open"
+                            class="flex items-center gap-2 bg-white/5 hover:bg-white/10 
+                   border border-white/10 px-3 py-2 rounded-xl transition">
+
+                            <!-- ICON -->
+                            <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" />
+                            </svg>
+
+                            <!-- USER NAME -->
+                            <span class="text-sm text-white/80">
+                                {{ Auth::user()->name ?? 'User' }}
+                            </span>
+
+                            <!-- ARROW -->
+                            <svg class="w-3 h-3 text-white/50" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+
+                        <!-- DROPDOWN -->
+                        <div x-show="open" @click.outside="open = false" x-transition
+                            class="absolute right-0 mt-2 w-48 
+                   bg-[#020617]/95 backdrop-blur-xl 
+                   border border-white/10 
+                   rounded-xl shadow-lg overflow-hidden z-50">
+
+                            <!-- USER INFO -->
+                            <div class="px-4 py-3 text-xs text-white/50 border-b border-white/10">
+                                Logged in as <br>
+                                <span class="text-white text-sm font-medium">
+                                    {{ Auth::user()->email ?? '-' }}
+                                </span>
+                            </div>
+
+                            <!-- LOGOUT -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-3 text-sm text-red-400 
+                           hover:bg-white/5 transition flex items-center gap-2">
+
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+                                    </svg>
+
+                                    Logout
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+
                 <div x-data="tabNav()" x-init="init()" class="mb-6 mt-3">
 
                     <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
