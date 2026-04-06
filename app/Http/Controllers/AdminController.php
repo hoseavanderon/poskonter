@@ -100,7 +100,7 @@ class AdminController extends Controller
             ->whereDate('transactions.created_at', $today)
             ->whereIn('transactions.outlet_id', $outletIds)
             ->whereNull('transactions.deleted_at')
-            ->count();
+            ->sum('detail_transaction.qty');
         +DigitalTransaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts)
