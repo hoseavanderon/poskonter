@@ -20,6 +20,8 @@ class AdminController extends Controller
         $outletIds = Outlet::where('owner_id', $user->id)
             ->pluck('id');
 
+        $outlets = Outlet::where('owner_id', request()->user()->id)->get();
+
         $excludedProducts = [
             112,
             114,
@@ -99,6 +101,8 @@ class AdminController extends Controller
         $todaySales = $fisik + $digital;
 
         $totalTransactions = $totalItems + $totalDigitalTransactions;
+
+        view()->share('outlets', $outlets);
 
         return view('admindashboard.index', [
             'todaySales' => $todaySales,

@@ -95,10 +95,9 @@
 
                     <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
 
-                        <template x-for="tab in tabs" :key="tab">
+                        <template x-for="tab in tabs" :key="tab.key">
                             <button @click="select(tab, $event)" class="relative pb-1"
-                                :class="selected === tab ? 'text-white' : 'text-white/40'"
-                                x-text="tab === 'all' ? 'All' : (tab === 'santuy' ? 'Santuy Cell' : 'Tian Cell')">
+                                :class="selected === tab ? 'text-white' : 'text-white/40'" x-text="tab.name">
                             </button>
                         </template>
 
@@ -226,7 +225,17 @@
     <script>
         function tabNav() {
             return {
-                tabs: ['all', 'santuy', 'tian'],
+                tabs: [{
+                        key: 'all',
+                        name: 'All'
+                    },
+                    @foreach ($outlets as $outlet)
+                        {
+                            key: '{{ $outlet->id }}',
+                            name: '{{ $outlet->name }}'
+                        },
+                    @endforeach
+                ],
                 selected: 'all',
                 width: 0,
                 left: 0,
@@ -241,7 +250,7 @@
                 },
 
                 select(tab, event) {
-                    this.selected = tab
+                    this.selected = tab.key
                     this.setIndicator(event.currentTarget)
                 },
 
