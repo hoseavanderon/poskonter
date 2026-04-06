@@ -79,52 +79,46 @@ class AdminController extends Controller
         ];
 
         // 🧾 fisik
-        $fisik = Transaction::whereNotNull('paid_at')
-            ->whereDate('paid_at', $today)
+        $fisik = Transaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->sum('subtotal');
 
-        // 💳 digital (exclude transfer & tarik)
-        $digital = DigitalTransaction::whereNotNull('paid_at')
-            ->whereDate('paid_at', $today)
+        // 💳 digital
+        $digital = DigitalTransaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts)
             ->sum('subtotal');
 
-        // 🔥 TODAY SALES FINAL
+        // 🔥 TODAY SALES
         $todaySales = $fisik + $digital;
 
-        // 🔥 TOTAL TRANSACTIONS (ikut exclude juga biar konsisten)
+        // 🔥 TOTAL TRANSACTIONS
         $totalTransactions =
-            Transaction::whereNotNull('paid_at')
-            ->whereDate('paid_at', $today)
+            Transaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->count()
             +
-            DigitalTransaction::whereNotNull('paid_at')
-            ->whereDate('paid_at', $today)
+            DigitalTransaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts)
             ->count();
 
+        // 🔥 PER OUTLET
         $outletTransactions = Outlet::where('owner_id', $user->id)
             ->get()
             ->map(function ($outlet) use ($today, $excludedProducts) {
 
                 // 🧾 FISIK
-                $fisikCount = Transaction::whereNotNull('paid_at')
-                    ->whereDate('paid_at', $today)
+                $fisikCount = Transaction::whereDate('created_at', $today)
                     ->where('outlet_id', $outlet->id)
                     ->count();
 
-                $fisikTotal = Transaction::whereNotNull('paid_at')
-                    ->whereDate('paid_at', $today)
+                $fisikTotal = Transaction::whereDate('created_at', $today)
                     ->where('outlet_id', $outlet->id)
                     ->sum('subtotal');
 
                 // 💳 DIGITAL
-                $digitalQuery = DigitalTransaction::whereNotNull('paid_at')
-                    ->whereDate('paid_at', $today)
+                $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
                     ->where('outlet_id', $outlet->id)
                     ->whereNotIn('digital_product_id', $excludedProducts);
 
