@@ -79,7 +79,7 @@ class AdminController extends Controller
         ];
 
         // 🧾 fisik
-        $fisik = DB::table('detail_transactions')
+        $fisik = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transactions.transaction_id')
             ->whereDate('transactions.created_at', $today)
             ->whereIn('transactions.outlet_id', $outletIds)
