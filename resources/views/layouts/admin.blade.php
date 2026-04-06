@@ -64,7 +64,7 @@
                             <div class="px-4 py-3 text-xs text-white/50 border-b border-white/10">
                                 Logged in as <br>
                                 <span class="text-white text-sm font-medium">
-                                    {{ Auth::user()->email ?? '-' }}
+                                    {{ Auth::user()->name ?? '-' }}
                                 </span>
                             </div>
 
