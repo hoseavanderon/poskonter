@@ -19,6 +19,10 @@ class AdminController extends Controller
     public function getData(Request $request)
     {
         $today = now()->toDateString();
+        $year = now()->year;
+        $month = now()->month;
+        $startDate = \Carbon\Carbon::create($year, $month, 1)->startOfDay();
+        $endDate = \Carbon\Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
         $user = $request->user();
 
         $selectedOutlet = $request->get('outlet', 'all');
@@ -104,11 +108,27 @@ class AdminController extends Controller
         $digital = $digitalQuery->sum('subtotal');
         $totalDigitalTransactions = $digitalQuery->count();
 
+        $baseMonthlyQuery = DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereBetween('transactions.created_at', [$startDate, $endDate])
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at');
+
+        $monthlyFisik = (clone $baseMonthlyQuery)->sum('detail_transaction.subtotal');
+
+        $monthlyDigital = DigitalTransaction::whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('outlet_id', $outletIds)
+            ->whereNotIn('digital_product_id', $excludedProducts)
+            ->sum('subtotal');
+
+        $monthlySales = $monthlyFisik + $monthlyDigital;
+
         return response()->json([
             'todaySales' => $fisik + $digital,
             'totalTransactions' => $totalItems + $totalDigitalTransactions,
             'totalItems' => $totalItems,
             'totalDigitalTransactions' => $totalDigitalTransactions,
+            'monthlySales' => $monthlySales,
         ]);
     }
 }

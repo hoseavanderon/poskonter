@@ -241,7 +241,8 @@
                 // 🔥 data dari backend
                 stats: {
                     todaySales: 0,
-                    totalTransactions: 0
+                    totalTransactions: 0,
+                    monthlySales: 0
                 },
 
                 width: 0,
@@ -283,6 +284,7 @@
 
                         this.stats.todaySales = data.todaySales
                         this.stats.totalTransactions = data.totalTransactions
+                        this.stats.monthlySales = data.monthlySales
 
                     } catch (e) {
                         console.error('Fetch error:', e)

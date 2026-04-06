@@ -139,7 +139,7 @@
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Monthly Sales</p>
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 1.648.000.000</p>
+                        <span x-text="'Rp ' + stats.monthlySales.toLocaleString('id-ID')"></span>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Total Profit</p>
