@@ -54,10 +54,28 @@
                         class="p-3 rounded-xl border-none bg-dark-input text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     <label class="mt-4 mb-1 text-sm text-blue-100">Password</label>
-                    <div class="flex items-center bg-dark-input rounded-xl">
+                    <div class="flex items-center bg-dark-input rounded-xl px-3">
                         <input type="password" name="password" id="passwordInput" placeholder="Enter your password"
-                            class="flex-1 p-3 bg-transparent border-none text-slate-100 placeholder-slate-400 text-sm focus:outline-none">
-                        <span class="px-3 cursor-pointer select-none" onclick="togglePassword()">👁️</span>
+                            class="flex-1 py-3 bg-transparent border-none text-slate-100 placeholder-slate-400 text-sm focus:outline-none">
+
+                        <button type="button" onclick="togglePassword()" class="text-slate-400 hover:text-white">
+                            <!-- Eye (default) -->
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5S2.25 12 2.25 12z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+
+                            <!-- Eye Slash (hidden) -->
+                            <svg id="eyeSlashIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.58 10.58A3 3 0 0012 15a3 3 0 002.42-4.42M9.88 5.09A9.77 9.77 0 0112 4.5c6 0 9.75 7.5 9.75 7.5a16.96 16.96 0 01-3.13 4.18M6.53 6.53A16.93 16.93 0 002.25 12s3.75 7.5 9.75 7.5c1.57 0 3-.33 4.28-.9" />
+                            </svg>
+                        </button>
                     </div>
 
                     <div
