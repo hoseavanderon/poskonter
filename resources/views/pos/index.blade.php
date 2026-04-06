@@ -3071,6 +3071,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 // ======== CHECKOUT MANUAL / SERVICE ========
                 async confirmManualCheckout() {
                     try {
+
                         if (!this.manualName || this.manualName.trim() === "") {
                             alert("Nama layanan belum diisi.");
                             return;
@@ -3110,7 +3111,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             },
                             body: JSON.stringify(payload),
                         });
-
+                        this.yooo();
                         const result = await res.json();
 
                         if (res.ok && result.success) {
@@ -3130,8 +3131,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.manualPaid = 0;
                             this.selectedCustomer = '';
                             this.customerSearch = '';
-
-                            this.yooo();
 
                             // 🔥 Toast
                             this.toastMsg = "Transaksi jasa berhasil!";
@@ -3194,6 +3193,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 // ======== CHECKOUT DIGITAL ========
                 async confirmDigitalTransaction() {
                     try {
+                        this.yooo();
                         const payload = {
                             device_id: this.selectedDevice?.id,
                             app_id: this.selectedApp?.id,
@@ -3241,9 +3241,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 dibayar: payload.dibayar,
                                 kembalian: payload.kembalian,
                             };
-                            this.yooo();
-
-                            console.log('🔊 sound triggered');
 
                             // 🔁 Reset semua state setelah transaksi sukses
                             this.step = 1;
