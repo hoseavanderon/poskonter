@@ -95,12 +95,13 @@ class AdminController extends Controller
         $todaySales = $fisik + $digital;
 
         // 🔥 TOTAL TRANSACTIONS
-        $totalTransactions =
-            Transaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->count()
-            +
-            DigitalTransaction::whereDate('created_at', $today)
+        $totalTransactions = DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereDate('transactions.created_at', $today)
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at')
+            ->sum('detail_transaction.qty');
+        +DigitalTransaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts)
             ->count();
