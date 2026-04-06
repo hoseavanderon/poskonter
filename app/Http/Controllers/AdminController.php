@@ -21,19 +21,79 @@ class AdminController extends Controller
         $outletIds = Outlet::where('owner_id', $user->id)
             ->pluck('id');
 
-        // 🔥 TODAY SALES (FILTER PER OUTLET)
-        $todaySales =
-            Transaction::whereNotNull('paid_at')
-            ->whereDate('paid_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->sum('subtotal')
-            +
-            DigitalTransaction::whereNotNull('paid_at')
+        // ❌ digital product yang bukan sales
+        $excludedProducts = [
+            112,
+            114,
+            115,
+            119,
+            123,
+            124,
+            125,
+            127,
+            128,
+            129,
+            251,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            259,
+            113,
+            116,
+            120
+        ];
+
+        // 🧾 fisik
+        $fisik = Transaction::whereNotNull('paid_at')
             ->whereDate('paid_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->sum('subtotal');
 
-        // 🔥 TOTAL TRANSACTIONS
+        // 💳 digital (exclude transfer & tarik)
+        $digital = DigitalTransaction::whereNotNull('paid_at')
+            ->whereDate('paid_at', $today)
+            ->whereIn('outlet_id', $outletIds)
+            ->whereNotIn('digital_product_id', $excludedProducts)
+            ->sum('subtotal');
+
+        // 🔥 TODAY SALES FINAL
+        $todaySales = $fisik + $digital;
+
+        // 🔥 TOTAL TRANSACTIONS (ikut exclude juga biar konsisten)
         $totalTransactions =
             Transaction::whereNotNull('paid_at')
             ->whereDate('paid_at', $today)
@@ -43,6 +103,7 @@ class AdminController extends Controller
             DigitalTransaction::whereNotNull('paid_at')
             ->whereDate('paid_at', $today)
             ->whereIn('outlet_id', $outletIds)
+            ->whereNotIn('digital_product_id', $excludedProducts)
             ->count();
 
         return view('admindashboard.index', [
