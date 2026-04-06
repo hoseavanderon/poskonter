@@ -3241,6 +3241,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 dibayar: payload.dibayar,
                                 kembalian: payload.kembalian,
                             };
+                            this.yooo();
 
                             // 🔁 Reset semua state setelah transaksi sukses
                             this.step = 1;
