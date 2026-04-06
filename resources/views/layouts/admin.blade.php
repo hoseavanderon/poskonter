@@ -96,8 +96,8 @@
                     <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
 
                         <template x-for="tab in tabs" :key="tab.key">
-                            <button @click="select(tab, $event)" class="relative pb-1"
-                                :class="selected === tab ? 'text-white' : 'text-white/40'" x-text="tab.name">
+                            <button class="tab-button relative pb-1" @click="select(tab, $event)"
+                                :class="selected === tab.key ? 'text-white' : 'text-white/40'" x-text="tab.name">
                             </button>
                         </template>
 
@@ -254,16 +254,14 @@
                     this.$nextTick(() => {
                         setTimeout(() => {
 
-                            // 🔥 cari index tab aktif
                             let index = this.tabs.findIndex(t => t.key == this.selected)
 
-                            let buttons = this.$el.querySelectorAll('button')
+                            let buttons = this.$el.querySelectorAll('.tab-button')
 
                             if (buttons[index]) {
                                 this.setIndicator(buttons[index])
                             }
 
-                            // 🔥 load data pertama kali
                             this.loadData(this.selected)
 
                         }, 50)
