@@ -3131,8 +3131,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedCustomer = '';
                             this.customerSearch = '';
 
-                            const sound = new Audio('/sounds/yoooo.mp3');
-                            sound.play();
+                            this.yooo();
 
                             // 🔥 Toast
                             this.toastMsg = "Transaksi jasa berhasil!";
@@ -3257,8 +3256,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedProduct = null;
                             this.selectedCustomer = '';
                             this.customerSearch = '';
-                            const sound = new Audio('/sounds/yoo0o.mp3');
-                            sound.play();
+
                         } else {
                             console.error('%c💥 Server Error:', 'color:#dc2626;font-weight:bold', result.error ||
                                 '(no message)');
@@ -3294,6 +3292,11 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 async confirmDelete(trx) {
                     this.transactionToDelete = trx;
                     this.showDeleteConfirm = true;
+                },
+
+                async yooo() {
+                    const sound = new Audio('/sounds/yooo.mp3');
+                    sound.play();
                 },
 
                 async deleteTransaction(trx) {
