@@ -32,7 +32,7 @@
             <div class="hidden md:flex md:w-1/2 flex-col justify-between"
                 style="background: linear-gradient(135deg, #0b3c88, #0a1f44);">
                 <div class="flex justify-center items-center flex-1 p-6">
-                    <img src="{{ asset('img/tri.jpeg') }}" alt="illustration" class="w-[70%] rounded-lg">
+                    <img src="{{ asset('img/gold.jpg') }}" alt="illustration" class="w-[70%] rounded-lg">
                 </div>
                 <div class="text-center p-5">
                     <h2 class="text-white text-xl font-bold m-0">Ciaelah Jaga Sendiri</h2>
