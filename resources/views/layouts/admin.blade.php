@@ -246,6 +246,7 @@
 
                 width: 0,
                 left: 0,
+                page: 'home',
 
                 // 🚀 INIT
                 init() {
