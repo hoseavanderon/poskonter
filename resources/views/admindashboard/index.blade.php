@@ -113,12 +113,12 @@
                     <p class="font-medium">{{ $outlet['name'] }}</p>
 
                     <p class="text-xs text-gray-400">
-                        Fisik: {{ $outlet['fisik_count'] }}
+                        Fisik: {{ $outlet['fisik_count'] }} item
                         (Rp {{ number_format($outlet['fisik_total'], 0, ',', '.') }})
                     </p>
 
                     <p class="text-xs text-gray-400">
-                        Digital: {{ $outlet['digital_count'] }}
+                        Digital: {{ $outlet['digital_count'] }} trx
                         (Rp {{ number_format($outlet['digital_total'], 0, ',', '.') }})
                     </p>
                 </div>
@@ -127,8 +127,9 @@
                     <p class="font-semibold">
                         Rp {{ number_format($outlet['total_amount'], 0, ',', '.') }}
                     </p>
+
                     <p class="text-xs text-gray-400">
-                        {{ $outlet['total_count'] }} transaksi
+                        {{ $outlet['fisik_count'] }} item • {{ $outlet['digital_count'] }} trx
                     </p>
                 </div>
 

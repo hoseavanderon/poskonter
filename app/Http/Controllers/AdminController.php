@@ -78,55 +78,70 @@ class AdminController extends Controller
             120
         ];
 
-        // 🧾 fisik
+        // =========================
+        // 🧾 FISIK (SOURCE OF TRUTH)
+        // =========================
         $fisik = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->whereDate('transactions.created_at', $today)
             ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at')
             ->sum('detail_transaction.subtotal');
 
-        // 💳 digital
-        $digital = DigitalTransaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->whereNotIn('digital_product_id', $excludedProducts)
-            ->sum('subtotal');
-
-        // 🔥 TODAY SALES
-        $todaySales = $fisik + $digital;
-
-        // 🔥 TOTAL TRANSACTIONS
-        $totalTransactions = DB::table('detail_transaction')
+        // total item terjual (REAL)
+        $totalItems = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->whereDate('transactions.created_at', $today)
             ->whereIn('transactions.outlet_id', $outletIds)
             ->whereNull('transactions.deleted_at')
             ->sum('detail_transaction.qty');
-        +DigitalTransaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->whereNotIn('digital_product_id', $excludedProducts)
-            ->count();
 
-        // 🔥 PER OUTLET
+        // =========================
+        // 💳 DIGITAL
+        // =========================
+        $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
+            ->whereIn('outlet_id', $outletIds)
+            ->whereNotIn('digital_product_id', $excludedProducts);
+
+        $digital = $digitalQuery->sum('subtotal');
+        $totalDigitalTransactions = $digitalQuery->count();
+
+        // =========================
+        // 🔥 TODAY SALES
+        // =========================
+        $todaySales = $fisik + $digital;
+
+        // =========================
+        // 🔥 TOTAL TRANSAKSI
+        // =========================
+        // fisik = item
+        // digital = transaksi
+        $totalTransactions = $totalItems + $totalDigitalTransactions;
+
+        // =========================
+        // 🏪 PER OUTLET
+        // =========================
         $outletTransactions = Outlet::where('owner_id', $user->id)
             ->get()
             ->map(function ($outlet) use ($today, $excludedProducts) {
 
-                // 🧾 FISIK
-                $fisikCount = Transaction::whereDate('created_at', $today)
-                    ->where('outlet_id', $outlet->id)
-                    ->count();
+                // 🧾 FISIK (pakai detail_transaction)
+                $fisikQuery = DB::table('detail_transaction')
+                    ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+                    ->whereDate('transactions.created_at', $today)
+                    ->where('transactions.outlet_id', $outlet->id)
+                    ->whereNull('transactions.deleted_at');
 
-                $fisikTotal = Transaction::whereDate('created_at', $today)
-                    ->where('outlet_id', $outlet->id)
-                    ->sum('subtotal');
+                $fisikTotal = $fisikQuery->sum('detail_transaction.subtotal');
+                $fisikCount = $fisikQuery->sum('detail_transaction.qty');
 
                 // 💳 DIGITAL
                 $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
                     ->where('outlet_id', $outlet->id)
                     ->whereNotIn('digital_product_id', $excludedProducts);
 
-                $digitalCount = $digitalQuery->count();
                 $digitalTotal = $digitalQuery->sum('subtotal');
+                $digitalCount = $digitalQuery->count();
 
                 return [
                     'name' => $outlet->name,
@@ -145,6 +160,8 @@ class AdminController extends Controller
         return view('admindashboard.index', [
             'todaySales' => $todaySales,
             'totalTransactions' => $totalTransactions,
+            'totalItems' => $totalItems,
+            'totalDigitalTransactions' => $totalDigitalTransactions,
             'outletTransactions' => $outletTransactions,
         ]);
     }
