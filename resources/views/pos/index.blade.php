@@ -3243,6 +3243,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             };
                             this.yooo();
 
+                            console.log('🔊 sound triggered');
+
                             // 🔁 Reset semua state setelah transaksi sukses
                             this.step = 1;
                             this.payment = {
