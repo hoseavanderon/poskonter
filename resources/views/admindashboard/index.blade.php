@@ -128,11 +128,15 @@
                 <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Today's Sales</p>
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 84.000.000</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">
+                            Rp {{ number_format($todaySales, 0, ',', '.') }}
+                        </p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Transactions</p>
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl">270</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">
+                            {{ $totalTransactions }}
+                        </p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Monthly Sales</p>
