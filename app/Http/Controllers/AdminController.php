@@ -13,20 +13,24 @@ class AdminController extends Controller
 {
     public function index()
     {
+        return view('admindashboard.index');
+    }
+
+    public function getData(Request $request)
+    {
         $today = now()->toDateString();
+        $user = $request->user();
 
-        $user = Auth::user();
+        $selectedOutlet = $request->get('outlet', 'all');
 
-        $outlets = Outlet::where('owner_id', request()->user()->id)->get();
-
-        $selectedOutlet = request()->get('outlet', 'all');
-
+        // 🔥 ambil outlet
         if ($selectedOutlet === 'all') {
             $outletIds = Outlet::where('owner_id', $user->id)->pluck('id');
         } else {
             $outletIds = [$selectedOutlet];
         }
 
+        // 🔥 samakan dengan index()
         $excludedProducts = [
             112,
             114,
@@ -82,20 +86,17 @@ class AdminController extends Controller
             120
         ];
 
-        $fisik = DB::table('detail_transaction')
+        // 🔥 FISIK
+        $baseQuery = DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
             ->whereDate('transactions.created_at', $today)
             ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at')
-            ->sum('detail_transaction.subtotal');
+            ->whereNull('transactions.deleted_at');
 
-        $totalItems = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-            ->whereDate('transactions.created_at', $today)
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at')
-            ->sum('detail_transaction.qty');
+        $fisik = (clone $baseQuery)->sum('detail_transaction.subtotal');
+        $totalItems = (clone $baseQuery)->sum('detail_transaction.qty');
 
+        // 🔥 DIGITAL (SAMA PERSIS DENGAN INDEX)
         $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts);
@@ -103,56 +104,11 @@ class AdminController extends Controller
         $digital = $digitalQuery->sum('subtotal');
         $totalDigitalTransactions = $digitalQuery->count();
 
-        $todaySales = $fisik + $digital;
-
-        $totalTransactions = $totalItems + $totalDigitalTransactions;
-
-        view()->share('outlets', $outlets);
-
-        return view('admindashboard.index', [
-            'todaySales' => $todaySales,
-            'totalTransactions' => $totalTransactions,
-            'totalItems' => $totalItems,
-            'totalDigitalTransactions' => $totalDigitalTransactions,
-        ]);
-    }
-
-    public function getData(Request $request)
-    {
-        $today = now()->toDateString();
-        $user = $request->user();
-
-        $selectedOutlet = $request->get('outlet', 'all');
-
-        if ($selectedOutlet === 'all') {
-            $outletIds = Outlet::where('owner_id', $user->id)->pluck('id');
-        } else {
-            $outletIds = [$selectedOutlet];
-        }
-
-        $fisik = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-            ->whereDate('transactions.created_at', $today)
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at')
-            ->sum('detail_transaction.subtotal');
-
-        $totalItems = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-            ->whereDate('transactions.created_at', $today)
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at')
-            ->sum('detail_transaction.qty');
-
-        $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds);
-
-        $digital = $digitalQuery->sum('subtotal');
-        $totalDigitalTransactions = $digitalQuery->count();
-
         return response()->json([
             'todaySales' => $fisik + $digital,
             'totalTransactions' => $totalItems + $totalDigitalTransactions,
+            'totalItems' => $totalItems,
+            'totalDigitalTransactions' => $totalDigitalTransactions,
         ]);
     }
 }
