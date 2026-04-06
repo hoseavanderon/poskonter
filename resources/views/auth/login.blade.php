@@ -35,8 +35,8 @@
                     <img src="{{ asset('img/gold.jpg') }}" alt="illustration" class="w-[70%] rounded-lg">
                 </div>
                 <div class="text-center p-5">
-                    <h2 class="text-white text-xl font-bold m-0">Ciaelah Jaga Sendiri</h2>
-                    <p class="text-white/70 text-sm mt-1">Semangat Bos Tanggal Tua !!!</p>
+                    <h2 class="text-white text-xl font-bold m-0">Ayok Gali Emas</h2>
+                    <p class="text-white/70 text-sm mt-1">Semangat Tanggal Muda !!!</p>
                 </div>
             </div>
 
