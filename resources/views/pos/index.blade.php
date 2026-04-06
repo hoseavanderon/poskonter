@@ -3131,6 +3131,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedCustomer = '';
                             this.customerSearch = '';
 
+                            const sound = new Audio('/sounds/success.mp3');
+                            sound.play();
+
                             // 🔥 Toast
                             this.toastMsg = "Transaksi jasa berhasil!";
                             this.showToast = true;
@@ -3254,6 +3257,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedProduct = null;
                             this.selectedCustomer = '';
                             this.customerSearch = '';
+                            const sound = new Audio('/sounds/success.mp3');
+                            sound.play();
                         } else {
                             console.error('%c💥 Server Error:', 'color:#dc2626;font-weight:bold', result.error ||
                                 '(no message)');
