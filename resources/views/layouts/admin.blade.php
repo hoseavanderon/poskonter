@@ -236,29 +236,63 @@
                         },
                     @endforeach
                 ],
-                selected: new URLSearchParams(window.location.search).get('outlet') || 'all',
+
+                // 🔥 default selected (no URL lagi, pure state)
+                selected: 'all',
+
+                // 🔥 data dari backend
+                stats: {
+                    todaySales: 0,
+                    totalTransactions: 0
+                },
+
                 width: 0,
                 left: 0,
 
+                // 🚀 INIT
                 init() {
                     this.$nextTick(() => {
                         setTimeout(() => {
-                            let el = this.$el.querySelectorAll('button')[0]
-                            this.setIndicator(el)
+
+                            // 🔥 cari index tab aktif
+                            let index = this.tabs.findIndex(t => t.key == this.selected)
+
+                            let buttons = this.$el.querySelectorAll('button')
+
+                            if (buttons[index]) {
+                                this.setIndicator(buttons[index])
+                            }
+
+                            // 🔥 load data pertama kali
+                            this.loadData(this.selected)
+
                         }, 50)
                     })
                 },
 
-                select(tab, event) {
+                // 🚀 CLICK TAB
+                async select(tab, event) {
                     this.selected = tab.key
                     this.setIndicator(event.currentTarget)
 
-                    const url = new URL(window.location.href)
-                    url.searchParams.set('outlet', tab.key)
-
-                    window.location.href = url.toString()
+                    await this.loadData(tab.key)
                 },
 
+                // 🚀 FETCH DATA
+                async loadData(outlet) {
+                    try {
+                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}`)
+                        let data = await res.json()
+
+                        this.stats.todaySales = data.todaySales
+                        this.stats.totalTransactions = data.totalTransactions
+
+                    } catch (e) {
+                        console.error('Fetch error:', e)
+                    }
+                },
+
+                // 🎯 INDICATOR
                 setIndicator(el) {
                     this.width = el.offsetWidth
                     this.left = el.offsetLeft

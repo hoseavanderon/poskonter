@@ -128,13 +128,13 @@
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Today's Sales</p>
                         <p class="font-semibold text-sm md:text-lg lg:text-xl">
-                            Rp {{ number_format($todaySales, 0, ',', '.') }}
+                            <span x-text="'Rp ' + stats.todaySales.toLocaleString('id-ID')"></span>
                         </p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Transactions</p>
                         <p class="font-semibold text-sm md:text-lg lg:text-xl">
-                            {{ $totalTransactions }}
+                            <span x-text="stats.totalTransactions"></span>
                         </p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">

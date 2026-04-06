@@ -116,4 +116,43 @@ class AdminController extends Controller
             'totalDigitalTransactions' => $totalDigitalTransactions,
         ]);
     }
+
+    public function getData(Request $request)
+    {
+        $today = now()->toDateString();
+        $user = $request->user();
+
+        $selectedOutlet = $request->get('outlet', 'all');
+
+        if ($selectedOutlet === 'all') {
+            $outletIds = Outlet::where('owner_id', $user->id)->pluck('id');
+        } else {
+            $outletIds = [$selectedOutlet];
+        }
+
+        $fisik = DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereDate('transactions.created_at', $today)
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at')
+            ->sum('detail_transaction.subtotal');
+
+        $totalItems = DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereDate('transactions.created_at', $today)
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at')
+            ->sum('detail_transaction.qty');
+
+        $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
+            ->whereIn('outlet_id', $outletIds);
+
+        $digital = $digitalQuery->sum('subtotal');
+        $totalDigitalTransactions = $digitalQuery->count();
+
+        return response()->json([
+            'todaySales' => $fisik + $digital,
+            'totalTransactions' => $totalItems + $totalDigitalTransactions,
+        ]);
+    }
 }
