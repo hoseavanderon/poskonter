@@ -16,10 +16,7 @@
 <body class="bg-[#020617] text-white">
 
     <main class="w-full min-h-screen bg-[#020617] relative overflow-hidden md:max-w-none md:mx-0">
-        <div x-data="{
-            page: 'home',
-            selectedOutlet: 'all'
-        }" class="min-h-screen pb-28">
+        <div x-data="tabNav()" x-init="init()" class="min-h-screen pb-28">
 
             <!-- CONTENT -->
             <div class="px-4 md:px-8 lg:px-12 pt-4 pb-24 max-w-7xl mx-auto">
@@ -91,7 +88,7 @@
                     </div>
                 </div>
 
-                <div x-data="tabNav()" x-init="init()" class="mb-6 mt-3">
+                <div class="mb-6 mt-3">
 
                     <div class="flex gap-5 text-sm font-medium relative overflow-x-auto no-scrollbar">
 
@@ -225,6 +222,7 @@
     <script>
         function tabNav() {
             return {
+                data: [],
                 tabs: [{
                         key: 'all',
                         name: 'All'
