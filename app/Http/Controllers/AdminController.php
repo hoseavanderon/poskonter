@@ -7,6 +7,7 @@ use App\Models\Outlet;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -106,9 +107,33 @@ class AdminController extends Controller
             ->whereNotIn('digital_product_id', $excludedProducts)
             ->count();
 
+        $outletTransactions = Outlet::where('owner_id', $user->id)
+            ->get()
+            ->map(function ($outlet) use ($today, $excludedProducts) {
+
+                // 🧾 fisik
+                $fisik = Transaction::whereNotNull('paid_at')
+                    ->whereDate('paid_at', $today)
+                    ->where('outlet_id', $outlet->id)
+                    ->count();
+
+                // 💳 digital (exclude)
+                $digital = DigitalTransaction::whereNotNull('paid_at')
+                    ->whereDate('paid_at', $today)
+                    ->where('outlet_id', $outlet->id)
+                    ->whereNotIn('digital_product_id', $excludedProducts)
+                    ->count();
+
+                return [
+                    'name' => $outlet->name,
+                    'total' => $fisik + $digital
+                ];
+            });
+
         return view('admindashboard.index', [
             'todaySales' => $todaySales,
             'totalTransactions' => $totalTransactions,
+            'outletTransactions' => $outletTransactions,
         ]);
     }
 }

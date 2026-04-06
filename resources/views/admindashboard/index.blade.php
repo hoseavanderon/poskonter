@@ -106,6 +106,13 @@
     </style>
     <div class="relative min-h-[300px] overflow-x-hidden">
 
+        @foreach ($outletTransactions as $outlet)
+            <div class="flex justify-between text-sm">
+                <span>{{ $outlet['name'] }}</span>
+                <span>{{ $outlet['total'] }} transaksi</span>
+            </div>
+        @endforeach
+
         <!-- 🏠 HOME -->
         <div x-show="page === 'home'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
