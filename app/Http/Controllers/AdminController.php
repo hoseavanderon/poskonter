@@ -111,22 +111,37 @@ class AdminController extends Controller
             ->get()
             ->map(function ($outlet) use ($today, $excludedProducts) {
 
-                // 🧾 fisik
-                $fisik = Transaction::whereNotNull('paid_at')
+                // 🧾 FISIK
+                $fisikCount = Transaction::whereNotNull('paid_at')
                     ->whereDate('paid_at', $today)
                     ->where('outlet_id', $outlet->id)
                     ->count();
 
-                // 💳 digital (exclude)
-                $digital = DigitalTransaction::whereNotNull('paid_at')
+                $fisikTotal = Transaction::whereNotNull('paid_at')
                     ->whereDate('paid_at', $today)
                     ->where('outlet_id', $outlet->id)
-                    ->whereNotIn('digital_product_id', $excludedProducts)
-                    ->count();
+                    ->sum('subtotal');
+
+                // 💳 DIGITAL
+                $digitalQuery = DigitalTransaction::whereNotNull('paid_at')
+                    ->whereDate('paid_at', $today)
+                    ->where('outlet_id', $outlet->id)
+                    ->whereNotIn('digital_product_id', $excludedProducts);
+
+                $digitalCount = $digitalQuery->count();
+                $digitalTotal = $digitalQuery->sum('subtotal');
 
                 return [
                     'name' => $outlet->name,
-                    'total' => $fisik + $digital
+
+                    'fisik_count' => $fisikCount,
+                    'fisik_total' => $fisikTotal,
+
+                    'digital_count' => $digitalCount,
+                    'digital_total' => $digitalTotal,
+
+                    'total_count' => $fisikCount + $digitalCount,
+                    'total_amount' => $fisikTotal + $digitalTotal,
                 ];
             });
 
