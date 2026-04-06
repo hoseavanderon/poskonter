@@ -139,7 +139,9 @@
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Monthly Sales</p>
-                        <span x-text="'Rp ' + stats.monthlySales.toLocaleString('id-ID')"></span>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
+                            x-text="'Rp ' + stats.monthlySales.toLocaleString('id-ID')">
+                        </p>
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Total Profit</p>
@@ -290,8 +292,8 @@
 
                             <div class="flex items-center gap-3">
                                 <div class="bg-white/5 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
