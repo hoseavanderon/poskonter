@@ -3298,7 +3298,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
 
                 async yooo() {
-                    const sound = new Audio('/sounds/yooo.mp3');
+                    const sound = new Audio('/sounds/yoooo.mp3');
                     sound.play();
                 },
 
