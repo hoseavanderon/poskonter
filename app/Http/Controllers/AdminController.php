@@ -79,9 +79,11 @@ class AdminController extends Controller
         ];
 
         // 🧾 fisik
-        $fisik = Transaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->sum('subtotal');
+        $fisik = DB::table('detail_transactions')
+            ->join('transactions', 'transactions.id', '=', 'detail_transactions.transaction_id')
+            ->whereDate('transactions.created_at', $today)
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->sum('detail_transactions.subtotal');
 
         // 💳 digital
         $digital = DigitalTransaction::whereDate('created_at', $today)
