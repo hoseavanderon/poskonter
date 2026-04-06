@@ -105,37 +105,6 @@
         }
     </style>
     <div class="relative min-h-[300px] overflow-x-hidden">
-
-        @foreach ($outletTransactions as $outlet)
-            <div class="flex justify-between items-center text-sm border-b border-white/10 py-3">
-
-                <div>
-                    <p class="font-medium">{{ $outlet['name'] }}</p>
-
-                    <p class="text-xs text-gray-400">
-                        Fisik: {{ $outlet['fisik_count'] }} item
-                        (Rp {{ number_format($outlet['fisik_total'], 0, ',', '.') }})
-                    </p>
-
-                    <p class="text-xs text-gray-400">
-                        Digital: {{ $outlet['digital_count'] }} trx
-                        (Rp {{ number_format($outlet['digital_total'], 0, ',', '.') }})
-                    </p>
-                </div>
-
-                <div class="text-right">
-                    <p class="font-semibold">
-                        Rp {{ number_format($outlet['total_amount'], 0, ',', '.') }}
-                    </p>
-
-                    <p class="text-xs text-gray-400">
-                        {{ $outlet['fisik_count'] }} item • {{ $outlet['digital_count'] }} trx
-                    </p>
-                </div>
-
-            </div>
-        @endforeach
-
         <!-- 🏠 HOME -->
         <div x-show="page === 'home'" x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
@@ -321,8 +290,8 @@
 
                             <div class="flex items-center gap-3">
                                 <div class="bg-white/5 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
