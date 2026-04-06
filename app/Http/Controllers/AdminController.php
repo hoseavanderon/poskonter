@@ -17,10 +17,15 @@ class AdminController extends Controller
 
         $user = Auth::user();
 
-        $outletIds = Outlet::where('owner_id', $user->id)
-            ->pluck('id');
-
         $outlets = Outlet::where('owner_id', request()->user()->id)->get();
+
+        $selectedOutlet = request()->get('outlet', 'all');
+
+        if ($selectedOutlet === 'all') {
+            $outletIds = Outlet::where('owner_id', $user->id)->pluck('id');
+        } else {
+            $outletIds = [$selectedOutlet];
+        }
 
         $excludedProducts = [
             112,

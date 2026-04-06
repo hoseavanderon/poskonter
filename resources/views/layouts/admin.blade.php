@@ -236,7 +236,7 @@
                         },
                     @endforeach
                 ],
-                selected: 'all',
+                selected: '{{ request()->get('outlet', 'all') }}',
                 width: 0,
                 left: 0,
 
@@ -252,6 +252,9 @@
                 select(tab, event) {
                     this.selected = tab.key
                     this.setIndicator(event.currentTarget)
+
+                    // 🔥 redirect dengan query param
+                    window.location.href = `?outlet=${tab.key}`
                 },
 
                 setIndicator(el) {
