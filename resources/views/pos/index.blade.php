@@ -3386,6 +3386,10 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
 
                 finalizeCheckout() {
+                    // 🔊 play sound
+                    const sound = new Audio('/sounds/yoooo.mp3');
+                    sound.play();
+
                     // Kosongkan keranjang TANPA mengubah stok di UI
                     this.cart = [];
                     this.saveCart();
