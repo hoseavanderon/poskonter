@@ -236,7 +236,7 @@
                         },
                     @endforeach
                 ],
-                selected: '{{ request()->get('outlet', 'all') }}',
+                selected: new URLSearchParams(window.location.search).get('outlet') || 'all',
                 width: 0,
                 left: 0,
 
@@ -253,8 +253,10 @@
                     this.selected = tab.key
                     this.setIndicator(event.currentTarget)
 
-                    // 🔥 redirect dengan query param
-                    window.location.href = `?outlet=${tab.key}`
+                    const url = new URL(window.location.href)
+                    url.searchParams.set('outlet', tab.key)
+
+                    window.location.href = url.toString()
                 },
 
                 setIndicator(el) {
