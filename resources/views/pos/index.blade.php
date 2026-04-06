@@ -3131,7 +3131,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedCustomer = '';
                             this.customerSearch = '';
 
-                            const sound = new Audio('/sounds/success.mp3');
+                            const sound = new Audio('/sounds/yoooo.mp3');
                             sound.play();
 
                             // 🔥 Toast
@@ -3257,7 +3257,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             this.selectedProduct = null;
                             this.selectedCustomer = '';
                             this.customerSearch = '';
-                            const sound = new Audio('/sounds/success.mp3');
+                            const sound = new Audio('/sounds/yoo0o.mp3');
                             sound.play();
                         } else {
                             console.error('%c💥 Server Error:', 'color:#dc2626;font-weight:bold', result.error ||
