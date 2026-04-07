@@ -3295,7 +3295,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 },
 
                 async yooo() {
-                    const sound = new Audio('/sounds/yoooo.mp3');
+                    const sound = new Audio('/sounds/yoooo.mpeg');
                     sound.play();
                 },
 
@@ -3395,7 +3395,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                 finalizeCheckout() {
                     // 🔊 play sound
-                    const sound = new Audio('/sounds/yoooo.mp3');
+                    const sound = new Audio('/sounds/yoooo.mpeg');
                     sound.play();
 
                     // Kosongkan keranjang TANPA mengubah stok di UI
