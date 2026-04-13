@@ -121,7 +121,11 @@
                         </svg>
                         All Outlets Combined
                     </h2>
-                    <span class="text-xs text-white/70">+11.2%</span>
+                    <span 
+                        class="text-xs"
+                        :class="stats.growth >= 0 ? 'text-green-400' : 'text-red-400'"
+                        x-text="(stats.growth >= 0 ? '+' : '') + stats.growth + '%'">
+                    </span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">

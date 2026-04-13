@@ -244,6 +244,7 @@
                     totalTransactions: 0,
                     monthlySales: 0,
                     todayProfit: 0,
+                    growth: 0,
                 },
 
                 width: 0,

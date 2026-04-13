@@ -52,6 +52,8 @@ class AdminController extends Controller
             ->selectRaw('SUM(detail_transaction.subtotal - (products.modal * detail_transaction.qty)) as profit')
             ->value('profit') ?? 0;
 
+        $growth = $this->getTodayGrowth($outletIds, $excludedProducts);
+
         return response()->json([
             'todaySales' => $todaySales,
             'todayProfit' => $profitToday,
@@ -59,6 +61,7 @@ class AdminController extends Controller
             'totalItems' => $totalItems,
             'totalDigitalTransactions' => $totalDigitalTransactions,
             'monthlySales' => $fisikMonthly + $digitalMonthly,
+            'growth' => $growth,
         ]);
     }
 
@@ -111,5 +114,43 @@ class AdminController extends Controller
         return DigitalTransaction::query()
             ->whereIn('outlet_id', $outletIds)
             ->whereNotIn('digital_product_id', $excludedProducts);
+    }
+
+    private function getTodayGrowth($outletIds, $excludedProducts)
+    {
+        $now = now();
+
+        $todayStart = $now->copy()->startOfDay();
+        $yesterdayStart = $now->copy()->subDay()->startOfDay();
+        $yesterdayNow = $now->copy()->subDay();
+
+        // 🔥 TODAY (sampai sekarang)
+        $todayFisik = $this->getFisikQuery($outletIds)
+            ->whereBetween('transactions.created_at', [$todayStart, $now])
+            ->sum('detail_transaction.subtotal');
+
+        $todayDigital = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereBetween('created_at', [$todayStart, $now])
+            ->sum('subtotal');
+
+        $todaySales = $todayFisik + $todayDigital;
+
+        // 🔥 YESTERDAY (sampai jam yang sama)
+        $yesterdayFisik = $this->getFisikQuery($outletIds)
+            ->whereBetween('transactions.created_at', [$yesterdayStart, $yesterdayNow])
+            ->sum('detail_transaction.subtotal');
+
+        $yesterdayDigital = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereBetween('created_at', [$yesterdayStart, $yesterdayNow])
+            ->sum('subtotal');
+
+        $yesterdaySales = $yesterdayFisik + $yesterdayDigital;
+
+        // 🔥 GROWTH
+        if ($yesterdaySales > 0) {
+            return round((($todaySales - $yesterdaySales) / $yesterdaySales) * 100, 1);
+        }
+
+        return $todaySales > 0 ? 100 : 0;
     }
 }
