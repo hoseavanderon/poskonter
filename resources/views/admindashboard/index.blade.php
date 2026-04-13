@@ -460,23 +460,6 @@
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-5">
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur">
-
-                    <h2 class="font-semibold mb-4">📊 Daily Profit Detail</h2>
-
-                    <div class="space-y-1 text-xs md:text-sm max-h-72 overflow-y-auto">
-
-                        <template x-for="item in dailyDebug" :key="item.date">
-                            <div :class="item.profit < 0 ? 'text-red-400' : 'text-green-400'" x-text="item.formatted">
-                            </div>
-                        </template>
-
-                    </div>
-
-                </div>
-            </div>
-
             <!-- CONTENT -->
             <div class="grid md:grid-cols-2 gap-5">
 

@@ -252,7 +252,6 @@
                     todayProfit: 0,
                     growth: 0,
                 },
-                dailyDebug: [],
 
                 width: 0,
                 left: 0,
@@ -283,7 +282,6 @@
                             }
 
                             this.loadData(this.selected)
-                            this.loadDailyDebug()
 
                         }, 50)
                     })
@@ -295,19 +293,6 @@
                     this.setIndicator(event.currentTarget)
 
                     await this.loadData(tab.key)
-
-                    this.loadDailyDebug()
-                },
-                async loadDailyDebug() {
-                    try {
-                        let res = await fetch(`/admin/debug-daily-profit?outlet=${this.selected}`)
-                        let data = await res.json()
-
-                        this.dailyDebug = data
-
-                    } catch (e) {
-                        console.error('❌ daily debug error:', e)
-                    }
                 },
 
                 // 🚀 FETCH DATA

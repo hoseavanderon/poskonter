@@ -40,7 +40,13 @@ class AdminController extends Controller
 
         $totalProfit = $this->getProfitQuery($outletIds)
             ->whereBetween('transactions.created_at', [$startDate, $endDate])
-            ->selectRaw('SUM(detail_transaction.subtotal - (products.modal * detail_transaction.qty)) as profit')
+            ->whereNull('detail_transaction.deleted_at')
+            ->whereNull('products.deleted_at')
+            ->selectRaw('
+        COALESCE(SUM(detail_transaction.subtotal), 0) 
+        - COALESCE(SUM(products.modal * detail_transaction.qty), 0) 
+        as profit
+    ')
             ->value('profit') ?? 0;
 
         // 🔥 GROWTH (COMPARE KE PERIODE SEBELUMNYA)
@@ -69,45 +75,6 @@ class AdminController extends Controller
             'monthlySales' => $totalSales,
             'growth' => $growth,
         ]);
-    }
-
-    public function getDailyProfitDebug(Request $request)
-    {
-        $user = $request->user();
-        $outletIds = $this->getOutletIds($request, $user->id);
-
-        $startDate = now()->startOfMonth();
-        $endDate = now();
-
-        $data = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-            ->join('products', 'products.id', '=', 'detail_transaction.product_id')
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at')
-            ->whereBetween('transactions.created_at', [$startDate, $endDate])
-            ->selectRaw("
-            DATE(transactions.created_at) as date,
-            SUM(detail_transaction.subtotal) as subtotal,
-            SUM(products.modal * detail_transaction.qty) as modal,
-            SUM(detail_transaction.subtotal - (products.modal * detail_transaction.qty)) as profit
-        ")
-            ->groupBy(DB::raw('DATE(transactions.created_at)'))
-            ->orderBy('date')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'date' => $item->date,
-                    'subtotal' => (int) $item->subtotal,
-                    'modal' => (int) $item->modal,
-                    'profit' => (int) $item->profit,
-                    'formatted' => $item->date . ' => (' .
-                        number_format($item->subtotal, 0, ',', '.') . ') - (' .
-                        number_format($item->modal, 0, ',', '.') . ') = (' .
-                        number_format($item->profit, 0, ',', '.') . ')'
-                ];
-            });
-
-        return response()->json($data);
     }
 
     // =========================
