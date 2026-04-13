@@ -245,6 +245,7 @@
                     monthlySales: 0,
                     todayProfit: 0,
                     growth: 0,
+                    range: 'today',
                 },
 
                 width: 0,
