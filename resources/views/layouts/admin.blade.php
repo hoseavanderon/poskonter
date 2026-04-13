@@ -334,27 +334,19 @@
                 },
 
                 changePeriod(p, el) {
-                    console.log('👉 CLICK PERIOD:', p)
+                    this.period = p
 
-                    try {
-                        this.period = p
-                        console.log('✅ period set:', this.period)
-
+                    this.$nextTick(() => {
                         this.updateIndicator(el)
-                        console.log('✅ indicator updated')
+                    })
 
-                        this.loadData(this.selected, p)
-                        console.log('✅ loadData called')
-
-                    } catch (e) {
-                        console.error('❌ ERROR changePeriod:', e)
-                    }
+                    this.loadData(this.selected, p)
                 },
                 updateIndicator(el) {
                     const indicator = this.$refs.mainPeriodIndicator
 
                     if (!indicator || !el) {
-                        console.warn('indicator/el null', indicator, el)
+                        console.warn('❌ indicator not ready', indicator)
                         return
                     }
 
