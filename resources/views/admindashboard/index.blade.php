@@ -119,7 +119,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M3 7h18M3 12h18M3 17h18" />
                         </svg>
-                        All Outlets Combined
+                        <span x-text="selected === 'all' ? 'All Outlets Combined' : activeOutletName"></span>
                     </h2>
                     <span 
                         class="text-xs"

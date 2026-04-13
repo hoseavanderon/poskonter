@@ -295,6 +295,11 @@
                     }
                 },
 
+                get activeOutletName() {
+                    let found = this.tabs.find(t => t.key == this.selected)
+                    return found ? found.name : 'All'
+                },
+
                 // 🎯 INDICATOR
                 setIndicator(el) {
                     this.width = el.offsetWidth
