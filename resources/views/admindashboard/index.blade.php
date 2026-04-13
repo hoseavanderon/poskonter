@@ -449,29 +449,36 @@
                     <div class="flex gap-6 relative min-w-max">
 
                         <!-- INDICATOR -->
-                        <span x-ref="indicator"
+                        <span x-ref="periodIndicator"
                             class="absolute bottom-0 h-[2px] bg-white/70 transition-all duration-300 ease-out">
                         </span>
 
-                        <!-- YEAR -->
-                        <button x-ref="year" @click="active='year'; move($el)"
-                            :class="active === 'year' ? 'text-white' : 'text-gray-400'"
+                        <!-- DAY -->
+                        <button x-ref="day" @click="changePeriod('day', $el)"
+                            :class="period === 'day' ? 'text-white' : 'text-gray-400'"
                             class="pb-2 text-xs whitespace-nowrap transition">
-                            Year
+                            Today
+                        </button>
+
+                        <!-- WEEK -->
+                        <button x-ref="week" @click="changePeriod('week', $el)"
+                            :class="period === 'week' ? 'text-white' : 'text-gray-400'"
+                            class="pb-2 text-xs whitespace-nowrap transition">
+                            Week
                         </button>
 
                         <!-- MONTH -->
-                        <button x-ref="month" @click="active='month'; move($el)"
-                            :class="active === 'month' ? 'text-white' : 'text-gray-400'"
+                        <button x-ref="month" @click="changePeriod('month', $el)"
+                            :class="period === 'month' ? 'text-white' : 'text-gray-400'"
                             class="pb-2 text-xs whitespace-nowrap transition">
                             Month
                         </button>
 
-                        <!-- TODAY -->
-                        <button x-ref="today" @click="active='today'; move($el)"
-                            :class="active === 'today' ? 'text-white' : 'text-gray-400'"
+                        <!-- YEAR -->
+                        <button x-ref="year" @click="changePeriod('year', $el)"
+                            :class="period === 'year' ? 'text-white' : 'text-gray-400'"
                             class="pb-2 text-xs whitespace-nowrap transition">
-                            Today
+                            Year
                         </button>
 
                     </div>

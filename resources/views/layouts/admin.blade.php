@@ -257,7 +257,6 @@
                     this.$nextTick(() => {
                         setTimeout(() => {
 
-                            // outlet indicator (existing)
                             let index = this.tabs.findIndex(t => t.key == this.selected)
                             let buttons = this.$el.querySelectorAll('.tab-button')
 
@@ -265,8 +264,10 @@
                                 this.setIndicator(buttons[index])
                             }
 
-                            // 🔥 PERIOD INDICATOR INIT
-                            this.updateIndicator(this.$refs.day)
+                            // 🔥 FIX: jangan crash kalau ref belum ada
+                            if (this.$refs.day) {
+                                this.updateIndicator(this.$refs.day)
+                            }
 
                             this.loadData(this.selected)
 
