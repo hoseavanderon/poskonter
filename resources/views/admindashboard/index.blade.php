@@ -420,32 +420,7 @@
                     </p>
                 </div>
 
-                <div x-data="{
-                    active: 'year',
-                    move(el) {
-                        const indicator = this.$refs.indicator
-                        if (!el || !indicator) return
-                
-                        indicator.style.width = el.offsetWidth + 'px'
-                        indicator.style.left = el.offsetLeft + 'px'
-                    },
-                    init() {
-                        // initial (kalau kebetulan sudah visible)
-                        this.$nextTick(() => {
-                            setTimeout(() => this.move(this.$refs.year), 50)
-                        })
-                
-                        // 🔥 FIX UTAMA
-                        this.$watch('page', value => {
-                            if (value === 'product') {
-                                setTimeout(() => {
-                                    this.move(this.$refs.year)
-                                }, 50)
-                            }
-                        })
-                    }
-                }" x-init="init()" class="relative overflow-x-auto">
-
+                <div class="relative overflow-x-auto">
                     <div class="flex gap-6 relative min-w-max">
 
                         <!-- INDICATOR -->

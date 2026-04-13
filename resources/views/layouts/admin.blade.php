@@ -318,6 +318,9 @@
                 },
                 updateIndicator(el) {
                     const indicator = this.$refs.periodIndicator
+
+                    if (!indicator || !el) return
+
                     indicator.style.width = el.offsetWidth + 'px'
                     indicator.style.left = el.offsetLeft + 'px'
                 },
