@@ -220,6 +220,11 @@
     </main>
 
     <script>
+        window.addEventListener('error', function(e) {
+            console.log('🔥 GLOBAL ERROR:', e.message)
+            console.log(e)
+        })
+
         function tabNav() {
             return {
                 data: [],
@@ -254,19 +259,26 @@
 
                 // 🚀 INIT
                 init() {
+                    console.log('🚀 INIT START')
+
                     this.$nextTick(() => {
                         setTimeout(() => {
 
+                            console.log('👉 selected:', this.selected)
+
                             let index = this.tabs.findIndex(t => t.key == this.selected)
                             let buttons = this.$el.querySelectorAll('.tab-button')
+
+                            console.log('👉 buttons:', buttons)
 
                             if (buttons[index]) {
                                 this.setIndicator(buttons[index])
                             }
 
-                            // 🔥 FIX: jangan crash kalau ref belum ada
                             if (this.$refs.day) {
                                 this.updateIndicator(this.$refs.day)
+                            } else {
+                                console.warn('⚠️ day ref tidak ditemukan')
                             }
 
                             this.loadData(this.selected)
@@ -285,9 +297,17 @@
 
                 // 🚀 FETCH DATA
                 async loadData(outlet, period = this.period) {
+                    console.log('📡 FETCH START:', {
+                        outlet,
+                        period
+                    })
+
                     try {
                         let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${period}`)
+                        console.log('📡 RESPONSE STATUS:', res.status)
+
                         let data = await res.json()
+                        console.log('📦 DATA:', data)
 
                         this.stats.todaySales = data.todaySales
                         this.stats.totalTransactions = data.totalTransactions
@@ -295,8 +315,10 @@
                         this.stats.todayProfit = data.todayProfit
                         this.stats.growth = data.growth
 
+                        console.log('✅ STATS UPDATED')
+
                     } catch (e) {
-                        console.error('Fetch error:', e)
+                        console.error('❌ FETCH ERROR:', e)
                     }
                 },
 
@@ -312,14 +334,34 @@
                 },
 
                 changePeriod(p, el) {
-                    this.period = p
-                    this.updateIndicator(el)
-                    this.loadData(this.selected, p)
+                    console.log('👉 CLICK PERIOD:', p)
+
+                    try {
+                        this.period = p
+                        console.log('✅ period set:', this.period)
+
+                        this.updateIndicator(el)
+                        console.log('✅ indicator updated')
+
+                        this.loadData(this.selected, p)
+                        console.log('✅ loadData called')
+
+                    } catch (e) {
+                        console.error('❌ ERROR changePeriod:', e)
+                    }
                 },
                 updateIndicator(el) {
+                    console.log('🎯 updateIndicator called')
+
                     const indicator = this.$refs.periodIndicator
 
-                    if (!indicator || !el) return
+                    console.log('indicator:', indicator)
+                    console.log('el:', el)
+
+                    if (!indicator || !el) {
+                        console.warn('⚠️ indicator atau el null')
+                        return
+                    }
 
                     indicator.style.width = el.offsetWidth + 'px'
                     indicator.style.left = el.offsetLeft + 'px'
