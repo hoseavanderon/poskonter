@@ -121,36 +121,39 @@
                 </h2>
 
                 <!-- SWITCH -->
-                <div x-data="{ period: 'day' }" class="relative">
+                <div x-data="{
+                    period: 'day',
+                    updateIndicator(el) {
+                        const indicator = this.$refs.indicator
+                        indicator.style.width = el.offsetWidth + 'px'
+                        indicator.style.left = el.offsetLeft + 'px'
+                    }
+                }" x-init="$nextTick(() => updateIndicator($refs.day))" class="relative">
                     <div class="flex gap-6 text-sm font-medium text-white/60 relative">
 
-                        <!-- DAY -->
-                        <button @click="period = 'day'" :class="period === 'day' ? 'text-white' : ''">
+                        <button x-ref="day" @click="period = 'day'; updateIndicator($el)"
+                            :class="period === 'day' ? 'text-white' : ''">
                             Day
                         </button>
 
-                        <!-- WEEK -->
-                        <button @click="period = 'week'" :class="period === 'week' ? 'text-white' : ''">
+                        <button x-ref="week" @click="period = 'week'; updateIndicator($el)"
+                            :class="period === 'week' ? 'text-white' : ''">
                             Week
                         </button>
 
-                        <!-- MONTH -->
-                        <button @click="period = 'month'" :class="period === 'month' ? 'text-white' : ''">
+                        <button x-ref="month" @click="period = 'month'; updateIndicator($el)"
+                            :class="period === 'month' ? 'text-white' : ''">
                             Month
                         </button>
 
-                        <!-- YEAR -->
-                        <button @click="period = 'year'" :class="period === 'year' ? 'text-white' : ''">
+                        <button x-ref="year" @click="period = 'year'; updateIndicator($el)"
+                            :class="period === 'year' ? 'text-white' : ''">
                             Year
                         </button>
 
-                        <!-- ANIMATED UNDERLINE -->
-                        <div class="absolute bottom-0 h-[2px] bg-white rounded-full transition-all duration-300"
-                            :style="{
-                                width: '40px',
-                                left: period === 'day' ? '0px' : period === 'week' ? '64px' :
-                                    period === 'month' ? '140px' : '230px'
-                            }">
+                        <!-- 🔥 REAL INDICATOR -->
+                        <div x-ref="indicator"
+                            class="absolute -bottom-1 h-[2px] bg-white rounded-full transition-all duration-300">
                         </div>
                     </div>
                 </div>
@@ -298,8 +301,8 @@
 
                             <div class="flex items-center gap-3">
                                 <div class="bg-white/5 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
