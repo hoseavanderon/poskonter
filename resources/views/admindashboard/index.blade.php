@@ -145,7 +145,10 @@
                     </div>
                     <div class="bg-white/10 rounded-xl p-3">
                         <p class="text-white/70">Total Profit</p>
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl">Rp 22.200.000</p>
+
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
+                        x-text="'Rp ' + stats.todayProfit.toLocaleString('id-ID')">
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1735,11 +1738,11 @@
                     copy() {
                         let text = `Santuy Cell
 
-Total Assets
-${this.format(this.totalAssets())}
+                        Total Assets
+                        ${this.format(this.totalAssets())}
 
-Assets:
-`;
+                        Assets:
+                        `;
 
                         this.items.forEach(item => {
                             if (item.label) {

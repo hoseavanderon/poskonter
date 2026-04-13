@@ -242,7 +242,8 @@
                 stats: {
                     todaySales: 0,
                     totalTransactions: 0,
-                    monthlySales: 0
+                    monthlySales: 0,
+                    todayProfit: 0,
                 },
 
                 width: 0,
@@ -285,6 +286,7 @@
                         this.stats.todaySales = data.todaySales
                         this.stats.totalTransactions = data.totalTransactions
                         this.stats.monthlySales = data.monthlySales
+                        this.stats.todayProfit = data.todayProfit
 
                     } catch (e) {
                         console.error('Fetch error:', e)

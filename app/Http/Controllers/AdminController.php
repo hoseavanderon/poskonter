@@ -47,8 +47,14 @@ class AdminController extends Controller
             ->whereBetween('created_at', [$startDate, $endDate])
             ->sum('subtotal');
 
+        $profitToday = $this->getProfitQuery($outletIds)
+            ->whereDate('transactions.created_at', $today)
+            ->selectRaw('SUM(detail_transaction.subtotal - (products.modal * detail_transaction.qty)) as profit')
+            ->value('profit') ?? 0;
+
         return response()->json([
             'todaySales' => $todaySales,
+            'todayProfit' => $profitToday,
             'totalTransactions' => $totalItems + $totalDigitalTransactions,
             'totalItems' => $totalItems,
             'totalDigitalTransactions' => $totalDigitalTransactions,
@@ -87,6 +93,15 @@ class AdminController extends Controller
     {
         return DB::table('detail_transaction')
             ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at');
+    }
+
+    private function getProfitQuery($outletIds)
+    {
+        return DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->join('products', 'products.id', '=', 'detail_transaction.product_id')
             ->whereIn('transactions.outlet_id', $outletIds)
             ->whereNull('transactions.deleted_at');
     }
