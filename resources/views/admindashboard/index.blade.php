@@ -154,22 +154,6 @@
                         x-text="'Rp ' + stats.todayProfit.toLocaleString('id-ID')">
                         </p>
                     </div>
-
-                    <div class="bg-white/10 rounded-xl p-3">
-                        <p class="text-white/70">Total Profit</p>
-
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
-                        x-text="'Rp ' + stats.todayProfit.toLocaleString('id-ID')">
-                        </p>
-                    </div>
-
-                    <div class="bg-white/10 rounded-xl p-3">
-                        <p class="text-white/70">Total Profit</p>
-
-                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
-                        x-text="'Rp ' + stats.todayProfit.toLocaleString('id-ID')">
-                        </p>
-                    </div>
                 </div>
             </div>
 
