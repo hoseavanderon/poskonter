@@ -41,7 +41,6 @@ class AdminController extends Controller
         $totalProfit = $this->getProfitQuery($outletIds)
             ->whereBetween('transactions.created_at', [$startDate, $endDate])
             ->whereNull('detail_transaction.deleted_at')
-            ->whereNull('products.deleted_at')
             ->selectRaw('
         COALESCE(SUM(detail_transaction.subtotal), 0) 
         - COALESCE(SUM(products.modal * detail_transaction.qty), 0) 
