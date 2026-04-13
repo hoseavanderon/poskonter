@@ -132,28 +132,28 @@
                     }" x-init="$nextTick(() => updateIndicator($refs.day))" class="relative">
                         <div class="flex gap-6 text-sm font-medium text-white/60 relative">
 
-                            <button x-ref="day" @click="period = 'day'; updateIndicator($el)"
+                            <button x-ref="day" @click="changePeriod('day', $el)"
                                 :class="period === 'day' ? 'text-white' : ''">
                                 Day
                             </button>
 
-                            <button x-ref="week" @click="period = 'week'; updateIndicator($el)"
+                            <button x-ref="week" @click="changePeriod('week', $el)"
                                 :class="period === 'week' ? 'text-white' : ''">
                                 Week
                             </button>
 
-                            <button x-ref="month" @click="period = 'month'; updateIndicator($el)"
+                            <button x-ref="month" @click="changePeriod('month', $el)"
                                 :class="period === 'month' ? 'text-white' : ''">
                                 Month
                             </button>
 
-                            <button x-ref="year" @click="period = 'year'; updateIndicator($el)"
+                            <button x-ref="year" @click="changePeriod('year', $el)"
                                 :class="period === 'year' ? 'text-white' : ''">
                                 Year
                             </button>
 
-                            <!-- 🔥 REAL INDICATOR -->
-                            <div x-ref="indicator"
+                            <!-- INDICATOR -->
+                            <div x-ref="periodIndicator"
                                 class="absolute -bottom-1 h-[2px] bg-white rounded-full transition-all duration-300">
                             </div>
                         </div>

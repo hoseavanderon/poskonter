@@ -245,6 +245,7 @@
                     monthlySales: 0,
                     todayProfit: 0,
                     growth: 0,
+                    period: 'day',
                 },
 
                 width: 0,
@@ -253,16 +254,20 @@
 
                 // 🚀 INIT
                 init() {
+
                     this.$nextTick(() => {
                         setTimeout(() => {
 
+                            // outlet indicator (existing)
                             let index = this.tabs.findIndex(t => t.key == this.selected)
-
                             let buttons = this.$el.querySelectorAll('.tab-button')
 
                             if (buttons[index]) {
                                 this.setIndicator(buttons[index])
                             }
+
+                            // 🔥 PERIOD INDICATOR INIT
+                            this.updateIndicator(this.$refs.day)
 
                             this.loadData(this.selected)
 
@@ -281,7 +286,8 @@
                 // 🚀 FETCH DATA
                 async loadData(outlet) {
                     try {
-                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}`)
+                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`) let res =
+                            await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`)
                         let data = await res.json()
 
                         this.stats.todaySales = data.todaySales
@@ -304,7 +310,18 @@
                 setIndicator(el) {
                     this.width = el.offsetWidth
                     this.left = el.offsetLeft
-                }
+                },
+
+                changePeriod(p, el) {
+                    this.period = p
+                    this.updateIndicator(el)
+                    this.loadData(this.selected)
+                },
+                updateIndicator(el) {
+                    const indicator = this.$refs.periodIndicator
+                    indicator.style.width = el.offsetWidth + 'px'
+                    indicator.style.left = el.offsetLeft + 'px'
+                },
             }
         }
     </script>

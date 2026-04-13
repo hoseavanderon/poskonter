@@ -17,50 +17,56 @@ class AdminController extends Controller
 
     public function getData(Request $request)
     {
-        $today = now()->toDateString();
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+        $period = $request->get('period', 'day');
+        [$startDate, $endDate] = $this->getDateRange($period);
 
         $user = $request->user();
         $outletIds = $this->getOutletIds($request, $user->id);
         $excludedProducts = $this->getExcludedProducts();
 
-        // 🔥 TODAY
-        $fisikToday = $this->getFisikQuery($outletIds)
-            ->whereDate('transactions.created_at', $today);
+        // 🔥 MAIN QUERY (DINAMIS)
+        $fisik = $this->getFisikQuery($outletIds)
+            ->whereBetween('transactions.created_at', [$startDate, $endDate]);
 
-        $digitalToday = $this->getDigitalQuery($outletIds, $excludedProducts)
-            ->whereDate('created_at', $today);
+        $digital = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereBetween('created_at', [$startDate, $endDate]);
 
-        $todaySales = $fisikToday->sum('detail_transaction.subtotal')
-            + $digitalToday->sum('subtotal');
+        // 🔥 CALCULATION
+        $totalSales = $fisik->sum('detail_transaction.subtotal')
+            + $digital->sum('subtotal');
 
-        $totalItems = $fisikToday->sum('detail_transaction.qty');
-        $totalDigitalTransactions = $digitalToday->count();
+        $totalItems = $fisik->sum('detail_transaction.qty');
+        $totalDigitalTransactions = $digital->count();
 
-        // 🔥 MONTHLY
-        $fisikMonthly = $this->getFisikQuery($outletIds)
+        $totalProfit = $this->getProfitQuery($outletIds)
             ->whereBetween('transactions.created_at', [$startDate, $endDate])
-            ->sum('detail_transaction.subtotal');
-
-        $digitalMonthly = $this->getDigitalQuery($outletIds, $excludedProducts)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('subtotal');
-
-        $profitToday = $this->getProfitQuery($outletIds)
-            ->whereDate('transactions.created_at', $today)
             ->selectRaw('SUM(detail_transaction.subtotal - (products.modal * detail_transaction.qty)) as profit')
             ->value('profit') ?? 0;
 
-        $growth = $this->getTodayGrowth($outletIds, $excludedProducts);
+        // 🔥 GROWTH (COMPARE KE PERIODE SEBELUMNYA)
+        [$prevStart, $prevEnd] = $this->getPreviousRange($period);
+
+        $prevFisik = $this->getFisikQuery($outletIds)
+            ->whereBetween('transactions.created_at', [$prevStart, $prevEnd])
+            ->sum('detail_transaction.subtotal');
+
+        $prevDigital = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereBetween('created_at', [$prevStart, $prevEnd])
+            ->sum('subtotal');
+
+        $prevSales = $prevFisik + $prevDigital;
+
+        $growth = $prevSales > 0
+            ? round((($totalSales - $prevSales) / $prevSales) * 100, 1)
+            : ($totalSales > 0 ? 100 : 0);
 
         return response()->json([
-            'todaySales' => $todaySales,
-            'todayProfit' => $profitToday,
+            'todaySales' => $totalSales,
+            'todayProfit' => $totalProfit,
             'totalTransactions' => $totalItems + $totalDigitalTransactions,
             'totalItems' => $totalItems,
             'totalDigitalTransactions' => $totalDigitalTransactions,
-            'monthlySales' => $fisikMonthly + $digitalMonthly,
+            'monthlySales' => $totalSales,
             'growth' => $growth,
         ]);
     }
@@ -200,5 +206,33 @@ class AdminController extends Controller
         }
 
         return $todaySales > 0 ? 100 : 0;
+    }
+
+    private function getDateRange($period)
+    {
+        switch ($period) {
+            case 'week':
+                return [now()->startOfWeek(), now()->endOfWeek()];
+            case 'month':
+                return [now()->startOfMonth(), now()->endOfMonth()];
+            case 'year':
+                return [now()->startOfYear(), now()->endOfYear()];
+            default:
+                return [now()->startOfDay(), now()->endOfDay()];
+        }
+    }
+
+    private function getPreviousRange($period)
+    {
+        switch ($period) {
+            case 'week':
+                return [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()];
+            case 'month':
+                return [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()];
+            case 'year':
+                return [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()];
+            default:
+                return [now()->subDay()->startOfDay(), now()->subDay()->endOfDay()];
+        }
     }
 }
