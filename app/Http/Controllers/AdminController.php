@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\DigitalTransaction;
 use App\Models\Outlet;
-use App\Models\Transaction;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -19,116 +18,83 @@ class AdminController extends Controller
     public function getData(Request $request)
     {
         $today = now()->toDateString();
-        $year = now()->year;
-        $month = now()->month;
-        $startDate = \Carbon\Carbon::create($year, $month, 1)->startOfDay();
-        $endDate = \Carbon\Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+
         $user = $request->user();
+        $outletIds = $this->getOutletIds($request, $user->id);
+        $excludedProducts = $this->getExcludedProducts();
 
-        $selectedOutlet = $request->get('outlet', 'all');
+        // 🔥 TODAY
+        $fisikToday = $this->getFisikQuery($outletIds)
+            ->whereDate('transactions.created_at', $today);
 
-        // 🔥 ambil outlet
-        if ($selectedOutlet === 'all') {
-            $outletIds = Outlet::where('owner_id', $user->id)->pluck('id');
-        } else {
-            $outletIds = [$selectedOutlet];
-        }
+        $digitalToday = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereDate('created_at', $today);
 
-        // 🔥 samakan dengan index()
-        $excludedProducts = [
-            112,
-            114,
-            115,
-            119,
-            123,
-            124,
-            125,
-            127,
-            128,
-            129,
-            251,
-            203,
-            204,
-            205,
-            206,
-            207,
-            208,
-            209,
-            210,
-            211,
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
-            218,
-            219,
-            220,
-            221,
-            222,
-            223,
-            224,
-            225,
-            226,
-            227,
-            228,
-            229,
-            230,
-            231,
-            232,
-            233,
-            234,
-            235,
-            236,
-            237,
-            238,
-            239,
-            259,
-            113,
-            116,
-            120
-        ];
+        $todaySales = $fisikToday->sum('detail_transaction.subtotal')
+            + $digitalToday->sum('subtotal');
 
-        // 🔥 FISIK
-        $baseQuery = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
-            ->whereDate('transactions.created_at', $today)
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at');
+        $totalItems = $fisikToday->sum('detail_transaction.qty');
+        $totalDigitalTransactions = $digitalToday->count();
 
-        $fisik = (clone $baseQuery)->sum('detail_transaction.subtotal');
-        $totalItems = (clone $baseQuery)->sum('detail_transaction.qty');
-
-        // 🔥 DIGITAL (SAMA PERSIS DENGAN INDEX)
-        $digitalQuery = DigitalTransaction::whereDate('created_at', $today)
-            ->whereIn('outlet_id', $outletIds)
-            ->whereNotIn('digital_product_id', $excludedProducts);
-
-        $digital = $digitalQuery->sum('subtotal');
-        $totalDigitalTransactions = $digitalQuery->count();
-
-        $baseMonthlyQuery = DB::table('detail_transaction')
-            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+        // 🔥 MONTHLY
+        $fisikMonthly = $this->getFisikQuery($outletIds)
             ->whereBetween('transactions.created_at', [$startDate, $endDate])
-            ->whereIn('transactions.outlet_id', $outletIds)
-            ->whereNull('transactions.deleted_at');
+            ->sum('detail_transaction.subtotal');
 
-        $monthlyFisik = (clone $baseMonthlyQuery)->sum('detail_transaction.subtotal');
-
-        $monthlyDigital = DigitalTransaction::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('outlet_id', $outletIds)
-            ->whereNotIn('digital_product_id', $excludedProducts)
+        $digitalMonthly = $this->getDigitalQuery($outletIds, $excludedProducts)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->sum('subtotal');
 
-        $monthlySales = $monthlyFisik + $monthlyDigital;
-
         return response()->json([
-            'todaySales' => $fisik + $digital,
+            'todaySales' => $todaySales,
             'totalTransactions' => $totalItems + $totalDigitalTransactions,
             'totalItems' => $totalItems,
             'totalDigitalTransactions' => $totalDigitalTransactions,
-            'monthlySales' => $monthlySales,
+            'monthlySales' => $fisikMonthly + $digitalMonthly,
         ]);
+    }
+
+    // =========================
+    // 🔥 HELPER FUNCTIONS
+    // =========================
+
+    private function getOutletIds(Request $request, $userId)
+    {
+        $selectedOutlet = $request->get('outlet', 'all');
+
+        if ($selectedOutlet === 'all') {
+            return Outlet::where('owner_id', $userId)->pluck('id');
+        }
+
+        return [$selectedOutlet];
+    }
+
+    private function getExcludedProducts()
+    {
+        return [
+            112,114,115,119,123,124,125,127,128,129,
+            251,203,204,205,206,207,208,209,210,211,
+            212,213,214,215,216,217,218,219,220,221,
+            222,223,224,225,226,227,228,229,230,231,
+            232,233,234,235,236,237,238,239,259,113,
+            116,120
+        ];
+    }
+
+    private function getFisikQuery($outletIds)
+    {
+        return DB::table('detail_transaction')
+            ->join('transactions', 'transactions.id', '=', 'detail_transaction.transaction_id')
+            ->whereIn('transactions.outlet_id', $outletIds)
+            ->whereNull('transactions.deleted_at');
+    }
+
+    private function getDigitalQuery($outletIds, $excludedProducts)
+    {
+        return DigitalTransaction::query()
+            ->whereIn('outlet_id', $outletIds)
+            ->whereNotIn('digital_product_id', $excludedProducts);
     }
 }
