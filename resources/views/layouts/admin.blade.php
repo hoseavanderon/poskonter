@@ -237,6 +237,7 @@
 
                 // 🔥 default selected (no URL lagi, pure state)
                 selected: 'all',
+                period: 'day',
 
                 // 🔥 data dari backend
                 stats: {
@@ -245,7 +246,6 @@
                     monthlySales: 0,
                     todayProfit: 0,
                     growth: 0,
-                    period: 'day',
                 },
 
                 width: 0,
@@ -254,7 +254,6 @@
 
                 // 🚀 INIT
                 init() {
-
                     this.$nextTick(() => {
                         setTimeout(() => {
 
@@ -286,8 +285,7 @@
                 // 🚀 FETCH DATA
                 async loadData(outlet) {
                     try {
-                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`) let res =
-                            await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`)
+                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`)
                         let data = await res.json()
 
                         this.stats.todaySales = data.todaySales
