@@ -30,6 +30,7 @@ Route::middleware([
     // ===================================================
     Route::get('/admin-pos', [AdminController::class, 'index'])->name('admin-pos');
     Route::get('/admin/dashboard-data', [AdminController::class, 'getData']);
+    Route::get('/admin/debug-daily-profit', [AdminController::class, 'getDailyProfitDebug']);
 
     // ===================================================
     // 💼 POS & TRANSAKSI
