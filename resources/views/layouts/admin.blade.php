@@ -288,6 +288,7 @@
                         this.stats.totalTransactions = data.totalTransactions
                         this.stats.monthlySales = data.monthlySales
                         this.stats.todayProfit = data.todayProfit
+                        this.stats.growth = data.growth
 
                     } catch (e) {
                         console.error('Fetch error:', e)
