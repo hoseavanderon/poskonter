@@ -421,7 +421,7 @@
                 </div>
 
                 <div class="relative overflow-x-auto">
-                    <div class="flex gap-6 relative min-w-max">
+                    <div class="flex gap-6 relative min-w-max pb-2">
 
                         <!-- INDICATOR -->
                         <span x-ref="periodIndicator"
