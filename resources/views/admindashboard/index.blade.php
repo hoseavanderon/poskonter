@@ -153,7 +153,7 @@
                             </button>
 
                             <!-- INDICATOR -->
-                            <div x-ref="periodIndicator"
+                            <div x-ref="mainPeriodIndicator"
                                 class="absolute -bottom-1 h-[2px] bg-white rounded-full transition-all duration-300">
                             </div>
                         </div>

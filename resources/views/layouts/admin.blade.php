@@ -351,15 +351,10 @@
                     }
                 },
                 updateIndicator(el) {
-                    console.log('🎯 updateIndicator called')
-
-                    const indicator = this.$refs.periodIndicator
-
-                    console.log('indicator:', indicator)
-                    console.log('el:', el)
+                    const indicator = this.$refs.mainPeriodIndicator
 
                     if (!indicator || !el) {
-                        console.warn('⚠️ indicator atau el null')
+                        console.warn('indicator/el null', indicator, el)
                         return
                     }
 
