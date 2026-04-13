@@ -112,49 +112,79 @@
             x-transition:leave-end="opacity-0 -translate-y-2" class="pb-24 space-y-6 text-xs md:text-sm">
 
             <!-- 🔥 ALL OUTLETS -->
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-semibold text-base md:text-lg lg:text-xl flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M3 7h18M3 12h18M3 17h18" />
-                    </svg>
-                    <span x-text="selected === 'all' ? 'All Outlets Combined' : activeOutletName"></span>
-                </h2>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-semibold text-base md:text-lg lg:text-xl flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 7h18M3 12h18M3 17h18" />
+                        </svg>
+                        <span x-text="selected === 'all' ? 'All Outlets Combined' : activeOutletName"></span>
+                    </h2>
 
-                <!-- SWITCH -->
-                <div x-data="{
-                    period: 'day',
-                    updateIndicator(el) {
-                        const indicator = this.$refs.indicator
-                        indicator.style.width = el.offsetWidth + 'px'
-                        indicator.style.left = el.offsetLeft + 'px'
-                    }
-                }" x-init="$nextTick(() => updateIndicator($refs.day))" class="relative">
-                    <div class="flex gap-6 text-sm font-medium text-white/60 relative">
+                    <!-- SWITCH -->
+                    <div x-data="{
+                        period: 'day',
+                        updateIndicator(el) {
+                            const indicator = this.$refs.indicator
+                            indicator.style.width = el.offsetWidth + 'px'
+                            indicator.style.left = el.offsetLeft + 'px'
+                        }
+                    }" x-init="$nextTick(() => updateIndicator($refs.day))" class="relative">
+                        <div class="flex gap-6 text-sm font-medium text-white/60 relative">
 
-                        <button x-ref="day" @click="period = 'day'; updateIndicator($el)"
-                            :class="period === 'day' ? 'text-white' : ''">
-                            Day
-                        </button>
+                            <button x-ref="day" @click="period = 'day'; updateIndicator($el)"
+                                :class="period === 'day' ? 'text-white' : ''">
+                                Day
+                            </button>
 
-                        <button x-ref="week" @click="period = 'week'; updateIndicator($el)"
-                            :class="period === 'week' ? 'text-white' : ''">
-                            Week
-                        </button>
+                            <button x-ref="week" @click="period = 'week'; updateIndicator($el)"
+                                :class="period === 'week' ? 'text-white' : ''">
+                                Week
+                            </button>
 
-                        <button x-ref="month" @click="period = 'month'; updateIndicator($el)"
-                            :class="period === 'month' ? 'text-white' : ''">
-                            Month
-                        </button>
+                            <button x-ref="month" @click="period = 'month'; updateIndicator($el)"
+                                :class="period === 'month' ? 'text-white' : ''">
+                                Month
+                            </button>
 
-                        <button x-ref="year" @click="period = 'year'; updateIndicator($el)"
-                            :class="period === 'year' ? 'text-white' : ''">
-                            Year
-                        </button>
+                            <button x-ref="year" @click="period = 'year'; updateIndicator($el)"
+                                :class="period === 'year' ? 'text-white' : ''">
+                                Year
+                            </button>
 
-                        <!-- 🔥 REAL INDICATOR -->
-                        <div x-ref="indicator"
-                            class="absolute -bottom-1 h-[2px] bg-white rounded-full transition-all duration-300">
+                            <!-- 🔥 REAL INDICATOR -->
+                            <div x-ref="indicator"
+                                class="absolute -bottom-1 h-[2px] bg-white rounded-full transition-all duration-300">
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
+                    <div class="bg-white/10 rounded-xl p-3">
+                        <p class="text-white/70">Today's Sales</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">
+                            <span x-text="'Rp ' + stats.todaySales.toLocaleString('id-ID')"></span>
+                        </p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3">
+                        <p class="text-white/70">Transactions</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl">
+                            <span x-text="stats.totalTransactions"></span>
+                        </p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3">
+                        <p class="text-white/70">Monthly Sales</p>
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
+                            x-text="'Rp ' + stats.monthlySales.toLocaleString('id-ID')">
+                        </p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3">
+                        <p class="text-white/70">Total Profit</p>
+
+                        <p class="font-semibold text-sm md:text-lg lg:text-xl"
+                            x-text="'Rp ' + stats.todayProfit.toLocaleString('id-ID')">
+                        </p>
                     </div>
                 </div>
             </div>
@@ -274,8 +304,8 @@
 
                                 <!-- ICON -->
                                 <div class="bg-white/5 p-2 rounded-lg">
-                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
                                         <path d="M3 7h18M5 7l1-2h12l1 2M6 7v13h12V7" />
                                     </svg>
                                 </div>
