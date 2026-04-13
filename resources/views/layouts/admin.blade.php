@@ -284,9 +284,9 @@
                 },
 
                 // 🚀 FETCH DATA
-                async loadData(outlet) {
+                async loadData(outlet, period = this.period) {
                     try {
-                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${this.period}`)
+                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${period}`)
                         let data = await res.json()
 
                         this.stats.todaySales = data.todaySales
@@ -314,7 +314,7 @@
                 changePeriod(p, el) {
                     this.period = p
                     this.updateIndicator(el)
-                    this.loadData(this.selected)
+                    this.loadData(this.selected, p)
                 },
                 updateIndicator(el) {
                     const indicator = this.$refs.periodIndicator
