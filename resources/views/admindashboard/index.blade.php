@@ -121,55 +121,16 @@
                         </svg>
                         <span x-text="selected === 'all' ? 'All Outlets Combined' : activeOutletName"></span>
                     </h2>
-                    <div class="flex items-center gap-3 text-xs font-medium">
-                        <!-- SWITCH -->
-                        <div class="flex gap-4">
-
-                            <button 
-                                @click="range = 'today'"
-                                :class="range === 'today' ? 'text-white' : 'text-white/40'">
-                                Today
-                            </button>
-
-                            <button 
-                                @click="range = 'week'"
-                                :class="range === 'week' ? 'text-white' : 'text-white/40'">
-                                Week
-                            </button>
-
-                            <button 
-                                @click="range = 'month'"
-                                :class="range === 'month' ? 'text-white' : 'text-white/40'">
-                                Month
-                            </button>
-
-                            <button 
-                                @click="range = 'year'"
-                                :class="range === 'year' ? 'text-white' : 'text-white/40'">
-                                Year
-                            </button>
-
-                        </div>
-
-                        <!-- GROWTH -->
-                        <span 
-                            :class="stats.growth >= 0 ? 'text-green-400' : 'text-red-400'"
-                            x-text="(stats.growth >= 0 ? '+' : '') + stats.growth + '%'">
-                        </span>
-
-                    </div>
+                    <span 
+                        class="text-xs"
+                        :class="stats.growth >= 0 ? 'text-green-400' : 'text-red-400'"
+                        x-text="(stats.growth >= 0 ? '+' : '') + stats.growth + '%'">
+                    </span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
                     <div class="bg-white/10 rounded-xl p-3">
-                        <p class="text-white/70"
-                            x-text="
-                                range === 'today' ? 'Today Sales' :
-                                range === 'week' ? 'Weekly Sales' :
-                                range === 'month' ? 'Monthly Sales' :
-                                'Yearly Sales'
-                            ">
-                        </p>
+                        <p class="text-white/70">Today's Sales</p>
                         <p class="font-semibold text-sm md:text-lg lg:text-xl">
                             <span x-text="'Rp ' + stats.todaySales.toLocaleString('id-ID')"></span>
                         </p>
