@@ -83,12 +83,58 @@ class AdminController extends Controller
     private function getExcludedProducts()
     {
         return [
-            112,114,115,119,123,124,125,127,128,129,
-            251,203,204,205,206,207,208,209,210,211,
-            212,213,214,215,216,217,218,219,220,221,
-            222,223,224,225,226,227,228,229,230,231,
-            232,233,234,235,236,237,238,239,259,113,
-            116,120
+            112,
+            114,
+            115,
+            119,
+            123,
+            124,
+            125,
+            127,
+            128,
+            129,
+            251,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            259,
+            113,
+            116,
+            120
         ];
     }
 
@@ -121,27 +167,29 @@ class AdminController extends Controller
         $now = now();
 
         $todayStart = $now->copy()->startOfDay();
-        $yesterdayStart = $now->copy()->subDay()->startOfDay();
-        $yesterdayNow = $now->copy()->subDay();
+        $todayEnd = $now->copy()->endOfDay();
 
-        // 🔥 TODAY (sampai sekarang)
+        $yesterdayStart = $now->copy()->subDay()->startOfDay();
+        $yesterdayEnd = $now->copy()->subDay()->endOfDay();
+
+        // 🔥 TODAY (full day)
         $todayFisik = $this->getFisikQuery($outletIds)
-            ->whereBetween('transactions.created_at', [$todayStart, $now])
+            ->whereBetween('transactions.created_at', [$todayStart, $todayEnd])
             ->sum('detail_transaction.subtotal');
 
         $todayDigital = $this->getDigitalQuery($outletIds, $excludedProducts)
-            ->whereBetween('created_at', [$todayStart, $now])
+            ->whereBetween('created_at', [$todayStart, $todayEnd])
             ->sum('subtotal');
 
         $todaySales = $todayFisik + $todayDigital;
 
-        // 🔥 YESTERDAY (sampai jam yang sama)
+        // 🔥 YESTERDAY (full day)
         $yesterdayFisik = $this->getFisikQuery($outletIds)
-            ->whereBetween('transactions.created_at', [$yesterdayStart, $yesterdayNow])
+            ->whereBetween('transactions.created_at', [$yesterdayStart, $yesterdayEnd])
             ->sum('detail_transaction.subtotal');
 
         $yesterdayDigital = $this->getDigitalQuery($outletIds, $excludedProducts)
-            ->whereBetween('created_at', [$yesterdayStart, $yesterdayNow])
+            ->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])
             ->sum('subtotal');
 
         $yesterdaySales = $yesterdayFisik + $yesterdayDigital;
