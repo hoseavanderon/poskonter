@@ -784,7 +784,7 @@ class PosController extends Controller
             ->whereDate('transactions.created_at', $today)
             ->whereNotNull('transactions.customer_id')
             ->whereNull('transactions.paid_at')
-            ->whereNull('digital_transactions.deleted_at')
+            ->whereNull('transactions.deleted_at')
             ->select('customers.name', 'transactions.subtotal')
             ->get();
 
