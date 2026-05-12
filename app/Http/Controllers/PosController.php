@@ -815,6 +815,7 @@ class PosController extends Controller
             ->whereNotNull('transactions.paid_at')
             ->whereDate('transactions.paid_at', $today)
             ->whereRaw('DATE(transactions.created_at) <> DATE(transactions.paid_at)')
+            ->whereNull('transactions.deleted_at')
             ->select('customers.name', 'transactions.subtotal')
             ->get();
 
@@ -824,6 +825,7 @@ class PosController extends Controller
             ->whereNotNull('digital_transactions.paid_at')
             ->whereDate('digital_transactions.paid_at', $today)
             ->whereRaw('DATE(digital_transactions.created_at) <> DATE(digital_transactions.paid_at)')
+            ->whereNull('digital_transactions.deleted_at')
             ->select('customers.name', 'digital_transactions.subtotal')
             ->get();
 
