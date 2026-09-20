@@ -2782,6 +2782,58 @@
             .pos-hist-row {
                 padding: 12px 14px;
             }
+
+            .pos-hist-nota {
+                font-size: 11px;
+                line-height: 1.35;
+                word-break: break-all;
+            }
+
+            .pos-hist-status {
+                font-size: 10px;
+                font-weight: 600;
+                margin-top: 2px;
+            }
+
+            .pos-hist-status i {
+                display: none;
+            }
+
+            .pos-hist-time {
+                font-size: 10px;
+                line-height: 1.3;
+                white-space: nowrap;
+            }
+
+            .pos-hist-head-right button {
+                padding: 4px;
+                margin-left: 2px;
+            }
+
+            .pos-hist-head-right svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .pos-hist-item,
+            .pos-hist-item-name,
+            .pos-hist-item-amt {
+                font-size: 11px;
+                line-height: 1.35;
+            }
+
+            .pos-hist-item-name {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .pos-hist-total {
+                font-size: 13px;
+                margin-top: 6px;
+            }
         }
 
         html.dark .pos-modal-shell-surface {
@@ -4544,26 +4596,23 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 <div
                                     :class="trx.customer_id ? 'pos-hist-row is-debt' : 'pos-hist-row'">
 
-                                    <div
-                                        class="flex justify-between items-center font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                                        <div class="flex flex-col">
-                                            <span class="flex items-center gap-2">
-                                                <span class="pos-hist-nota" x-text="trx.nomor_nota"></span>
+                                    <div class="pos-hist-head flex justify-between items-start gap-2 mb-1.5">
+                                        <div class="pos-hist-head-left flex flex-col min-w-0">
+                                            <span class="pos-hist-nota" x-text="trx.nomor_nota"></span>
 
-                                                <template x-if="trx.customer_id">
-                                                    <span
-                                                        class="pos-hist-status inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
-                                                        <i class="fa-solid fa-clock"></i> Belum Lunas
-                                                    </span>
-                                                </template>
+                                            <template x-if="trx.customer_id">
+                                                <span
+                                                    class="pos-hist-status inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
+                                                    <i class="fa-solid fa-clock"></i> Belum Lunas
+                                                </span>
+                                            </template>
 
-                                                <template x-if="!trx.customer_id">
-                                                    <span
-                                                        class="inline-flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
-                                                        <i class="fa-solid fa-circle-check"></i> Lunas
-                                                    </span>
-                                                </template>
-                                            </span>
+                                            <template x-if="!trx.customer_id">
+                                                <span
+                                                    class="pos-hist-status inline-flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
+                                                    <i class="fa-solid fa-circle-check"></i> Lunas
+                                                </span>
+                                            </template>
 
                                             <template x-if="trx.customer_id && trx.customer">
                                                 <span class="text-xs text-red-700 dark:text-red-300 font-medium mt-0.5">
@@ -4573,10 +4622,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                             </template>
                                         </div>
 
-                                        <div class="relative flex items-center justify-between">
-                                            <!-- Jam -->
+                                        <div class="pos-hist-head-right relative flex items-start justify-end shrink-0">
                                             <span x-text="trx.created_at + ' WITA'"
-                                                class="text-sm text-gray-500 dark:text-gray-400"></span>
+                                                class="pos-hist-time text-sm text-gray-500 dark:text-gray-400"></span>
 
                                             <!-- ⋮ Tombol Dropdown -->
                                             <div x-data="{ open: false }" class="relative">
@@ -4608,20 +4656,16 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                     </div>
 
                                     <template x-for="item in trx.details.slice(0, 3)" :key="item.id">
-                                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                                            <span>
-
-                                                <!-- Nama item: product OR service -->
+                                        <div class="pos-hist-item flex justify-between gap-3 text-sm text-gray-600 dark:text-gray-300">
+                                            <span class="pos-hist-item-name min-w-0">
                                                 <span
                                                     x-text="item.item_type === 'service'
                                                 ? item.manual_name
                                                 : item.product">
                                                 </span>
-
                                                 × <span x-text="item.qty"></span> pcs
                                             </span>
-
-                                            <span x-text="'Rp ' + item.subtotal.toLocaleString()"></span>
+                                            <span class="pos-hist-item-amt shrink-0" x-text="'Rp ' + item.subtotal.toLocaleString()"></span>
                                         </div>
                                     </template>
 
@@ -4633,7 +4677,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                     </template>
 
                                     {{-- Total transaksi --}}
-                                    <div class="text-right font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                                    <div class="pos-hist-total text-right font-semibold text-blue-600 dark:text-blue-400 mt-1.5">
                                         <span x-text="'Rp ' + trx.subtotal.toLocaleString()"></span>
                                     </div>
                                 </div>
