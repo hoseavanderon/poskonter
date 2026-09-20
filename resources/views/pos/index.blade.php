@@ -75,7 +75,7 @@
                             'bg-blue-600 text-white dark:bg-blue-700' :
                             'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
                         class="px-4 py-2 rounded-lg font-semibold transition">
-                        🛍️ Produk Fisik
+                        🛍️ Produk Fisiksss
                     </button>
 
                     <button @click="activeTab = 'digital'"
@@ -343,7 +343,7 @@
                 handleBarcodeInput($event);
                 $event.target.value = '';
             "
-                                class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
+                                class="w-full pl-14 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800
                 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 dark:text-gray-100"
                                 autofocus>
 
@@ -361,7 +361,7 @@
                         <div class="relative">
                             <input id="searchInput" type="text" placeholder="Cari nama produk..."
                                 x-model="searchQuery"
-                                class="w-full pl-12 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 
+                                class="w-full pl-12 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800
                 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800 dark:text-gray-100">
 
                             <div class="absolute left-4 top-2.5 text-gray-500 dark:text-gray-400">
@@ -385,11 +385,11 @@
                     {{-- Wrapper scroll khusus produk --}}
                     <div id="productScrollArea" class="relative min-h-[60vh] max-h-[70vh] overflow-y-auto pr-2">
                         {{-- Grid produk --}}
-                        <div class="grid 
-                                grid-cols-2 
-                                sm:grid-cols-2 
+                        <div class="grid
+                                grid-cols-2
+                                sm:grid-cols-2
                                 md:grid-cols-2
-                                xl:grid-cols-3 
+                                xl:grid-cols-3
                                 gap-5"
                             x-show="!transitioning && !isCategoryLoading"
                             x-transition:enter="transition ease-out duration-300"
@@ -399,8 +399,8 @@
                             <template x-for="product in filteredProducts" :key="product.id">
                                 <div @click.stop="openProductOptions(product)"
                                     :class="{ 'opacity-60 pointer-events-none grayscale': product.stock <= 0 }"
-                                    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                                        rounded-xl shadow-sm hover:shadow-md transition-all duration-200 
+                                    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                                        rounded-xl shadow-sm hover:shadow-md transition-all duration-200
                                         cursor-pointer flex flex-col p-5">
 
                                     {{-- Header (ikon + nama produk + stok) --}}
@@ -430,19 +430,19 @@
                                         {{-- Kanan: Stock Label (dengan satuan pcs) --}}
                                         <template x-if="displayStock(product) > 10">
                                             <span
-                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md
                                                         bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                                                 x-text="displayStock(product)"></span>
                                         </template>
                                         <template x-if="displayStock(product) <= 10 && displayStock(product) > 0">
                                             <span
-                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md
                                                         bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
                                                 x-text="displayStock(product)"></span>
                                         </template>
                                         <template x-if="displayStock(product) <= 0">
                                             <span
-                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md 
+                                                class="px-2 py-0.5 text-[11px] font-semibold rounded-md
                                                         bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
                                                 0 pcs
                                             </span>
@@ -469,7 +469,7 @@
                                     <div class="mt-auto flex items-start justify-start">
                                         <template x-if="(product.attribute_values?.length || 0) > 1">
                                             <button @click.stop="openProductOptions(product)"
-                                                class="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400 
+                                                class="inline-block text-xs font-semibold text-blue-600 dark:text-blue-400
                                                     bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/50
                                                     py-1 px-3 rounded-md transition text-left w-fit">
                                                 Multiple Options
@@ -536,7 +536,7 @@
                         <div @click="open = !open"
                             class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-2 text-sm flex justify-between items-center cursor-pointer">
                             <span
-                                x-text="selectedCustomer 
+                                x-text="selectedCustomer
                             ? ('👤 ' + (customers.find(c => c.id == selectedCustomer)?.name || ''))
                             : '💵 Tunai'">
                             </span>
@@ -636,7 +636,7 @@
                                     @focus="payment.editingPaid = true"
                                     @blur="editingTotal = false; payment.editingPaid = false"
                                     @input="formatTotalInput($event)" @keydown.enter="$el.blur()"
-                                    class="w-full text-center text-4xl font-bold border border-blue-500 bg-gray-900 
+                                    class="w-full text-center text-4xl font-bold border border-blue-500 bg-gray-900
                  text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="Masukkan total bayar">
                             </template>
@@ -714,14 +714,14 @@
                         <!-- ======================= -->
                         <div class="flex gap-3 mt-6">
                             <button @click="loadTodayTransactions()"
-                                class="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 
+                                class="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600
                  text-gray-200 py-3 rounded-lg font-semibold text-sm border border-gray-600">
                                 <i class="fa-solid fa-clock-rotate-left text-base"></i>
                                 <span>Riwayat</span>
                             </button>
 
                             <button @click="openReviewModal()"
-                                class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+                                class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700
                  text-white py-3 rounded-lg font-semibold text-sm transition">
                                 <i class="fa-solid fa-cash-register text-base"></i>
                                 <span>Bayar</span>
@@ -984,8 +984,8 @@
 
                                                 {{-- Tombol Riwayat Transaksi Digital --}}
                                                 <button @click="showHistoryDigital = true"
-                                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg 
-                                                    bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 
+                                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg
+                                                    bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200
                                                     hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm font-semibold shadow-sm active:scale-[0.98]">
                                                     <svg class="w-5 h-5 text-blue-600 dark:text-blue-400"
                                                         xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -1471,7 +1471,7 @@
                                                                     @blur="editingTotal = false"
                                                                     @keydown.enter="$el.blur()"
                                                                     class="w-full text-center text-3xl font-bold border border-blue-400 bg-white dark:bg-gray-700
-                                                                    text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 
+                                                                    text-blue-600 dark:text-blue-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500
                                                                     outline-none transition"
                                                                     placeholder="Masukkan total bayar">
                                                             </template>
@@ -1556,7 +1556,7 @@
                         <div>
                             <input type="text" x-model="manualPriceDisplay" @input="formatManualPrice"
                                 inputmode="numeric"
-                                class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 
+                                class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5
                    focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
                                 placeholder="Rp Masukkan harga" />
                         </div>
@@ -1621,14 +1621,14 @@
                                 <!-- TOMBOL AKSI -->
                                 <div class="flex gap-3 mt-4">
                                     <button @click="loadTodayTransactions()"
-                                        class="flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 
+                                        class="flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700
                        text-gray-200 py-3 rounded-lg font-semibold text-sm transition border border-gray-600">
                                         <i class="fa-solid fa-clock-rotate-left text-base"></i>
                                         <span>Riwayat</span>
                                     </button>
 
                                     <button @click="showManualConfirm = true"
-                                        class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 
+                                        class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700
 text-white py-3 rounded-lg font-semibold text-sm transition">
                                         <i class="fa-solid fa-cash-register text-base"></i>
                                         <span>Bayar</span>
@@ -1831,9 +1831,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             <div x-show="showHistory" @click.self="showHistory = false"
                 class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" x-transition>
                 <div x-transition.scale.duration.300ms
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[800px] 
-                            max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-thin 
-                            scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[800px]
+                            max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-thin
+                            scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600
                             scrollbar-track-transparent">
 
                     {{-- Header --}}
@@ -1849,8 +1849,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                         {{-- Total Penjualan --}}
                         <div
-                            class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 
-                            dark:from-blue-900/40 dark:to-blue-800/20 text-blue-700 dark:text-blue-300 
+                            class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100
+                            dark:from-blue-900/40 dark:to-blue-800/20 text-blue-700 dark:text-blue-300
                             rounded-2xl p-4 shadow-sm border border-blue-100 dark:border-blue-700/50 hover:shadow-md transition-all">
                             <div class="flex items-center gap-2 text-sm opacity-80">
                                 <i class="fa-solid fa-money-bill-wave"></i>
@@ -1863,8 +1863,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                         {{-- Jumlah Transaksi --}}
                         <div
-                            class="flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-green-100 
-                            dark:from-green-900/40 dark:to-green-800/20 text-green-700 dark:text-green-300 
+                            class="flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-green-100
+                            dark:from-green-900/40 dark:to-green-800/20 text-green-700 dark:text-green-300
                             rounded-2xl p-4 shadow-sm border border-green-100 dark:border-green-700/50 hover:shadow-md transition-all">
                             <div class="flex items-center gap-2 text-sm opacity-80">
                                 <i class="fa-solid fa-receipt"></i>
@@ -1875,8 +1875,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                         {{-- Produk Terjual --}}
                         <div
-                            class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-100 
-                            dark:from-cyan-900/40 dark:to-blue-800/20 text-cyan-700 dark:text-cyan-300 
+                            class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-100
+                            dark:from-cyan-900/40 dark:to-blue-800/20 text-cyan-700 dark:text-cyan-300
                             rounded-2xl p-4 shadow-sm border border-cyan-100 dark:border-cyan-700/50 hover:shadow-md transition-all">
                             <div class="flex items-center gap-2 text-sm opacity-80">
                                 <i class="fa-solid fa-boxes-stacked"></i>
@@ -1895,9 +1895,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             <div class="flex flex-wrap gap-3">
                                 <template x-for="cat in summary.categories" :key="cat.name">
                                     <div
-                                        class="flex flex-col items-center justify-center px-4 py-3 
+                                        class="flex flex-col items-center justify-center px-4 py-3
                                     bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700
-                                    rounded-xl shadow-sm text-center min-w-[110px] transform transition-all duration-300 
+                                    rounded-xl shadow-sm text-center min-w-[110px] transform transition-all duration-300
                                     hover:scale-105 hover:shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
 
                                         {{-- Nama kategori uppercase --}}
@@ -2000,8 +2000,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                                             <!-- Nama item: product OR service -->
                                             <span
-                                                x-text="item.item_type === 'service' 
-                                                ? item.manual_name 
+                                                x-text="item.item_type === 'service'
+                                                ? item.manual_name
                                                 : item.product">
                                             </span>
 
@@ -2205,7 +2205,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 @keydown.escape.window="showHistoryDigital = false"
                 class="fixed inset-0 bg-black/60 flex items-center justify-center z-50" x-transition>
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[850px] 
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[95%] md:w-[850px]
                  max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 ease-out">
 
                     {{-- Header --}}
@@ -2224,8 +2224,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                 <template x-for="app in apps" :key="app.id">
                                     <div @click="selectedAppFilter = app.id; loadDigitalTransactions();"
-                                        class="flex flex-col items-center justify-center p-4 border dark:border-gray-700 rounded-xl cursor-pointer 
-                        bg-gray-50 dark:bg-gray-900 hover:bg-blue-50 dark:hover:bg-blue-900/30 
+                                        class="flex flex-col items-center justify-center p-4 border dark:border-gray-700 rounded-xl cursor-pointer
+                        bg-gray-50 dark:bg-gray-900 hover:bg-blue-50 dark:hover:bg-blue-900/30
                         transition-all duration-200 shadow-sm hover:shadow-md">
 
                                         {{-- Logo --}}
