@@ -396,9 +396,10 @@
 
             .pos-physical #productScrollArea {
                 flex: none;
-                min-height: 0;
-                max-height: none;
-                overflow: visible;
+                min-height: 240px;
+                max-height: min(52dvh, 520px);
+                overflow-x: hidden;
+                overflow-y: auto;
                 padding-right: 0;
             }
 
@@ -2699,7 +2700,6 @@
                 transform: none !important;
             }
 
-            body.is-pos .pos-physical #productScrollArea,
             body.is-pos .pos-physical .pos-panel-divider .overflow-y-auto {
                 overflow: visible !important;
                 max-height: none !important;
@@ -5001,41 +5001,21 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     // 🔁 Data digital
                     await this.loadDigitalData();
 
-                    // 📜 Infinite Scroll
+                    // 📜 Infinite Scroll — hanya di grid produk, bukan scroll halaman
                     const scrollContainer = document.querySelector('#productScrollArea');
                     if (scrollContainer) {
-                        let isUserScrolling = false;
-                        const markUserScroll = () => {
-                            isUserScrolling = true;
-                        };
-                        const nearBottom = (scrollTop, visibleHeight, totalHeight) =>
-                            scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this.loadingMore;
-                        const loadIfNeeded = async (scrollTop, visibleHeight, totalHeight) => {
-                            if (!isUserScrolling) return;
-                            if (!nearBottom(scrollTop, visibleHeight, totalHeight)) return;
+                        scrollContainer.addEventListener('scroll', async () => {
+                            if (this.activeTab !== 'physical') return;
+                            if (this.loadingMore || !this.hasMore) return;
+                            if (scrollContainer.scrollHeight <= scrollContainer.clientHeight + 8) return;
+
+                            const nearBottom = scrollContainer.scrollTop + scrollContainer.clientHeight >=
+                                scrollContainer.scrollHeight - 80;
+                            if (!nearBottom) return;
+
                             this.loadingMore = true;
                             await this.loadProducts();
                             this.loadingMore = false;
-                        };
-
-                        scrollContainer.addEventListener('wheel', markUserScroll);
-                        scrollContainer.addEventListener('touchmove', markUserScroll);
-                        window.addEventListener('wheel', markUserScroll, {
-                            passive: true
-                        });
-                        window.addEventListener('touchmove', markUserScroll, {
-                            passive: true
-                        });
-
-                        scrollContainer.addEventListener('scroll', async () => {
-                            await loadIfNeeded(scrollContainer.scrollTop, scrollContainer.clientHeight,
-                                scrollContainer.scrollHeight);
-                        });
-
-                        window.addEventListener('scroll', async () => {
-                            if (this.activeTab !== 'physical') return;
-                            const el = document.scrollingElement || document.documentElement;
-                            await loadIfNeeded(el.scrollTop, window.innerHeight, el.scrollHeight);
                         }, {
                             passive: true
                         });
