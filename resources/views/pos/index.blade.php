@@ -291,28 +291,6 @@
                 max-width: 100%;
             }
 
-            html,
-            body {
-                overflow-x: hidden;
-            }
-
-            .pos-physical {
-                height: auto !important;
-                min-height: 0 !important;
-                overflow: visible !important;
-            }
-
-            .pos-physical-split {
-                flex-direction: column;
-                overflow: visible;
-                min-height: 0 !important;
-            }
-
-            .pos-physical-workspace {
-                padding-right: 0 !important;
-                min-width: 0;
-            }
-
             .pos-physical-tools {
                 grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) !important;
                 gap: 8px !important;
@@ -338,41 +316,9 @@
                 color: var(--accent);
             }
 
-            .pos-physical #productScrollArea {
-                flex: none;
-                min-height: 0;
-                max-height: none;
-                overflow: visible;
-                padding-right: 0;
-            }
-
             .pos-physical #productScrollArea>.grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
                 gap: 10px !important;
-            }
-
-            .pos-physical .pos-panel-divider {
-                width: 100% !important;
-                margin-left: 0;
-                margin-top: 12px;
-                overflow: visible;
-            }
-
-            .pos-physical .pos-panel-divider .flex-1.min-h-0 {
-                flex: none;
-                max-height: none;
-                min-height: 0;
-                overflow: visible !important;
-            }
-
-            .pos-physical .pos-panel-divider .w-7.h-7 {
-                width: 44px !important;
-                height: 44px !important;
-            }
-
-            .pos-physical .pos-panel-divider .grid.grid-cols-2.gap-2>button {
-                min-height: 48px;
-                height: 48px;
             }
 
             body.is-pos .pos-root {
@@ -423,14 +369,63 @@
                 width: 100%;
                 max-width: 100%;
             }
+        }
 
-            /*
-             * Android Chrome GPU corruption at page bottom:
-             * 100vh shell + body.h-screen + main overflow-y-auto paints a compositor
-             * tile taller than the visual viewport (address / nav bar). A transformed
-             * off-screen sidebar (translateX -100%, height 100vh) keeps that layer alive.
-             * Document scroll + no full-viewport transform; design/layout unchanged.
-             */
+        @media (max-width: 767px) {
+            html,
+            body {
+                overflow-x: hidden;
+            }
+
+            .pos-physical {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+
+            .pos-physical-split {
+                flex-direction: column;
+                overflow: visible;
+                min-height: 0 !important;
+            }
+
+            .pos-physical-workspace {
+                padding-right: 0 !important;
+                min-width: 0;
+            }
+
+            .pos-physical #productScrollArea {
+                flex: none;
+                min-height: 0;
+                max-height: none;
+                overflow: visible;
+                padding-right: 0;
+            }
+
+            .pos-physical .pos-panel-divider {
+                width: 100% !important;
+                margin-left: 0;
+                margin-top: 12px;
+                overflow: visible;
+            }
+
+            .pos-physical .pos-panel-divider .flex-1.min-h-0 {
+                flex: none;
+                max-height: none;
+                min-height: 0;
+                overflow: visible !important;
+            }
+
+            .pos-physical .pos-panel-divider .w-7.h-7 {
+                width: 44px !important;
+                height: 44px !important;
+            }
+
+            .pos-physical .pos-panel-divider .grid.grid-cols-2.gap-2>button {
+                min-height: 48px;
+                height: 48px;
+            }
+
             html {
                 scroll-behavior: auto;
             }
@@ -503,11 +498,6 @@
 
             .pos-product-card {
                 transition: box-shadow 0.25s ease-out, background-color 0.15s ease;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .pos-product-card {
                 padding: 12px;
                 border-radius: 16px;
             }
@@ -532,6 +522,86 @@
             .pos-product-barcode,
             .pos-product-variant {
                 font-size: 11px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            body.is-pos .app-shell {
+                height: calc(100svh - 64px) !important;
+                max-height: calc(100svh - 64px) !important;
+                min-height: 0 !important;
+                overflow: hidden !important;
+            }
+
+            body.is-pos main {
+                display: flex;
+                flex-direction: column;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+                overflow: hidden !important;
+            }
+
+            body.is-pos .pos-root {
+                flex: 1 1 auto;
+                min-height: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .pos-tabs {
+                flex-shrink: 0;
+            }
+
+            .pos-physical {
+                flex: 1 1 auto !important;
+                min-height: 0 !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow: hidden !important;
+            }
+
+            .pos-physical-split {
+                flex-direction: row !important;
+                flex: 1 1 auto;
+                min-height: 0 !important;
+                height: 100%;
+                overflow: hidden !important;
+            }
+
+            .pos-physical-workspace {
+                min-width: 0;
+                min-height: 0;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .pos-physical #productScrollArea {
+                flex: 1 1 auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
+
+            .pos-physical .pos-panel-divider {
+                position: sticky;
+                top: 0;
+                align-self: stretch;
+                height: 100% !important;
+                max-height: 100% !important;
+                overflow: hidden !important;
+                flex-shrink: 0;
+                margin-top: 0 !important;
+            }
+
+            .pos-physical .pos-panel-divider .flex-1.min-h-0 {
+                flex: 1 1 auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                overflow-y: auto !important;
             }
         }
 
@@ -2547,7 +2617,7 @@
             }
         }
 
-        @media (max-width: 1023px) {
+        @media (max-width: 767px) {
             body.is-pos .pos-seg-pill {
                 will-change: auto;
                 transform: translateX(0);
