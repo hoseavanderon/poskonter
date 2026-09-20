@@ -340,9 +340,9 @@
 
             .pos-physical #productScrollArea {
                 flex: none;
-                min-height: 240px;
-                max-height: min(52vh, 520px);
-                overflow-y: auto;
+                min-height: 0;
+                max-height: none;
+                overflow: visible;
                 padding-right: 0;
             }
 
@@ -360,8 +360,9 @@
 
             .pos-physical .pos-panel-divider .flex-1.min-h-0 {
                 flex: none;
-                max-height: 42vh;
-                min-height: 120px;
+                max-height: none;
+                min-height: 0;
+                overflow: visible !important;
             }
 
             .pos-physical .pos-panel-divider .w-7.h-7 {
@@ -2603,10 +2604,35 @@
                 height: auto !important;
             }
 
-            body.is-pos #productScrollArea,
+            html.is-pos,
+            body.is-pos {
+                overscroll-behavior: none;
+                background-color: var(--pos-bg) !important;
+            }
+
+            body.is-pos .app-shell,
+            body.is-pos main {
+                background-color: var(--pos-bg) !important;
+                -webkit-overflow-scrolling: auto !important;
+            }
+
             body.is-pos .pos-digital,
-            body.is-pos .pos-dig-body,
-            body.is-pos .pos-physical .pos-panel-divider .flex-1.min-h-0 {
+            body.is-pos .pos-dig-body {
+                overflow-x: hidden;
+                overflow-y: visible !important;
+                -webkit-overflow-scrolling: auto;
+                transform: none !important;
+                filter: none !important;
+            }
+
+            body.is-pos .pos-dig-body > div {
+                transform: none !important;
+            }
+
+            body.is-pos .pos-physical #productScrollArea,
+            body.is-pos .pos-physical .pos-panel-divider .overflow-y-auto {
+                overflow: visible !important;
+                max-height: none !important;
                 -webkit-overflow-scrolling: auto;
             }
         }
@@ -2985,10 +3011,7 @@
             {{-- ============================= --}}
             {{-- TAB: PRODUK FISIK --}}
             {{-- ============================= --}}
-            <div x-show="activeTab === 'physical'" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
+            <div x-show="activeTab === 'physical'"
                 class="pos-physical h-[calc(100vh-9rem)] min-h-[520px] flex flex-col overflow-hidden">
 
                 <div class="pos-physical-split flex flex-1 min-h-0 gap-0">
@@ -3338,7 +3361,7 @@
             {{-- ============================= --}}
             {{-- TAB: PRODUK DIGITAL (Final Enhanced Version) --}}
             {{-- ============================= --}}
-            <div x-show="activeTab === 'digital'" x-transition
+            <div x-show="activeTab === 'digital'"
                 class="pos-digital flex flex-col text-gray-800 dark:text-gray-100">
 
                 {{-- Header --}}
@@ -3984,7 +4007,7 @@
             <!-- ====================== TAB INPUT MANUAL ====================== -->
 
 
-            <div x-show="activeTab === 'manual'" x-transition class="mt-4">
+            <div x-show="activeTab === 'manual'" class="mt-4">
                 <div class="pos-manual">
                     <div class="pos-manual-card">
                         <h2 class="pos-manual-title">Input Manual / Jasa</h2>
@@ -4912,22 +4935,39 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     const scrollContainer = document.querySelector('#productScrollArea');
                     if (scrollContainer) {
                         let isUserScrolling = false;
-                        scrollContainer.addEventListener('wheel', () => (isUserScrolling = true));
-                        scrollContainer.addEventListener('touchmove', () => (isUserScrolling = true));
+                        const markUserScroll = () => {
+                            isUserScrolling = true;
+                        };
+                        const nearBottom = (scrollTop, visibleHeight, totalHeight) =>
+                            scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this.loadingMore;
+                        const loadIfNeeded = async (scrollTop, visibleHeight, totalHeight) => {
+                            if (!isUserScrolling) return;
+                            if (!nearBottom(scrollTop, visibleHeight, totalHeight)) return;
+                            this.loadingMore = true;
+                            await this.loadProducts();
+                            this.loadingMore = false;
+                        };
+
+                        scrollContainer.addEventListener('wheel', markUserScroll);
+                        scrollContainer.addEventListener('touchmove', markUserScroll);
+                        window.addEventListener('wheel', markUserScroll, {
+                            passive: true
+                        });
+                        window.addEventListener('touchmove', markUserScroll, {
+                            passive: true
+                        });
 
                         scrollContainer.addEventListener('scroll', async () => {
-                            if (!isUserScrolling) return;
+                            await loadIfNeeded(scrollContainer.scrollTop, scrollContainer.clientHeight,
+                                scrollContainer.scrollHeight);
+                        });
 
-                            const scrollTop = scrollContainer.scrollTop;
-                            const visibleHeight = scrollContainer.clientHeight;
-                            const totalHeight = scrollContainer.scrollHeight;
-
-                            if (scrollTop + visibleHeight >= totalHeight - 120 && this.hasMore && !this
-                                .loadingMore) {
-                                this.loadingMore = true;
-                                await this.loadProducts();
-                                this.loadingMore = false;
-                            }
+                        window.addEventListener('scroll', async () => {
+                            if (this.activeTab !== 'physical') return;
+                            const el = document.scrollingElement || document.documentElement;
+                            await loadIfNeeded(el.scrollTop, window.innerHeight, el.scrollHeight);
+                        }, {
+                            passive: true
                         });
                     }
 

@@ -119,6 +119,18 @@ document.addEventListener('fullscreenchange', () => {
             transition: background-color .25s ease, color .25s ease;
         }
 
+        html.is-pos,
+        html.is-pos body {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+
+        @media (max-width: 1023px) {
+            html.is-pos * {
+                transition: none !important;
+            }
+        }
+
         html,
         body {
             margin: 0;
@@ -291,7 +303,7 @@ document.addEventListener('fullscreenchange', () => {
     @stack('head')
 </head>
 
-<body class="h-screen text-gray-900 dark:text-gray-100{{ request()->routeIs('pos') ? ' is-pos' : '' }}">
+<body class="text-gray-900 dark:text-gray-100{{ request()->routeIs('pos') ? ' is-pos' : ' h-screen' }}">
     {{-- NAVBAR --}}
     <header
         class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-10 relative">
