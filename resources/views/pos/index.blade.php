@@ -374,6 +374,55 @@
                 height: 48px;
             }
 
+            body.is-pos .pos-root {
+                min-width: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            body.is-pos .app-shell,
+            body.is-pos main,
+            body.is-pos .pos-tabs,
+            body.is-pos .pos-digital,
+            body.is-pos .pos-dig-body,
+            body.is-pos .pos-physical,
+            body.is-pos .pos-manual {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .pos-digital {
+                width: 100%;
+                overflow-x: hidden;
+            }
+
+            .pos-wiz-row {
+                min-width: 0;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .pos-wiz-row::-webkit-scrollbar {
+                display: none;
+                width: 0;
+                height: 0;
+            }
+
+            .pos-dig-body {
+                width: 100%;
+                overflow-x: hidden;
+            }
+
+            .pos-digital .grid {
+                width: 100%;
+                max-width: 100%;
+            }
+
             /*
              * Android Chrome GPU corruption at page bottom:
              * 100vh shell + body.h-screen + main overflow-y-auto paints a compositor
@@ -410,6 +459,8 @@
             body.is-pos main {
                 overflow: visible !important;
                 height: auto !important;
+                min-width: 0;
+                max-width: 100%;
                 -webkit-overflow-scrolling: auto;
                 padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
             }
@@ -590,6 +641,9 @@
             grid-template-columns: minmax(0, 1fr) auto;
             align-items: center;
             column-gap: 12px;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
             overflow: visible;
             flex-wrap: nowrap;
             -webkit-overflow-scrolling: auto;
@@ -1451,6 +1505,9 @@
         .pos-digital {
             gap: 10px;
             padding: 4px 10px 12px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
             overflow-x: hidden;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -1514,6 +1571,8 @@
             display: flex;
             align-items: flex-start;
             width: 100%;
+            min-width: 0;
+            max-width: 100%;
             flex-shrink: 0;
         }
 
@@ -2493,7 +2552,7 @@
     </style>
 
     <main>
-        <div x-data="posApp()" x-init="init()" class="flex flex-col gap-3">
+        <div x-data="posApp()" x-init="init()" class="pos-root flex flex-col gap-3 min-w-0 w-full">
             <svg class="pos-sprite" aria-hidden="true">
                 <symbol id="pos-i-viewfinder" viewBox="0 0 24 24">
                     <path
