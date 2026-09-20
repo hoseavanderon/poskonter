@@ -2615,11 +2615,177 @@
         }
 
         .pos-modal-shell-surface {
-            background: var(--surface);
+            background: #F5F5F7;
         }
 
         html.dark .pos-modal-shell-surface {
+            background: #000000;
+        }
+
+        .pos-hist-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .pos-hist-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-width: 0;
+            padding: 16px 8px 14px;
+            border-radius: 20px;
+            background: #ffffff;
+            border: none !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+
+        html.dark .pos-hist-stat {
             background: #1C1C1E;
+        }
+
+        .pos-hist-stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.2;
+            color: #6E6E73;
+        }
+
+        html.dark .pos-hist-stat-label {
+            color: #8E8E93;
+        }
+
+        .pos-hist-stat-value {
+            margin-top: 6px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            color: #1D1D1F;
+            word-break: break-word;
+        }
+
+        html.dark .pos-hist-stat-value {
+            color: #F5F5F7;
+        }
+
+        .pos-hist-stat.is-accent .pos-hist-stat-value {
+            color: var(--accent);
+        }
+
+        .pos-hist-cats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pos-hist-cat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 96px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: #ffffff;
+            border: none !important;
+            box-shadow: none !important;
+            text-align: center;
+        }
+
+        html.dark .pos-hist-cat {
+            background: #1C1C1E;
+        }
+
+        .pos-hist-list {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: none;
+            box-shadow: none;
+        }
+
+        html.dark .pos-hist-list {
+            background: #1C1C1E;
+        }
+
+        .pos-hist-row {
+            padding: 14px 16px;
+            border: none !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            cursor: pointer;
+        }
+
+        .pos-hist-row:not(:last-child) {
+            box-shadow: inset 0 -0.5px 0 rgba(60, 60, 67, 0.18) !important;
+        }
+
+        html.dark .pos-hist-row:not(:last-child) {
+            box-shadow: inset 0 -0.5px 0 rgba(84, 84, 88, 0.45) !important;
+        }
+
+        .pos-hist-nota {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .pos-hist-row.is-debt .pos-hist-nota,
+        .pos-hist-row.is-debt .pos-hist-status {
+            color: #E25B54;
+        }
+
+        @media (max-width: 767px) {
+            .pos-modal-overlay {
+                padding: 8px;
+            }
+
+            .pos-modal-shell.pos-modal-shell-surface {
+                width: 100%;
+                max-width: none;
+                padding: 16px;
+                border-radius: 20px;
+                max-height: calc(100svh - 64px - 16px);
+            }
+
+            .pos-modal-head h2 {
+                font-size: 17px;
+            }
+
+            .pos-hist-stats {
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .pos-hist-stat {
+                padding: 12px 6px 11px;
+                border-radius: 16px;
+            }
+
+            .pos-hist-stat-label {
+                font-size: 10px;
+            }
+
+            .pos-hist-stat-value {
+                font-size: 15px;
+            }
+
+            .pos-hist-list {
+                border-radius: 16px;
+            }
+
+            .pos-hist-row {
+                padding: 12px 14px;
+            }
+        }
+
+        html.dark .pos-modal-shell-surface {
+            background: #000000;
         }
 
         .pos-modal-dig-hist {
@@ -2632,9 +2798,9 @@
 
         .pos-dig-hist-card {
             background: #ffffff !important;
-            border: 1px solid #E5E5EA !important;
-            border-radius: 18px !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            border: none !important;
+            border-radius: 20px !important;
+            box-shadow: none !important;
             color: var(--text-primary);
         }
 
@@ -2663,7 +2829,7 @@
 
         @media (max-width: 767px) {
             .pos-modal-overlay {
-                padding: 1rem;
+                padding: 8px;
             }
         }
 
@@ -4329,44 +4495,20 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                     <div class="pos-modal-body">
 
-                        {{-- Ringkasan Penjualan (modern minimalist) --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                            {{-- Total Penjualan --}}
-                            <div
-                                class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100
-                            dark:from-blue-900/40 dark:to-blue-800/20 text-blue-700 dark:text-blue-300
-                            rounded-2xl p-4 shadow-sm border border-blue-100 dark:border-blue-700/50 hover:shadow-md transition-all">
-                                <div class="flex items-center gap-2 text-sm opacity-80">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
-                                    <span>Total Penjualan</span>
-                                </div>
-                                <div class="text-2xl font-bold mt-1"
-                                    x-text="'Rp ' + summary.total_penjualan.toLocaleString()">
-                                </div>
+                        {{-- Ringkasan Penjualan --}}
+                        <div class="pos-hist-stats">
+                            <div class="pos-hist-stat is-accent">
+                                <span class="pos-hist-stat-label">Total Penjualan</span>
+                                <span class="pos-hist-stat-value"
+                                    x-text="'Rp ' + summary.total_penjualan.toLocaleString()"></span>
                             </div>
-
-                            {{-- Jumlah Transaksi --}}
-                            <div
-                                class="flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-green-100
-                            dark:from-green-900/40 dark:to-green-800/20 text-green-700 dark:text-green-300
-                            rounded-2xl p-4 shadow-sm border border-green-100 dark:border-green-700/50 hover:shadow-md transition-all">
-                                <div class="flex items-center gap-2 text-sm opacity-80">
-                                    <i class="fa-solid fa-receipt"></i>
-                                    <span>Jumlah Transaksi</span>
-                                </div>
-                                <div class="text-2xl font-bold mt-1" x-text="summary.jumlah_transaksi"></div>
+                            <div class="pos-hist-stat">
+                                <span class="pos-hist-stat-label">Jumlah Transaksi</span>
+                                <span class="pos-hist-stat-value" x-text="summary.jumlah_transaksi"></span>
                             </div>
-
-                            {{-- Produk Terjual --}}
-                            <div
-                                class="flex flex-col items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-100
-                            dark:from-cyan-900/40 dark:to-blue-800/20 text-cyan-700 dark:text-cyan-300
-                            rounded-2xl p-4 shadow-sm border border-cyan-100 dark:border-cyan-700/50 hover:shadow-md transition-all">
-                                <div class="flex items-center gap-2 text-sm opacity-80">
-                                    <i class="fa-solid fa-boxes-stacked"></i>
-                                    <span>Produk Terjual</span>
-                                </div>
-                                <div class="text-2xl font-bold mt-1" x-text="summary.total_produk_terjual"></div>
+                            <div class="pos-hist-stat">
+                                <span class="pos-hist-stat-label">Produk Terjual</span>
+                                <span class="pos-hist-stat-value" x-text="summary.total_produk_terjual"></span>
                             </div>
                         </div>
 
@@ -4376,21 +4518,13 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 <h3 class="text-gray-700 dark:text-gray-300 font-semibold mb-3">
                                     Kategori Terjual:
                                 </h3>
-                                <div class="flex flex-wrap gap-3">
+                                <div class="pos-hist-cats">
                                     <template x-for="cat in summary.categories" :key="cat.name">
-                                        <div
-                                            class="flex flex-col items-center justify-center px-4 py-3
-                                    bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700
-                                    rounded-xl shadow-sm text-center min-w-[110px] transform transition-all duration-300
-                                    hover:scale-105 hover:shadow-md hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
-
-                                            {{-- Nama kategori uppercase --}}
+                                        <div class="pos-hist-cat">
                                             <span
                                                 class="text-gray-800 dark:text-gray-100 font-bold text-xs tracking-wide uppercase"
                                                 x-text="cat.name">
                                             </span>
-
-                                            {{-- Jumlah pcs --}}
                                             <span class="text-gray-500 dark:text-gray-400 text-xs mt-1">
                                                 (<span x-text="cat.pcs"></span> pcs)
                                             </span>
@@ -4405,25 +4539,20 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                             <p class="text-gray-500 text-center py-8">Belum ada transaksi hari ini.</p>
                         </template>
 
-                        <div class="divide-y divide-gray-300 dark:divide-gray-700">
+                        <div class="pos-hist-list" x-show="transactionsToday.length > 0">
                             <template x-for="trx in transactionsToday" :key="trx.id">
                                 <div
-                                    :class="[
-                                        'p-3 rounded-lg cursor-pointer transition border',
-                                        trx.customer_id ?
-                                        'bg-red-50/80 dark:bg-red-900/30 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-800/40' :
-                                        'hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'
-                                    ]">
+                                    :class="trx.customer_id ? 'pos-hist-row is-debt' : 'pos-hist-row'">
 
                                     <div
                                         class="flex justify-between items-center font-semibold text-gray-800 dark:text-gray-100 mb-1">
                                         <div class="flex flex-col">
                                             <span class="flex items-center gap-2">
-                                                <span x-text="trx.nomor_nota"></span>
+                                                <span class="pos-hist-nota" x-text="trx.nomor_nota"></span>
 
                                                 <template x-if="trx.customer_id">
                                                     <span
-                                                        class="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
+                                                        class="pos-hist-status inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
                                                         <i class="fa-solid fa-clock"></i> Belum Lunas
                                                     </span>
                                                 </template>
@@ -4798,10 +4927,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 </template>
 
                                 {{-- Daftar Transaksi --}}
-                                <div class="space-y-3" x-show="digitalTransactions.length > 0">
+                                <div class="pos-hist-list" x-show="digitalTransactions.length > 0">
                                     <template x-for="trx in digitalTransactions" :key="trx.id">
-                                        <div
-                                            class="p-4 border dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition">
+                                        <div class="pos-hist-row">
 
                                             {{-- Header --}}
                                             <div class="flex justify-between items-center mb-1">
