@@ -4311,7 +4311,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
             <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay" x-transition>
                 <div x-transition.scale.duration.300ms
-                    class="pos-modal-shell pos-modal-shell-surface w-[95%] max-w-[800px]">
+                    class="pos-modal-shell pos-modal-shell-surface w-[95%] max-w-[896px]">
 
                     {{-- Header --}}
                     <div class="pos-modal-head">
@@ -4674,7 +4674,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
             <div x-show="showHistoryDigital" @click.self="showHistoryDigital = false"
                 @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay" x-transition>
-                <div class="pos-modal-shell pos-modal-shell-surface pos-modal-dig-hist w-[95%] max-w-[850px]">
+                <div class="pos-modal-shell pos-modal-shell-surface pos-modal-dig-hist w-[95%] max-w-[960px]">
 
                     {{-- Header --}}
                     <div class="pos-modal-head">
