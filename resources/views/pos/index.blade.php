@@ -435,21 +435,23 @@
             }
 
             html,
+            html.is-pos,
             body.is-pos {
                 height: auto !important;
-                min-height: 100dvh;
-                overflow-x: hidden;
+                min-height: 0 !important;
+                overflow-x: visible;
                 overflow-y: visible;
                 animation: none !important;
                 opacity: 1 !important;
                 transform: none !important;
                 filter: none !important;
                 will-change: auto !important;
+                padding-bottom: 0 !important;
             }
 
             body.is-pos .app-shell {
                 height: auto !important;
-                min-height: calc(100dvh - 64px);
+                min-height: 0 !important;
                 overflow: visible !important;
                 transform: none !important;
                 filter: none !important;
@@ -2547,6 +2549,65 @@
         @media (max-width: 1023px) {
             body.is-pos .pos-seg-pill {
                 will-change: auto;
+                transform: translateX(0);
+            }
+
+            html.is-pos {
+                padding-bottom: 0 !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+
+            body.is-pos {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+
+            body.is-pos * {
+                transition-property: none !important;
+            }
+
+            body.is-pos .pos-seg.is-pos-seg-ready .pos-seg-pill {
+                transition-property: transform, width !important;
+                transition-duration: 300ms !important;
+                transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+            }
+
+            body.is-pos .app-sidebar.-translate-x-full {
+                visibility: hidden !important;
+                pointer-events: none !important;
+                width: 0 !important;
+                min-width: 0 !important;
+                max-width: 0 !important;
+                height: 0 !important;
+                top: 64px !important;
+                bottom: auto !important;
+                overflow: hidden !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                transform: none !important;
+            }
+
+            body.is-pos .app-sidebar.translate-x-0 {
+                visibility: visible !important;
+                width: 15rem !important;
+                max-width: 15rem !important;
+                top: 64px !important;
+                bottom: 0 !important;
+                height: auto !important;
+            }
+
+            body.is-pos #productScrollArea,
+            body.is-pos .pos-digital,
+            body.is-pos .pos-dig-body,
+            body.is-pos .pos-physical .pos-panel-divider .flex-1.min-h-0 {
+                -webkit-overflow-scrolling: auto;
             }
         }
     </style>

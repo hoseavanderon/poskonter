@@ -10,7 +10,7 @@
     }
 @endphp
 <!DOCTYPE html>
-<html lang="id" x-data="{
+<html lang="id" class="{{ request()->routeIs('pos') ? 'is-pos' : '' }}" x-data="{
     darkMode: localStorage.getItem('darkMode') === 'true',
     isFullscreen: false,
     sidebarOpen: JSON.parse(localStorage.getItem('sidebarOpen') ?? 'false'),
