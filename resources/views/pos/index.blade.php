@@ -272,28 +272,23 @@
 
         @media (max-width: 1023px) {
             .pos-tabs {
-                overflow-x: hidden;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
                 gap: 12px;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+                overflow: visible;
             }
 
-            .pos-tabs::-webkit-scrollbar {
-                display: none;
-                width: 0;
-                height: 0;
+            .pos-seg-wrap {
+                min-width: 0;
+                overflow: hidden;
             }
 
             .pos-seg {
-                flex: 1 1 auto;
+                flex: none;
+                width: 100%;
                 min-width: 0;
                 max-width: 100%;
-            }
-
-            .pos-tabs>div {
-                flex-wrap: nowrap;
             }
 
             html,
@@ -576,7 +571,6 @@
             scrollbar-color: var(--pos-thumb) var(--pos-track);
         }
 
-        .pos-tabs,
         .pos-dig-body,
         .pos-digital {
             scrollbar-width: none;
@@ -584,7 +578,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .pos-tabs::-webkit-scrollbar,
         .pos-dig-body::-webkit-scrollbar,
         .pos-digital::-webkit-scrollbar {
             display: none;
@@ -593,29 +586,39 @@
         }
 
         .pos-tabs {
-            overflow-x: hidden;
-            overflow-y: hidden;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            column-gap: 12px;
+            overflow: visible;
             flex-wrap: nowrap;
-            -webkit-overflow-scrolling: touch;
-            gap: 20px;
+            -webkit-overflow-scrolling: auto;
             border-color: var(--divider) !important;
         }
 
+        .pos-seg-wrap {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+        }
+
         .pos-seg {
-            display: inline-flex;
+            display: flex;
             align-items: center;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
             padding: 4px;
             border-radius: 18px;
             background: var(--surface-secondary);
             border: 1px solid var(--border-hairline);
-            min-width: 0;
-            flex: 0 1 auto;
             overflow-x: auto;
             overflow-y: hidden;
             scrollbar-width: none;
             -ms-overflow-style: none;
             -webkit-overflow-scrolling: touch;
             box-shadow: none;
+            flex: none;
         }
 
         .pos-seg::-webkit-scrollbar {
@@ -626,9 +629,12 @@
 
         .pos-seg-track {
             position: relative;
+            isolation: isolate;
             display: inline-flex;
             align-items: center;
             gap: 2px;
+            min-width: max-content;
+            z-index: 0;
         }
 
         .pos-seg-pill {
@@ -663,10 +669,16 @@
 
         .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] {
             color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
         }
 
-        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] .pos-ico {
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] .pos-ico,
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] svg,
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] use {
             color: #ffffff !important;
+            stroke: #ffffff !important;
+            opacity: 1 !important;
         }
 
         .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"]::before {
@@ -676,45 +688,91 @@
             background: var(--accent);
             border-radius: 14px;
             z-index: -1;
+            pointer-events: none;
         }
 
         .pos-seg-track>button {
             position: relative;
-            z-index: 1;
+            isolation: isolate;
+            z-index: 2;
             min-height: 44px;
             border-radius: 14px !important;
             box-shadow: none !important;
             border: none !important;
             background-color: transparent !important;
             background-image: none !important;
-            color: var(--text-secondary) !important;
+            color: #6E6E73 !important;
+            -webkit-text-fill-color: #6E6E73;
             font-weight: 600;
             white-space: nowrap;
             flex-shrink: 0;
-            transition: color 200ms ease;
+            opacity: 1 !important;
+            transition: color 200ms ease, -webkit-text-fill-color 200ms ease;
         }
 
-        .pos-seg-track>button .pos-ico {
-            color: var(--text-secondary);
+        .pos-seg-track>button .pos-ico,
+        .pos-seg-track>button svg,
+        .pos-seg-track>button use {
+            color: #6E6E73 !important;
+            stroke: currentColor;
+            opacity: 1 !important;
             transition: color 200ms ease;
         }
 
         .pos-seg-track>button.is-pos-seg-on,
-        .pos-seg-track>button.is-pos-seg-on .pos-ico {
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] {
             color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        .pos-seg-track>button.is-pos-seg-on .pos-ico,
+        .pos-seg-track>button.is-pos-seg-on svg,
+        .pos-seg-track>button.is-pos-seg-on use,
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] .pos-ico,
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] svg,
+        .pos-seg:not(.is-pos-seg-ready) [data-pos-tab="physical"] use {
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        html.dark .pos-seg-track>button:not(.is-pos-seg-on) {
+            color: #AEAEB2 !important;
+            -webkit-text-fill-color: #AEAEB2;
+        }
+
+        html.dark .pos-seg-track>button:not(.is-pos-seg-on) .pos-ico,
+        html.dark .pos-seg-track>button:not(.is-pos-seg-on) svg {
+            color: #AEAEB2 !important;
+        }
+
+        html.dark .pos-seg-track>button.is-pos-seg-on,
+        html.dark .pos-seg-track>button.is-pos-seg-on .pos-ico,
+        html.dark .pos-seg-track>button.is-pos-seg-on svg,
+        html.dark .pos-seg-track>button.is-pos-seg-on use {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            stroke: #ffffff !important;
         }
 
         .pos-close-book {
+            position: relative;
+            z-index: 2;
             flex-shrink: 0;
             min-height: 52px;
+            white-space: nowrap;
             border-radius: 16px !important;
             background-color: var(--accent) !important;
             color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff;
             box-shadow: none !important;
         }
 
-        .pos-close-book .pos-ico {
-            color: #ffffff;
+        .pos-close-book .pos-ico,
+        .pos-close-book svg {
+            color: #ffffff !important;
+            stroke: #ffffff;
         }
 
         html.dark .pos-seg {
@@ -2561,41 +2619,41 @@
             </svg>
 
             {{-- Tabs atas --}}
-            <div class="pos-tabs flex items-center justify-between border-b border-gray-300 dark:border-gray-700 pb-2">
-                <!-- 🧭 Tombol Tab -->
-                <div class="pos-seg" x-ref="posSeg">
-                    <div class="pos-seg-track">
-                        <div class="pos-seg-pill" aria-hidden="true"></div>
-                        <button data-pos-tab="physical" @click="activeTab = 'physical'"
-                            :class="activeTab === 'physical' ? 'is-pos-seg-on' : ''"
-                            class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
-                            <svg class="pos-ico pos-tab-ico">
-                                <use href="#pos-i-bag"></use>
-                            </svg>
-                            Produk Fisik
-                        </button>
+            <div class="pos-tabs border-b border-gray-300 dark:border-gray-700 pb-2">
+                <div class="pos-seg-wrap">
+                    <div class="pos-seg" x-ref="posSeg">
+                        <div class="pos-seg-track">
+                            <div class="pos-seg-pill" aria-hidden="true"></div>
+                            <button type="button" data-pos-tab="physical" @click="activeTab = 'physical'"
+                                :class="activeTab === 'physical' ? 'is-pos-seg-on' : ''"
+                                class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
+                                <svg class="pos-ico pos-tab-ico">
+                                    <use href="#pos-i-bag"></use>
+                                </svg>
+                                Produk Fisik
+                            </button>
 
-                        <button data-pos-tab="digital" @click="activeTab = 'digital'"
-                            :class="activeTab === 'digital' ? 'is-pos-seg-on' : ''"
-                            class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
-                            <svg class="pos-ico pos-tab-ico">
-                                <use href="#pos-i-bolt"></use>
-                            </svg>
-                            Produk Digital
-                        </button>
+                            <button type="button" data-pos-tab="digital" @click="activeTab = 'digital'"
+                                :class="activeTab === 'digital' ? 'is-pos-seg-on' : ''"
+                                class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
+                                <svg class="pos-ico pos-tab-ico">
+                                    <use href="#pos-i-bolt"></use>
+                                </svg>
+                                Produk Digital
+                            </button>
 
-                        <button data-pos-tab="manual" @click="activeTab = 'manual'"
-                            :class="activeTab === 'manual' ? 'is-pos-seg-on' : ''"
-                            class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
-                            <svg class="pos-ico pos-tab-ico">
-                                <use href="#pos-i-pencil"></use>
-                            </svg>
-                            Input Manual
-                        </button>
+                            <button type="button" data-pos-tab="manual" @click="activeTab = 'manual'"
+                                :class="activeTab === 'manual' ? 'is-pos-seg-on' : ''"
+                                class="px-4 py-2 rounded-xl font-semibold text-[16px] transition inline-flex items-center gap-2">
+                                <svg class="pos-ico pos-tab-ico">
+                                    <use href="#pos-i-pencil"></use>
+                                </svg>
+                                Input Manual
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <!-- 🧾 Tombol Tutup Buku -->
-                <button @click="handleCloseBook()"
+                <button type="button" @click="handleCloseBook()"
                     class="pos-close-book bg-neutral-900 hover:bg-black text-white dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 font-semibold text-[16px] px-4 py-2 rounded-xl transition inline-flex items-center gap-2">
                     <svg class="pos-ico pos-tab-ico">
                         <use href="#pos-i-book"></use>
