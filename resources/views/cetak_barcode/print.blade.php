@@ -18,7 +18,7 @@
             padding: 0;
             width: {{ $pageWidth ?? 100 }}mm;
             height: {{ $pageHeight ?? 15 }}mm;
-            font-family: Arial, sans-serif;
+            font-family: "SF Pro Display", "SF Pro Text", Arial, sans-serif;
             -webkit-print-color-adjust: exact;
         }
 
@@ -174,7 +174,7 @@
             @endif
         @endforeach
     @else
-        <div style="padding:12px; font-family: Arial, sans-serif;">
+        <div style="padding:12px; font-family: 'SF Pro Display', 'SF Pro Text', Arial, sans-serif;">
             <strong>Tidak ada label untuk ditampilkan.</strong>
         </div>
     @endif

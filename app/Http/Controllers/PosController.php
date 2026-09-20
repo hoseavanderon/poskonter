@@ -269,8 +269,8 @@ class PosController extends Controller
         // ===============================
         $transaction = \App\Models\Transaction::create([
             'subtotal' => $data['subtotal'],
-            'dibayar' => $data['dibayar'],
-            'kembalian' => $data['kembalian'],
+            'dibayar' => $data['subtotal'],
+            'kembalian' => 0,
 
             // nanti diupdate
             'nomor_nota' => null,
@@ -534,8 +534,8 @@ class PosController extends Controller
                 'nominal' => $validated['nominal'],
                 'harga_jual' => $validated['harga_jual'],
                 'subtotal' => $validated['subtotal'],
-                'dibayar' => $validated['dibayar'],
-                'kembalian' => $validated['kembalian'],
+                'dibayar' => $validated['total'],
+                'kembalian' => 0,
                 'total' => $validated['total'],
                 'outlet_id' => $outletId,
                 'paid_at' => $isHutang ? null : now(),

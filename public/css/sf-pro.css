@@ -1,0 +1,84 @@
+:root {
+    --font-sf: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-family: var(--font-sf);
+}
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local("SF Pro Display Regular"), local("SFProDisplay-Regular"), local("SF Pro Display"), local(".SF NS Display");
+}
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: local("SF Pro Display Medium"), local("SFProDisplay-Medium"), local("SF Pro Display");
+}
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: local("SF Pro Display Semibold"), local("SFProDisplay-Semibold"), local("SF Pro Display");
+}
+
+@font-face {
+    font-family: "SF Pro Display";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local("SF Pro Display Bold"), local("SFProDisplay-Bold"), local("SF Pro Display");
+}
+
+@font-face {
+    font-family: "SF Pro Text";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local("SF Pro Text Regular"), local("SFProText-Regular"), local("SF Pro Text"), local(".SF NS Text");
+}
+
+@font-face {
+    font-family: "SF Pro Text";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: local("SF Pro Text Medium"), local("SFProText-Medium"), local("SF Pro Text");
+}
+
+@font-face {
+    font-family: "SF Pro Text";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: local("SF Pro Text Semibold"), local("SFProText-Semibold"), local("SF Pro Text");
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: var(--font-sf);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.fi-body,
+.fi-layout,
+.fi-simple-layout,
+.fi-simple-main,
+.fi-sidebar,
+.fi-topbar,
+.fi-main,
+.fi-modal {
+    --font-family: var(--font-sf);
+    font-family: var(--font-sf) !important;
+}

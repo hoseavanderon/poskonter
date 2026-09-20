@@ -54,13 +54,22 @@ document.addEventListener('fullscreenchange', () => {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{{ $title ?? 'POS App' }}</title>
 
+    <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
+
     {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
 
     <script>
         tailwind.config = {
-            darkMode: 'class'
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['SF Pro Display', 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
+                    }
+                }
+            }
         }
     </script>
 
@@ -68,6 +77,44 @@ document.addEventListener('fullscreenchange', () => {
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <style>
+        :root {
+            --app-bg: #F5F5F7;
+            --surface: #FFFFFF;
+            --surface-secondary: #F2F2F7;
+            --border: #D1D1D6;
+            --divider: #E5E5EA;
+            --text-primary: #1D1D1F;
+            --text-secondary: #6E6E73;
+            --text-muted: #86868B;
+            --accent: #007AFF;
+            --accent-soft: rgba(0, 122, 255, 0.10);
+            --border-hairline: rgba(0, 0, 0, 0.04);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-card-lg: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.12);
+            --shadow-focus: 0 0 0 3px rgba(0, 122, 255, 0.12);
+            --icon: #3A3A3C;
+        }
+
+        html.dark {
+            --app-bg: #000000;
+            --surface: #1C1C1E;
+            --surface-secondary: #2C2C2E;
+            --border: #38383A;
+            --divider: #38383A;
+            --text-primary: #F5F5F7;
+            --text-secondary: #AEAEB2;
+            --text-muted: #8E8E93;
+            --accent: #0A84FF;
+            --accent-soft: rgba(10, 132, 255, 0.15);
+            --border-hairline: rgba(255, 255, 255, 0.08);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+            --shadow-card-lg: 0 8px 32px rgba(0, 0, 0, 0.50);
+            --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.65);
+            --shadow-focus: 0 0 0 3px rgba(10, 132, 255, 0.16);
+            --icon: #D1D1D6;
+        }
+
         * {
             transition: background-color .25s ease, color .25s ease;
         }
@@ -76,9 +123,11 @@ document.addEventListener('fullscreenchange', () => {
         body {
             margin: 0;
             padding: 0;
-            background: #000;
+            background: var(--app-bg);
+            color: var(--text-primary);
             min-height: 100vh;
             height: 100%;
+            font-family: var(--font-sf);
         }
 
         body:fullscreen {
@@ -106,32 +155,131 @@ document.addEventListener('fullscreenchange', () => {
             }
         }
 
-        /* 🌙 Scrollbar modern dan halus untuk dark mode */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #0f172a;
-            /* warna dasar latar belakang */
+            background: var(--surface-secondary);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #334155, #1e293b);
-            border-radius: 9999px;
-            border: 2px solid #0f172a;
-            /* ruang kecil agar thumb terlihat floating */
+            background: var(--border);
+            border-radius: 10px;
+            border: 2px solid var(--surface-secondary);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #475569, #334155);
+            background: var(--text-muted);
         }
 
-        /* 🦊 Firefox */
         * {
             scrollbar-width: thin;
-            scrollbar-color: #334155 #0f172a;
+            scrollbar-color: var(--border) var(--surface-secondary);
+        }
+
+        header {
+            background: var(--surface) !important;
+            border-color: var(--border-hairline) !important;
+            box-shadow: 0 1px 0 var(--border-hairline) !important;
+            color: var(--text-primary) !important;
+        }
+
+        aside {
+            background: var(--surface) !important;
+            border-color: var(--border-hairline) !important;
+            box-shadow: var(--shadow-card) !important;
+            color: var(--text-primary) !important;
+        }
+
+        main {
+            background: var(--app-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+        textarea,
+        select {
+            background-color: var(--surface) !important;
+            border-color: var(--border) !important;
+            color: var(--text-primary) !important;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent) !important;
+            box-shadow: var(--shadow-focus) !important;
+            outline: none !important;
+        }
+
+        .bg-white {
+            background-color: var(--surface) !important;
+        }
+
+        .bg-gray-800,
+        .bg-gray-900,
+        .bg-slate-800,
+        .bg-\[\#020617\] {
+            background-color: var(--surface) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .bg-gray-700 {
+            background-color: var(--surface) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .bg-gray-50,
+        .bg-gray-100 {
+            background-color: var(--surface-secondary) !important;
+        }
+
+        .text-gray-100,
+        .text-gray-200,
+        .dark\:text-gray-100 {
+            color: var(--text-primary) !important;
+        }
+
+        .border-gray-700,
+        .border-gray-200,
+        .border-gray-300 {
+            border-color: var(--border-hairline) !important;
+        }
+
+        .rounded-2xl {
+            border-radius: 20px;
+        }
+
+        .shadow-md,
+        .shadow-lg,
+        .shadow-sm {
+            box-shadow: var(--shadow-card) !important;
+        }
+
+        .shadow-2xl,
+        .shadow-xl {
+            box-shadow: var(--shadow-modal) !important;
+        }
+
+        .bg-black\/70,
+        .bg-black\/60 {
+            background-color: rgba(0, 0, 0, 0.30) !important;
+        }
+
+        .bg-gradient-to-r,
+        .bg-gradient-to-br {
+            background-image: none !important;
+        }
+
+        .from-blue-600,
+        .to-blue-400 {
+            background-color: var(--accent) !important;
+            color: #FFFFFF !important;
         }
 
         /* ✨ Efek halus saat scroll */
@@ -143,7 +291,7 @@ document.addEventListener('fullscreenchange', () => {
     @stack('head')
 </head>
 
-<body class="h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="h-screen text-gray-900 dark:text-gray-100">
     {{-- NAVBAR --}}
     <header
         class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-10 relative">

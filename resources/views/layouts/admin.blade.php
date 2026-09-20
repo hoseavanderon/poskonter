@@ -6,14 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Admin POS</title>
 
+    <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['SF Pro Display', 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- Alpine -->
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-[#020617] text-white">
+<body class="bg-[#020617] text-white font-sans">
 
     <main class="w-full min-h-screen bg-[#020617] relative overflow-hidden md:max-w-none md:mx-0">
         <div x-data="tabNav()" x-init="init()" class="min-h-screen pb-28">

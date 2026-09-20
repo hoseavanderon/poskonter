@@ -1,13 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
         /* 🔥 Modern Dark Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
