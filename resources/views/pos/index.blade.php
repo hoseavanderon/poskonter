@@ -120,7 +120,11 @@
             border-radius: 18px;
             box-shadow: var(--shadow-card);
             cursor: pointer;
-            transition: box-shadow 0.25s ease-out, transform 0.25s ease-out, background-color 0.15s ease;
+            overflow: visible;
+            transform: none;
+            filter: none;
+            background-clip: padding-box;
+            transition: box-shadow 0.25s ease-out, background-color 0.15s ease;
         }
 
         html.dark .pos-product-card {
@@ -203,7 +207,6 @@
             line-height: 1.2;
             color: var(--pos-text);
             white-space: nowrap;
-            font-variant-numeric: tabular-nums;
         }
 
         .pos-product-name {
@@ -261,6 +264,19 @@
             border-radius: 12px;
         }
 
+        .pos-product-barcode,
+        .pos-product-variant {
+            transform: none;
+            filter: none;
+            will-change: auto;
+            opacity: 1;
+        }
+
+        #productScrollArea {
+            background-color: var(--pos-bg);
+            -webkit-overflow-scrolling: auto;
+        }
+
         .pos-panel-divider {
             border-left: none !important;
             background-color: var(--surface) !important;
@@ -268,6 +284,32 @@
             border-radius: 18px;
             box-shadow: var(--shadow-card);
             margin-left: 12px;
+            -webkit-overflow-scrolling: auto;
+        }
+
+        .pos-cart-foot {
+            position: relative;
+            z-index: 3;
+            flex-shrink: 0;
+            background-color: var(--surface) !important;
+            background-clip: padding-box;
+            transform: none;
+            filter: none;
+            opacity: 1;
+        }
+
+        .pos-cart-foot button {
+            transform: none;
+            filter: none;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .pos-cart-btn:disabled {
+            opacity: 1 !important;
+            background-color: var(--surface-secondary) !important;
+            color: var(--text-muted) !important;
+            border-color: var(--border-hairline) !important;
         }
 
         @media (max-width: 1023px) {
@@ -501,6 +543,13 @@
                 transition: box-shadow 0.25s ease-out, background-color 0.15s ease;
                 padding: 12px;
                 border-radius: 16px;
+                box-shadow: none;
+                transform: none !important;
+                filter: none !important;
+            }
+
+            .pos-panel-divider {
+                box-shadow: none;
             }
 
             .pos-product-icon {
@@ -3318,7 +3367,7 @@
                             </template>
                         </div>
 
-                        <div class="shrink-0 px-4 py-4 border-t pos-total-divider">
+                        <div class="pos-cart-foot shrink-0 px-4 py-4 border-t pos-total-divider">
                             <div class="mb-4">
                                 <h3
                                     class="flex items-center gap-2 text-[11px] font-semibold tracking-wide text-neutral-400 mb-1">
@@ -3330,7 +3379,7 @@
 
                                 <template x-if="!editingTotal">
                                     <div @click="editingTotal = true"
-                                        class="text-right text-[36px] font-semibold text-neutral-900 dark:text-white cursor-pointer select-none hover:opacity-80 transition tabular-nums leading-tight"
+                                        class="text-right text-[36px] font-semibold text-neutral-900 dark:text-white cursor-pointer select-none leading-tight"
                                         x-text="'Rp ' + payment.total.toLocaleString('id-ID')">
                                     </div>
                                 </template>
@@ -3356,14 +3405,14 @@
 
                             <div class="grid grid-cols-2 gap-2">
                                 <button @click="loadTodayTransactions()"
-                                    class="h-11 flex items-center justify-center gap-2 rounded-xl border border-neutral-300 dark:border-[#48484A] bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-[15px] font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                                    class="pos-cart-btn h-11 flex items-center justify-center gap-2 rounded-xl border border-neutral-300 dark:border-[#48484A] bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-[15px] font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                                     <svg class="pos-ico w-4 h-4">
                                         <use href="#pos-i-clock"></use>
                                     </svg>
                                     Riwayat
                                 </button>
                                 <button @click="openReviewModal()" :disabled="cart.length === 0"
-                                    class="h-11 flex items-center justify-center gap-2 rounded-xl border border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 text-[15px] font-semibold hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                                    class="pos-cart-btn h-11 flex items-center justify-center gap-2 rounded-xl border border-neutral-900 dark:border-white bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 text-[15px] font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 disabled:cursor-not-allowed transition">
                                     <svg class="pos-ico w-4 h-4">
                                         <use href="#pos-i-receipt"></use>
                                     </svg>
