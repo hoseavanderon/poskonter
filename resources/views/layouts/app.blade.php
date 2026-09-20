@@ -291,7 +291,7 @@ document.addEventListener('fullscreenchange', () => {
     @stack('head')
 </head>
 
-<body class="h-screen text-gray-900 dark:text-gray-100">
+<body class="h-screen text-gray-900 dark:text-gray-100{{ request()->routeIs('pos') ? ' is-pos' : '' }}">
     {{-- NAVBAR --}}
     <header
         class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-10 relative">
@@ -389,10 +389,10 @@ document.addEventListener('fullscreenchange', () => {
     </header>
 
     {{-- LAYOUT --}}
-    <div class="flex h-[calc(100vh-64px)] overflow-visible relative z-0">
+    <div class="app-shell flex h-[calc(100vh-64px)] overflow-visible relative z-0">
         {{-- Sidebar floating --}}
         <aside
-            class="fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform transition-transform duration-300 ease-in-out z-30"
+            class="app-sidebar fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform transition-transform duration-300 ease-in-out z-30"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
 
@@ -460,7 +460,8 @@ document.addEventListener('fullscreenchange', () => {
         </aside>
 
         {{-- Overlay ketika sidebar terbuka --}}
-        <div x-show="sidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-20"
+        <div x-show="sidebarOpen" @click="toggleSidebar"
+            class="app-sidebar-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-20"
             x-transition.opacity></div>
 
         {{-- Konten utama --}}

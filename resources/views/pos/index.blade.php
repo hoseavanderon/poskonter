@@ -378,6 +378,83 @@
                 min-height: 48px;
                 height: 48px;
             }
+
+            /*
+             * Android Chrome GPU corruption at page bottom:
+             * 100vh shell + body.h-screen + main overflow-y-auto paints a compositor
+             * tile taller than the visual viewport (address / nav bar). A transformed
+             * off-screen sidebar (translateX -100%, height 100vh) keeps that layer alive.
+             * Document scroll + no full-viewport transform; design/layout unchanged.
+             */
+            html {
+                scroll-behavior: auto;
+            }
+
+            html,
+            body.is-pos {
+                height: auto !important;
+                min-height: 100dvh;
+                overflow-x: hidden;
+                overflow-y: visible;
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+                will-change: auto !important;
+            }
+
+            body.is-pos .app-shell {
+                height: auto !important;
+                min-height: calc(100dvh - 64px);
+                overflow: visible !important;
+                transform: none !important;
+                filter: none !important;
+                will-change: auto !important;
+            }
+
+            body.is-pos main {
+                overflow: visible !important;
+                height: auto !important;
+                -webkit-overflow-scrolling: auto;
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            }
+
+            body.is-pos .app-sidebar {
+                top: 64px;
+                bottom: 0;
+                height: auto !important;
+                transform: none !important;
+                will-change: auto !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                transition: left 300ms ease-in-out !important;
+                left: 0;
+            }
+
+            body.is-pos .app-sidebar.-translate-x-full {
+                left: -15rem;
+            }
+
+            body.is-pos .app-sidebar.translate-x-0 {
+                left: 0;
+            }
+
+            body.is-pos .app-sidebar-overlay {
+                top: 64px;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                height: auto;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                filter: none !important;
+                transform: none !important;
+            }
+
+            .pos-product-card {
+                transition: box-shadow 0.25s ease-out, background-color 0.15s ease;
+            }
         }
 
         @media (max-width: 767px) {
@@ -426,6 +503,7 @@
         .backdrop-blur-sm,
         .backdrop-blur-md {
             backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
         }
 
         .bg-white\/90,
@@ -2346,6 +2424,12 @@
         @media (max-width: 767px) {
             .pos-modal-overlay {
                 padding: 1rem;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            body.is-pos .pos-seg-pill {
+                will-change: auto;
             }
         }
     </style>
