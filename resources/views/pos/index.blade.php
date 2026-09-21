@@ -441,6 +441,16 @@
                 padding: 12px 10px 16px;
             }
 
+            .pos-hist-overlay {
+                top: 64px !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                z-index: 36 !important;
+                padding: 12px 10px 16px;
+                align-items: flex-start;
+            }
+
             .pos-modal-shell.pos-modal-shell-surface {
                 width: 100%;
                 max-width: none;
@@ -2504,6 +2514,20 @@
             box-sizing: border-box;
             overflow: auto;
             background: rgba(0, 0, 0, 0.42);
+        }
+
+        .pos-hist-overlay {
+            position: fixed !important;
+            top: 64px !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            z-index: 36 !important;
+            transform: none !important;
+            filter: none !important;
+            background: rgba(0, 0, 0, 0.5) !important;
         }
 
         .pos-modal-shell {
@@ -4719,7 +4743,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
             </template>
 
-            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay" x-cloak x-transition>
+            <template x-teleport="body">
+            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay pos-hist-overlay" x-cloak>
                 <div x-transition.scale.duration.300ms
                     class="pos-modal-shell pos-modal-shell-surface w-[95%] max-w-[896px]">
 
@@ -4878,6 +4903,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             <!-- Modal Konfirmasi Hapus -->
             <div x-show="showDeleteConfirm" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
@@ -5037,8 +5063,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
             {{-- Modal Riwayat Transaksi Digital --}}
 
+            <template x-teleport="body">
             <div x-show="showHistoryDigital" @click.self="showHistoryDigital = false"
-                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay" x-cloak x-transition>
+                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay pos-hist-overlay" x-cloak>
                 <div class="pos-modal-shell pos-modal-shell-surface pos-modal-dig-hist w-[95%] max-w-[960px]">
 
                     {{-- Header --}}
@@ -5242,6 +5269,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             <!-- Modal Konfirmasi Hapus Digital -->
             <div x-show="showDeleteConfirmDigital" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
