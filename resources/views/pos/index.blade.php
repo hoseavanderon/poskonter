@@ -1015,6 +1015,69 @@
             display: none;
         }
 
+        @media (max-width: 1023px) {
+            body.is-pos .pos-tabs {
+                display: none !important;
+            }
+
+            body.is-pos .pos-bottom-nav {
+                display: grid !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                position: fixed !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                z-index: 45 !important;
+                height: calc(64px + env(safe-area-inset-bottom, 0px));
+                padding: 6px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+                box-sizing: border-box;
+                margin: 0;
+                background: var(--surface, #ffffff);
+                border-top: 1px solid var(--border-hairline, rgba(0, 0, 0, 0.08));
+                transform: none !important;
+                filter: none !important;
+            }
+
+            body.is-pos .pos-bottom-nav button {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                min-width: 0;
+                min-height: 48px;
+                border: 0;
+                background: transparent;
+                color: var(--text-secondary, #6e6e73);
+                font-size: 11px;
+                font-weight: 600;
+                font-family: inherit;
+                padding: 4px 2px;
+            }
+
+            body.is-pos .pos-bottom-nav .pos-ico {
+                width: 22px;
+                height: 22px;
+                stroke: currentColor;
+                fill: none;
+                color: currentColor;
+            }
+
+            body.is-pos .pos-bottom-nav button.is-on,
+            body.is-pos .pos-bottom-nav button.is-book {
+                color: var(--accent, #007aff);
+            }
+
+            body.is-pos main {
+                padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            body.is-pos .pwa-install {
+                bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+            }
+        }
+
         .pos-manual-pane {
             width: 100%;
             min-width: 0;
@@ -5187,8 +5250,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
-        </div>
 
+            <template x-teleport="body">
             <nav class="pos-bottom-nav" aria-label="Menu POS">
                 <button type="button" @click="activeTab = 'physical'"
                     :class="activeTab === 'physical' ? 'is-on' : ''">
@@ -5218,6 +5281,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     <span>Tutup</span>
                 </button>
             </nav>
+            </template>
         </div>
     </main>
 
