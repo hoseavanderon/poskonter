@@ -469,8 +469,64 @@
                 height: 48px;
             }
 
-            html {
-                scroll-behavior: auto;
+            .pos-tabs {
+                display: none !important;
+            }
+
+            .pos-bottom-nav {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 15;
+                height: calc(64px + env(safe-area-inset-bottom, 0px));
+                padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+                box-sizing: border-box;
+                background: var(--surface);
+                border-top: 1px solid var(--border-hairline);
+                box-shadow: none;
+            }
+
+            .pos-bottom-nav button {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                min-width: 0;
+                border: 0;
+                background: transparent;
+                color: var(--text-secondary);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: -0.01em;
+                font-family: inherit;
+                padding: 4px 2px;
+            }
+
+            .pos-bottom-nav .pos-ico {
+                width: 22px;
+                height: 22px;
+                color: currentColor;
+                stroke: currentColor;
+            }
+
+            .pos-bottom-nav button.is-on {
+                color: var(--accent);
+            }
+
+            .pos-bottom-nav button.is-book {
+                color: var(--accent);
+            }
+
+            body.is-pos main {
+                padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            body.is-pos .pwa-install {
+                bottom: calc(80px + env(safe-area-inset-bottom, 0px));
             }
 
             html,
@@ -508,7 +564,7 @@
 
             body.is-pos .app-sidebar {
                 top: 64px;
-                bottom: 0;
+                bottom: calc(64px + env(safe-area-inset-bottom, 0px));
                 height: auto !important;
                 transform: none !important;
                 will-change: auto !important;
@@ -530,7 +586,7 @@
             body.is-pos .app-sidebar-overlay {
                 top: 64px;
                 right: 0;
-                bottom: 0;
+                bottom: calc(64px + env(safe-area-inset-bottom, 0px));
                 left: 0;
                 height: auto;
                 backdrop-filter: none !important;
@@ -954,6 +1010,10 @@
 
         html.dark .pos-seg {
             background: #2C2C2E;
+        }
+
+        .pos-bottom-nav {
+            display: none;
         }
 
         .pos-manual-pane {
@@ -2988,7 +3048,7 @@
                 width: 15rem !important;
                 max-width: 15rem !important;
                 top: 64px !important;
-                bottom: 0 !important;
+                bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
                 height: auto !important;
             }
 
@@ -5127,6 +5187,37 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+        </div>
+
+            <nav class="pos-bottom-nav" aria-label="Menu POS">
+                <button type="button" @click="activeTab = 'physical'"
+                    :class="activeTab === 'physical' ? 'is-on' : ''">
+                    <svg class="pos-ico">
+                        <use href="#pos-i-bag"></use>
+                    </svg>
+                    <span>Fisik</span>
+                </button>
+                <button type="button" @click="activeTab = 'digital'"
+                    :class="activeTab === 'digital' ? 'is-on' : ''">
+                    <svg class="pos-ico">
+                        <use href="#pos-i-bolt"></use>
+                    </svg>
+                    <span>Digital</span>
+                </button>
+                <button type="button" @click="activeTab = 'manual'"
+                    :class="activeTab === 'manual' ? 'is-on' : ''">
+                    <svg class="pos-ico">
+                        <use href="#pos-i-pencil"></use>
+                    </svg>
+                    <span>Manual</span>
+                </button>
+                <button type="button" class="is-book" @click="handleCloseBook()">
+                    <svg class="pos-ico">
+                        <use href="#pos-i-book"></use>
+                    </svg>
+                    <span>Tutup</span>
+                </button>
+            </nav>
         </div>
     </main>
 
