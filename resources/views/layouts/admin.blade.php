@@ -22,6 +22,10 @@
         }
     </script>
 
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <!-- Alpine -->
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
@@ -64,7 +68,7 @@
                         </button>
 
                         <!-- DROPDOWN -->
-                        <div x-show="open" @click.outside="open = false" x-transition
+                        <div x-show="open" x-cloak @click.outside="open = false" x-transition
                             class="absolute right-0 mt-2 w-48 
                    bg-[#020617]/95 backdrop-blur-xl 
                    border border-white/10 

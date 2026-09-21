@@ -3364,7 +3364,7 @@
                         </button>
                     </div>
 
-                    <div x-show="showConfirmClose" x-transition.opacity @keydown.escape.window="showConfirmClose = false"
+                    <div x-show="showConfirmClose" x-cloak x-transition.opacity @keydown.escape.window="showConfirmClose = false"
                         @click="showConfirmClose = false" class="pos-modal-overlay z-[90]">
                         <div @click.stop class="pos-modal-confirm p-6 rounded-xl shadow-2xl w-full max-w-sm">
 
@@ -3697,7 +3697,7 @@
             {{-- ============================= --}}
             {{-- MODAL: PILIH VARIAN PRODUK --}}
             {{-- ============================= --}}
-            <div x-show="showOptionModal" x-transition @keydown.window.escape="showOptionModal = false; focusScanner()"
+            <div x-show="showOptionModal" x-cloak x-transition @keydown.window.escape="showOptionModal = false; focusScanner()"
                 @click.self="showOptionModal = false; focusScanner()" class="pos-modal-overlay">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl mx-4 p-8 relative">
                     {{-- Tombol Close --}}
@@ -3748,7 +3748,7 @@
             {{-- ============================= --}}
             {{-- TAB: PRODUK DIGITAL (Final Enhanced Version) --}}
             {{-- ============================= --}}
-            <div x-show="activeTab === 'digital'"
+            <div x-show="activeTab === 'digital'" x-cloak
                 class="pos-digital flex flex-col text-gray-800 dark:text-gray-100">
 
                 {{-- Header --}}
@@ -4394,7 +4394,7 @@
             <!-- ====================== TAB INPUT MANUAL ====================== -->
 
 
-            <div x-show="activeTab === 'manual'" class="pos-manual-pane">
+            <div x-show="activeTab === 'manual'" class="pos-manual-pane" x-cloak>
                 <div class="pos-manual">
                     <div class="pos-manual-card">
                         <h2 class="pos-manual-title">Input Manual / Jasa</h2>
@@ -4445,7 +4445,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             {{-- 🧾 Modal Konfirmasi Manual --}}
-            <div x-show="showManualConfirm" class="pos-modal-overlay" x-transition>
+            <div x-show="showManualConfirm" class="pos-modal-overlay" x-cloak x-transition>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden"
                     x-transition.scale>
 
@@ -4502,7 +4502,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
 
             {{-- 🧾 Modal Konfirmasi Transaksi --}}
-            <div x-show="showReview" class="pos-modal-overlay" x-transition>
+            <div x-show="showReview" class="pos-modal-overlay" x-cloak x-transition>
 
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden">
@@ -4577,7 +4577,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
             </template>
 
-            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay" x-transition>
+            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay" x-cloak x-transition>
                 <div x-transition.scale.duration.300ms
                     class="pos-modal-shell pos-modal-shell-surface w-[95%] max-w-[896px]">
 
@@ -4738,7 +4738,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             <!-- Modal Konfirmasi Hapus -->
-            <div x-show="showDeleteConfirm" x-transition.opacity.duration.300ms class="pos-modal-overlay">
+            <div x-show="showDeleteConfirm" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
                 <div x-show="showDeleteConfirm" x-transition.scale.duration.300ms
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-[90%] max-w-sm text-center">
 
@@ -4769,7 +4769,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             {{-- Modal Detail Transaksi --}}
-            <div x-show="showDetailModal" class="pos-modal-overlay" x-transition>
+            <div x-show="showDetailModal" class="pos-modal-overlay" x-cloak x-transition>
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-[90%] md:w-[600px] max-h-[85vh] overflow-y-auto shadow-2xl">
                     <div class="flex justify-between items-center mb-4">
@@ -4809,7 +4809,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             <!-- 🌟 MODAL REVIEW TRANSAKSI DIGITAL -->
-            <div x-show="showDigitalReviewModal" x-transition class="pos-modal-overlay">
+            <div x-show="showDigitalReviewModal" x-cloak x-transition class="pos-modal-overlay">
 
                 <div @click.away="showDigitalReviewModal = false"
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 w-[95%] max-w-2xl shadow-2xl relative overflow-hidden border border-gray-300 dark:border-gray-700">
@@ -4896,7 +4896,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             {{-- Modal Riwayat Transaksi Digital --}}
 
             <div x-show="showHistoryDigital" @click.self="showHistoryDigital = false"
-                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay" x-transition>
+                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay" x-cloak x-transition>
                 <div class="pos-modal-shell pos-modal-shell-surface pos-modal-dig-hist w-[95%] max-w-[960px]">
 
                     {{-- Header --}}
@@ -5102,7 +5102,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
 
             <!-- Modal Konfirmasi Hapus Digital -->
-            <div x-show="showDeleteConfirmDigital" x-transition.opacity.duration.300ms class="pos-modal-overlay">
+            <div x-show="showDeleteConfirmDigital" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
                 <div x-show="showDeleteConfirmDigital" x-transition.scale.duration.300ms
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-[90%] max-w-sm text-center">
                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
