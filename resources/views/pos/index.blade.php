@@ -3189,6 +3189,33 @@
                 -webkit-overflow-scrolling: auto;
             }
         }
+
+        html.pos-hist-open,
+        html.pos-hist-open body,
+        html.pos-hist-open body.is-pos,
+        html.pos-hist-open .app-shell,
+        html.pos-hist-open main,
+        html.pos-hist-open #productScrollArea,
+        html.pos-hist-open .pos-physical,
+        html.pos-hist-open .pos-physical-split,
+        html.pos-hist-open .pos-physical-workspace,
+        html.pos-hist-open .pos-digital,
+        html.pos-hist-open .pos-dig-body,
+        html.pos-hist-open .pos-manual {
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+            touch-action: none;
+        }
+
+        html.pos-hist-open .pos-hist-overlay {
+            touch-action: auto;
+            overflow: auto !important;
+        }
+
+        html.pos-hist-open .pos-hist-overlay .pos-modal-shell {
+            touch-action: pan-y;
+            overflow-y: auto !important;
+        }
     </style>
 
     <main>
@@ -5497,6 +5524,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     // WATCHER
                     this.$watch('showHistoryDigital', value => {
                         if (value) this.loadAppSummaries();
+                        if (value) this.lockHistPageScroll();
+                        else this.unlockHistPageScroll();
                     });
 
                     // 🎯 Watcher Search Produk
@@ -5549,6 +5578,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     });
 
                     this.$watch('showHistory', (open) => {
+                        if (open) this.lockHistPageScroll();
+                        else this.unlockHistPageScroll();
                         if (!open) this.focusScanner();
                     });
 
@@ -5605,6 +5636,31 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         }, 1680);
                     });
 
+                },
+
+                lockHistPageScroll() {
+                    document.documentElement.classList.add('pos-hist-open');
+                    if (this._histLockOn) return;
+                    this._histLockOn = true;
+                    this._histTouchLock = (e) => {
+                        if (e.target && e.target.closest && e.target.closest('.pos-modal-shell')) return;
+                        e.preventDefault();
+                    };
+                    document.addEventListener('touchmove', this._histTouchLock, {
+                        passive: false
+                    });
+                    document.addEventListener('wheel', this._histTouchLock, {
+                        passive: false
+                    });
+                },
+
+                unlockHistPageScroll() {
+                    if (this.showHistory || this.showHistoryDigital) return;
+                    document.documentElement.classList.remove('pos-hist-open');
+                    if (!this._histLockOn || !this._histTouchLock) return;
+                    document.removeEventListener('touchmove', this._histTouchLock);
+                    document.removeEventListener('wheel', this._histTouchLock);
+                    this._histLockOn = false;
                 },
 
                 focusScanner() {
