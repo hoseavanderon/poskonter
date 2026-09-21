@@ -7,20 +7,23 @@
     <title>Admin POS</title>
     @include('partials.pwa')
     <script>
-        document.documentElement.classList.add('is-boot', 'dark');
-        setTimeout(function() {
-            document.documentElement.classList.remove('is-boot');
-            document.documentElement.classList.add('alpine-ready');
-            var boot = document.getElementById('appBoot');
-            if (boot && boot.parentNode) boot.parentNode.removeChild(boot);
-        }, 4000);
+        document.documentElement.classList.add('dark');
+        try {
+            if (sessionStorage.getItem('pos-boot-done') === '1') {
+                document.documentElement.classList.add('alpine-ready');
+            } else {
+                document.documentElement.classList.add('is-boot');
+            }
+        } catch (e) {
+            document.documentElement.classList.add('is-boot');
+        }
     </script>
     <style>
         [x-cloak] {
             display: none !important;
         }
 
-        html.is-boot [x-show] {
+        html.is-boot .app-sidebar-overlay {
             display: none !important;
         }
     </style>
@@ -29,7 +32,7 @@
     <script src="{{ asset('js/app-boot.js') }}"></script>
 
     <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/vendor/tailwindcdn.js') }}"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -47,7 +50,7 @@
     </style>
 
     <!-- Alpine -->
-    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="{{ asset('js/vendor/alpine.min.js') }}" defer></script>
 </head>
 
 <body class="bg-[#020617] text-white font-sans">

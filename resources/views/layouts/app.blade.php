@@ -58,28 +58,15 @@ document.addEventListener('fullscreenchange', () => {
             try {
                 if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
             } catch (e) {}
-            document.documentElement.classList.add('is-boot');
-            setTimeout(function() {
-                document.documentElement.classList.remove('is-boot');
-                document.documentElement.classList.add('alpine-ready');
-                var boot = document.getElementById('appBoot');
-                if (boot && boot.parentNode) boot.parentNode.removeChild(boot);
-            }, 4000);
+            var skip = false;
+            try { skip = sessionStorage.getItem('pos-boot-done') === '1'; } catch (e) {}
+            if (skip) document.documentElement.classList.add('alpine-ready');
+            else document.documentElement.classList.add('is-boot');
         })();
     </script>
     <style>
         [x-cloak] {
             display: none !important;
-        }
-
-        html.is-boot [x-show] {
-            display: none !important;
-        }
-
-        html.is-boot .app-sidebar {
-            transform: translate3d(-100%, 0, 0) !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
         }
 
         html.is-boot .app-sidebar-overlay,
@@ -104,9 +91,8 @@ document.addEventListener('fullscreenchange', () => {
 
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
 
-    {{-- Tailwind --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="{{ asset('js/vendor/tailwindcdn.js') }}"></script>
+    <script src="{{ asset('js/vendor/alpine-collapse.min.js') }}" defer></script>
 
     <script>
         tailwind.config = {
@@ -122,7 +108,7 @@ document.addEventListener('fullscreenchange', () => {
     </script>
 
     {{-- AlpineJS --}}
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="{{ asset('js/vendor/alpine.min.js') }}" defer></script>
 
     <style>
         :root {
