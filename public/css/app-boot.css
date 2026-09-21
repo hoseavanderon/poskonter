@@ -1,0 +1,226 @@
+.app-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  background: var(--app-bg, #F5F5F7);
+  overflow: hidden;
+}
+
+html.dark .app-boot {
+  background: #000;
+}
+
+.app-boot-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(42px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.app-boot-orb-a {
+  width: 280px;
+  height: 280px;
+  background: #007aff;
+  top: -80px;
+  left: -40px;
+  animation: appBootOrb 10s ease-in-out infinite;
+}
+
+.app-boot-orb-b {
+  width: 220px;
+  height: 220px;
+  background: #64d2ff;
+  right: -50px;
+  bottom: -40px;
+  animation: appBootOrb 12s ease-in-out infinite reverse;
+}
+
+html.dark .app-boot-orb-a {
+  background: #0a84ff;
+}
+
+.app-boot-stage {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+}
+
+.app-boot-ring {
+  position: absolute;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 122, 255, 0.35);
+  animation: appBootRing 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+html.dark .app-boot-ring {
+  border-color: rgba(10, 132, 255, 0.4);
+}
+
+.app-boot-ring-2 {
+  animation-delay: 1.2s;
+}
+
+.app-boot-ring-3 {
+  animation-delay: 2.4s;
+}
+
+.app-boot-hero {
+  position: relative;
+  z-index: 2;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sf, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: linear-gradient(180deg, #3a8dff, #0a64e0);
+  box-shadow: 0 16px 36px rgba(0, 122, 255, 0.28);
+  animation: appBootPop 700ms cubic-bezier(0.16, 1, 0.3, 1) both, appBootBreathe 4.4s 800ms ease-in-out infinite;
+}
+
+html.dark .app-boot-hero {
+  background: linear-gradient(180deg, #3a3a3c, #2c2c2e);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(10, 132, 255, 0.28);
+}
+
+.app-boot-label {
+  position: absolute;
+  bottom: 18%;
+  font-family: var(--font-sf, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-secondary, #6e6e73);
+  animation: appBootRise 600ms 180ms both;
+}
+
+html.dark .app-boot-label {
+  color: #aeaeb2;
+}
+
+.app-boot.is-leaving {
+  animation: appBootOut 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+html.alpine-ready header,
+html.alpine-ready .app-shell {
+  animation: appBootFade 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html.is-pos.alpine-ready header,
+html.is-pos.alpine-ready .app-shell {
+  animation: appBootFade 520ms ease both;
+}
+
+@keyframes appBootOrb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(16px, -12px, 0) scale(1.08);
+  }
+}
+
+@keyframes appBootRing {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+@keyframes appBootPop {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes appBootBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+@keyframes appBootRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appBootShell {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes appBootFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes appBootOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-boot-orb,
+  .app-boot-ring,
+  .app-boot-hero,
+  .app-boot-label,
+  html.alpine-ready header,
+  html.alpine-ready .app-shell {
+    animation: none !important;
+  }
+
+  .app-boot.is-leaving {
+    opacity: 0;
+  }
+}

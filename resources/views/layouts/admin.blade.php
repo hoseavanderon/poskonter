@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Admin POS</title>
+    @include('partials.pwa')
+    <script>
+        document.documentElement.classList.add('is-boot', 'dark');
+    </script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
 
+        html.is-boot [x-show] {
+            display: none !important;
+        }
+    </style>
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app-boot.css') }}">
+    <script src="{{ asset('js/app-boot.js') }}"></script>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,6 +45,7 @@
 </head>
 
 <body class="bg-[#020617] text-white font-sans">
+    @include('partials.app-boot')
 
     <main class="w-full min-h-screen bg-[#020617] relative overflow-hidden md:max-w-none md:mx-0">
         <div x-data="tabNav()" x-init="init()" class="min-h-screen pb-28">
@@ -139,6 +154,9 @@
                     })
                 },
                 select(page, event) {
+                    if (this.page !== page && window.playAppBootOverlay) {
+                        window.playAppBootOverlay();
+                    }
                     this.page = page
                     this.set(event.currentTarget)
                 },

@@ -52,38 +52,13 @@ document.addEventListener('fullscreenchange', () => {
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#000000">
     <title>{{ $title ?? 'POS App' }}</title>
+    @include('partials.pwa')
     <script>
         (function() {
-            var html = document.documentElement;
             try {
-                if (localStorage.getItem('darkMode') === 'true') html.classList.add('dark');
+                if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
             } catch (e) {}
-            html.classList.add('is-boot');
-
-            var revealed = false;
-
-            function reveal() {
-                if (revealed) return;
-                revealed = true;
-                html.classList.add('alpine-ready');
-                html.classList.remove('is-boot');
-                var boot = document.getElementById('appBoot');
-                if (!boot) return;
-                boot.classList.add('is-leaving');
-                boot.addEventListener('animationend', function() {
-                    if (boot.parentNode) boot.remove();
-                });
-                setTimeout(function() {
-                    if (boot.parentNode) boot.remove();
-                }, 900);
-            }
-
-            document.addEventListener('alpine:initialized', function() {
-                requestAnimationFrame(function() {
-                    requestAnimationFrame(reveal);
-                });
-            });
-            setTimeout(reveal, 2200);
+            document.documentElement.classList.add('is-boot');
         })();
     </script>
     <style>
@@ -109,180 +84,17 @@ document.addEventListener('fullscreenchange', () => {
             pointer-events: none !important;
         }
 
-        .app-boot {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            display: grid;
-            place-items: center;
-            background: var(--app-bg, #F5F5F7);
-            overflow: hidden;
+        .app-sidebar {
+            transform: translate3d(-100%, 0, 0);
+            transition: transform 300ms ease;
         }
 
-        html.dark .app-boot {
-            background: #000;
-        }
-
-        .app-boot-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(42px);
-            opacity: .5;
-            pointer-events: none;
-        }
-
-        .app-boot-orb-a {
-            width: 280px;
-            height: 280px;
-            background: #007AFF;
-            top: -80px;
-            left: -40px;
-            animation: appBootOrb 10s ease-in-out infinite;
-        }
-
-        .app-boot-orb-b {
-            width: 220px;
-            height: 220px;
-            background: #64D2FF;
-            right: -50px;
-            bottom: -40px;
-            animation: appBootOrb 12s ease-in-out infinite reverse;
-        }
-
-        html.dark .app-boot-orb-a {
-            background: #0A84FF;
-        }
-
-        .app-boot-stage {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            display: grid;
-            place-items: center;
-        }
-
-        .app-boot-ring {
-            position: absolute;
-            width: 112px;
-            height: 112px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(0, 122, 255, .35);
-            animation: appBootRing 3.8s cubic-bezier(.22, 1, .36, 1) infinite;
-        }
-
-        html.dark .app-boot-ring {
-            border-color: rgba(10, 132, 255, .4);
-        }
-
-        .app-boot-ring-2 {
-            animation-delay: 1.2s;
-        }
-
-        .app-boot-ring-3 {
-            animation-delay: 2.4s;
-        }
-
-        .app-boot-hero {
-            position: relative;
-            z-index: 2;
-            width: 72px;
-            height: 72px;
-            border-radius: 22px;
-            display: grid;
-            place-items: center;
-            font-family: var(--font-sf, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif);
-            font-weight: 700;
-            letter-spacing: .08em;
-            color: #fff;
-            background: linear-gradient(180deg, #3a8dff, #0a64e0);
-            box-shadow: 0 16px 36px rgba(0, 122, 255, .28);
-            animation: appBootPop 700ms cubic-bezier(.16, 1, .3, 1) both, appBootBreathe 4.4s 800ms ease-in-out infinite;
-        }
-
-        html.dark .app-boot-hero {
-            background: linear-gradient(180deg, #3A3A3C, #2C2C2E);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, .5), 0 0 24px rgba(10, 132, 255, .28);
-        }
-
-        .app-boot-label {
-            position: absolute;
-            bottom: 18%;
-            font-family: var(--font-sf, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif);
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: -.01em;
-            color: var(--text-secondary, #6E6E73);
-            animation: appBootRise 600ms 180ms both;
-        }
-
-        html.dark .app-boot-label {
-            color: #AEAEB2;
-        }
-
-        .app-boot.is-leaving {
-            animation: appBootOut 520ms cubic-bezier(.22, 1, .36, 1) forwards;
-        }
-
-        html.alpine-ready header {
-            animation: appBootRise 560ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        html.alpine-ready .app-shell {
-            animation: appBootShell 700ms 70ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        html.is-pos.alpine-ready header,
-        html.is-pos.alpine-ready .app-shell {
-            animation: appBootFade 520ms ease both;
-        }
-
-        @keyframes appBootOrb {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(16px, -12px, 0) scale(1.08); }
-        }
-
-        @keyframes appBootRing {
-            0% { transform: scale(.72); opacity: .4; }
-            100% { transform: scale(1.55); opacity: 0; }
-        }
-
-        @keyframes appBootPop {
-            from { opacity: 0; transform: scale(.72); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes appBootBreathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.045); }
-        }
-
-        @keyframes appBootRise {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes appBootShell {
-            from { opacity: 0; transform: translateY(14px) scale(.985); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        @keyframes appBootFade {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes appBootOut {
-            to { opacity: 0; visibility: hidden; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .app-boot-orb, .app-boot-ring, .app-boot-hero, .app-boot-label,
-            html.alpine-ready header, html.alpine-ready .app-shell {
-                animation: none !important;
-            }
-            .app-boot.is-leaving { opacity: 0; }
+        .app-sidebar.translate-x-0 {
+            transform: translate3d(0, 0, 0);
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/app-boot.css') }}">
+    <script src="{{ asset('js/app-boot.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
 
@@ -534,20 +346,10 @@ document.addEventListener('fullscreenchange', () => {
 </head>
 
 <body class="text-gray-900 dark:text-gray-100{{ request()->routeIs('pos') ? ' is-pos' : ' h-screen' }}">
-    <div class="app-boot" id="appBoot" aria-hidden="true">
-        <span class="app-boot-orb app-boot-orb-a"></span>
-        <span class="app-boot-orb app-boot-orb-b"></span>
-        <div class="app-boot-stage">
-            <span class="app-boot-ring"></span>
-            <span class="app-boot-ring app-boot-ring-2"></span>
-            <span class="app-boot-ring app-boot-ring-3"></span>
-            <div class="app-boot-hero">POS</div>
-        </div>
-        <span class="app-boot-label">POS Konter</span>
-    </div>
+    @include('partials.app-boot')
     {{-- NAVBAR --}}
     <header
-        class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-10 relative">
+        class="flex items-center justify-between h-16 px-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-40 relative">
 
         <div class="flex items-center gap-2">
             {{-- Sidebar toggle (mobile & desktop) --}}
@@ -642,14 +444,19 @@ document.addEventListener('fullscreenchange', () => {
     </header>
 
     {{-- LAYOUT --}}
-    <div class="app-shell flex h-[calc(100vh-64px)] overflow-visible relative z-0">
-        {{-- Sidebar floating --}}
-        <aside
-            class="app-sidebar fixed top-[64px] left-0 h-[calc(100vh-64px)] w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out z-30"
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <div class="app-shell flex h-[calc(100vh-64px)] overflow-hidden relative z-0">
+        {{-- Konten utama --}}
+        <main class="flex-1 p-4 overflow-y-auto relative z-0 min-w-0">
+            @yield('content')
+        </main>
+    </div>
 
+    {{-- Sidebar di luar shell supaya tidak terpotong --}}
+    <aside
+        class="app-sidebar fixed top-16 left-0 bottom-0 w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl z-30"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
-            <nav class="space-y-2 p-4">
+        <nav class="space-y-2 p-4 h-full overflow-y-auto">
                 @php
                     $user = Auth::user();
                 @endphp
@@ -709,19 +516,11 @@ document.addEventListener('fullscreenchange', () => {
                     <x-heroicon-o-cog-6-tooth class="w-5 h-5" /> <span>Admin</span>
                 </a>
             </nav>
+    </aside>
 
-        </aside>
-
-        {{-- Overlay ketika sidebar terbuka --}}
-        <div x-show="sidebarOpen" x-cloak @click="toggleSidebar"
-            class="app-sidebar-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-20"
-            x-transition.opacity></div>
-
-        {{-- Konten utama --}}
-        <main class="flex-1 p-4 overflow-y-auto relative z-0">
-            @yield('content')
-        </main>
-    </div>
+    <div x-show="sidebarOpen" x-cloak @click="toggleSidebar"
+        class="app-sidebar-overlay fixed top-16 inset-x-0 bottom-0 bg-black/50 z-20"
+        x-transition.opacity></div>
 
 </body>
 

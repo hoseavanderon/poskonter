@@ -60,7 +60,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString('<link rel="stylesheet" href="'.e(asset('css/sf-pro.css')).'">'),
+                fn (): HtmlString => new HtmlString(
+                    '<link rel="stylesheet" href="'.e(asset('css/sf-pro.css')).'">'.
+                    view('partials.pwa')->render()
+                ),
             );
     }
 }
