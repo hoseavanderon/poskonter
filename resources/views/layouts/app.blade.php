@@ -90,22 +90,8 @@ document.addEventListener('fullscreenchange', () => {
     <script src="{{ asset('js/app-boot.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
-
-    <script src="{{ asset('js/vendor/tailwindcdn.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
     <script src="{{ asset('js/vendor/alpine-collapse.min.js') }}" defer></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['SF Pro Display', 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
 
     {{-- AlpineJS --}}
     <script src="{{ asset('js/vendor/alpine.min.js') }}" defer></script>

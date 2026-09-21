@@ -29,21 +29,8 @@
     </style>
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app-boot.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
     <script src="{{ asset('js/app-boot.js') }}"></script>
-
-    <!-- Tailwind -->
-    <script src="{{ asset('js/vendor/tailwindcdn.js') }}"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['SF Pro Display', 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         [x-cloak] { display: none !important; }
