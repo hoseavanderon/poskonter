@@ -1,135 +1,1054 @@
 @extends('layouts.app')
 
 @section('content')
-    <div x-data="ledgerApp()" x-init="init()" class="p-3 sm:p-4 md:p-6 w-full h-full overflow-x-hidden">
+    <div x-data="ledgerApp()" x-init="init()" class="ledger-page p-3 sm:p-4 md:p-6 w-full h-full overflow-x-hidden">
         <style>
-            /* === Scrollbar modern === */
-            .scrollbar-modern::-webkit-scrollbar {
-                height: 6px;
-                width: 6px;
-            }
-
-            .scrollbar-modern::-webkit-scrollbar-track {
+            .ledger-page {
+                color: var(--text-primary);
                 background: transparent;
             }
 
-            .scrollbar-modern::-webkit-scrollbar-thumb {
-                background: #d1d5db;
-                border-radius: 999px;
+            .ledger-data {
+                text-transform: uppercase;
             }
 
-            .dark .scrollbar-modern::-webkit-scrollbar-thumb {
-                background: #374151;
-            }
-
-            .scrollbar-modern {
-                scrollbar-width: thin;
-                scrollbar-color: #d1d5db transparent;
-            }
-
-            .dark .scrollbar-modern {
-                scrollbar-color: #374151 transparent;
-            }
-
-            .no-scrollbar::-webkit-scrollbar {
+            .ledger-page .no-scrollbar::-webkit-scrollbar {
                 display: none;
             }
 
-            .no-scrollbar {
+            .ledger-page .no-scrollbar {
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
+
+            .ledger-page .smooth-scroll {
+                scroll-behavior: smooth;
+            }
+
+            .ledger-card {
+                background: #FFFFFF;
+                border-radius: 24px;
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            html.dark .ledger-card {
+                background: #1C1C1E;
+                border-color: rgba(255, 255, 255, 0.08);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+            }
+
+            /* Balance flat — no nested box */
+            .ledger-balance {
+                background: transparent;
+                border: 0;
+                border-radius: 0;
+                padding: 4px 2px 2px;
+                box-shadow: none;
+            }
+
+            .ledger-balance-label {
+                font-size: 13px;
+                font-weight: 500;
+                color: #8E8E93;
+                letter-spacing: -0.01em;
+            }
+
+            .ledger-balance-value {
+                margin-top: 6px;
+                font-size: clamp(30px, 5vw, 38px);
+                font-weight: 700;
+                letter-spacing: -0.045em;
+                line-height: 1.08;
+                color: #1D1D1F;
+            }
+
+            html.dark .ledger-balance-value {
+                color: #F5F5F7;
+            }
+
+            .ledger-balance-meta {
+                margin-top: 8px;
+                font-size: 12px;
+                color: #AEAEB2;
+                font-weight: 400;
+            }
+
+            .ledger-balance-meta span {
+                color: #AEAEB2;
+                font-weight: 400;
+            }
+
+            .ledger-action {
+                width: 100%;
+                height: 58px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                border-radius: 16px;
+                background: #FFFFFF;
+                border: 1px solid #E5E5EA;
+                color: var(--text-primary);
+                transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+            }
+
+            html.dark .ledger-action {
+                background: #2C2C2E;
+                border-color: #38383A;
+            }
+
+            .ledger-action:hover {
+                border-color: var(--accent);
+                background: var(--accent-soft);
+            }
+
+            .ledger-action:active {
+                transform: scale(0.97);
+            }
+
+            .ledger-action svg {
+                width: 22px;
+                height: 22px;
+                color: #636366;
+            }
+
+            html.dark .ledger-action svg {
+                color: #AEAEB2;
+            }
+
+            .ledger-action:hover svg {
+                color: var(--accent);
+            }
+
+            .ledger-action span {
+                font-size: 12px;
+                font-weight: 600;
+                color: #636366;
+            }
+
+            html.dark .ledger-action span {
+                color: #AEAEB2;
+            }
+
+            .ledger-wallet {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                width: 100%;
+                text-align: left;
+                padding: 14px 12px 14px 14px;
+                border-radius: 16px;
+                background: transparent;
+                border: 0;
+                transition:
+                    background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .ledger-wallet:hover {
+                background: rgba(0, 0, 0, 0.025);
+            }
+
+            html.dark .ledger-wallet:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .ledger-wallet.is-on {
+                background: rgba(0, 122, 255, 0.08);
+            }
+
+            html.dark .ledger-wallet.is-on {
+                background: rgba(10, 132, 255, 0.16);
+            }
+
+            .ledger-wallet-bar {
+                position: absolute;
+                left: 0;
+                top: 50%;
+                width: 4px;
+                height: 62%;
+                border-radius: 999px;
+                background: var(--accent);
+                transform: translateY(-50%) scaleY(0.35);
+                opacity: 0;
+                transform-origin: center;
+                transition:
+                    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+                pointer-events: none;
+            }
+
+            .ledger-wallet.is-on .ledger-wallet-bar {
+                opacity: 1;
+                transform: translateY(-50%) scaleY(1);
+            }
+
+            /* Icon flat — no box */
+            .ledger-wallet-icon {
+                width: 28px;
+                height: 28px;
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                background: transparent;
+                border: 0;
+                color: #3A3A3C;
+                transition: color 380ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            html.dark .ledger-wallet-icon {
+                color: #D1D1D6;
+            }
+
+            .ledger-wallet-icon svg {
+                width: 22px;
+                height: 22px;
+                color: currentColor !important;
+                stroke: currentColor;
+                transition: color 380ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .ledger-wallet.is-on .ledger-wallet-icon {
+                color: var(--accent);
+            }
+
+            .ledger-wallet.is-on .ledger-wallet-icon svg {
+                color: var(--accent) !important;
+            }
+
+            .ledger-wallet-name {
+                font-size: 15px;
+                font-weight: 600;
+                color: #1D1D1F;
+                letter-spacing: -0.02em;
+            }
+
+            html.dark .ledger-wallet-name {
+                color: #F5F5F7;
+            }
+
+            .ledger-wallet-value {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1D1D1F;
+                letter-spacing: -0.02em;
+            }
+
+            html.dark .ledger-wallet-value {
+                color: #F5F5F7;
+            }
+
+            .ledger-wallet-note,
+            .ledger-wallet-type {
+                font-size: 12px;
+                color: #8E8E93;
+            }
+
+            .ledger-wallet-chevron {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+                color: #C7C7CC;
+                margin-left: 4px;
+                transition: color 380ms cubic-bezier(0.22, 1, 0.36, 1), transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .ledger-wallet.is-on .ledger-wallet-chevron {
+                color: var(--accent);
+                transform: translateX(2px);
+            }
+
+            .ledger-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding-bottom: 14px;
+                border-bottom: 1px solid #E5E5EA;
+                min-height: 58px;
+            }
+
+            html.dark .ledger-head {
+                border-bottom-color: #38383A;
+            }
+
+            .ledger-head h2 {
+                font-size: 20px;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                color: #1D1D1F;
+                white-space: nowrap;
+                overflow: hidden;
+                flex: 1 1 auto;
+                min-width: 0;
+                max-width: 420px;
+                transform-origin: left center;
+                transition:
+                    opacity 280ms cubic-bezier(0.32, 0.72, 0, 1),
+                    transform 420ms cubic-bezier(0.32, 0.72, 0, 1),
+                    max-width 420ms cubic-bezier(0.32, 0.72, 0, 1);
+            }
+
+            .ledger-head h2.is-away {
+                opacity: 0;
+                transform: translateX(-12px) scale(0.98);
+                max-width: 0;
+                flex: 0 0 0;
+                pointer-events: none;
+            }
+
+            html.dark .ledger-head h2 {
+                color: #F5F5F7;
+            }
+
+            .ledger-icon-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: #636366;
+                background: #F2F2F7;
+                border: 0;
+            }
+
+            html.dark .ledger-icon-btn {
+                background: #2C2C2E;
+                color: #AEAEB2;
+            }
+
+            .ledger-icon-btn:hover {
+                background: #E5E5EA;
+                color: #1D1D1F;
+            }
+
+            html.dark .ledger-icon-btn:hover {
+                background: #3A3A3C;
+                color: #F5F5F7;
+            }
+
+            /* Morph: icon button → search field */
+            .ledger-search-morph {
+                position: relative;
+                display: flex;
+                align-items: center;
+                flex: 0 0 auto;
+                width: 36px;
+                height: 36px;
+                margin-left: auto;
+                border-radius: 999px;
+                background: #F2F2F7;
+                overflow: hidden;
+                will-change: width, border-radius;
+                transition:
+                    width 480ms cubic-bezier(0.32, 0.72, 0, 1),
+                    max-width 480ms cubic-bezier(0.32, 0.72, 0, 1),
+                    flex-grow 480ms cubic-bezier(0.32, 0.72, 0, 1),
+                    height 480ms cubic-bezier(0.32, 0.72, 0, 1),
+                    border-radius 480ms cubic-bezier(0.32, 0.72, 0, 1),
+                    background-color 280ms ease,
+                    box-shadow 320ms cubic-bezier(0.32, 0.72, 0, 1),
+                    padding 480ms cubic-bezier(0.32, 0.72, 0, 1);
+            }
+
+            .ledger-search-morph.is-open {
+                flex: 1 1 auto;
+                width: 100%;
+                max-width: 100%;
+                height: 44px;
+                border-radius: 12px;
+                padding: 0 8px 0 2px;
+                background: #F2F2F7;
+                box-shadow: none;
+            }
+
+            html.dark .ledger-search-morph {
+                background: #2C2C2E;
+            }
+
+            html.dark .ledger-search-morph.is-open {
+                background: #2C2C2E;
+                box-shadow: none;
+            }
+
+            .ledger-search-morph:not(.is-open):hover {
+                background: #E5E5EA;
+            }
+
+            html.dark .ledger-search-morph:not(.is-open):hover {
+                background: #3A3A3C;
+            }
+
+            .ledger-search-trigger {
+                flex: 0 0 36px;
+                width: 36px;
+                height: 36px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 0;
+                background: transparent;
+                color: #636366;
+                cursor: pointer;
+                transition:
+                    color 220ms ease,
+                    transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+            }
+
+            .ledger-search-morph.is-open .ledger-search-trigger {
+                flex-basis: 36px;
+                width: 36px;
+                height: 44px;
+                color: #8E8E93;
+                pointer-events: none;
+                transform: none;
+            }
+
+            html.dark .ledger-search-trigger {
+                color: #AEAEB2;
+            }
+
+            .ledger-page .ledger-search-morph input.ledger-search-field,
+            .ledger-page .ledger-search-morph input.ledger-search-field:focus {
+                flex: 1 1 auto;
+                align-self: stretch;
+                min-width: 0;
+                width: 0;
+                height: auto !important;
+                min-height: 0 !important;
+                opacity: 0;
+                appearance: none;
+                -webkit-appearance: none;
+                border: 0 !important;
+                border-radius: 0 !important;
+                outline: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                background-color: transparent !important;
+                color: #1D1D1F !important;
+                font-size: 15px !important;
+                font-weight: 500;
+                letter-spacing: -0.01em;
+                padding: 0 8px 0 0 !important;
+                margin: 0 !important;
+                line-height: 44px;
+                transform: translateX(8px);
+                pointer-events: none;
+                transition:
+                    opacity 260ms cubic-bezier(0.32, 0.72, 0, 1) 80ms,
+                    transform 420ms cubic-bezier(0.32, 0.72, 0, 1),
+                    width 0ms linear 480ms;
+            }
+
+            .ledger-page .ledger-search-morph.is-open input.ledger-search-field,
+            .ledger-page .ledger-search-morph.is-open input.ledger-search-field:focus {
+                width: auto;
+                opacity: 1;
+                transform: translateX(0);
+                pointer-events: auto;
+                border: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                background-color: transparent !important;
+                transition:
+                    opacity 300ms cubic-bezier(0.32, 0.72, 0, 1) 120ms,
+                    transform 420ms cubic-bezier(0.32, 0.72, 0, 1) 40ms,
+                    width 0ms linear 0ms;
+            }
+
+            html.dark .ledger-page .ledger-search-morph input.ledger-search-field,
+            html.dark .ledger-page .ledger-search-morph input.ledger-search-field:focus {
+                color: #F5F5F7 !important;
+                background: transparent !important;
+                background-color: transparent !important;
+            }
+
+            .ledger-search-field::placeholder {
+                color: #8E8E93;
+                font-weight: 500;
+                opacity: 1;
+            }
+
+            .ledger-search-close {
+                flex: 0 0 28px;
+                width: 28px;
+                height: 28px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 0;
+                border-radius: 999px;
+                background: rgba(60, 60, 67, 0.12);
+                color: #636366;
+                cursor: pointer;
+                opacity: 0;
+                transform: scale(0.55);
+                pointer-events: none;
+                transition:
+                    opacity 240ms cubic-bezier(0.32, 0.72, 0, 1),
+                    transform 420ms cubic-bezier(0.32, 0.72, 0, 1),
+                    background-color 200ms ease;
+            }
+
+            .ledger-search-morph.is-open .ledger-search-close {
+                opacity: 1;
+                transform: scale(1);
+                pointer-events: auto;
+                transition-delay: 140ms, 140ms, 0ms;
+            }
+
+            .ledger-search-close:hover {
+                background: rgba(60, 60, 67, 0.18);
+                color: #1D1D1F;
+            }
+
+            html.dark .ledger-search-close {
+                background: rgba(255, 255, 255, 0.12);
+                color: #AEAEB2;
+            }
+
+            html.dark .ledger-search-close:hover {
+                background: rgba(255, 255, 255, 0.18);
+                color: #F5F5F7;
+            }
+
+            .ledger-label {
+                font-size: 13px;
+                font-weight: 600;
+                color: #8E8E93;
+            }
+
+            /* Soft white pills + sliding blue */
+            .ledger-seg-scroll {
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+
+            .ledger-seg-track {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                min-width: max-content;
+                padding: 1px;
+            }
+
+            .ledger-seg-pill {
+                position: absolute;
+                top: 1px;
+                left: 0;
+                z-index: 0;
+                height: 36px;
+                width: 48px;
+                border-radius: 999px;
+                background: #007AFF;
+                transform: translate3d(0, 0, 0);
+                transition:
+                    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    width 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    height 480ms cubic-bezier(0.22, 1, 0.36, 1);
+                pointer-events: none;
+                will-change: transform, width;
+            }
+
+            html.dark .ledger-seg-pill {
+                background: #007AFF;
+            }
+
+            .ledger-chip,
+            .ledger-day {
+                position: relative;
+                z-index: 1;
+                padding: 8px 16px;
+                border-radius: 999px;
+                font-size: 13px;
+                font-weight: 600;
+                white-space: nowrap;
+                background: #FFFFFF;
+                color: #1D1D1F;
+                border: 1px solid #E5E5EA;
+                transition:
+                    color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                    background-color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            html.dark .ledger-chip,
+            html.dark .ledger-day {
+                background: #1C1C1E;
+                color: #F5F5F7;
+                border-color: #38383A;
+            }
+
+            .ledger-chip:hover,
+            .ledger-day:hover {
+                border-color: #D1D1D6;
+            }
+
+            html.dark .ledger-chip:hover,
+            html.dark .ledger-day:hover {
+                border-color: #48484A;
+            }
+
+            .ledger-chip.is-on,
+            .ledger-day.is-on {
+                background: transparent;
+                color: #ffffff;
+                border-color: transparent;
+            }
+
+            .ledger-day {
+                min-width: 48px;
+                height: 36px;
+                padding: 0 12px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .ledger-chip {
+                height: 36px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .ledger-divider {
+                border-color: #E5E5EA !important;
+            }
+
+            html.dark .ledger-divider {
+                border-color: #38383A !important;
+            }
+
+            .ledger-dropdown {
+                background: #FFFFFF;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                border-radius: 16px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+            }
+
+            html.dark .ledger-dropdown {
+                background: #1C1C1E;
+                border-color: rgba(255, 255, 255, 0.08);
+            }
+
+            .ledger-month-btn {
+                height: 40px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: 600;
+                background: #F2F2F7;
+                color: #1D1D1F;
+                border: 0;
+            }
+
+            html.dark .ledger-month-btn {
+                background: #2C2C2E;
+                color: #F5F5F7;
+            }
+
+            .ledger-month-btn.is-on {
+                background: var(--accent);
+                color: #ffffff;
+            }
+
+            .ledger-trx-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                flex: 1;
+                min-height: 0;
+                padding: 2px 1px 8px;
+            }
+
+            .ledger-trx {
+                background: #FFFFFF;
+                border-radius: 18px;
+                padding: 16px 18px;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+                transition:
+                    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            html.dark .ledger-trx {
+                background: #1C1C1E;
+                border-color: rgba(255, 255, 255, 0.08);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+            }
+
+            .ledger-trx:hover {
+                transform: translateY(-1px);
+                border-color: rgba(0, 0, 0, 0.10);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            html.dark .ledger-trx:hover {
+                border-color: rgba(255, 255, 255, 0.14);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+            }
+
+            .ledger-trx.is-open {
+                border-color: rgba(0, 0, 0, 0.10);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            html.dark .ledger-trx.is-open {
+                border-color: rgba(255, 255, 255, 0.14);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+            }
+
+            .ledger-trx-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1D1D1F;
+                letter-spacing: -0.01em;
+            }
+
+            html.dark .ledger-trx-title {
+                color: #F5F5F7;
+            }
+
+            .ledger-trx-amt {
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+            }
+
+            .ledger-trx-amt.is-in {
+                color: #34C759;
+            }
+
+            .ledger-trx-amt.is-out {
+                color: #FF3B30;
+            }
+
+            html.dark .ledger-trx-amt.is-in {
+                color: #30D158;
+            }
+
+            html.dark .ledger-trx-amt.is-out {
+                color: #FF453A;
+            }
+
+            .ledger-trx-detail {
+                margin-top: 14px;
+                padding: 0;
+                border-radius: 14px;
+                background: #FFFFFF;
+                border: 1px solid rgba(60, 60, 67, 0.12);
+                overflow: hidden;
+                font-size: 13px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            }
+
+            html.dark .ledger-trx-detail {
+                background: #2C2C2E;
+                border-color: rgba(255, 255, 255, 0.10);
+                box-shadow: none;
+            }
+
+            .ledger-trx-detail-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 14px;
+            }
+
+            .ledger-trx-detail-row:first-child {
+                padding-top: 14px;
+            }
+
+            .ledger-trx-detail-row:last-of-type {
+                padding-bottom: 14px;
+            }
+
+            .ledger-trx-detail .k {
+                color: #8E8E93;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .ledger-trx-detail .v {
+                color: #1D1D1F;
+                font-weight: 600;
+                font-size: 13px;
+                letter-spacing: -0.01em;
+            }
+
+            html.dark .ledger-trx-detail .v {
+                color: #F5F5F7;
+            }
+
+            .ledger-trx-detail-actions {
+                padding: 12px 14px;
+                background: #FAFAFC;
+                border-top: 1px solid rgba(60, 60, 67, 0.10);
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            html.dark .ledger-trx-detail-actions {
+                background: #242426;
+                border-top-color: rgba(84, 84, 88, 0.45);
+            }
+
+            .ledger-trx-delete {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 14px;
+                border-radius: 12px;
+                font-size: 13px;
+                font-weight: 600;
+                border: 0;
+                background: #FF3B30;
+                color: #FFFFFF;
+                transition:
+                    background-color 200ms ease,
+                    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .ledger-trx-delete:hover {
+                background: #E0352B;
+            }
+
+            .ledger-trx-delete:active {
+                transform: scale(0.97);
+            }
+
+            html.dark .ledger-trx-delete {
+                background: #FF453A;
+                color: #FFFFFF;
+            }
+
+            html.dark .ledger-trx-delete:hover {
+                background: #E03E35;
+            }
+
+            .ledger-empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                flex: 1;
+                min-height: 220px;
+                text-align: center;
+                color: #8E8E93;
+                font-size: 14px;
+                margin-top: 8px;
+                border: 1px solid #E5E5EA;
+                border-radius: 18px;
+                padding: 40px 16px;
+                background: transparent;
+            }
+
+            html.dark .ledger-empty {
+                border-color: #38383A;
+                color: #8E8E93;
+            }
+
+            .ledger-empty svg {
+                width: 36px;
+                height: 36px;
+                color: #C7C7CC;
+            }
+
+            .ledger-modal-shell {
+                background: #FFFFFF;
+                color: var(--text-primary);
+                border-radius: 20px;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.14);
+            }
+
+            html.dark .ledger-modal-shell {
+                background: #1C1C1E;
+                border-color: rgba(255, 255, 255, 0.08);
+            }
+
+            .ledger-modal-shell label {
+                color: #6E6E73;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            .ledger-page .ledger-modal-shell input,
+            .ledger-page .ledger-modal-shell select {
+                width: 100%;
+                margin-top: 6px;
+                padding: 12px 14px !important;
+                font-size: 14px !important;
+                line-height: 1.35 !important;
+                background-color: #FFFFFF !important;
+                border: 1.5px solid #D1D1D6 !important;
+                color: #1D1D1F !important;
+                border-radius: 12px !important;
+                box-shadow: none !important;
+                outline: none !important;
+                text-transform: none !important;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+            .ledger-page .ledger-modal-shell select {
+                background-color: #FFFFFF !important;
+                border-color: #D1D1D6 !important;
+                font-weight: 500;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23636666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") !important;
+                background-repeat: no-repeat !important;
+                background-position: right 12px center !important;
+                background-size: 16px 16px !important;
+                padding-right: 36px !important;
+            }
+
+            .ledger-page .ledger-modal-shell input::placeholder {
+                text-transform: none !important;
+                color: #8E8E93 !important;
+                opacity: 1;
+            }
+
+            .ledger-page .ledger-modal-shell input:focus,
+            .ledger-page .ledger-modal-shell select:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14) !important;
+                background-color: #FFFFFF !important;
+            }
+
+            html.dark .ledger-page .ledger-modal-shell input,
+            html.dark .ledger-page .ledger-modal-shell select {
+                background-color: #1C1C1E !important;
+                border-color: #48484A !important;
+                color: #F5F5F7 !important;
+            }
+
+            html.dark .ledger-page .ledger-modal-shell select {
+                background-color: #1C1C1E !important;
+            }
+
+            html.dark .ledger-page .ledger-modal-shell input:focus,
+            html.dark .ledger-page .ledger-modal-shell select:focus {
+                background-color: #1C1C1E !important;
+                border-color: var(--accent) !important;
+            }
+
+            .ledger-btn-ghost {
+                padding: 10px 16px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                background: #F2F2F7;
+                color: var(--text-primary);
+                border: 0;
+            }
+
+            html.dark .ledger-btn-ghost {
+                background: #2C2C2E;
+            }
+
+            .ledger-btn-primary {
+                padding: 10px 18px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #ffffff;
+                border: 0;
+                background: var(--accent);
+            }
+
+            .ledger-btn-danger {
+                padding: 10px 18px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #ffffff;
+                border: 0;
+                background: #FF3B30;
+            }
+
+            html.dark .ledger-btn-danger {
+                background: #FF453A;
+            }
         </style>
-        <!-- === GRID LAYOUT === -->
+
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 max-w-[1800px] mx-auto">
 
             <!-- LEFT: Balance & Wallets -->
-            <aside
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 flex flex-col min-w-0 overflow-hidden space-y-5">
+            <aside class="ledger-card p-6 flex flex-col space-y-5">
 
-                <!-- CARD SALDO -->
-                <div class="bg-[#1f2531] dark:bg-gray-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-                    <h3 class="text-sm font-semibold text-gray-200">Sisa Saldo</h3>
-
-                    <div class="mt-2">
-                        <p class="text-3xl sm:text-4xl font-bold text-white tracking-tight"
-                            x-text="formatCurrency(totalSaldo)"></p>
-                    </div>
-
-                    <p class="text-xs text-gray-400 mt-3">
-                        Terakhir Di Update :
-                        <span class="text-gray-300 font-medium" x-text="lastUpdated"></span>
+                <div class="ledger-balance">
+                    <h3 class="ledger-balance-label">Sisa Saldo</h3>
+                    <p class="ledger-balance-value" x-text="formatCurrency(totalSaldo)"></p>
+                    <p class="ledger-balance-meta">
+                        Terakhir di update <span x-text="lastUpdated"></span>
                     </p>
                 </div>
 
-                <!-- ACTION BUTTONS -->
-                <div class="grid grid-cols-2 gap-4 mt-5 text-center select-none">
-                    <!-- MASUK -->
-                    <div>
-                        <button @click="openModal('IN')"
-                            class="w-full h-14 flex flex-col items-center justify-center bg-gray-700 hover:bg-gray-600 active:bg-gray-500 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-arrow-down-tray class="w-6 h-6 text-gray-200" />
-                            <span class="mt-1 text-[12px] font-medium text-gray-300">Masuk</span>
-                        </button>
-                    </div>
-
-                    <!-- KELUAR -->
-                    <div>
-                        <button @click="openModal('OUT')"
-                            class="w-full h-14 flex flex-col items-center justify-center bg-gray-700 hover:bg-gray-600 active:bg-gray-500 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] shadow-sm hover:shadow-md">
-                            <x-heroicon-o-arrow-up-tray class="w-6 h-6 text-gray-200" />
-                            <span class="mt-1 text-[12px] font-medium text-gray-300">Keluar</span>
-                        </button>
-                    </div>
+                <div class="grid grid-cols-2 gap-3 select-none">
+                    <button type="button" @click="openModal('IN')" class="ledger-action">
+                        <x-heroicon-o-arrow-down-tray />
+                        <span>Masuk</span>
+                    </button>
+                    <button type="button" @click="openModal('OUT')" class="ledger-action">
+                        <x-heroicon-o-arrow-up-tray />
+                        <span>Keluar</span>
+                    </button>
                 </div>
 
-                <!-- ✅ MODAL INPUT PEMBUKUAN -->
                 <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
                     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
                     x-transition:leave-end="opacity-0 scale-90"
-                    class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
+                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
                     @click.self="closeModal">
 
-                    <div class="bg-gray-800 rounded-2xl shadow-2xl w-[90%] max-w-md p-6 relative border border-gray-700">
-
-                        <!-- CLOSE BUTTON -->
+                    <div class="ledger-modal-shell w-[90%] max-w-md p-6 relative">
                         <button @click="closeModal"
-                            class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 transition">
+                            class="absolute top-3 right-3 text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)] transition">
                             <x-heroicon-o-x-mark class="w-5 h-5" />
                         </button>
 
-                        <!-- HEADER -->
                         <div class="mb-5 text-center">
                             <h2 class="text-xl font-bold"
-                                :class="modalType === 'IN' ? 'text-blue-400' : 'text-purple-400'"
+                                :class="modalType === 'IN' ? 'text-[color:var(--accent)]' : 'text-[#AF52DE]'"
                                 x-text="modalType === 'IN' ? 'Tambah Pemasukan' : 'Tambah Pengeluaran'"></h2>
-                            <p class="text-sm text-gray-400 mt-1">
+                            <p class="text-sm mt-1" style="color: var(--text-muted)">
                                 Lengkapi detail pembukuan di bawah ini
                             </p>
                         </div>
 
-                        <!-- FORM -->
                         <div class="space-y-4">
                             <div>
-                                <label class="text-sm text-gray-300">Deskripsi</label>
+                                <label>Deskripsi</label>
                                 <input type="text" x-model="form.deskripsi"
-                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
+                                    class="w-full mt-1 text-sm p-2.5 focus:outline-none"
                                     placeholder="Contoh: Penjualan Pulsa, Bayar Listrik, dll" />
                             </div>
 
                             <div>
-                                <label class="text-sm text-gray-300">Nominal</label>
+                                <label>Nominal</label>
                                 <input type="text" x-model="form.nominalDisplay" @input="formatNominal"
-                                    inputmode="numeric"
-                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100 placeholder-gray-400"
+                                    inputmode="numeric" class="w-full mt-1 text-sm p-2.5 focus:outline-none"
                                     placeholder="Rp Masukkan jumlah uang" />
                             </div>
 
                             <div>
-                                <label class="text-sm text-gray-300">Wallet</label>
+                                <label>Wallet</label>
                                 <select x-model="form.cashbook_wallet_id"
-                                    class="w-full mt-1 rounded-lg bg-gray-700 border border-gray-600 text-sm p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-100">
+                                    class="w-full mt-1 text-sm p-2.5 focus:outline-none">
                                     <template x-for="w in wallets.filter(w => w.id !== 0)" :key="w.id">
                                         <option :value="w.id" x-text="w.name"></option>
                                     </template>
@@ -137,144 +1056,99 @@
                             </div>
                         </div>
 
-                        <!-- ACTION BUTTONS -->
                         <div class="flex justify-end gap-3 mt-6">
-                            <button @click="closeModal"
-                                class="px-4 py-2.5 text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-200">
-                                Batal
-                            </button>
-
-                            <button @click="submitTransaction"
-                                :class="[
-                                    modalType === 'IN' ? 'bg-blue-600 hover:bg-blue-500' :
-                                    'bg-purple-600 hover:bg-purple-500',
-                                    'px-5 py-2.5 text-sm font-medium text-white rounded-lg shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.97]'
-                                ]">
+                            <button type="button" @click="closeModal" class="ledger-btn-ghost">Batal</button>
+                            <button type="button" @click="submitTransaction" class="ledger-btn-primary"
+                                :style="modalType === 'OUT' ? 'background:#AF52DE' : ''">
                                 Simpan
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- LIST WALLET -->
-                <div class="flex flex-col gap-2 sm:gap-3 flex-1 overflow-y-auto no-scrollbar pr-1">
+                <div class="flex flex-col gap-1 flex-1 overflow-y-auto no-scrollbar pr-1">
                     <template x-for="w in wallets" :key="w.id">
-                        <button @click="selectWallet(w.id)"
-                            class="relative flex items-center gap-3 p-3 rounded-xl w-full text-left group transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-gray-100 dark:hover:bg-gray-700"
-                            :class="selectedWallet === w.id ? 'bg-gray-100 dark:bg-gray-700 shadow-sm scale-[1.02]' :
-                                'bg-transparent'">
+                        <button type="button" @click="selectWallet(w.id)" class="ledger-wallet"
+                            :class="selectedWallet === w.id ? 'is-on' : ''">
 
-                            <!-- 🔹 Animated Active Indicator -->
-                            <div x-cloak x-show="selectedWallet === w.id" x-transition.opacity.duration.300ms
-                                x-transition:enter="transform transition ease-out duration-300"
-                                x-transition:enter-start="-translate-x-2 opacity-0"
-                                x-transition:enter-end="translate-x-0 opacity-100"
-                                class="absolute -left-[3px] top-1/2 -translate-y-1/2 h-[70%] w-[3px] bg-blue-500 rounded-r-md">
-                            </div>
+                            <div class="ledger-wallet-bar" aria-hidden="true"></div>
 
-                            <!-- Heroicon -->
-                            <div class="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
-                                <div x-bind:class="selectedWallet === w.id ?
-                                    'absolute left-0 top-1/2 -translate-y-1/2 h-[80%] w-[3px] bg-blue-500 rounded-full opacity-100 translate-x-0 shadow-[0_0_6px_#3b82f6aa]' :
-                                    'opacity-0 -translate-x-2'"
-                                    x-transition.opacity.duration.300ms
-                                    x-transition:enter="transform transition ease-out duration-300"
-                                    x-transition:enter-start="-translate-x-2 opacity-0"
-                                    x-transition:enter-end="translate-x-0 opacity-100"
-                                    class="absolute left-0 h-[80%] w-[3px] bg-blue-500 rounded-full"></div>
-
+                            <div class="ledger-wallet-icon">
                                 <template x-if="w.id === 0">
-                                    <x-heroicon-o-wallet class="w-6 h-6 text-gray-500 dark:text-gray-300" />
+                                    <x-heroicon-o-wallet class="w-5 h-5" />
                                 </template>
                                 <template x-if="w.id === 1">
-                                    <x-heroicon-o-credit-card class="w-6 h-6 text-green-500" />
+                                    <x-heroicon-o-credit-card class="w-5 h-5" />
                                 </template>
                                 <template x-if="w.id === 2">
-                                    <x-heroicon-o-banknotes class="w-6 h-6 text-blue-500" />
+                                    <x-heroicon-o-banknotes class="w-5 h-5" />
                                 </template>
                                 <template x-if="w.id === 3">
-                                    <x-heroicon-o-building-library class="w-6 h-6 text-purple-500" />
+                                    <x-heroicon-o-building-library class="w-5 h-5" />
                                 </template>
                                 <template x-if="w.id === 4">
-                                    <x-heroicon-o-currency-dollar class="w-6 h-6 text-yellow-500" />
+                                    <x-heroicon-o-currency-dollar class="w-5 h-5" />
                                 </template>
                             </div>
 
-                            <!-- TEXT -->
-                            <div class="min-w-0 flex-1 pr-3">
-                                <p class="font-medium text-sm truncate text-gray-200 dark:text-gray-100" x-text="w.name">
-                                </p>
-                                <p class="text-xs text-gray-400 truncate" x-text="w.note"></p>
+                            <div class="min-w-0 flex-1">
+                                <p class="ledger-wallet-name truncate" x-text="w.name"></p>
+                                <p class="ledger-wallet-note truncate" x-text="w.note"></p>
                             </div>
 
-                            <!-- VALUE -->
                             <div class="text-right flex-shrink-0">
-                                <p class="font-medium text-sm text-gray-200 dark:text-gray-100"
-                                    x-text="formatCurrency(w.balance)"></p>
-                                <p class="text-xs text-gray-400" x-text="w.type"></p>
+                                <p class="ledger-wallet-value" x-text="formatCurrency(w.balance)"></p>
+                                <p class="ledger-wallet-type" x-text="w.type"></p>
                             </div>
+
+                            <x-heroicon-o-chevron-right class="ledger-wallet-chevron" />
                         </button>
                     </template>
                 </div>
             </aside>
+
             <!-- RIGHT: Transactions -->
-            <section
-                class="relative bg-[#1f2937] dark:bg-gray-800 rounded-2xl shadow-md p-7 flex flex-col min-w-0 overflow-hidden"
-                style="height: 640px;">
+            <section class="ledger-card relative p-6 flex flex-col min-w-0" style="height: 640px;">
 
-                <style>
-                    .no-scrollbar::-webkit-scrollbar {
-                        display: none;
-                    }
+                <div class="ledger-head">
+                    <h2 :class="{ 'is-away': showSearch }">Riwayat Transaksi</h2>
 
-                    .no-scrollbar {
-                        -ms-overflow-style: none;
-                        scrollbar-width: none;
-                    }
+                    <div class="ledger-search-morph" :class="{ 'is-open': showSearch }">
+                        <button type="button"
+                            class="ledger-search-trigger"
+                            @click="!showSearch && toggleSearch()"
+                            :tabindex="showSearch ? -1 : 0"
+                            :aria-label="showSearch ? 'Pencarian' : 'Buka pencarian'">
+                            <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                        </button>
 
-                    .smooth-scroll {
-                        scroll-behavior: smooth;
-                    }
-                </style>
+                        <input type="search"
+                            x-ref="searchInput"
+                            x-model="filter"
+                            placeholder="Cari transaksi..."
+                            class="ledger-search-field"
+                            :tabindex="showSearch ? 0 : -1"
+                            @keydown.escape.prevent="showSearch && toggleSearch()" />
 
-                <!-- HEADER -->
-                <div class="flex items-center justify-between pb-3 border-b border-gray-700">
-                    <h2 class="text-lg font-semibold text-gray-100">Transaction History</h2>
-                    <button @click="toggleSearch()" class="p-2 rounded-md hover:bg-gray-700 transition-all duration-300">
-                        <template x-if="!showSearch">
-                            <x-heroicon-o-magnifying-glass
-                                class="w-5 h-5 text-gray-400 transition-transform duration-300 hover:scale-110" />
-                        </template>
-                        <template x-if="showSearch">
-                            <x-heroicon-o-x-mark
-                                class="w-5 h-5 text-gray-400 transition-transform duration-300 hover:rotate-90" />
-                        </template>
-                    </button>
+                        <button type="button"
+                            class="ledger-search-close"
+                            @click="toggleSearch()"
+                            :tabindex="showSearch ? 0 : -1"
+                            aria-label="Tutup pencarian">
+                            <x-heroicon-o-x-mark class="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
 
-                <!-- SEARCH -->
-                <div x-show="showSearch" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
-                    class="my-3">
-                    <input type="search" x-model="filter" placeholder="Cari transaksi..."
-                        class="w-full rounded-lg p-2 border border-gray-600 bg-gray-700 text-gray-200 focus:ring focus:ring-blue-400 text-sm placeholder-gray-400" />
-                </div>
-
-                <!-- WRAPPER UTAMA -->
                 <div class="flex-1 flex flex-col overflow-hidden">
-
-                    <!-- HEADER BULAN & TANGGAL (tetap statis) -->
                     <div class="flex-shrink-0 relative">
-                        <!-- SELECT MONTH -->
-                        <div class="pb-4 border-b border-gray-700">
+                        <div class="pb-4 border-b ledger-divider">
                             <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-sm font-semibold text-gray-300">Select Month</h3>
-                                <button @click="toggleDropdown()" class="p-1.5 rounded-md hover:bg-gray-700 transition">
+                                <h3 class="ledger-label">Pilih Bulan</h3>
+                                <button type="button" @click="toggleDropdown()" class="ledger-icon-btn">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="w-5 h-5 transform transition-transform duration-300"
-                                        :class="showDropdown ? 'rotate-180 text-blue-400' : 'rotate-0 text-gray-400'"
+                                        :class="showDropdown ? 'rotate-180 text-[color:var(--accent)]' : 'rotate-0'"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 9l-7 7-7-7" />
@@ -282,25 +1156,23 @@
                                 </button>
                             </div>
 
-                            <!-- DROPDOWN YEAR -->
                             <div x-show="showDropdown" x-transition:enter="transition ease-out duration-400"
                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-300"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute top-[100%] left-0 right-0 mt-2 bg-gray-800 rounded-xl p-5 border border-gray-700 space-y-4 shadow-lg z-40 max-h-[380px] overflow-y-auto no-scrollbar">
+                                class="ledger-dropdown absolute top-[100%] left-0 right-0 mt-2 p-5 space-y-4 z-40 max-h-[380px] overflow-y-auto no-scrollbar">
 
                                 <template x-for="year in years" :key="year">
                                     <div>
-                                        <p class="text-xl font-bold text-gray-100 mb-3" x-text="year"></p>
-                                        <div class="grid grid-cols-4 gap-3">
+                                        <p class="text-lg font-bold mb-3" style="color: var(--text-primary)"
+                                            x-text="year"></p>
+                                        <div class="grid grid-cols-4 gap-2">
                                             <template x-for="m in months" :key="m.index">
-                                                <button @click="selectYear(year); selectMonth(m.index)"
-                                                    class="h-10 rounded-lg text-sm font-medium transition-all duration-300"
-                                                    :class="isMonthActive(m.index, year) ?
-                                                        'bg-blue-600 text-white scale-105 shadow' :
-                                                        'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                                <button type="button" @click="selectYear(year); selectMonth(m.index)"
+                                                    class="ledger-month-btn"
+                                                    :class="isMonthActive(m.index, year) ? 'is-on' : ''">
                                                     <span x-text="m.name"></span>
                                                 </button>
                                             </template>
@@ -309,62 +1181,59 @@
                                 </template>
                             </div>
 
-                            <!-- SLIDER MONTH -->
-                            <div class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll pb-1">
-                                <template x-for="m in months" :key="m.index">
-                                    <button @click="selectMonth(m.index)"
-                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-out"
-                                        :class="selectedMonthIndex === m.index && selectedYear === currentYear ?
-                                            'bg-blue-600 text-white scale-105 shadow-md' :
-                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                        <span x-text="m.name"></span>
-                                    </button>
-                                </template>
+                            <div class="ledger-seg-scroll no-scrollbar smooth-scroll pb-1" x-ref="monthContainer">
+                                <div class="ledger-seg-track">
+                                    <div class="ledger-seg-pill" x-ref="monthPill" aria-hidden="true"></div>
+                                    <template x-for="m in months" :key="m.index">
+                                        <button type="button" @click="selectMonth(m.index)" class="ledger-chip"
+                                            :data-month="m.index" :class="selectedMonthIndex === m.index ? 'is-on' : ''">
+                                            <span x-text="m.name"></span>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- DATE SLIDER -->
-                        <div class="py-4 border-b border-gray-700">
-                            <div x-ref="dateContainer" class="flex gap-2 overflow-x-auto no-scrollbar smooth-scroll px-1">
-                                <template x-for="day in days" :key="day">
-                                    <button @click="selectDay(day)" :data-day="day"
-                                        class="min-w-[48px] h-9 flex items-center justify-center rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ease-out"
-                                        :class="selectedDate === day ? 'bg-blue-600 text-white scale-105 shadow-md' :
-                                            'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
-                                        <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
-                                    </button>
-                                </template>
+                        <div class="py-4 border-b ledger-divider">
+                            <div class="ledger-seg-scroll no-scrollbar smooth-scroll px-1" x-ref="dateContainer">
+                                <div class="ledger-seg-track">
+                                    <div class="ledger-seg-pill" x-ref="dayPill" aria-hidden="true"></div>
+                                    <template x-for="day in days" :key="day">
+                                        <button type="button" @click="selectDay(day)" :data-day="day"
+                                            class="ledger-day" :class="selectedDate === day ? 'is-on' : ''">
+                                            <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- LIST TRANSAKSI (ini aja yang scrollable) -->
-                    <div class="flex-1 overflow-y-auto no-scrollbar mt-2 pb-3 smooth-scroll uppercase">
-                        <div class="flex flex-col gap-4">
+                    <div class="flex-1 overflow-y-auto no-scrollbar mt-3 pb-1 smooth-scroll flex flex-col">
+                        <div class="ledger-trx-list">
                             <template x-if="filteredTransactions.length > 0">
                                 <template x-for="t in filteredTransactions" :key="t.id">
-                                    <div
-                                        class="bg-gray-700/90 rounded-xl p-3 transition-all duration-300 ease-out hover:scale-[1.01] hover:shadow-lg hover:bg-gray-700/95">
-
-                                        <!-- HEADER -->
-                                        <button @click="toggleTransaction(t.id)"
-                                            class="w-full flex items-center justify-between text-left transition-all duration-300">
-                                            <div>
-                                                <p class="font-medium text-gray-100 uppercase">
+                                    <div class="ledger-trx" :class="activeTransaction === t.id ? 'is-open' : ''"
+                                        :data-transaction-id="t.id">
+                                        <button type="button" @click="toggleTransaction(t.id)"
+                                            class="w-full flex items-center justify-between text-left gap-3">
+                                            <div class="min-w-0">
+                                                <p class="ledger-trx-title truncate">
                                                     <span
                                                         x-text="new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' })"></span>
-                                                    -
-                                                    <span x-text="t.deskripsi"></span>
+                                                    —
+                                                    <span class="ledger-data" x-text="t.deskripsi"></span>
                                                 </p>
                                             </div>
-                                            <div class="flex items-center gap-3">
-                                                <p class="text-sm font-semibold uppercase"
-                                                    :class="t.type === 'IN' ? 'text-green-400' : 'text-red-400'"
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <p class="ledger-trx-amt"
+                                                    :class="t.type === 'IN' ? 'is-in' : 'is-out'"
                                                     x-text="formatCurrency(t.nominal)"></p>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                     class="w-5 h-5 transform transition-transform duration-300"
-                                                    :class="activeTransaction === t.id ? 'rotate-180 text-blue-400' :
-                                                        'rotate-0 text-gray-400'"
+                                                    :class="activeTransaction === t.id ?
+                                                        'rotate-180 text-[color:var(--accent)]' :
+                                                        'rotate-0 text-[color:var(--text-muted)]'"
                                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M19 9l-7 7-7-7" />
@@ -372,19 +1241,18 @@
                                             </div>
                                         </button>
 
-                                        <!-- DETAIL (DROPDOWN) -->
                                         <div x-show="activeTransaction === t.id"
-                                            x-transition:enter="transition ease-out duration-400"
-                                            x-transition:enter-start="opacity-0 translate-y-2"
+                                            x-transition:enter="transition ease-out duration-320"
+                                            x-transition:enter-start="opacity-0 -translate-y-1"
                                             x-transition:enter-end="opacity-100 translate-y-0"
-                                            x-transition:leave="transition ease-in duration-300"
+                                            x-transition:leave="transition ease-in duration-220"
                                             x-transition:leave-start="opacity-100 translate-y-0"
-                                            x-transition:leave-end="opacity-0 translate-y-2"
-                                            class="mt-3 bg-gray-800 rounded-xl p-4 border border-gray-700 text-sm space-y-2">
+                                            x-transition:leave-end="opacity-0 -translate-y-1"
+                                            class="ledger-trx-detail">
 
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-400">Created</span>
-                                                <span class="font-medium text-gray-100"
+                                            <div class="ledger-trx-detail-row">
+                                                <span class="k">Created</span>
+                                                <span class="v"
                                                     x-text="new Date(t.created_at).toLocaleTimeString('id-ID', {
                                                         hour: '2-digit',
                                                         minute: '2-digit',
@@ -393,21 +1261,19 @@
                                                 </span>
                                             </div>
 
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-400">Nominal</span>
-                                                <span class="font-medium text-gray-100"
-                                                    x-text="formatCurrency(t.nominal)"></span>
+                                            <div class="ledger-trx-detail-row">
+                                                <span class="k">Nominal</span>
+                                                <span class="v" x-text="formatCurrency(t.nominal)"></span>
                                             </div>
 
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-400">Tipe</span>
-                                                <span class="font-medium text-gray-100"
-                                                    x-text="t.type === 'IN' ? 'Masuk' : 'Keluar'"></span>
+                                            <div class="ledger-trx-detail-row">
+                                                <span class="k">Tipe</span>
+                                                <span class="v" x-text="t.type === 'IN' ? 'Masuk' : 'Keluar'"></span>
                                             </div>
 
-                                            <div class="pt-3 border-t border-gray-700 flex justify-end">
-                                                <button @click="requestDelete(t.id)"
-                                                    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 text-sm font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                                            <div class="ledger-trx-detail-actions">
+                                                <button type="button" @click="requestDelete(t.id)"
+                                                    class="ledger-trx-delete">
                                                     <x-heroicon-o-trash class="w-4 h-4" />
                                                     Hapus Transaksi
                                                 </button>
@@ -417,11 +1283,10 @@
                                 </template>
                             </template>
 
-                            <!-- Jika tidak ada transaksi -->
                             <template x-if="filteredTransactions.length === 0">
-                                <div
-                                    class="text-center text-gray-400 text-sm mt-8 border border-gray-700 rounded-xl py-6 bg-gray-800/60">
-                                    Tidak ada pembukuan di tanggal ini.
+                                <div class="ledger-empty">
+                                    <x-heroicon-o-document-text />
+                                    <p>Tidak ada pembukuan di tanggal ini.</p>
                                 </div>
                             </template>
                         </div>
@@ -429,31 +1294,24 @@
                 </div>
             </section>
 
-            <!-- MODAL KONFIRMASI -->
             <div x-show="showConfirmModal" x-transition.opacity.duration.300ms
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" x-cloak>
 
                 <div @click.away="cancelDelete()"
-                    class="bg-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-lg border border-gray-700 transform transition-all duration-300"
+                    class="ledger-modal-shell p-6 w-full max-w-sm transform transition-all duration-300"
                     x-transition.scale.duration.250ms>
 
-                    <h2 class="text-lg font-semibold text-white mb-2">
+                    <h2 class="text-lg font-semibold mb-2" style="color: var(--text-primary)">
                         Konfirmasi Hapus
                     </h2>
-                    <p class="text-gray-400 text-sm mb-5">
+                    <p class="text-sm mb-5" style="color: var(--text-muted)">
                         Apakah kamu yakin ingin menghapus transaksi ini? <br>
                         Tindakan ini tidak bisa dibatalkan.
                     </p>
 
                     <div class="flex justify-end gap-3">
-                        <button @click="cancelDelete()"
-                            class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-200 text-sm font-medium transition-all duration-200">
-                            Batal
-                        </button>
-                        <button @click="confirmDelete()"
-                            class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium transition-all duration-200 shadow-md">
-                            Ya, Hapus
-                        </button>
+                        <button type="button" @click="cancelDelete()" class="ledger-btn-ghost">Batal</button>
+                        <button type="button" @click="confirmDelete()" class="ledger-btn-danger">Ya, Hapus</button>
                     </div>
                 </div>
             </div>
@@ -594,7 +1452,14 @@
                             const el = this.$refs.dateContainer?.querySelector(
                                 `[data-day='${this.selectedDate}']`);
                             if (el) this.scrollSelectedDayIntoView();
+                            this.syncMonthPill();
+                            this.syncDayPill();
                         }, 300);
+
+                        requestAnimationFrame(() => {
+                            this.syncMonthPill(true);
+                            this.syncDayPill(true);
+                        });
                     });
                 },
 
@@ -686,23 +1551,70 @@
                     this.updateDaysInMonth();
                     this.showDropdown = false;
                     this.scrollSelectedDayIntoView();
+                    this.$nextTick(() => {
+                        this.syncMonthPill();
+                        this.syncDayPill();
+                    });
                 },
                 selectMonth(index) {
                     this.selectedMonthIndex = index;
                     this.updateDaysInMonth();
                     this.showDropdown = false;
-                    this.scrollSelectedDayIntoView();
+                    this.$nextTick(() => {
+                        this.syncMonthPill();
+                        this.scrollSelectedDayIntoView();
+                        this.syncDayPill();
+                    });
                 },
                 selectDay(day) {
                     this.selectedDate = day;
                     this.scrollSelectedDayIntoView();
+                    this.$nextTick(() => this.syncDayPill());
+                },
+
+                syncSegPill(btn, pill, instant = false) {
+                    if (!btn || !pill) return;
+                    const w = btn.offsetWidth;
+                    const h = btn.offsetHeight;
+                    if (w <= 0 || h <= 0) return;
+                    if (instant) pill.style.transition = 'none';
+                    pill.style.width = w + 'px';
+                    pill.style.height = h + 'px';
+                    pill.style.transform = `translate3d(${btn.offsetLeft}px, ${btn.offsetTop}px, 0)`;
+                    if (instant) {
+                        // force reflow then restore transition
+                        void pill.offsetWidth;
+                        pill.style.transition = '';
+                    }
+                },
+
+                syncMonthPill(instant = false) {
+                    const container = this.$refs.monthContainer;
+                    const pill = this.$refs.monthPill;
+                    if (!container || !pill) return;
+                    const btn = container.querySelector('.ledger-chip.is-on') ||
+                        container.querySelector(`[data-month="${this.selectedMonthIndex}"]`);
+                    this.syncSegPill(btn, pill, instant);
+                },
+
+                syncDayPill(instant = false) {
+                    const container = this.$refs.dateContainer;
+                    const pill = this.$refs.dayPill;
+                    if (!container || !pill) return;
+                    const btn = container.querySelector(`[data-day="${this.selectedDate}"]`);
+                    this.syncSegPill(btn, pill, instant);
                 },
 
                 // === DROPDOWN & SEARCH ===
                 toggleSearch() {
                     this.showSearch = !this.showSearch;
-                    if (!this.showSearch) this.filter = '';
-                    else this.$nextTick(() => document.querySelector('input[type=search]')?.focus());
+                    if (!this.showSearch) {
+                        this.filter = '';
+                        return;
+                    }
+                    this.$nextTick(() => {
+                        setTimeout(() => this.$refs.searchInput?.focus(), 180);
+                    });
                 },
                 toggleDropdown() {
                     this.showDropdown = !this.showDropdown;
@@ -718,18 +1630,13 @@
                         const el = container.querySelector(`[data-day='${this.selectedDate}']`);
                         if (!el) return;
 
-                        // scroll - gunakan smooth
                         el.scrollIntoView({
                             behavior: 'smooth',
                             inline: 'center',
                             block: 'nearest'
                         });
 
-                        // opsional: beri highlight sementara agar visual terlihat
-                        el.classList.add('ring-2', 'ring-blue-400', 'ring-offset-2');
-                        setTimeout(() => {
-                            el.classList.remove('ring-2', 'ring-blue-400', 'ring-offset-2');
-                        }, 700);
+                        this.syncDayPill();
                     });
                 },
 

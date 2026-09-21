@@ -9,77 +9,591 @@
 
 @section('content')
     <style>
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.6;
-                transform: scale(1.1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .animate-pulse {
-            animation: pulse 0.8s ease-in-out infinite;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            scrollbar-width: none;
-        }
-    </style>
-
-    <style>
-        /* 🔧 Hilangkan scrollbar bawaan browser secara global */
-        html,
-        body {
+        .hist-page {
+            color: var(--text-primary);
             overflow-x: hidden !important;
-            overflow-y: auto;
-            /* ubah ke hidden kalau kamu ingin full tanpa scroll */
+        }
+
+        .hist-page .no-scrollbar::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .hist-page .no-scrollbar {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+
+        .hist-page .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        /* iOS cards */
+        .hist-card {
+            background: #FFFFFF !important;
+            border: 1px solid rgba(0, 0, 0, 0.04) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important;
+            color: var(--text-primary) !important;
+        }
+
+        html.dark .hist-card {
+            background: #1C1C1E !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
+        }
+
+        /* Nested panel (utang, total) */
+        .hist-inset {
+            background: #F2F2F7 !important;
+            border-radius: 16px !important;
+            border: 0 !important;
+            color: var(--text-primary) !important;
+            box-shadow: none !important;
+        }
+
+        html.dark .hist-inset {
+            background: #2C2C2E !important;
+        }
+
+        /* Elevated list / tile cards inside sections */
+        .hist-item {
+            background: #FFFFFF !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+            color: var(--text-primary) !important;
+            transition: box-shadow 220ms ease, transform 220ms ease, border-color 220ms ease;
+        }
+
+        .hist-item:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07) !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        html.dark .hist-item {
+            background: #2C2C2E !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        html.dark .hist-item:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        .hist-title {
+            color: var(--text-primary) !important;
+        }
+
+        .hist-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .hist-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .hist-accent {
+            color: var(--accent) !important;
+        }
+
+        .hist-divider {
+            border-color: var(--divider) !important;
+        }
+
+        .hist-chip {
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #FFFFFF;
+            color: var(--text-secondary);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        html.dark .hist-chip {
+            background: #1C1C1E;
+            border-color: rgba(255, 255, 255, 0.10);
+            box-shadow: none;
+            color: #AEAEB2;
+        }
+
+        .hist-chip.is-on {
+            background: #007AFF;
+            color: #fff;
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        html.dark .hist-chip.is-on {
+            background: #007AFF;
+            color: #fff;
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        /* Premium date-range control (Flatpickr target unchanged) */
+        .hist-range {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: min(100%, 320px);
+            height: 48px;
+            padding: 0 14px 0 16px;
+            border-radius: 16px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.04),
+                0 8px 24px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition:
+                box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 240ms ease,
+                transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .hist-range:hover {
+            border-color: rgba(0, 122, 255, 0.22);
+            box-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.04),
+                0 12px 28px rgba(0, 122, 255, 0.10);
+            transform: translateY(-1px);
+        }
+
+        html.dark .hist-range {
+            background: #1C1C1E;
+            border-color: rgba(255, 255, 255, 0.10);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        html.dark .hist-range:hover {
+            border-color: rgba(10, 132, 255, 0.35);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+        }
+
+        .hist-range-icon {
+            flex: 0 0 auto;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 122, 255, 0.10);
+            color: var(--accent);
+        }
+
+        html.dark .hist-range-icon {
+            background: rgba(10, 132, 255, 0.18);
+        }
+
+        .hist-page .hist-range input.hist-range-input,
+        .hist-page .hist-range input.hist-range-input:focus {
+            flex: 1 1 auto;
+            min-width: 0;
+            width: 100%;
             height: 100%;
-            background-color: #0f172a;
-            /* warna dasar agar tidak ada flicker putih */
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            color: var(--text-primary) !important;
+            font-size: 15px !important;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-align: left;
+            cursor: pointer;
         }
 
-        /* 🔹 Hilangkan scrollbar horizontal di container utama */
-        [x-data="transactionHistory()"] {
-            overflow-x: hidden !important;
+        .hist-range-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
-        /* 🔸 Pastikan area utama tidak menyebabkan scroll tambahan */
-        .p-5,
-        .p-6 {
-            max-width: 100%;
-            overflow-x: hidden;
+        .hist-range-chevron {
+            flex: 0 0 auto;
+            color: var(--text-muted);
+            display: inline-flex;
         }
 
-        /* 🩵 Kalau mau hilangkan scroll seluruh halaman */
+        /* Flatpickr calendar — premium iOS */
+        .flatpickr-calendar {
+            width: 320px !important;
+            padding: 12px 12px 14px !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            border-radius: 20px !important;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                0 20px 48px rgba(0, 0, 0, 0.12) !important;
+            overflow: hidden;
+            font-family: inherit;
+            background: #FFFFFF !important;
+        }
+
+        html.dark .flatpickr-calendar {
+            background: #1C1C1E !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55) !important;
+        }
+
+        .flatpickr-calendar.arrowTop:before,
+        .flatpickr-calendar.arrowTop:after,
+        .flatpickr-calendar.arrowBottom:before,
+        .flatpickr-calendar.arrowBottom:after {
+            display: none !important;
+        }
+
+        .flatpickr-months {
+            padding: 4px 4px 10px !important;
+            align-items: center;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            height: 36px !important;
+            color: #1D1D1F !important;
+            fill: #1D1D1F !important;
+            background: transparent !important;
+        }
+
+        html.dark .flatpickr-months .flatpickr-month {
+            color: #F5F5F7 !important;
+            fill: #F5F5F7 !important;
+        }
+
+        .flatpickr-current-month {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.02em;
+            padding-top: 4px !important;
+        }
+
+        .flatpickr-current-month input.cur-year,
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            color: #1D1D1F !important;
+            font-weight: 700 !important;
+            background: transparent !important;
+        }
+
+        html.dark .flatpickr-current-month input.cur-year,
+        html.dark .flatpickr-current-month .flatpickr-monthDropdown-months {
+            color: #F5F5F7 !important;
+        }
+
+        .flatpickr-months .flatpickr-prev-month,
+        .flatpickr-months .flatpickr-next-month {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 10px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            top: 10px !important;
+            padding: 0 !important;
+            fill: #636366 !important;
+            color: #636366 !important;
+            transition: background-color 160ms ease;
+        }
+
+        .flatpickr-months .flatpickr-prev-month:hover,
+        .flatpickr-months .flatpickr-next-month:hover {
+            background: #F2F2F7 !important;
+        }
+
+        html.dark .flatpickr-months .flatpickr-prev-month:hover,
+        html.dark .flatpickr-months .flatpickr-next-month:hover {
+            background: #2C2C2E !important;
+        }
+
+        .flatpickr-weekdays {
+            height: 32px !important;
+            margin-top: 2px;
+        }
+
+        span.flatpickr-weekday {
+            color: #8E8E93 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        .flatpickr-days {
+            width: 100% !important;
+        }
+
+        .dayContainer {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .flatpickr-day {
+            max-width: 40px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            margin: 2px 0 !important;
+            border-radius: 12px !important;
+            border: 0 !important;
+            color: #1D1D1F !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            transition:
+                background-color 160ms ease,
+                color 160ms ease,
+                box-shadow 160ms ease;
+        }
+
+        html.dark .flatpickr-day {
+            color: #F5F5F7 !important;
+        }
+
+        .flatpickr-day:hover,
+        .flatpickr-day:focus {
+            background: #F2F2F7 !important;
+            border-color: transparent !important;
+        }
+
+        html.dark .flatpickr-day:hover,
+        html.dark .flatpickr-day:focus {
+            background: #2C2C2E !important;
+        }
+
+        .flatpickr-day.flatpickr-disabled,
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            color: #C7C7CC !important;
+        }
+
+        html.dark .flatpickr-day.prevMonthDay,
+        html.dark .flatpickr-day.nextMonthDay {
+            color: #636366 !important;
+        }
+
+        .flatpickr-day.today {
+            background: transparent !important;
+            box-shadow: inset 0 0 0 1.5px rgba(0, 122, 255, 0.45) !important;
+            color: var(--accent) !important;
+            font-weight: 700 !important;
+        }
+
+        .flatpickr-day.today:hover {
+            background: rgba(0, 122, 255, 0.08) !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange,
+        .flatpickr-day.selected:hover,
+        .flatpickr-day.startRange:hover,
+        .flatpickr-day.endRange:hover,
+        .flatpickr-day.selected:focus,
+        .flatpickr-day.startRange:focus,
+        .flatpickr-day.endRange:focus {
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.28) !important;
+        }
+
+        .flatpickr-day.startRange {
+            border-radius: 12px 4px 4px 12px !important;
+        }
+
+        .flatpickr-day.endRange {
+            border-radius: 4px 12px 12px 4px !important;
+        }
+
+        .flatpickr-day.startRange.endRange {
+            border-radius: 12px !important;
+        }
+
+        .flatpickr-day.inRange,
+        .flatpickr-day.prevMonthDay.inRange,
+        .flatpickr-day.nextMonthDay.inRange {
+            background: rgba(0, 122, 255, 0.12) !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+            color: #1D1D1F !important;
+            border-radius: 0 !important;
+        }
+
+        html.dark .flatpickr-day.inRange {
+            background: rgba(10, 132, 255, 0.22) !important;
+            color: #F5F5F7 !important;
+        }
+
+        .flatpickr-day.inRange:hover {
+            background: rgba(0, 122, 255, 0.18) !important;
+        }
+
+        /* Tabs with blue underline */
+        .hist-tabs {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .hist-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 16px 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition:
+                color 200ms ease,
+                border-color 200ms ease;
+        }
+
+        .hist-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .hist-tab.is-on {
+            color: var(--accent) !important;
+            border-bottom-color: var(--accent) !important;
+        }
+
+        .hist-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .hist-empty svg {
+            width: 28px;
+            height: 28px;
+            color: var(--text-muted);
+            stroke: currentColor;
+        }
+
+        .hist-dropdown {
+            background: #FFFFFF !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            border-radius: 18px !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+            color: var(--text-primary);
+        }
+
+        html.dark .hist-dropdown {
+            background: #1C1C1E !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
+        }
+
+        .hist-month-btn {
+            height: 40px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #F2F2F7;
+            color: var(--text-secondary);
+            border: 0;
+        }
+
+        html.dark .hist-month-btn {
+            background: #2C2C2E;
+        }
+
+        .hist-month-btn.is-on {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .hist-modal {
+            background: #FFFFFF !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16) !important;
+            color: var(--text-primary) !important;
+        }
+
+        html.dark .hist-modal {
+            background: #1C1C1E !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        .hist-debt {
+            color: #FF3B30 !important;
+        }
+
+        .hist-pay {
+            color: #34C759 !important;
+        }
+
+        html.dark .hist-debt {
+            color: #FF453A !important;
+        }
+
+        html.dark .hist-pay {
+            color: #30D158 !important;
+        }
+
+        .hist-btn-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #FF3B30 !important;
+            color: #FFFFFF !important;
+            border: 0;
+            font-weight: 600;
+            transition: background-color 200ms ease, transform 160ms ease;
+        }
+
+        .hist-btn-danger:hover {
+            background: #E0352B !important;
+            color: #FFFFFF !important;
+        }
+
+        .hist-btn-danger:active {
+            transform: scale(0.98);
+        }
+
+        html.dark .hist-btn-danger {
+            background: #FF3B30 !important;
+            color: #FFFFFF !important;
+        }
+
+        html.dark .hist-btn-danger:hover {
+            background: #E0352B !important;
+        }
+
         body.no-scroll {
             overflow: hidden !important;
         }
     </style>
 
-    <div x-data="transactionHistory()" x-init="init()" class="p-5 sm:p-6 w-full h-full overflow-x-hidden relative">
+    <div x-data="transactionHistory()" x-init="init()" class="hist-page p-5 sm:p-6 w-full h-full overflow-x-hidden relative">
 
         <!-- HEADER -->
-        <div class="flex items-center justify-between border-b border-gray-700 pb-3 mb-5 relative">
-            <h1 class="text-2xl font-semibold text-gray-100">Riwayat Transaksi</h1>
+        <div class="flex items-center justify-between border-b hist-divider pb-3 mb-5 relative">
+            <h1 class="text-2xl font-semibold hist-title">Riwayat Transaksi</h1>
 
             <!-- DROPDOWN BUTTON -->
             <button @click="toggleDropdown"
-                class="p-2 rounded-md hover:bg-gray-700 transition-all duration-300 z-30 relative">
+                class="p-2 rounded-md hover:bg-[color:var(--surface-secondary)] transition-all duration-300 z-30 relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transform transition-transform duration-300"
-                    :class="showDropdown ? 'rotate-180 text-blue-400' : 'rotate-0 text-gray-400'" fill="none"
+                    :class="showDropdown ? 'rotate-180 text-[color:var(--accent)]' : 'rotate-0 text-[color:var(--text-muted)]'" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -90,18 +604,16 @@
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-2"
                 x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
-                class="absolute top-[52px] right-0 bg-gray-800 border border-gray-700 rounded-xl p-5 w-72 shadow-2xl z-50 space-y-4">
+                class="hist-dropdown absolute top-[52px] right-0 p-5 w-72 z-50 space-y-4">
 
                 <template x-for="year in availableYears" :key="year">
                     <div>
-                        <p class="text-lg font-semibold text-gray-100 mb-3" x-text="year"></p>
+                        <p class="text-lg font-semibold hist-title mb-3" x-text="year"></p>
                         <div class="grid grid-cols-4 gap-3">
                             <template x-for="m in months" :key="m">
                                 <button @click="selectMonth(m, year)"
-                                    class="h-10 rounded-lg text-sm font-medium transition-all duration-300"
-                                    :class="(selectedYear === year && selectedMonth === m) ?
-                                    'bg-blue-600 text-white scale-105 shadow' :
-                                    'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                                    class="hist-month-btn transition-all duration-300"
+                                    :class="(selectedYear === year && selectedMonth === m) ? 'is-on' : ''">
                                     <span x-text="m"></span>
                                 </button>
                             </template>
@@ -113,57 +625,42 @@
 
         <!-- DATE RANGE FILTER (FLATPICKR) -->
         <div class="flex justify-center items-center mb-6">
-            <input id="dateRangePicker" type="text"
-                class="bg-[#0E1524] border border-[#1B2334] rounded-lg px-4 py-2 text-[15px] text-[#D8DFEA] 
-               focus:ring-1 focus:ring-blue-400 focus:border-blue-400 
-               text-center w-64 cursor-pointer placeholder-[#7A8292]"
-                readonly placeholder="Pilih rentang tanggal" />
+            <label class="hist-range" for="dateRangePicker">
+                <span class="hist-range-icon" aria-hidden="true">
+                    <x-heroicon-o-calendar-days class="w-4 h-4" />
+                </span>
+                <input id="dateRangePicker" type="text"
+                    class="hist-range-input"
+                    readonly placeholder="Pilih rentang tanggal" />
+                <span class="hist-range-chevron" aria-hidden="true">
+                    <x-heroicon-o-chevron-down class="w-4 h-4" />
+                </span>
+            </label>
         </div>
 
         <!-- DATE SLIDER -->
         <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-4 smooth-scroll">
             <template x-for="day in days" :key="day">
                 <button @click="selectedDate = day; fetchData();"
-                    class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-out"
-                    :class="selectedDate === day ?
-                        'bg-blue-600 text-white scale-105 shadow-md' :
-                        'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'">
+                    class="hist-chip transition-all duration-300 ease-out"
+                    :class="selectedDate === day ? 'is-on' : ''">
                     <span x-text="day + '/' + selectedMonthNumber"></span>
                 </button>
             </template>
         </div>
 
-        <style>
-            /* Hilangkan scrollbar sepenuhnya */
-            .no-scrollbar::-webkit-scrollbar {
-                display: none !important;
-                width: 0 !important;
-                height: 0 !important;
-            }
-
-            .no-scrollbar {
-                -ms-overflow-style: none !important;
-                scrollbar-width: none !important;
-                overflow: -moz-scrollbars-none;
-            }
-
-            .smooth-scroll {
-                scroll-behavior: smooth;
-            }
-        </style>
-
         <!-- MAIN GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-5">
 
             <div id="summaryBox"
-                class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-6 text-[15px] text-[#D8DFEA] space-y-6 leading-normal">
+                class="hist-card p-6 text-[15px] space-y-6 leading-normal">
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center mb-1">
                     <div>
-                        <p class="text-[12px] uppercase tracking-wider text-[#7A8292]">Rincian Transaksi</p>
+                        <p class="text-[12px] uppercase tracking-wider hist-muted">Rincian Transaksi</p>
 
-                        <h2 class="text-[20px] font-semibold text-white mt-1">
+                        <h2 class="text-[20px] font-semibold hist-title mt-1">
                             <template x-if="isRangeActive">
                                 <span x-text="formatRangeTanggal(fromDate, toDate)"></span>
                             </template>
@@ -180,8 +677,8 @@
                             class="w-5 h-5 transition-all duration-300"
                             :class="copied
                                 ?
-                                'text-green-400 drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] scale-110' :
-                                'text-[#A9B4C8] hover:opacity-80'">
+                                'text-green-500 drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] scale-110' :
+                                'hist-secondary hover:opacity-80'">
 
                             <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round"
@@ -195,40 +692,40 @@
 
                 </div>
 
-                <hr class="border-[#1E2532]">
+                <hr class="hist-divider">
 
                 <!-- BARANG + DIGITAL -->
                 <div class="space-y-2">
                     <div class="flex justify-between">
-                        <span class="text-[#9BA8BF]">Barang</span>
-                        <span class="font-semibold text-[#81ACFF]" x-text="formatCurrency(barangTotal)"></span>
+                        <span class="hist-secondary">Barang</span>
+                        <span class="font-semibold hist-accent" x-text="formatCurrency(barangTotal)"></span>
                     </div>
 
                     <template x-for="d in digitalPerApp" :key="d.name">
                         <div class="flex justify-between">
-                            <span class="text-[#9BA8BF]" x-text="d.name"></span>
-                            <span class="font-semibold text-[#81ACFF]" x-text="formatCurrency(d.total)"></span>
+                            <span class="hist-secondary" x-text="d.name"></span>
+                            <span class="font-semibold hist-accent" x-text="formatCurrency(d.total)"></span>
                         </div>
                     </template>
                 </div>
 
-                <hr class="border-[#1E2532]">
+                <hr class="hist-divider">
 
                 <!-- SUBTOTAL -->
                 <div class="flex justify-between pt-1">
-                    <span class="text-[#A3AEC0]">Subtotal ( Belum Utang )</span>
-                    <span class="font-semibold text-white" x-text="formatCurrency(totalPenjualanSebelumUtang)"></span>
+                    <span class="hist-secondary">Subtotal ( Belum Utang )</span>
+                    <span class="font-semibold hist-title" x-text="formatCurrency(totalPenjualanSebelumUtang)"></span>
                 </div>
 
                 <!-- DEBT -->
                 <template x-if="utangList.length > 0">
-                    <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
-                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">Utang : </p>
+                    <div class="hist-inset p-4 space-y-2">
+                        <p class="uppercase text-[12px] hist-muted font-semibold">Utang : </p>
 
                         <template x-for="u in utangList" :key="u.name">
                             <div class="flex justify-between">
-                                <span class="text-white" x-text="u.name"></span>
-                                <span class="text-[#FF6B6B] font-semibold"
+                                <span class="hist-title" x-text="u.name"></span>
+                                <span class="hist-debt font-semibold"
                                     x-text="'(' + formatCurrency(u.subtotal) + ')'"></span>
                             </div>
                         </template>
@@ -237,43 +734,43 @@
 
                 <!-- PAYMENT -->
                 <template x-if="pembayaranUtang.length > 0">
-                    <div class="bg-[#131B2C] rounded-xl p-4 space-y-2">
-                        <p class="uppercase text-[12px] text-[#7A8292] font-semibold">Bayar Utang : </p>
+                    <div class="hist-inset p-4 space-y-2">
+                        <p class="uppercase text-[12px] hist-muted font-semibold">Bayar Utang : </p>
 
                         <template x-for="(u, index) in pembayaranUtang" :key="u.name + '-' + index">
                             <div class="flex justify-between">
-                                <span class="text-[#7CFF99]" x-text="u.name"></span>
-                                <span class="text-[#7CFF99] font-semibold" x-text="formatCurrency(u.subtotal)"></span>
+                                <span class="hist-pay" x-text="u.name"></span>
+                                <span class="hist-pay font-semibold" x-text="formatCurrency(u.subtotal)"></span>
                             </div>
                         </template>
                     </div>
                 </template>
 
                 <!-- TOTAL SALES -->
-                <div class="bg-[#131B2C] rounded-xl px-4 py-3 flex justify-between font-semibold text-white">
+                <div class="hist-inset px-4 py-3 flex justify-between font-semibold hist-title">
                     <span>Total Penjualan</span>
                     <span x-text="formatCurrency(computedTotalPenjualan())"></span>
                 </div>
 
                 <!-- TRANSFERS -->
                 <div>
-                    <p class="uppercase text-[12px] text-[#7A8292] font-semibold mb-2">Transfer</p>
+                    <p class="uppercase text-[12px] hist-muted font-semibold mb-2">Transfer</p>
 
                     <div class="space-y-2">
 
                         <!-- Brilink -->
                         <template x-if="tfTarikByApp[7]?.tf > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#9BA8BF]">Brilink TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[7]?.tf)">
+                                <span class="hist-secondary">Brilink TF</span>
+                                <span class="hist-accent" x-text="formatCurrency(tfTarikByApp[7]?.tf)">
                                 </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[7]?.tarik > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#FF6B6B]">Brilink Tarik</span>
-                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[7]?.tarik)">
+                                <span class="hist-debt">Brilink Tarik</span>
+                                <span class="hist-debt" x-text="formatCurrency(tfTarikByApp[7]?.tarik)">
                                 </span>
                             </div>
                         </template>
@@ -281,8 +778,8 @@
                         <!-- Seabank -->
                         <template x-if="tfTarikByApp[6]?.tf > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#9BA8BF]">Seabank TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[6]?.tf)">
+                                <span class="hist-secondary">Seabank TF</span>
+                                <span class="hist-accent" x-text="formatCurrency(tfTarikByApp[6]?.tf)">
                                 </span>
                             </div>
                         </template>
@@ -290,16 +787,16 @@
                         <!-- MyBCA -->
                         <template x-if="tfTarikByApp[9]?.tf > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#9BA8BF]">MyBCA TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[9]?.tf)">
+                                <span class="hist-secondary">MyBCA TF</span>
+                                <span class="hist-accent" x-text="formatCurrency(tfTarikByApp[9]?.tf)">
                                 </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[9]?.tarik > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#FF6B6B]">MyBCA Tarik</span>
-                                <span class="text-[#FF6B6B]" x-text="formatCurrency(tfTarikByApp[9]?.tarik)">
+                                <span class="hist-debt">MyBCA Tarik</span>
+                                <span class="hist-debt" x-text="formatCurrency(tfTarikByApp[9]?.tarik)">
                                 </span>
                             </div>
                         </template>
@@ -307,16 +804,16 @@
                         <!-- Shopee -->
                         <template x-if="tfTarikByApp[10]?.tf > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#9BA8BF]">SHP Pay TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[10]?.tf)">
+                                <span class="hist-secondary">SHP Pay TF</span>
+                                <span class="hist-accent" x-text="formatCurrency(tfTarikByApp[10]?.tf)">
                                 </span>
                             </div>
                         </template>
 
                         <template x-if="tfTarikByApp[12]?.tf > 0">
                             <div class="flex justify-between">
-                                <span class="text-[#9BA8BF]">ShopeePay TF</span>
-                                <span class="text-[#81ACFF]" x-text="formatCurrency(tfTarikByApp[12]?.tf)">
+                                <span class="hist-secondary">ShopeePay TF</span>
+                                <span class="hist-accent" x-text="formatCurrency(tfTarikByApp[12]?.tf)">
                                 </span>
                             </div>
                         </template>
@@ -326,7 +823,7 @@
 
 
                 @if (Auth::user()->outlet_id == 3)
-                    <div class="flex justify-between items-center font-semibold text-white text-lg mt-4">
+                    <div class="flex justify-between items-center font-semibold hist-title text-lg mt-4">
                         <span>Grand Total</span>
                         <span x-text="formatCurrency(computedGrandTotal())"></span>
                     </div>
@@ -339,22 +836,16 @@
                 style="max-height: calc(110vh - 100px);">
 
                 <!-- TABS -->
-                <div class="flex items-center border-b border-[#1B2334] w-full">
-                    <button @click="activeTab = 'produk'"
-                        class="px-4 py-2 text-[15px] font-semibold transition-all flex-1 text-center"
-                        :class="activeTab === 'produk'
-                            ?
-                            'text-blue-400 border-blue-400 border-b-2' :
-                            'text-[#9BA8BF] hover:text-[#D8DFEA]'">
+                <div class="hist-tabs">
+                    <button type="button" @click="activeTab = 'produk'"
+                        class="hist-tab"
+                        :class="{ 'is-on': activeTab === 'produk' }">
                         Produk Fisik
                     </button>
 
-                    <button @click="activeTab = 'digital'"
-                        class="px-4 py-2 text-[15px] font-semibold transition-all flex-1 text-center"
-                        :class="activeTab === 'digital'
-                            ?
-                            'text-blue-400 border-blue-400 border-b-2' :
-                            'text-[#9BA8BF] hover:text-[#D8DFEA]'">
+                    <button type="button" @click="activeTab = 'digital'"
+                        class="hist-tab"
+                        :class="{ 'is-on': activeTab === 'digital' }">
                         Produk Digital
                     </button>
                 </div>
@@ -363,35 +854,38 @@
                 <div x-show="activeTab === 'produk'" class="space-y-5">
 
                     <!-- CATEGORY SUMMARY -->
-                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
-                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Ringkasan Kategori Produk</h3>
+                    <div class="hist-card p-5">
+                        <h3 class="text-[15px] font-semibold hist-title mb-3">Ringkasan Kategori Produk</h3>
 
                         <template x-if="categories.length > 0">
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                                 <template x-for="(c, index) in categories" :key="c.name + index">
-                                    <div class="bg-[#131B2C] rounded-xl py-3 transition hover:bg-[#1A2336]">
-                                        <p class="text-[15px] font-semibold text-white" x-text="c.name"></p>
-                                        <p class="text-[13px] text-[#9BA8BF]" x-text="c.total_pcs + ' pcs'"></p>
+                                    <div class="hist-inset py-3 px-1">
+                                        <p class="text-[15px] font-semibold hist-title" x-text="c.name"></p>
+                                        <p class="text-[13px] hist-muted" x-text="c.total_pcs + ' pcs'"></p>
                                     </div>
                                 </template>
                             </div>
                         </template>
 
                         <template x-if="categories.length === 0">
-                            <p class="text-center text-[#9BA8BF] py-10">📭 Tidak ada data kategori produk.</p>
+                            <div class="hist-empty">
+                                <x-heroicon-o-rectangle-stack />
+                                <p>Tidak ada data kategori produk.</p>
+                            </div>
                         </template>
                     </div>
 
                     <!-- PRODUCT HISTORY -->
-                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
-                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Riwayat Transaksi Produk</h3>
+                    <div class="hist-card p-5">
+                        <h3 class="text-[15px] font-semibold hist-title mb-3">Riwayat Transaksi Produk</h3>
 
                         <template x-if="productTransactions.length > 0">
                             <div class="space-y-4">
                                 <template x-for="t in productTransactions" :key="t.transaction_id">
 
                                     <div x-data="{ openMenu: false, confirmDelete: false }"
-                                        class="bg-[#131B2C] rounded-xl p-4 hover:bg-[#1A2336] transition-all duration-200 space-y-3"
+                                        class="hist-item p-4 space-y-3"
                                         @keydown.escape.window="confirmDelete = false">
 
                                         <!-- MODAL BACKDROP -->
@@ -400,14 +894,14 @@
 
                                             <!-- MODAL BOX -->
                                             <div x-show="confirmDelete" x-transition.scale @click.stop
-                                                class="bg-[#1A2336] w-[420px] rounded-xl p-6 space-y-5 shadow-xl border border-white/10">
+                                                class="hist-modal w-[420px] p-6 space-y-5">
 
-                                                <h2 class="text-white text-xl font-semibold text-center leading-snug">
-                                                    Yakin retur <span class="text-blue-300"
+                                                <h2 class="hist-title text-xl font-semibold text-center leading-snug">
+                                                    Yakin retur <span class="hist-accent"
                                                         x-text="t.details[0].name"></span>?
                                                 </h2>
 
-                                                <p class="text-gray-300 text-[15px] text-center leading-relaxed">
+                                                <p class="hist-secondary text-[15px] text-center leading-relaxed">
                                                     Transaksi ini akan dihapus dan stok akan dikembalikan.
                                                 </p>
 
@@ -415,14 +909,14 @@
 
                                                     <!-- BATAL -->
                                                     <button @click="confirmDelete = false"
-                                                        class="px-5 py-2 text-sm rounded-lg bg-gray-600/30 hover:bg-gray-600/50 text-gray-200 transition">
+                                                        class="px-5 py-2 text-sm rounded-lg bg-[color:var(--surface-secondary)] hist-title transition">
                                                         Batal
                                                     </button>
 
                                                     <!-- YA, RETUR -->
                                                     <button
                                                         @click="confirmDelete = false; deleteTransaction(t.transaction_id)"
-                                                        class="px-5 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition">
+                                                        class="hist-btn-danger px-5 py-2 text-sm rounded-lg">
                                                         Ya, Retur
                                                     </button>
 
@@ -435,7 +929,7 @@
 
                                             <!-- TANGGAL & JAM -->
                                             <div class="flex flex-col leading-tight">
-                                                <span class="text-[13px] text-[#9BA8BF]"
+                                                <span class="text-[13px] hist-muted"
                                                     x-text="formatPrettyDate(t.datetime || t.date || t.created_at)">
                                                 </span>
                                             </div>
@@ -444,8 +938,8 @@
                                             <div x-data="{ openMenu: false }" class="relative">
 
                                                 <button @click="openMenu = !openMenu"
-                                                    class="p-1 rounded hover:bg-[#1F2A44] transition">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300"
+                                                    class="p-1 rounded hover:bg-[color:var(--surface)] transition">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hist-secondary"
                                                         fill="currentColor" viewBox="0 0 24 24">
                                                         <circle cx="12" cy="5" r="2"></circle>
                                                         <circle cx="12" cy="12" r="2"></circle>
@@ -462,16 +956,15 @@
                                                     x-transition:leave-start="opacity-100 scale-100"
                                                     x-transition:leave-end="opacity-0 scale-95"
                                                     @click.outside="openMenu = false"
-                                                    class="absolute right-0 mt-2 w-36 bg-[#1F2A44] rounded-xl shadow-xl shadow-black/30 z-30 overflow-hidden">
+                                                    class="hist-dropdown absolute right-0 mt-2 w-36 z-30 overflow-hidden">
 
                                                     <button @click="confirmDelete = true"
-                                                        class="w-full flex items-center gap-2 px-4 py-2.5 text-[14px] text-red-300 hover:bg-red-500/10 transition">
+                                                        class="hist-btn-danger w-full px-4 py-2.5 text-[14px] rounded-none">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="h-4 w-4 text-red-300" fill="none"
+                                                            class="h-4 w-4" fill="none"
                                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1
-                                                                                                                                    1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1 1 0 00-1-1h-4a1 1 0 00-1 1v2m-5 0h16" />
                                                         </svg>
                                                         Hapus
                                                     </button>
@@ -488,15 +981,15 @@
 
                                                 <!-- NAMA PRODUK -->
                                                 <div class="flex flex-col leading-tight">
-                                                    <span class="text-white font-semibold text-[15px]"
+                                                    <span class="hist-title font-semibold text-[15px]"
                                                         x-text="d.name"></span>
-                                                    <span class="text-[13px] text-[#9BA8BF]"
+                                                    <span class="text-[13px] hist-muted"
                                                         x-text="d.qty + ' pcs'"></span>
                                                 </div>
 
                                                 <!-- HARGA -->
                                                 <div class="flex flex-col text-right">
-                                                    <span class="text-blue-400 font-semibold text-[15px]"
+                                                    <span class="hist-accent font-semibold text-[15px]"
                                                         x-text="formatCurrency(d.amount)">
                                                     </span>
                                                 </div>
@@ -512,7 +1005,10 @@
                         </template>
 
                         <template x-if="productTransactions.length === 0">
-                            <p class="text-[#9BA8BF] text-center py-8">📭 Tidak ada transaksi produk pada tanggal ini.</p>
+                            <div class="hist-empty">
+                                <x-heroicon-o-document-text />
+                                <p>Tidak ada transaksi produk pada tanggal ini.</p>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -533,8 +1029,8 @@
                 <!-- TAB PRODUK DIGITAL -->
                 <div x-show="activeTab === 'digital'" class="space-y-5">
 
-                    <div class="bg-[#0E1524] border border-[#1B2334] rounded-2xl p-5">
-                        <h3 class="text-[15px] font-semibold text-[#D8DFEA] mb-3">Riwayat Produk Digital</h3>
+                    <div class="hist-card p-5">
+                        <h3 class="text-[15px] font-semibold hist-title mb-3">Riwayat Produk Digital</h3>
 
                         <template x-if="Object.keys(digitalTransactions).length > 0">
                             <div class="space-y-6">
@@ -542,8 +1038,8 @@
                                 <!-- DEVICE LIST -->
                                 <template x-for="(apps, deviceName) in digitalTransactions" :key="deviceName">
                                     <div>
-                                        <h4 class="text-[15px] font-semibold text-[#D8DFEA] mb-3 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#9BA8BF]"
+                                        <h4 class="text-[15px] font-semibold hist-title mb-3 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 hist-muted"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 2h6a2 2 0 012 2v16a2 2 0 01-2 2H9a2 2 0 01-2-2V4a2 2 0 012-2z" />
@@ -554,27 +1050,27 @@
                                         <!-- APPS -->
                                         <div class="space-y-3">
                                             <template x-for="(app, appName) in apps" :key="appName">
-                                                <div class="bg-[#131B2C] rounded-xl p-3">
+                                                <div class="hist-item p-3">
 
                                                     <!-- APP HEADER -->
                                                     <button @click="app.open = !app.open"
-                                                        class="w-full flex justify-between items-center px-2 py-1 text-left text-[15px] font-semibold text-white hover:text-blue-400">
+                                                        class="w-full flex justify-between items-center px-2 py-1 text-left text-[15px] font-semibold hist-title hover:text-[color:var(--accent)]">
 
                                                         <div class="flex items-center gap-2">
                                                             <span x-text="appName"></span>
 
-                                                            <span class="text-[13px] text-[#9BA8BF]"
+                                                            <span class="text-[13px] hist-muted"
                                                                 x-text="app.transactions.length + ' Trx'">
                                                             </span>
                                                         </div>
 
                                                         <div class="flex items-center gap-2">
-                                                            <span class="text-blue-400 text-[13px] font-medium"
+                                                            <span class="hist-accent text-[13px] font-medium"
                                                                 x-text="formatCurrency(app.total)">
                                                             </span>
 
                                                             <svg xmlns="http://www.w3.org/2000/svg"
-                                                                class="w-4 h-4 transition-transform"
+                                                                class="w-4 h-4 transition-transform hist-muted"
                                                                 :class="app.open ? 'rotate-180' : ''" fill="none"
                                                                 viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -588,21 +1084,21 @@
                                                     <div x-show="app.open" x-collapse class="mt-3 space-y-2">
                                                         <template x-for="t in app.transactions">
                                                             <div
-                                                                class="bg-[#0E1524] border border-[#1B2334] rounded-lg p-3 flex justify-between items-center">
+                                                                class="hist-card p-3 flex justify-between items-center !shadow-none">
 
                                                                 <div>
-                                                                    <p class="text-[15px] font-semibold text-white"
+                                                                    <p class="text-[15px] font-semibold hist-title"
                                                                         x-text="t.name"></p>
 
-                                                                    <p class="text-[13px] text-[#9BA8BF]"
+                                                                    <p class="text-[13px] hist-muted"
                                                                         x-text="t.datetime"></p>
                                                                 </div>
 
                                                                 <span class="text-[15px] font-semibold"
                                                                     :class="{
-                                                                        'text-green-400': t.category_id == 8,
-                                                                        'text-red-400': t.category_id == 9,
-                                                                        'text-blue-400': ![8, 9].includes(t
+                                                                        'hist-pay': t.category_id == 8,
+                                                                        'hist-debt': t.category_id == 9,
+                                                                        'hist-accent': ![8, 9].includes(t
                                                                             .category_id),
                                                                     }"
                                                                     x-text="formatCurrency(t.amount)">
@@ -623,7 +1119,10 @@
                         </template>
 
                         <template x-if="Object.keys(digitalTransactions).length === 0">
-                            <p class="text-center text-[#9BA8BF] py-10">📭 Tidak ada transaksi digital.</p>
+                            <div class="hist-empty">
+                                <x-heroicon-o-bolt />
+                                <p>Tidak ada transaksi digital.</p>
+                            </div>
                         </template>
 
                     </div>
@@ -1171,6 +1670,7 @@
                             mode: "range",
                             dateFormat: "Y-m-d",
                             locale: "id",
+                            animate: true,
                             defaultDate: [this.fromDate, this.toDate],
                             onChange: (selectedDates, dateStr, instance) => {
                                 if (selectedDates.length === 2) {
