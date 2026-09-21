@@ -438,10 +438,9 @@
 
             .pos-physical #productScrollArea {
                 flex: none;
-                min-height: 240px;
-                max-height: min(52dvh, 520px);
-                overflow-x: hidden;
-                overflow-y: auto;
+                min-height: 0;
+                max-height: none;
+                overflow: visible;
                 padding-right: 0;
             }
 
@@ -3054,7 +3053,8 @@
 
             html.is-pos,
             body.is-pos {
-                overscroll-behavior: none;
+                overscroll-behavior-x: none;
+                overscroll-behavior-y: auto;
                 background-color: var(--pos-bg) !important;
             }
 
