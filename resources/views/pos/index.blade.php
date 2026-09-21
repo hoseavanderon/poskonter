@@ -434,19 +434,12 @@
             }
 
             .pos-modal-overlay {
-                top: 0;
-                bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-                z-index: 35;
                 align-items: flex-start;
                 padding: 12px 10px 16px;
             }
 
             .pos-hist-overlay {
-                top: 64px !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                z-index: 36 !important;
+                inset: 0 !important;
                 padding: 12px 10px 16px;
                 align-items: flex-start;
             }
@@ -2518,16 +2511,19 @@
 
         .pos-hist-overlay {
             position: fixed !important;
-            top: 64px !important;
+            inset: 0 !important;
+            top: 0 !important;
             left: 0 !important;
             right: 0 !important;
             bottom: 0 !important;
-            width: 100% !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
             margin: 0 !important;
-            z-index: 36 !important;
+            z-index: 100 !important;
             transform: none !important;
             filter: none !important;
-            background: rgba(0, 0, 0, 0.5) !important;
+            background: rgba(0, 0, 0, 0.55) !important;
         }
 
         .pos-modal-shell {
@@ -3207,9 +3203,18 @@
             touch-action: none;
         }
 
+        html.pos-hist-open header,
+        html.pos-hist-open .app-sidebar,
+        html.pos-hist-open .pos-bottom-nav,
+        html.pos-hist-open .pos-tabs,
+        html.pos-hist-open .pos-close-book {
+            z-index: 0 !important;
+        }
+
         html.pos-hist-open .pos-hist-overlay {
             touch-action: auto;
             overflow: auto !important;
+            z-index: 100 !important;
         }
 
         html.pos-hist-open .pos-hist-overlay .pos-modal-shell {
