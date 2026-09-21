@@ -1,9 +1,8 @@
 (function () {
   var html = document.documentElement;
-  var MIN_MS = 900;
+  var MIN_MS = 700;
   var started = Date.now();
   var revealed = false;
-  var alpineDone = false;
 
   try {
     if (localStorage.getItem('darkMode') === 'true') html.classList.add('dark');
@@ -61,15 +60,14 @@
   }
 
   document.addEventListener('alpine:initialized', function () {
-    alpineDone = true;
     requestAnimationFrame(function () {
       requestAnimationFrame(revealWhenReady);
     });
   });
 
   setTimeout(function () {
-    if (!revealed) revealWhenReady();
-  }, 2400);
+    if (!revealed) reveal();
+  }, 1800);
 
   window.playAppBootOverlay = function () {
     revealed = false;
@@ -79,44 +77,4 @@
     ensureOverlay();
     setTimeout(reveal, MIN_MS);
   };
-
-  function isInternalLink(anchor) {
-    if (!anchor || !anchor.getAttribute) return false;
-    var href = anchor.getAttribute('href');
-    if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return false;
-    if (anchor.hasAttribute('download')) return false;
-    if (anchor.target && anchor.target !== '_self') return false;
-    var url;
-    try {
-      url = new URL(anchor.href, location.href);
-    } catch (err) {
-      return false;
-    }
-    if (url.origin !== location.origin) return false;
-    if (url.pathname === location.pathname && url.search === location.search) return false;
-    return url.href;
-  }
-
-  document.addEventListener(
-    'click',
-    function (e) {
-      if (e.defaultPrevented || e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      var anchor = e.target.closest ? e.target.closest('a[href]') : null;
-      var next = isInternalLink(anchor);
-      if (!next) return;
-
-      e.preventDefault();
-      revealed = false;
-      alpineDone = false;
-      started = Date.now();
-      html.classList.add('is-boot');
-      html.classList.remove('alpine-ready');
-      ensureOverlay();
-      setTimeout(function () {
-        location.href = next;
-      }, 160);
-    },
-    true
-  );
 })();

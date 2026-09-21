@@ -1,16 +1,10 @@
-const CACHE = 'poskonter-pwa-v1';
+const CACHE = 'poskonter-pwa-v2';
 const PRECACHE = [
   'offline.html',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
-  'icons/apple-touch-icon.png',
-  'css/sf-pro.css',
-  'css/login.css',
-  'css/app-boot.css',
-  'js/pwa.js',
-  'js/app-boot.js',
-  'js/login.js'
+  'icons/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -45,10 +39,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(() => caches.match(new URL('offline.html', self.registration.scope).href))
-    );
+  if (request.mode === 'navigate' || request.destination === 'document') {
     return;
   }
 
@@ -57,17 +48,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetched = fetch(request)
-        .then((response) => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || fetched;
-    })
+    fetch(request)
+      .then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
   );
 });

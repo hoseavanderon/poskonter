@@ -8,6 +8,12 @@
     @include('partials.pwa')
     <script>
         document.documentElement.classList.add('is-boot', 'dark');
+        setTimeout(function() {
+            document.documentElement.classList.remove('is-boot');
+            document.documentElement.classList.add('alpine-ready');
+            var boot = document.getElementById('appBoot');
+            if (boot && boot.parentNode) boot.parentNode.removeChild(boot);
+        }, 4000);
     </script>
     <style>
         [x-cloak] {
