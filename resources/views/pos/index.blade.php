@@ -383,23 +383,67 @@
             .pos-digital {
                 width: 100%;
                 overflow-x: hidden;
+                padding: 4px 10px 20px;
+                gap: 8px;
+            }
+
+            .pos-dig-head {
+                padding-bottom: 0;
+            }
+
+            .pos-dig-stepn {
+                font-size: 12px;
             }
 
             .pos-wiz-row {
                 min-width: 0;
                 width: 100%;
                 max-width: 100%;
-                overflow-x: auto;
+                overflow-x: hidden;
                 overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
             }
 
-            .pos-wiz-row::-webkit-scrollbar {
-                display: none;
-                width: 0;
-                height: 0;
+            .pos-wiz-item {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+            .pos-wiz-item:last-child {
+                flex: 1 1 0;
+            }
+
+            .pos-wiz-step {
+                width: auto;
+                min-width: 0;
+                flex: 1 1 0;
+            }
+
+            .pos-wiz-circle {
+                width: 36px;
+                height: 36px;
+            }
+
+            .pos-wiz-circle .pos-ico {
+                width: 16px;
+                height: 16px;
+            }
+
+            .pos-wiz-connector {
+                margin-top: 17px;
+                margin-left: 2px;
+                margin-right: 2px;
+                height: 1.5px;
+            }
+
+            .pos-wiz-label {
+                margin-top: 6px;
+                font-size: 9px;
+                line-height: 1.15;
+                max-width: 100%;
+                padding: 0 1px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .pos-dig-body {
@@ -410,6 +454,135 @@
             .pos-digital .grid {
                 width: 100%;
                 max-width: 100%;
+                gap: 10px;
+            }
+
+            .pos-digital .pos-dig-body h3 {
+                font-size: 16px;
+                line-height: 1.3;
+            }
+
+            .pos-digital .border.rounded-xl {
+                padding: 14px 12px;
+            }
+
+            .pos-digital .pos-dig-body h4 {
+                font-size: 14px;
+                line-height: 1.3;
+                word-break: break-word;
+            }
+
+            body.is-pos .pos-modal-sheet {
+                top: 64px !important;
+                bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+                left: 0 !important;
+                right: 0 !important;
+                padding: 0 !important;
+                align-items: stretch !important;
+                justify-content: flex-start !important;
+                overflow: hidden;
+                z-index: 42 !important;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-modal-shell {
+                width: 100% !important;
+                max-width: none !important;
+                max-height: none !important;
+                height: 100%;
+                border-radius: 0;
+                padding: 16px 16px 20px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-modal-head h2 {
+                font-size: 18px;
+                line-height: 1.25;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-stats {
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-stat {
+                padding: 14px 8px 12px;
+                border-radius: 16px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-stat-label {
+                font-size: 11px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-stat-value {
+                font-size: 16px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-cat {
+                min-width: 88px;
+                padding: 12px 14px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-list {
+                border-radius: 18px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-row {
+                padding: 16px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-nota {
+                font-size: 13px;
+                line-height: 1.35;
+                word-break: break-all;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-status {
+                font-size: 12px;
+                font-weight: 600;
+                margin-top: 2px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-status i {
+                display: none;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-time {
+                font-size: 12px;
+                line-height: 1.3;
+                white-space: nowrap;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-item,
+            body.is-pos .pos-modal-sheet .pos-hist-item-name,
+            body.is-pos .pos-modal-sheet .pos-hist-item-amt {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-item-name {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-hist-total {
+                font-size: 16px;
+                margin-top: 8px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-dig-hist-card {
+                padding: 16px 12px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-dig-hist-card p.text-sm {
+                font-size: 14px;
+            }
+
+            body.is-pos .pos-modal-sheet .pos-dig-hist-card p.text-xs {
+                font-size: 12px;
             }
         }
 
@@ -2913,98 +3086,14 @@
         }
 
         @media (max-width: 767px) {
-            .pos-modal-overlay {
-                padding: 8px;
-            }
-
-            .pos-modal-shell.pos-modal-shell-surface {
-                width: 100%;
-                max-width: none;
-                padding: 16px;
-                border-radius: 20px;
-                max-height: calc(100svh - 64px - 16px);
-            }
-
-            .pos-modal-head h2 {
-                font-size: 17px;
-            }
-
-            .pos-hist-stats {
-                gap: 8px;
-                margin-bottom: 14px;
-            }
-
-            .pos-hist-stat {
-                padding: 12px 6px 11px;
-                border-radius: 16px;
-            }
-
-            .pos-hist-stat-label {
-                font-size: 10px;
-            }
-
-            .pos-hist-stat-value {
-                font-size: 15px;
-            }
-
-            .pos-hist-list {
-                border-radius: 16px;
-            }
-
-            .pos-hist-row {
-                padding: 12px 14px;
-            }
-
-            .pos-hist-nota {
-                font-size: 11px;
-                line-height: 1.35;
-                word-break: break-all;
-            }
-
-            .pos-hist-status {
-                font-size: 10px;
-                font-weight: 600;
-                margin-top: 2px;
-            }
-
-            .pos-hist-status i {
-                display: none;
-            }
-
-            .pos-hist-time {
-                font-size: 10px;
-                line-height: 1.3;
-                white-space: nowrap;
-            }
-
             .pos-hist-head-right button {
                 padding: 4px;
                 margin-left: 2px;
             }
 
             .pos-hist-head-right svg {
-                width: 14px;
-                height: 14px;
-            }
-
-            .pos-hist-item,
-            .pos-hist-item-name,
-            .pos-hist-item-amt {
-                font-size: 11px;
-                line-height: 1.35;
-            }
-
-            .pos-hist-item-name {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-            }
-
-            .pos-hist-total {
-                font-size: 13px;
-                margin-top: 6px;
+                width: 16px;
+                height: 16px;
             }
         }
 
@@ -4700,7 +4789,8 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </div>
             </template>
 
-            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay" x-cloak x-transition>
+            <template x-teleport="body">
+            <div x-show="showHistory" @click.self="showHistory = false" class="pos-modal-overlay pos-modal-sheet" x-cloak x-transition>
                 <div x-transition.scale.duration.300ms
                     class="pos-modal-shell pos-modal-shell-surface w-[95%] max-w-[896px]">
 
@@ -4859,6 +4949,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             <!-- Modal Konfirmasi Hapus -->
             <div x-show="showDeleteConfirm" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
@@ -5018,8 +5109,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
             {{-- Modal Riwayat Transaksi Digital --}}
 
+            <template x-teleport="body">
             <div x-show="showHistoryDigital" @click.self="showHistoryDigital = false"
-                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay" x-cloak x-transition>
+                @keydown.escape.window="showHistoryDigital = false" class="pos-modal-overlay pos-modal-sheet" x-cloak x-transition>
                 <div class="pos-modal-shell pos-modal-shell-surface pos-modal-dig-hist w-[95%] max-w-[960px]">
 
                     {{-- Header --}}
@@ -5223,6 +5315,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             <!-- Modal Konfirmasi Hapus Digital -->
             <div x-show="showDeleteConfirmDigital" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
