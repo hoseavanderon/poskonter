@@ -10,38 +10,7 @@
     }
 @endphp
 <!DOCTYPE html>
-<html lang="id" class="{{ request()->routeIs('pos') ? 'is-pos' : '' }}" x-data="{
-    darkMode: localStorage.getItem('darkMode') === 'true',
-    isFullscreen: false,
-    sidebarOpen: JSON.parse(localStorage.getItem('sidebarOpen') ?? 'false'),
-
-    toggleDarkMode() {
-        this.darkMode = !this.darkMode;
-        localStorage.setItem('darkMode', this.darkMode);
-        document.documentElement.classList.toggle('dark', this.darkMode);
-    },
-
-    toggleFullscreen() {
-        const el = document.body;
-
-        if (!document.fullscreenElement) {
-            if (el.requestFullscreen) {
-                el.requestFullscreen({ navigationUI: 'hide' });
-            } else if (el.webkitRequestFullscreen) {
-                el.webkitRequestFullscreen();
-            }
-            this.isFullscreen = true;
-        } else {
-            document.exitFullscreen();
-            this.isFullscreen = false;
-        }
-    },
-
-    toggleSidebar() {
-        this.sidebarOpen = !this.sidebarOpen;
-        localStorage.setItem('sidebarOpen', this.sidebarOpen);
-    }
-}" x-init="document.documentElement.classList.toggle('dark', darkMode);
+<html lang="id" class="{{ request()->routeIs('pos') ? 'is-pos' : '' }}" x-data="appShell()" x-init="document.documentElement.classList.toggle('dark', darkMode);
 document.addEventListener('fullscreenchange', () => {
     isFullscreen = !!document.fullscreenElement;
 });">
@@ -58,10 +27,7 @@ document.addEventListener('fullscreenchange', () => {
             try {
                 if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
             } catch (e) {}
-            var skip = false;
-            try { skip = sessionStorage.getItem('pos-boot-done') === '1'; } catch (e) {}
-            if (skip) document.documentElement.classList.add('alpine-ready');
-            else document.documentElement.classList.add('is-boot');
+            document.documentElement.classList.add('alpine-ready');
         })();
     </script>
     <style>
@@ -91,9 +57,8 @@ document.addEventListener('fullscreenchange', () => {
 
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
     <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
+    <script src="{{ asset('js/app-shell.js') }}"></script>
     <script src="{{ asset('js/vendor/alpine-collapse.min.js') }}" defer></script>
-
-    {{-- AlpineJS --}}
     <script src="{{ asset('js/vendor/alpine.min.js') }}" defer></script>
 
     <style>

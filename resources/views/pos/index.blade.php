@@ -5254,7 +5254,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 _rawProducts: @json($products),
                 categories: @json($categories),
                 products: [],
-                cart: JSON.parse(localStorage.getItem('cart') || '[]'),
+                cart: [],
                 selectedCategoryPhysical: null,
                 showToast: false,
                 toastMsg: '',
@@ -5800,12 +5800,18 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 total() {
                     return this.cart.reduce((s, i) => s + i.price * i.qty, 0);
                 },
-                saveCart() {
-                    localStorage.setItem('cart', JSON.stringify(this.cart));
-                },
                 loadCart() {
-                    this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                    this.updatePaymentTotals(); // 🔥 penting kalau reload halaman
+                    try {
+                        this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    } catch (e) {
+                        this.cart = [];
+                    }
+                    this.updatePaymentTotals();
+                },
+                saveCart() {
+                    try {
+                        localStorage.setItem('cart', JSON.stringify(this.cart));
+                    } catch (e) {}
                 },
                 clearCart() {
                     this.cart = [];
@@ -6652,7 +6658,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                 syncPosSegPill(opts = {}) {
                     const seg = this.$refs.posSeg;
                     if (!seg) {
-                        this.$nextTick(() => this.syncPosSegPill(opts));
                         return;
                     }
                     const track = seg.querySelector('.pos-seg-track');
@@ -6666,7 +6671,6 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     const w = btn.offsetWidth;
                     const h = btn.offsetHeight;
                     if (w <= 0 || h <= 0) {
-                        this.$nextTick(() => this.syncPosSegPill(opts));
                         return;
                     }
 

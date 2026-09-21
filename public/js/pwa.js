@@ -96,11 +96,7 @@
 
   if ('serviceWorker' in navigator && swUrl) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        return Promise.all(regs.map(function (reg) { return reg.unregister(); }));
-      }).then(function () {
-        return navigator.serviceWorker.register(swUrl);
-      }).catch(function () {});
+      navigator.serviceWorker.register(swUrl).catch(function () {});
     });
   }
 
