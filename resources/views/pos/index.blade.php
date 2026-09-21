@@ -956,6 +956,12 @@
             background: #2C2C2E;
         }
 
+        .pos-manual-pane {
+            width: 100%;
+            min-width: 0;
+            margin-top: 8px;
+        }
+
         .pos-manual {
             display: flex;
             justify-content: center;
@@ -1127,6 +1133,50 @@
             .pos-manual-card {
                 padding: 16px;
                 min-height: 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .pos-manual-pane {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-x: hidden;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .pos-manual {
+                flex: 1 1 auto;
+                align-items: stretch;
+                justify-content: flex-start;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .pos-manual-card {
+                max-width: 100%;
+                width: 100%;
+                min-height: 0;
+                height: auto;
+            }
+
+            .pos-manual-fields {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .pos-manual-card {
+                padding: 20px 22px;
+            }
+
+            .pos-manual-title {
+                font-size: 18px;
+            }
+
+            .pos-manual-actions button {
+                min-height: 48px;
             }
         }
 
@@ -4344,7 +4394,7 @@
             <!-- ====================== TAB INPUT MANUAL ====================== -->
 
 
-            <div x-show="activeTab === 'manual'" class="mt-4">
+            <div x-show="activeTab === 'manual'" class="pos-manual-pane">
                 <div class="pos-manual">
                     <div class="pos-manual-card">
                         <h2 class="pos-manual-title">Input Manual / Jasa</h2>
