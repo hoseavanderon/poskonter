@@ -600,9 +600,15 @@
 
             .ledger-chip.is-on,
             .ledger-day.is-on {
-                background: transparent;
-                color: #ffffff;
-                border-color: transparent;
+                background: #007AFF !important;
+                color: #ffffff !important;
+                border-color: transparent !important;
+            }
+
+            html.dark .ledger-chip.is-on,
+            html.dark .ledger-day.is-on {
+                background: #007AFF !important;
+                color: #ffffff !important;
             }
 
             .ledger-day {
@@ -1186,7 +1192,7 @@
                                     <div class="ledger-seg-pill" x-ref="monthPill" aria-hidden="true"></div>
                                     <template x-for="m in months" :key="m.index">
                                         <button type="button" @click="selectMonth(m.index)" class="ledger-chip"
-                                            :data-month="m.index" :class="selectedMonthIndex === m.index ? 'is-on' : ''">
+                                            :data-month="m.index" :class="Number(selectedMonthIndex) === Number(m.index) ? 'is-on' : ''">
                                             <span x-text="m.name"></span>
                                         </button>
                                     </template>
@@ -1200,7 +1206,7 @@
                                     <div class="ledger-seg-pill" x-ref="dayPill" aria-hidden="true"></div>
                                     <template x-for="day in days" :key="day">
                                         <button type="button" @click="selectDay(day)" :data-day="day"
-                                            class="ledger-day" :class="selectedDate === day ? 'is-on' : ''">
+                                            class="ledger-day" :class="Number(selectedDate) === Number(day) ? 'is-on' : ''">
                                             <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
                                         </button>
                                     </template>

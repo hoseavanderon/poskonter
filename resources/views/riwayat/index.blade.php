@@ -643,7 +643,7 @@
             <template x-for="day in days" :key="day">
                 <button @click="selectedDate = day; fetchData();"
                     class="hist-chip transition-all duration-300 ease-out"
-                    :class="selectedDate === day ? 'is-on' : ''">
+                    :class="Number(selectedDate) === Number(day) ? 'is-on' : ''">
                     <span x-text="day + '/' + selectedMonthNumber"></span>
                 </button>
             </template>
@@ -1652,21 +1652,28 @@
                 },
 
                 init() {
-                    this.selectedMonth = this.months[this.currentMonthIndex];
-                    this.selectedYear = this.currentYear;
+                    const now = new Date();
+                    this.currentYear = now.getFullYear();
+                    this.currentMonthIndex = now.getMonth();
+                    this.selectedYear = now.getFullYear();
+                    this.selectedMonth = this.months[now.getMonth()];
+                    this.selectedDate = now.getDate();
 
-                    const year = this.currentYear;
+                    const year = this.selectedYear;
                     const month = this.currentMonthIndex + 1;
                     const lastDay = new Date(year, month, 0).getDate();
+                    if (this.selectedDate > lastDay) this.selectedDate = lastDay;
+
                     this.days = Array.from({
                         length: lastDay
                     }, (_, i) => i + 1);
 
                     this.loadAvailableYears();
+                    this.fetchData();
 
                     this.$nextTick(() => {
                         // Inisialisasi Flatpickr untuk rentang tanggal
-                        const fp = flatpickr("#dateRangePicker", {
+                        flatpickr("#dateRangePicker", {
                             mode: "range",
                             dateFormat: "Y-m-d",
                             locale: "id",
@@ -1683,16 +1690,22 @@
                             },
                         });
 
-                        const container = document.querySelector('.smooth-scroll');
-                        const activeBtn = container?.querySelector('.bg-blue-600');
-                        if (activeBtn && container) {
-                            const offsetLeft = activeBtn.offsetLeft - container.clientWidth / 2 + activeBtn
-                                .clientWidth / 2;
-                            container.scrollTo({
-                                left: offsetLeft,
-                                behavior: 'smooth'
-                            });
-                        }
+                        this.scrollActiveDateIntoView();
+                        // retry singkat jika chip belum ter-render
+                        setTimeout(() => this.scrollActiveDateIntoView(), 120);
+                        setTimeout(() => this.scrollActiveDateIntoView(), 320);
+                    });
+                },
+
+                scrollActiveDateIntoView() {
+                    const container = this.$el.querySelector('.smooth-scroll');
+                    const activeBtn = container?.querySelector('.hist-chip.is-on');
+                    if (!activeBtn || !container) return;
+                    const offsetLeft = activeBtn.offsetLeft - container.clientWidth / 2 + activeBtn
+                        .clientWidth / 2;
+                    container.scrollTo({
+                        left: Math.max(0, offsetLeft),
+                        behavior: 'smooth'
                     });
                 },
             };
