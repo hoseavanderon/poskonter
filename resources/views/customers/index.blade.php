@@ -1,19 +1,69 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .cust-hero {
+            background: #FFFFFF;
+            color: #1D1D1F;
+            padding: 20px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark .cust-hero {
+            background: #1C1C1E;
+            color: #F5F5F7;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .cust-hero-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1D1D1F;
+        }
+
+        html.dark .cust-hero-title {
+            color: #F5F5F7;
+        }
+
+        .cust-hero-icon {
+            color: #007AFF;
+        }
+
+        html.dark .cust-hero-icon {
+            color: #0A84FF;
+        }
+
+        .cust-hero-sub {
+            margin-top: 4px;
+            font-size: 0.875rem;
+            color: #6E6E73;
+        }
+
+        html.dark .cust-hero-sub {
+            color: #AEAEB2;
+        }
+    </style>
+
     <div x-data="customerPage()" class="p-6 space-y-6 relative">
 
         <!-- HEADER -->
-        <div
-            class="bg-gradient-to-r from-gray-800 via-slate-800 to-gray-900 
-                text-white p-5 rounded-lg flex items-center justify-between 
-                shadow shadow-blue-900/30 border border-gray-700/60">
+        <div class="cust-hero">
             <div>
-                <h1 class="text-2xl font-semibold flex items-center gap-2">
-                    <x-heroicon-o-users class="w-6 h-6 text-gray-300" />
+                <h1 class="cust-hero-title">
+                    <x-heroicon-o-users class="w-6 h-6 cust-hero-icon" />
                     Pelanggan
                 </h1>
-                <p class="text-sm text-gray-300">Total: <span x-text="customers.length"></span> Pelanggan</p>
+                <p class="cust-hero-sub">Total: <span x-text="customers.length"></span> Pelanggan</p>
             </div>
         </div>
 
@@ -26,7 +76,7 @@
         </div>
 
         <!-- CUSTOMER GRID -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             <template x-for="(item, index) in filteredCustomers" :key="item.id">
                 <div @click="openCustomer(item)"
                     class="group bg-gray-800 border border-gray-700 rounded-xl shadow-md hover:shadow-blue-900/30 hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer p-5 flex flex-col items-start justify-between">

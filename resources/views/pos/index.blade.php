@@ -3607,6 +3607,9 @@
                                 <input id="barcodeInput" type="text" placeholder="Scan barcode produk..."
                                     autocomplete="off" @focus="focused = true" @blur="focused = false"
                                     @keydown.enter.prevent="
+                if (isScanning) { $event.target.value = ''; return; }
+                isScanning = true;
+                setTimeout(() => isScanning = false, 400);
                 handleBarcodeInput($event);
                 $event.target.value = '';
             "
@@ -5464,8 +5467,12 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     document.addEventListener("keydown", (e) => {
                         const target = e.target;
                         const tag = (target && target.tagName ? target.tagName : '').toLowerCase();
+
+                        // #barcodeInput sudah punya @keydown.enter → jangan proses lagi di sini
+                        // (tanpa ini, 1 scan = 2 pcs)
+                        if (target && target.id === 'barcodeInput') return;
+
                         const typingElsewhere = target &&
-                            target.id !== 'barcodeInput' &&
                             (tag === 'input' || tag === 'textarea' || tag === 'select' || target
                                 .isContentEditable);
 
@@ -5477,10 +5484,10 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                         if (e.key.length === 1) buffer += e.key;
 
                         if (e.key === "Enter" && buffer.length > 3) {
-                            if (this.isScanning) return; // 🔥 cegah double scan
+                            if (this.isScanning) return;
 
                             this.isScanning = true;
-                            setTimeout(() => this.isScanning = false, 80); // cooldown 80ms
+                            setTimeout(() => this.isScanning = false, 400);
 
                             e.preventDefault();
                             const code = buffer.trim();
@@ -6633,11 +6640,18 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
 
                 // Update scanner agar mendeteksi produk bervarian
                 async handleBarcodeInput(e) {
-                    const code = e.target.value.trim();
+                    const code = (e?.target?.value || '').trim();
                     if (!code) {
-                        e.target.value = '';
+                        if (e?.target) e.target.value = '';
                         return;
                     }
+
+                    // Guard ekstra: cegah double-add dari event yang nyasar
+                    if (this._barcodeLock === code) return;
+                    this._barcodeLock = code;
+                    setTimeout(() => {
+                        if (this._barcodeLock === code) this._barcodeLock = null;
+                    }, 500);
 
                     // 1️⃣ Cari di produk lokal dulu
                     let found = this.products.find(p => String(p.code) === String(code));
