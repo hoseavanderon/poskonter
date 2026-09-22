@@ -1,0 +1,50 @@
+@keyframes pageSoftIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+html.page-enter-waiting .page-enter,
+html.page-enter-waiting .page-enter-item {
+  opacity: 0 !important;
+}
+
+html.page-enter-play .page-enter {
+  animation: pageSoftIn 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+html.page-enter-play .page-enter-item {
+  animation: pageSlideIn 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(140ms + (var(--i, 0) * 28ms));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.page-enter-waiting .page-enter,
+  html.page-enter-waiting .page-enter-item,
+  html.page-enter-play .page-enter,
+  html.page-enter-play .page-enter-item {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

@@ -3,14 +3,14 @@
     @section('content')
         <div x-data="stokBarang()" x-init="init()" class="p-6 max-w-7xl mx-auto">
             <!-- 🏷️ Judul -->
-            <div class="mb-8 text-left space-y-4">
+            <div class="mb-8 text-left space-y-4 page-enter" style="--d:0">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">📦 Stok Barang</h2>
                     <p class="text-sm text-gray-500">Monitor semua jenis barang</p>
                 </div>
 
                 <!-- 🔍 Form Pencarian -->
-                <div class="relative max-w-md">
+                <div class="relative max-w-md page-enter" style="--d:80">
                     <input 
                         type="text"
                         x-model="searchQuery"
@@ -31,7 +31,8 @@
                     <div 
                         :data-rack-id="rack.id"
                         @click="openShelf(rack)"
-                        class="relative bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-300 cursor-pointer text-center">
+                        class="page-enter-item relative bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-300 cursor-pointer text-center"
+                        :style="'--i:' + i">
 
                         <!-- 🔢 Jumlah Items -->
                         <div

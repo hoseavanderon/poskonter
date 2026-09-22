@@ -53,7 +53,9 @@ document.addEventListener('fullscreenchange', () => {
         }
     </style>
     <link rel="stylesheet" href="{{ asset('css/app-boot.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/page-enter.css') }}">
     <script src="{{ asset('js/app-boot.js') }}"></script>
+    <script src="{{ asset('js/page-enter.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('css/sf-pro.css') }}">
     <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">

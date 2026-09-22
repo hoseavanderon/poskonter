@@ -4,7 +4,7 @@
 <div x-data="inventoryHistory()" x-init="init()" class="p-6 max-w-4xl mx-auto">
 
     <!-- 🔹 Judul di Tengah -->
-    <div class="text-center mb-6">
+    <div class="text-center mb-6 page-enter" style="--d:0">
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1">
             📦 Cek History Stok Barang
         </h2>
@@ -13,7 +13,8 @@
 
     <!-- 🔍 Form Input -->
     <div
-        class="flex flex-col sm:flex-row justify-center items-center gap-3 mb-10 bg-white/50 dark:bg-gray-800/60 p-4 rounded-2xl shadow-sm backdrop-blur-md">
+        class="page-enter flex flex-col sm:flex-row justify-center items-center gap-3 mb-10 bg-white/50 dark:bg-gray-800/60 p-4 rounded-2xl shadow-sm backdrop-blur-md"
+        style="--d:90">
         
         <input type="text" x-model="barcode" placeholder="Scan / Ketik Kode / Barcode Barang"
             class="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 w-72 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 text-center"
@@ -34,7 +35,8 @@
     <div x-show="!loading && summaries.length > 0" class="space-y-4">
         <template x-for="(item, index) in summaries" :key="index">
             <div @click="openModal(item.date)" 
-                 class="p-5 bg-white dark:bg-gray-800 rounded-2xl shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.01] transition border border-gray-200 dark:border-gray-700">
+                 class="page-enter-item p-5 bg-white dark:bg-gray-800 rounded-2xl shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.01] transition border border-gray-200 dark:border-gray-700"
+                 :style="'--i:' + index">
                 <div class="flex justify-between items-center mb-3">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="formatDate(item.date)"></h3>

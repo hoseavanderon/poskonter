@@ -581,12 +581,240 @@
         body.no-scroll {
             overflow: hidden !important;
         }
+
+        /* Entrance — soft fade (setelah overlay) */
+        @keyframes histSoftIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+                filter: blur(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes histChipSlide {
+            from {
+                opacity: 0;
+                transform: translateX(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes histTabIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes histCopyPop {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(0.88);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes histCopyCheck {
+            0% {
+                transform: scale(0.4);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.12);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .hist-page.is-waiting .hist-enter-head,
+        .hist-page.is-waiting .hist-range,
+        .hist-page.is-waiting .hist-chip,
+        .hist-page.is-waiting .hist-enter-card,
+        .hist-page.is-waiting .hist-item,
+        .hist-page.is-waiting .hist-tabs {
+            opacity: 0;
+        }
+
+        .hist-page.is-booting .hist-enter-head {
+            animation: histSoftIn 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hist-page.is-booting .hist-range {
+            animation: histSoftIn 680ms cubic-bezier(0.16, 1, 0.3, 1) 90ms both;
+        }
+
+        .hist-page.is-booting .hist-chip {
+            opacity: 0;
+            animation: histChipSlide 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: calc(160ms + (var(--i, 0) * 22ms));
+        }
+
+        .hist-page.is-booting .hist-tabs {
+            animation: histTabIn 560ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
+        }
+
+        .hist-page.is-booting .hist-enter-card {
+            opacity: 0;
+            animation: histSoftIn 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hist-page.is-booting .hist-enter-card[data-enter="1"] {
+            animation-delay: 260ms;
+        }
+
+        .hist-page.is-booting .hist-enter-card[data-enter="2"] {
+            animation-delay: 340ms;
+        }
+
+        .hist-page.is-booting .hist-enter-card[data-enter="3"] {
+            animation-delay: 420ms;
+        }
+
+        .hist-page.is-booting .hist-enter-card[data-enter="4"] {
+            animation-delay: 500ms;
+        }
+
+        .hist-page.is-booting .hist-item {
+            opacity: 0;
+            animation: histSoftIn 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: calc(480ms + (var(--i, 0) * 40ms));
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hist-page.is-waiting .hist-enter-head,
+            .hist-page.is-waiting .hist-range,
+            .hist-page.is-waiting .hist-chip,
+            .hist-page.is-waiting .hist-enter-card,
+            .hist-page.is-waiting .hist-item,
+            .hist-page.is-waiting .hist-tabs,
+            .hist-page.is-booting .hist-enter-head,
+            .hist-page.is-booting .hist-range,
+            .hist-page.is-booting .hist-chip,
+            .hist-page.is-booting .hist-enter-card,
+            .hist-page.is-booting .hist-item,
+            .hist-page.is-booting .hist-tabs {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+        }
+
+        /* Round copy button */
+        .hist-copy-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #F2F2F7;
+            color: #636366;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition:
+                background-color 220ms ease,
+                color 220ms ease,
+                box-shadow 220ms ease,
+                transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .hist-copy-btn:hover {
+            background: #E5E5EA;
+            color: #1D1D1F;
+        }
+
+        .hist-copy-btn:active {
+            transform: scale(0.94);
+        }
+
+        html.dark .hist-copy-btn {
+            background: #2C2C2E;
+            color: #AEAEB2;
+        }
+
+        html.dark .hist-copy-btn:hover {
+            background: #3A3A3C;
+            color: #F5F5F7;
+        }
+
+        .hist-copy-btn .hist-copy-ico {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            transition:
+                opacity 220ms ease,
+                transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .hist-copy-btn .hist-copy-ico.is-clip {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .hist-copy-btn .hist-copy-ico.is-check {
+            opacity: 0;
+            transform: scale(0.45);
+            color: #34C759;
+        }
+
+        .hist-copy-btn.is-done {
+            background: rgba(52, 199, 89, 0.14);
+            color: #34C759;
+            animation: histCopyPop 360ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .hist-copy-btn.is-done .hist-copy-ico.is-clip {
+            opacity: 0;
+            transform: scale(0.45);
+        }
+
+        .hist-copy-btn.is-done .hist-copy-ico.is-check {
+            opacity: 1;
+            animation: histCopyCheck 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        html.dark .hist-copy-btn.is-done {
+            background: rgba(48, 209, 88, 0.18);
+            color: #30D158;
+        }
+
+        html.dark .hist-copy-btn .hist-copy-ico.is-check {
+            color: #30D158;
+        }
+
+        .hist-tab-panel {
+            width: 100%;
+        }
     </style>
 
-    <div x-data="transactionHistory()" x-init="init()" class="hist-page p-5 sm:p-6 w-full h-full overflow-x-hidden relative">
+    <div x-data="transactionHistory()" x-init="init()"
+        class="hist-page p-5 sm:p-6 w-full h-full overflow-x-hidden relative"
+        :class="{ 'is-waiting': isWaiting, 'is-booting': isBooting }">
 
         <!-- HEADER -->
-        <div class="flex items-center justify-between border-b hist-divider pb-3 mb-5 relative">
+        <div class="hist-enter-head flex items-center justify-between border-b hist-divider pb-3 mb-5 relative">
             <h1 class="text-2xl font-semibold hist-title">Riwayat Transaksi</h1>
 
             <!-- DROPDOWN BUTTON -->
@@ -643,6 +871,7 @@
             <template x-for="day in days" :key="day">
                 <button @click="selectedDate = day; fetchData();"
                     class="hist-chip transition-all duration-300 ease-out"
+                    :style="'--i:' + (day - 1)"
                     :class="Number(selectedDate) === Number(day) ? 'is-on' : ''">
                     <span x-text="day + '/' + selectedMonthNumber"></span>
                 </button>
@@ -653,7 +882,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-5">
 
             <div id="summaryBox"
-                class="hist-card p-6 text-[15px] space-y-6 leading-normal">
+                class="hist-card hist-enter-card p-6 text-[15px] space-y-6 leading-normal" data-enter="1">
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center mb-1">
@@ -670,24 +899,21 @@
                         </h2>
                     </div>
 
-                    <button @click="copySummary()" class="p-1 transition" :disabled="copied">
-
-                        <!-- ICON -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                            class="w-5 h-5 transition-all duration-300"
-                            :class="copied
-                                ?
-                                'text-green-500 drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] scale-110' :
-                                'hist-secondary hover:opacity-80'">
-
-                            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M13 13H7a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2z" />
-
-                            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" d="M17 17H11a2 2 0 01-2-2v-6" />
+                    <button type="button"
+                        @click="copySummary()"
+                        class="hist-copy-btn"
+                        :class="{ 'is-done': copied }"
+                        :disabled="copied"
+                        :aria-label="copied ? 'Disalin' : 'Salin rincian'">
+                        <svg class="hist-copy-ico is-clip" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-
+                        <svg class="hist-copy-ico is-check" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
                     </button>
 
                 </div>
@@ -851,10 +1077,17 @@
                 </div>
 
                 <!-- TAB PRODUK FISIK -->
-                <div x-show="activeTab === 'produk'" class="space-y-5">
+                <div x-show="activeTab === 'produk'"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-1"
+                    class="hist-tab-panel space-y-5">
 
                     <!-- CATEGORY SUMMARY -->
-                    <div class="hist-card p-5">
+                    <div class="hist-card hist-enter-card p-5" data-enter="2">
                         <h3 class="text-[15px] font-semibold hist-title mb-3">Ringkasan Kategori Produk</h3>
 
                         <template x-if="categories.length > 0">
@@ -877,15 +1110,16 @@
                     </div>
 
                     <!-- PRODUCT HISTORY -->
-                    <div class="hist-card p-5">
+                    <div class="hist-card hist-enter-card p-5" data-enter="3">
                         <h3 class="text-[15px] font-semibold hist-title mb-3">Riwayat Transaksi Produk</h3>
 
                         <template x-if="productTransactions.length > 0">
                             <div class="space-y-4">
-                                <template x-for="t in productTransactions" :key="t.transaction_id">
+                                <template x-for="(t, idx) in productTransactions" :key="t.transaction_id">
 
                                     <div x-data="{ openMenu: false, confirmDelete: false }"
                                         class="hist-item p-4 space-y-3"
+                                        :style="'--i:' + idx"
                                         @keydown.escape.window="confirmDelete = false">
 
                                         <!-- MODAL BACKDROP -->
@@ -1027,9 +1261,16 @@
                 </div>
 
                 <!-- TAB PRODUK DIGITAL -->
-                <div x-show="activeTab === 'digital'" class="space-y-5">
+                <div x-show="activeTab === 'digital'"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-1"
+                    class="hist-tab-panel space-y-5">
 
-                    <div class="hist-card p-5">
+                    <div class="hist-card hist-enter-card p-5" data-enter="2">
                         <h3 class="text-[15px] font-semibold hist-title mb-3">Riwayat Produk Digital</h3>
 
                         <template x-if="Object.keys(digitalTransactions).length > 0">
@@ -1171,6 +1412,8 @@
                 activeTab: 'produk',
                 toastSuccess: false,
                 toastMessage: "",
+                isWaiting: true,
+                isBooting: false,
 
                 async deleteTransaction(id) {
                     try {
@@ -1694,7 +1937,80 @@
                         // retry singkat jika chip belum ter-render
                         setTimeout(() => this.scrollActiveDateIntoView(), 120);
                         setTimeout(() => this.scrollActiveDateIntoView(), 320);
+
+                        this.playEnterAfterOverlay();
                     });
+                },
+
+                playEnterAfterOverlay() {
+                    const start = () => {
+                        if (this._enterStarted) return;
+                        this._enterStarted = true;
+
+                        this.isWaiting = false;
+                        // double rAF supaya browser apply state → lalu trigger anim
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                this.isBooting = true;
+                                setTimeout(() => {
+                                    this.isBooting = false;
+                                }, 1500);
+                            });
+                        });
+                    };
+
+                    const html = document.documentElement;
+
+                    // Overlay masih aktif → tunggu class is-boot hilang / event reveal
+                    if (html.classList.contains('is-boot') || document.getElementById('appBoot')) {
+                        const onReveal = () => {
+                            window.removeEventListener('app-boot:reveal', onReveal);
+                            setTimeout(start, 100);
+                        };
+                        window.addEventListener('app-boot:reveal', onReveal);
+
+                        const obs = new MutationObserver(() => {
+                            const overlayLeaving = document.querySelector('.app-boot.is-leaving');
+                            if (!html.classList.contains('is-boot') || overlayLeaving) {
+                                obs.disconnect();
+                                window.removeEventListener('app-boot:reveal', onReveal);
+                                setTimeout(start, overlayLeaving ? 100 : 40);
+                            }
+                        });
+
+                        obs.observe(html, {
+                            attributes: true,
+                            attributeFilter: ['class']
+                        });
+
+                        // pantau overlay DOM juga
+                        const boot = document.getElementById('appBoot');
+                        if (boot) {
+                            const bootObs = new MutationObserver(() => {
+                                if (boot.classList.contains('is-leaving') || !boot.isConnected) {
+                                    bootObs.disconnect();
+                                    obs.disconnect();
+                                    window.removeEventListener('app-boot:reveal', onReveal);
+                                    setTimeout(start, 100);
+                                }
+                            });
+                            bootObs.observe(boot, {
+                                attributes: true,
+                                attributeFilter: ['class']
+                            });
+                        }
+
+                        // fallback jika observer gagal
+                        setTimeout(() => {
+                            obs.disconnect();
+                            window.removeEventListener('app-boot:reveal', onReveal);
+                            if (this.isWaiting) start();
+                        }, 2800);
+                        return;
+                    }
+
+                    // Tidak ada overlay → langsung animasi
+                    start();
                 },
 
                 scrollActiveDateIntoView() {

@@ -3,7 +3,7 @@
 @section('content')
     <div x-data="barangMasuk()" class="w-full mx-auto py-6 px-4 sm:px-8 text-gray-100">
         <!-- 🏷️ Header -->
-        <div class="mb-8">
+        <div class="mb-8 page-enter" style="--d:0">
             <h1 class="text-3xl font-bold flex items-center gap-2 text-blue-400">
                 <span>📦 Barang Masuk</span>
             </h1>
@@ -11,7 +11,7 @@
         </div>
 
         <!-- 🧾 Supplier -->
-        <div class="bg-[#1B2332] rounded-2xl p-6 mb-6 shadow-lg border border-[#2A3242] w-full">
+        <div class="page-enter bg-[#1B2332] rounded-2xl p-6 mb-6 shadow-lg border border-[#2A3242] w-full" style="--d:90">
             <label class="block font-semibold text-gray-300 mb-2">Supplier</label>
             <div @click="openSupplierModal"
                 class="flex items-center gap-2 border border-[#2A3242] rounded-xl px-4 py-3 cursor-pointer hover:border-blue-400 transition bg-[#222B3A]">
@@ -25,7 +25,7 @@
         </div>
 
         <!-- 📦 Product Form -->
-        <div class="relative bg-[#1B2332] rounded-2xl p-5 sm:p-8 shadow-lg border border-[#2A3242] w-full">
+        <div class="page-enter relative bg-[#1B2332] rounded-2xl p-5 sm:p-8 shadow-lg border border-[#2A3242] w-full" style="--d:180">
             <div class="flex items-center justify-between mb-6">
 
                 <h2 class="text-lg font-semibold text-gray-300">
@@ -67,7 +67,8 @@
 
 
             <template x-for="(item, index) in products" :key="index">
-                <div class="flex flex-wrap items-center gap-4 mb-5 border border-[#2A3242] rounded-xl p-5 bg-[#222B3A]">
+                <div class="page-enter-item flex flex-wrap items-center gap-4 mb-5 border border-[#2A3242] rounded-xl p-5 bg-[#222B3A]"
+                    :style="'--i:' + index">
                     <div class="w-8 text-center font-bold text-gray-400" x-text="index + 1"></div>
 
                     <!-- Product -->

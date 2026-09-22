@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div x-data="ledgerApp()" x-init="init()" class="ledger-page p-3 sm:p-4 md:p-6 w-full h-full overflow-x-hidden">
+    <div x-data="ledgerApp()" x-init="init()"
+        class="ledger-page p-3 sm:p-4 md:p-6 w-full h-full overflow-x-hidden"
+        :class="{ 'is-waiting': isWaiting, 'is-booting': isBooting }">
         <style>
             .ledger-page {
                 color: var(--text-primary);
@@ -59,7 +61,7 @@
             .ledger-balance-value {
                 margin-top: 6px;
                 font-size: clamp(30px, 5vw, 38px);
-                font-weight: 700;
+                font-weight: 500;
                 letter-spacing: -0.045em;
                 line-height: 1.08;
                 color: #1D1D1F;
@@ -91,19 +93,39 @@
                 gap: 4px;
                 border-radius: 16px;
                 background: #FFFFFF;
-                border: 1px solid #E5E5EA;
+                border: 1px solid rgba(0, 0, 0, 0.04);
                 color: var(--text-primary);
-                transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+                box-shadow:
+                    0 1px 2px rgba(0, 0, 0, 0.04),
+                    0 4px 12px rgba(0, 0, 0, 0.06);
+                transition:
+                    transform 160ms ease,
+                    border-color 160ms ease,
+                    background-color 160ms ease,
+                    box-shadow 160ms ease;
             }
 
             html.dark .ledger-action {
                 background: #2C2C2E;
-                border-color: #38383A;
+                border-color: rgba(255, 255, 255, 0.06);
+                box-shadow:
+                    0 1px 2px rgba(0, 0, 0, 0.25),
+                    0 6px 16px rgba(0, 0, 0, 0.35);
             }
 
             .ledger-action:hover {
-                border-color: var(--accent);
+                border-color: rgba(0, 122, 255, 0.18);
                 background: var(--accent-soft);
+                box-shadow:
+                    0 2px 6px rgba(0, 0, 0, 0.04),
+                    0 8px 18px rgba(0, 122, 255, 0.10);
+            }
+
+            html.dark .ledger-action:hover {
+                border-color: rgba(10, 132, 255, 0.28);
+                box-shadow:
+                    0 2px 6px rgba(0, 0, 0, 0.3),
+                    0 8px 20px rgba(0, 0, 0, 0.4);
             }
 
             .ledger-action:active {
@@ -281,8 +303,8 @@
 
             .ledger-head h2 {
                 font-size: 20px;
-                font-weight: 700;
-                letter-spacing: -0.03em;
+                font-weight: 500;
+                letter-spacing: -0.045em;
                 color: #1D1D1F;
                 white-space: nowrap;
                 overflow: hidden;
@@ -574,28 +596,41 @@
                 white-space: nowrap;
                 background: #FFFFFF;
                 color: #1D1D1F;
-                border: 1px solid #E5E5EA;
+                border: 1px solid rgba(0, 0, 0, 0.04);
+                box-shadow:
+                    0 1px 2px rgba(0, 0, 0, 0.04),
+                    0 3px 10px rgba(0, 0, 0, 0.05);
                 transition:
                     color 280ms cubic-bezier(0.22, 1, 0.36, 1),
                     background-color 280ms cubic-bezier(0.22, 1, 0.36, 1),
-                    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+                    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
             }
 
             html.dark .ledger-chip,
             html.dark .ledger-day {
                 background: #1C1C1E;
                 color: #F5F5F7;
-                border-color: #38383A;
+                border-color: rgba(255, 255, 255, 0.06);
+                box-shadow:
+                    0 1px 2px rgba(0, 0, 0, 0.25),
+                    0 4px 12px rgba(0, 0, 0, 0.35);
             }
 
             .ledger-chip:hover,
             .ledger-day:hover {
-                border-color: #D1D1D6;
+                border-color: rgba(0, 0, 0, 0.06);
+                box-shadow:
+                    0 2px 4px rgba(0, 0, 0, 0.04),
+                    0 6px 14px rgba(0, 0, 0, 0.07);
             }
 
             html.dark .ledger-chip:hover,
             html.dark .ledger-day:hover {
-                border-color: #48484A;
+                border-color: rgba(255, 255, 255, 0.10);
+                box-shadow:
+                    0 2px 4px rgba(0, 0, 0, 0.3),
+                    0 6px 16px rgba(0, 0, 0, 0.4);
             }
 
             .ledger-chip.is-on,
@@ -603,12 +638,14 @@
                 background: #007AFF !important;
                 color: #ffffff !important;
                 border-color: transparent !important;
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.28) !important;
             }
 
             html.dark .ledger-chip.is-on,
             html.dark .ledger-day.is-on {
                 background: #007AFF !important;
                 color: #ffffff !important;
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.28) !important;
             }
 
             .ledger-day {
@@ -988,12 +1025,127 @@
             html.dark .ledger-btn-danger {
                 background: #FF453A;
             }
+
+            /* Entrance — soft fade after overlay */
+            @keyframes ledgerSoftIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                    filter: blur(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                    filter: blur(0);
+                }
+            }
+
+            @keyframes ledgerChipSlide {
+                from {
+                    opacity: 0;
+                    transform: translateX(16px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .ledger-page.is-waiting .ledger-enter-card,
+            .ledger-page.is-waiting .ledger-enter-block,
+            .ledger-page.is-waiting .ledger-chip,
+            .ledger-page.is-waiting .ledger-day,
+            .ledger-page.is-waiting .ledger-wallet,
+            .ledger-page.is-waiting .ledger-trx,
+            .ledger-page.is-waiting .ledger-action {
+                opacity: 0;
+            }
+
+            .ledger-page.is-booting .ledger-enter-card {
+                opacity: 0;
+                animation: ledgerSoftIn 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+            }
+
+            .ledger-page.is-booting .ledger-enter-card[data-enter="1"] {
+                animation-delay: 80ms;
+            }
+
+            .ledger-page.is-booting .ledger-enter-card[data-enter="2"] {
+                animation-delay: 180ms;
+            }
+
+            .ledger-page.is-booting .ledger-enter-block {
+                opacity: 0;
+                animation: ledgerSoftIn 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+            }
+
+            .ledger-page.is-booting .ledger-enter-block[data-enter="1"] {
+                animation-delay: 220ms;
+            }
+
+            .ledger-page.is-booting .ledger-enter-block[data-enter="2"] {
+                animation-delay: 280ms;
+            }
+
+            .ledger-page.is-booting .ledger-action {
+                opacity: 0;
+                animation: ledgerSoftIn 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+            }
+
+            .ledger-page.is-booting .ledger-action:nth-child(1) {
+                animation-delay: 200ms;
+            }
+
+            .ledger-page.is-booting .ledger-action:nth-child(2) {
+                animation-delay: 260ms;
+            }
+
+            .ledger-page.is-booting .ledger-wallet {
+                opacity: 0;
+                animation: ledgerSoftIn 580ms cubic-bezier(0.16, 1, 0.3, 1) both;
+                animation-delay: calc(300ms + (var(--i, 0) * 45ms));
+            }
+
+            .ledger-page.is-booting .ledger-chip,
+            .ledger-page.is-booting .ledger-day {
+                opacity: 0;
+                animation: ledgerChipSlide 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+                animation-delay: calc(260ms + (var(--i, 0) * 22ms));
+            }
+
+            .ledger-page.is-booting .ledger-trx {
+                opacity: 0;
+                animation: ledgerSoftIn 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+                animation-delay: calc(420ms + (var(--i, 0) * 40ms));
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .ledger-page.is-waiting .ledger-enter-card,
+                .ledger-page.is-waiting .ledger-enter-block,
+                .ledger-page.is-waiting .ledger-chip,
+                .ledger-page.is-waiting .ledger-day,
+                .ledger-page.is-waiting .ledger-wallet,
+                .ledger-page.is-waiting .ledger-trx,
+                .ledger-page.is-waiting .ledger-action,
+                .ledger-page.is-booting .ledger-enter-card,
+                .ledger-page.is-booting .ledger-enter-block,
+                .ledger-page.is-booting .ledger-chip,
+                .ledger-page.is-booting .ledger-day,
+                .ledger-page.is-booting .ledger-wallet,
+                .ledger-page.is-booting .ledger-trx,
+                .ledger-page.is-booting .ledger-action {
+                    animation: none !important;
+                    opacity: 1 !important;
+                    transform: none !important;
+                    filter: none !important;
+                }
+            }
         </style>
 
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 max-w-[1800px] mx-auto">
 
             <!-- LEFT: Balance & Wallets -->
-            <aside class="ledger-card p-6 flex flex-col space-y-5">
+            <aside class="ledger-card ledger-enter-card p-6 flex flex-col space-y-5" data-enter="1">
 
                 <div class="ledger-balance">
                     <h3 class="ledger-balance-label">Sisa Saldo</h3>
@@ -1073,8 +1225,9 @@
                 </div>
 
                 <div class="flex flex-col gap-1 flex-1 overflow-y-auto no-scrollbar pr-1">
-                    <template x-for="w in wallets" :key="w.id">
+                    <template x-for="(w, wIdx) in wallets" :key="w.id">
                         <button type="button" @click="selectWallet(w.id)" class="ledger-wallet"
+                            :style="'--i:' + wIdx"
                             :class="selectedWallet === w.id ? 'is-on' : ''">
 
                             <div class="ledger-wallet-bar" aria-hidden="true"></div>
@@ -1114,9 +1267,10 @@
             </aside>
 
             <!-- RIGHT: Transactions -->
-            <section class="ledger-card relative p-6 flex flex-col min-w-0" style="height: 640px;">
+            <section class="ledger-card ledger-enter-card relative p-6 flex flex-col min-w-0" data-enter="2"
+                style="height: 640px;">
 
-                <div class="ledger-head">
+                <div class="ledger-head ledger-enter-block" data-enter="1">
                     <h2 :class="{ 'is-away': showSearch }">Riwayat Transaksi</h2>
 
                     <div class="ledger-search-morph" :class="{ 'is-open': showSearch }">
@@ -1192,7 +1346,9 @@
                                     <div class="ledger-seg-pill" x-ref="monthPill" aria-hidden="true"></div>
                                     <template x-for="m in months" :key="m.index">
                                         <button type="button" @click="selectMonth(m.index)" class="ledger-chip"
-                                            :data-month="m.index" :class="Number(selectedMonthIndex) === Number(m.index) ? 'is-on' : ''">
+                                            :data-month="m.index"
+                                            :style="'--i:' + m.index"
+                                            :class="Number(selectedMonthIndex) === Number(m.index) ? 'is-on' : ''">
                                             <span x-text="m.name"></span>
                                         </button>
                                     </template>
@@ -1206,7 +1362,9 @@
                                     <div class="ledger-seg-pill" x-ref="dayPill" aria-hidden="true"></div>
                                     <template x-for="day in days" :key="day">
                                         <button type="button" @click="selectDay(day)" :data-day="day"
-                                            class="ledger-day" :class="Number(selectedDate) === Number(day) ? 'is-on' : ''">
+                                            class="ledger-day"
+                                            :style="'--i:' + (day - 1)"
+                                            :class="Number(selectedDate) === Number(day) ? 'is-on' : ''">
                                             <span x-text="day + '/' + (selectedMonthIndex + 1)"></span>
                                         </button>
                                     </template>
@@ -1218,8 +1376,9 @@
                     <div class="flex-1 overflow-y-auto no-scrollbar mt-3 pb-1 smooth-scroll flex flex-col">
                         <div class="ledger-trx-list">
                             <template x-if="filteredTransactions.length > 0">
-                                <template x-for="t in filteredTransactions" :key="t.id">
+                                <template x-for="(t, tIdx) in filteredTransactions" :key="t.id">
                                     <div class="ledger-trx" :class="activeTransaction === t.id ? 'is-open' : ''"
+                                        :style="'--i:' + tIdx"
                                         :data-transaction-id="t.id">
                                         <button type="button" @click="toggleTransaction(t.id)"
                                             class="w-full flex items-center justify-between text-left gap-3">
@@ -1405,6 +1564,8 @@
                 },
                 showConfirmModal: false,
                 deleteTargetId: null,
+                isWaiting: true,
+                isBooting: false,
 
                 // === INIT ===
                 init() {
@@ -1466,7 +1627,81 @@
                             this.syncMonthPill(true);
                             this.syncDayPill(true);
                         });
+
+                        this.playEnterAfterOverlay();
                     });
+                },
+
+                playEnterAfterOverlay() {
+                    const start = () => {
+                        if (this._enterStarted) return;
+                        this._enterStarted = true;
+
+                        this.isWaiting = false;
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                this.isBooting = true;
+                                this.$nextTick(() => {
+                                    this.syncMonthPill(true);
+                                    this.syncDayPill(true);
+                                });
+                                setTimeout(() => {
+                                    this.isBooting = false;
+                                    this.syncMonthPill(true);
+                                    this.syncDayPill(true);
+                                }, 1500);
+                            });
+                        });
+                    };
+
+                    const html = document.documentElement;
+
+                    if (html.classList.contains('is-boot') || document.getElementById('appBoot')) {
+                        const onReveal = () => {
+                            window.removeEventListener('app-boot:reveal', onReveal);
+                            setTimeout(start, 100);
+                        };
+                        window.addEventListener('app-boot:reveal', onReveal);
+
+                        const obs = new MutationObserver(() => {
+                            const overlayLeaving = document.querySelector('.app-boot.is-leaving');
+                            if (!html.classList.contains('is-boot') || overlayLeaving) {
+                                obs.disconnect();
+                                window.removeEventListener('app-boot:reveal', onReveal);
+                                setTimeout(start, overlayLeaving ? 100 : 40);
+                            }
+                        });
+
+                        obs.observe(html, {
+                            attributes: true,
+                            attributeFilter: ['class']
+                        });
+
+                        const boot = document.getElementById('appBoot');
+                        if (boot) {
+                            const bootObs = new MutationObserver(() => {
+                                if (boot.classList.contains('is-leaving') || !boot.isConnected) {
+                                    bootObs.disconnect();
+                                    obs.disconnect();
+                                    window.removeEventListener('app-boot:reveal', onReveal);
+                                    setTimeout(start, 100);
+                                }
+                            });
+                            bootObs.observe(boot, {
+                                attributes: true,
+                                attributeFilter: ['class']
+                            });
+                        }
+
+                        setTimeout(() => {
+                            obs.disconnect();
+                            window.removeEventListener('app-boot:reveal', onReveal);
+                            if (this.isWaiting) start();
+                        }, 2800);
+                        return;
+                    }
+
+                    start();
                 },
 
                 // === UPDATE JUMLAH HARI ===

@@ -13,59 +13,397 @@
             -moz-appearance: textfield;
         }
 
-        /* 🔹 Tampilan modern garis polos (qty input) */
+        .bc-page {
+            color: var(--text-primary);
+        }
+
+        .bc-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            color: #007AFF;
+        }
+
+        html.dark .bc-icon {
+            background: #1C1C1E;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            color: #0A84FF;
+        }
+
+        .bc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #1D1D1F;
+        }
+
+        html.dark .bc-title {
+            color: #F5F5F7;
+        }
+
+        .bc-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            padding: 20px;
+        }
+
+        html.dark .bc-card {
+            background: #1C1C1E;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .bc-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8E8E93;
+            margin-bottom: 6px;
+        }
+
+        .bc-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #F2F2F7;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            color: #1D1D1F;
+            font-size: 14px;
+            transition: background-color 180ms ease, border-color 180ms ease;
+        }
+
+        .bc-btn:hover {
+            background: #E5E5EA;
+            border-color: rgba(0, 0, 0, 0.10);
+        }
+
+        html.dark .bc-btn {
+            background: #2C2C2E;
+            border-color: rgba(255, 255, 255, 0.10);
+            color: #F5F5F7;
+        }
+
+        html.dark .bc-btn:hover {
+            background: #3A3A3C;
+        }
+
+        .bc-btn-muted {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #F2F2F7;
+            border: 0;
+            color: #1D1D1F;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .bc-btn-muted:hover {
+            background: #E5E5EA;
+        }
+
+        html.dark .bc-btn-muted {
+            background: #2C2C2E;
+            color: #F5F5F7;
+        }
+
+        html.dark .bc-btn-muted:hover {
+            background: #3A3A3C;
+        }
+
+        .bc-btn-primary {
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: #007AFF;
+            border: 0;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+        }
+
+        .bc-btn-primary:hover {
+            background: #0066D6;
+        }
+
+        .bc-btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .bc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bc-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8E8E93;
+            background: #F2F2F7;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .bc-table th.text-right,
+        .bc-table td.text-right {
+            text-align: right;
+        }
+
+        .bc-table th.text-center,
+        .bc-table td.text-center {
+            text-align: center;
+        }
+
+        html.dark .bc-table th {
+            background: #2C2C2E;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .bc-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            color: #1D1D1F;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        html.dark .bc-table td {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+            color: #F5F5F7;
+        }
+
+        .bc-table tbody tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        html.dark .bc-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .bc-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F2F2F7;
+            color: #1D1D1F;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        html.dark .bc-avatar {
+            background: #2C2C2E;
+            color: #F5F5F7;
+        }
+
+        .bc-muted {
+            color: #8E8E93;
+            font-size: 12px;
+        }
+
+        .bc-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1D1D1F;
+        }
+
+        html.dark .bc-name {
+            color: #F5F5F7;
+        }
+
+        .bc-empty {
+            padding: 32px 24px;
+            text-align: center;
+            color: #8E8E93;
+            font-size: 14px;
+        }
+
+        .bc-empty strong {
+            color: #1D1D1F;
+            font-weight: 600;
+        }
+
+        html.dark .bc-empty strong {
+            color: #F5F5F7;
+        }
+
         .qty-input {
             border: none;
-            border-bottom: 1px solid #475569;
+            border-bottom: 1.5px solid #D1D1D6;
             padding: 2px 0;
             width: 42px;
-            background: transparent;
-            color: #e2e8f0;
+            background: transparent !important;
+            color: #1D1D1F !important;
             text-align: center;
             font-size: 0.875rem;
-            transition: all 0.25s ease;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            transition: border-color 0.2s ease;
         }
 
         .qty-input:focus {
             outline: none;
-            border-bottom: 1px solid #3b82f6;
-            box-shadow: 0 1px 0 0 #3b82f6;
+            border-bottom-color: #007AFF;
+            box-shadow: none !important;
+        }
+
+        html.dark .qty-input {
+            border-bottom-color: #48484A;
+            color: #F5F5F7 !important;
+        }
+
+        html.dark .qty-input:focus {
+            border-bottom-color: #0A84FF;
         }
 
         .qty-input::placeholder {
-            color: #64748b;
+            color: #8E8E93;
+        }
+
+        .bc-btn-danger {
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: #FF3B30;
+            border: 0;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .bc-btn-danger:hover {
+            background: #E0352B;
+        }
+
+        .bc-modal-shell {
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16);
+            overflow: hidden;
+        }
+
+        html.dark .bc-modal-shell {
+            background: #1C1C1E;
+            border-color: rgba(255, 255, 255, 0.10);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .bc-modal-head,
+        .bc-modal-search,
+        .bc-modal-foot {
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark .bc-modal-head,
+        html.dark .bc-modal-search,
+        html.dark .bc-modal-foot {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .bc-modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1D1D1F;
+        }
+
+        html.dark .bc-modal-title {
+            color: #F5F5F7;
+        }
+
+        .bc-page .bc-modal-search input,
+        .bc-page .bc-modal-search input:focus {
+            background: #F2F2F7 !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            border-radius: 12px !important;
+            color: #1D1D1F !important;
+            box-shadow: none !important;
+        }
+
+        html.dark .bc-page .bc-modal-search input,
+        html.dark .bc-page .bc-modal-search input:focus {
+            background: #2C2C2E !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            color: #F5F5F7 !important;
+        }
+
+        .bc-row {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            transition: background-color 160ms ease;
+        }
+
+        .bc-row:hover {
+            background: #F2F2F7;
+        }
+
+        html.dark .bc-row {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html.dark .bc-row:hover {
+            background: #2C2C2E;
+        }
+
+        .bc-warn {
+            background: #FFFFFF;
+            color: #1D1D1F;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16);
+        }
+
+        html.dark .bc-warn {
+            background: #1C1C1E;
+            color: #F5F5F7;
+            border-color: rgba(255, 255, 255, 0.10);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
     </style>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="barcodePage()" x-init="init()">
+    <div class="bc-page max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="barcodePage()" x-init="init()">
 
         <!-- Header -->
-        <div class="flex items-center gap-3 mb-8">
-            <div class="bg-slate-800 rounded-lg p-3 shadow-sm border border-slate-700 flex items-center justify-center">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    class="relative top-[1px]">
-                    <rect x="1" y="4" width="2" height="16" fill="#60A5FA" />
-                    <rect x="4" y="4" width="1.5" height="16" fill="#60A5FA" />
-                    <rect x="6" y="4" width="0.8" height="16" fill="#60A5FA" />
-                    <rect x="8" y="4" width="1.2" height="16" fill="#60A5FA" />
-                    <rect x="10.5" y="4" width="1.5" height="16" fill="#60A5FA" />
-                    <rect x="13" y="4" width="0.9" height="16" fill="#60A5FA" />
+        <div class="flex items-center gap-3 mb-8 page-enter" style="--d:0">
+            <div class="bc-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="1" y="4" width="2" height="16" fill="currentColor" />
+                    <rect x="4" y="4" width="1.5" height="16" fill="currentColor" />
+                    <rect x="6" y="4" width="0.8" height="16" fill="currentColor" />
+                    <rect x="8" y="4" width="1.2" height="16" fill="currentColor" />
+                    <rect x="10.5" y="4" width="1.5" height="16" fill="currentColor" />
+                    <rect x="13" y="4" width="0.9" height="16" fill="currentColor" />
+                    <rect x="15" y="4" width="2" height="16" fill="currentColor" />
+                    <rect x="18" y="4" width="1" height="16" fill="currentColor" />
+                    <rect x="20.5" y="4" width="2" height="16" fill="currentColor" />
                 </svg>
             </div>
-            <h1 class="text-2xl font-semibold text-slate-100 flex items-center gap-2">
-                Cetak Barcode
-            </h1>
+            <h1 class="bc-title">Cetak Barcode</h1>
         </div>
 
         <!-- Card utama -->
-        <div class="bg-slate-800 rounded-2xl shadow border border-slate-700 p-5">
+        <div class="bc-card page-enter" style="--d:100">
             <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div class="flex-1">
-                    <label class="block text-xs text-slate-400 mb-1">Pilih Produk</label>
-                    <button @click="openModal()"
-                        class="w-full sm:w-72 flex items-center justify-between gap-3 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-300 hover:bg-slate-600 transition">
+                    <label class="bc-label">Pilih Produk</label>
+                    <button type="button" @click="openModal()" class="bc-btn w-full sm:w-72">
                         <span x-text="cart.length ? cart.length + ' produk dipilih' : 'Klik untuk memilih produk'"></span>
-                        <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        <svg class="w-4 h-4 opacity-50" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
@@ -73,10 +411,9 @@
                 </div>
 
                 <div class="flex-none">
-                    <label class="block text-xs text-slate-400 mb-1">Aksi</label>
+                    <label class="bc-label">Aksi</label>
                     <div class="flex gap-2">
-                        <button @click="clearCart()"
-                            class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-md text-sm">
+                        <button type="button" @click="clearCart()" class="bc-btn-muted">
                             Clear
                         </button>
 
@@ -84,8 +421,7 @@
                             @submit.prevent="submitForPrint">
                             @csrf
                             <input type="hidden" name="items" id="printItems">
-                            <button type="submit" :disabled="!cart.length"
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm shadow">
+                            <button type="submit" :disabled="!cart.length" class="bc-btn-primary">
                                 Cetak Barcode
                             </button>
                         </form>
@@ -94,50 +430,48 @@
             </div>
 
             <!-- Tabel Cart -->
-            <div class="mt-6 overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-700">
-                    <thead class="bg-slate-700/40">
+            <div class="mt-6 overflow-x-auto rounded-16" style="border-radius: 14px; overflow: hidden;">
+                <table class="bc-table">
+                    <thead>
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-400">Produk</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-slate-400">Brand • Kategori</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-slate-400">Stok</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-slate-400">Cetak (pcs)</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-slate-400">Aksi</th>
+                            <th>Produk</th>
+                            <th>Brand • Kategori</th>
+                            <th class="text-right">Stok</th>
+                            <th class="text-center">Cetak (pcs)</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-700">
+                    <tbody>
                         <template x-for="item in cart" :key="item.id">
-                            <tr class="hover:bg-slate-700/40 transition-colors">
-                                <td class="px-4 py-3">
+                            <tr>
+                                <td>
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-md bg-slate-700 flex items-center justify-center text-sm text-slate-300 font-medium">
+                                        <div class="bc-avatar">
                                             <span x-text="getInitials(item.name)"></span>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-medium text-slate-100">
+                                            <div class="bc-name">
                                                 <span x-text="item.name"></span>
-                                                <span x-show="item.variant" class="text-slate-400 text-xs ml-1">(<span
+                                                <span x-show="item.variant" class="bc-muted ml-1">(<span
                                                         x-text="item.variant"></span>)</span>
                                             </div>
-                                            <div class="text-xs text-slate-500"
+                                            <div class="bc-muted"
                                                 x-text="'Barcode: ' + (item.barcode ?? '-')"></div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-3 text-sm text-slate-300" x-text="item.brand + ' • ' + item.category">
-                                </td>
-                                <td class="px-4 py-3 text-right text-sm text-slate-400" x-text="item.stock"></td>
+                                <td class="bc-muted" style="font-size: 14px;"
+                                    x-text="item.brand + ' • ' + item.category"></td>
+                                <td class="text-right bc-muted" style="font-size: 14px;" x-text="item.stock"></td>
 
-                                <td class="px-4 py-3 text-center">
+                                <td class="text-center">
                                     <input type="number" min="1" x-model.number="item.qty"
                                         @blur="updateQty(item, item.qty)" class="qty-input" placeholder="1">
                                 </td>
 
-                                <td class="px-4 py-3 text-right">
-                                    <button @click="removeFromCart(item.id)"
-                                        class="px-3 py-1 text-xs rounded-md bg-red-600 hover:bg-red-700 text-white">
+                                <td class="text-right">
+                                    <button type="button" @click="removeFromCart(item.id)" class="bc-btn-danger">
                                         Hapus
                                     </button>
                                 </td>
@@ -145,8 +479,8 @@
                         </template>
 
                         <tr x-show="!cart.length">
-                            <td colspan="5" class="px-6 py-8 text-center text-slate-500">
-                                Keranjang cetak kosong — klik <span class="font-medium text-slate-100">Pilih Produk</span>
+                            <td colspan="5" class="bc-empty">
+                                Keranjang cetak kosong — klik <strong>Pilih Produk</strong>
                                 untuk menambah.
                             </td>
                         </tr>
@@ -157,55 +491,52 @@
 
         <!-- Modal -->
         <div x-show="modalOpen" x-transition.opacity
-            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm px-4">
-            <div @click.outside="closeModal()"
-                class="bg-slate-800 w-full max-w-4xl rounded-xl border border-slate-700 shadow-lg overflow-hidden">
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+            <div @click.outside="closeModal()" class="bc-modal-shell w-full max-w-4xl">
 
                 <!-- Header -->
-                <div class="flex items-center justify-between p-4 border-b border-slate-700">
-                    <h3 class="text-lg font-semibold text-slate-100">Pilih Produk</h3>
-                    <button @click="closeModal()" class="text-slate-400 hover:text-slate-200">✕</button>
+                <div class="bc-modal-head flex items-center justify-between p-4 border-b">
+                    <h3 class="bc-modal-title">Pilih Produk</h3>
+                    <button type="button" @click="closeModal()" class="bc-muted hover:opacity-80 text-lg">✕</button>
                 </div>
 
                 <!-- Search -->
-                <div class="p-4 border-b border-slate-700">
+                <div class="bc-modal-search p-4 border-b">
                     <input type="text" x-model="modalSearch"
                         placeholder="Cari produk berdasarkan nama, merek, atau kategori..."
-                        class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500 outline-none" />
+                        class="w-full px-3 py-2 text-sm outline-none" />
                 </div>
 
                 <!-- Product List -->
                 <div class="max-h-96 overflow-y-auto">
                     <template x-for="p in availableProducts" :key="p.id">
                         <div @click="selectProduct(p)"
-                            class="flex items-center justify-between px-4 py-3 border-b border-slate-700 hover:bg-slate-700/50 cursor-pointer transition">
+                            class="bc-row flex items-center justify-between px-4 py-3 cursor-pointer">
                             <div class="flex items-center gap-3">
-                                <div
-                                    class="w-9 h-9 bg-slate-700 rounded-md flex items-center justify-center text-xs text-slate-200 font-medium">
+                                <div class="bc-avatar" style="width:36px;height:36px;font-size:12px;">
                                     <span x-text="getInitials(p.name)"></span>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-slate-100 font-medium">
+                                    <div class="bc-name">
                                         <span x-text="p.name"></span>
-                                        <span x-show="p.variant" class="text-slate-400 text-xs ml-1">(<span
+                                        <span x-show="p.variant" class="bc-muted ml-1">(<span
                                                 x-text="p.variant"></span>)</span>
                                     </div>
-                                    <div class="text-xs text-slate-400" x-text="'Barcode: ' + (p.barcode ?? '-')"></div>
+                                    <div class="bc-muted" x-text="'Barcode: ' + (p.barcode ?? '-')"></div>
                                 </div>
                             </div>
-                            <div class="text-xs text-slate-400">Stok: <span x-text="p.stock"></span></div>
+                            <div class="bc-muted">Stok: <span x-text="p.stock"></span></div>
                         </div>
                     </template>
 
-                    <div x-show="!availableProducts.length" class="py-8 text-center text-slate-500">
+                    <div x-show="!availableProducts.length" class="bc-empty">
                         Tidak ada produk ditemukan.
                     </div>
                 </div>
 
                 <!-- Footer -->
-                <div class="flex items-center justify-end p-4 border-t border-slate-700 bg-slate-800">
-                    <button @click="closeModal()"
-                        class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md text-sm">
+                <div class="bc-modal-foot flex items-center justify-end p-4 border-t">
+                    <button type="button" @click="closeModal()" class="bc-btn-muted">
                         Tutup
                     </button>
                 </div>
@@ -214,41 +545,18 @@
 
         <div x-show="showWarning" x-transition.opacity.duration.400ms
             class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div x-transition.scale.duration.300ms
-                class="bg-slate-800 text-slate-100 border border-slate-600 rounded-xl shadow-2xl px-6 py-5 max-w-sm text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-yellow-400 mx-auto mb-2" fill="none"
+            <div x-transition.scale.duration.300ms class="bc-warn px-6 py-5 max-w-sm text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-yellow-500 mx-auto mb-2" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 9v2m0 4h.01m-.01-9a9 9 0 110 18 9 9 0 010-18z" />
                 </svg>
                 <p class="text-sm leading-relaxed" x-text="warningMessage"></p>
-                <div class="mt-4 flex justify-center gap-3">
-                    <!-- Batal -->
-                    <button
-                        @click="
-                            showWarning = false;
-                            confirmMode = false;
-                            pendingNavigation = null;
-                        "
-                        class="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md text-xs transition">
-                        Batal
+                <div class="mt-4 flex justify-center">
+                    <button type="button" @click="showWarning = false" class="bc-btn-muted text-xs px-4 py-1.5">
+                        Tutup
                     </button>
-
-                    <!-- Keluar -->
-                    <button
-                        x-show="confirmMode"
-                        @click="
-                            isDirty = false;
-                            showWarning = false;
-                            confirmMode = false;
-                            window.location.href = pendingNavigation;
-                        "
-                        class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs transition">
-                        Keluar
-                    </button>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -262,51 +570,21 @@
                 modalSearch: '',
                 showWarning: false,
                 warningMessage: '',
-                isDirty: false,
                 hasInitialized: false,
                 draftKey: 'barcodePrintDraft',
-                pendingNavigation: null,
-                confirmMode: false,
 
                 init() {
-                    // 🔹 Watch cart → tandai dirty + autosave
+                    // Restore keranjang dari localStorage perangkat
+                    this.loadDraft();
+
+                    // Autosave setiap perubahan cart (tetap di perangkat)
                     this.$watch('cart', () => {
                         if (!this.hasInitialized) return;
-                        this.isDirty = this.cart.length > 0;
                         this.saveDraft();
                     }, { deep: true });
 
-                    // 🔹 Tandai selesai init (hindari dirty saat load pertama)
                     this.$nextTick(() => {
                         this.hasInitialized = true;
-                    });
-
-                    // 🔹 Load draft cart jika ada
-                    this.loadDraft();
-
-                    // 🔹 Intercept navigasi internal (link menu/sidebar)
-                    this.interceptLinks();
-
-                    // 🔹 Warning browser untuk refresh / back / close tab
-                    window.addEventListener('beforeunload', (e) => {
-                        if (this.isDirty) {
-                            e.preventDefault();
-                            e.returnValue = '';
-                        }
-                    });
-
-                    // 🟡 (OPSIONAL tapi cakep) Intercept Ctrl+R & F5 → popup custom
-                    window.addEventListener('keydown', (e) => {
-                        if (
-                            this.isDirty &&
-                            (
-                                (e.ctrlKey && e.key === 'r') ||
-                                e.key === 'F5'
-                            )
-                        ) {
-                            e.preventDefault();
-                            this.showPopup('Data cetak belum disimpan. Jika refresh, data akan hilang.');
-                        }
                     });
                 },
 
@@ -341,70 +619,50 @@
                     });
                 },
 
-                interceptLinks() {
-                    document.addEventListener('click', (e) => {
-                        const link = e.target.closest('a');
-                        if (!link) return;
-
-                        if (
-                            link.target === '_blank' ||
-                            link.href.startsWith('#') ||
-                            link.href.startsWith('javascript') ||
-                            !link.href.startsWith(window.location.origin)
-                        ) return;
-
-                        if (this.isDirty) {
-                            e.preventDefault();
-                            this.pendingNavigation = link.href;
-                            this.confirmMode = true;
-                            this.showPopup('Data cetak belum disimpan. Jika keluar, data akan hilang.');
-                        }
-                    });
-                },
-
                 removeFromCart(id) {
                     this.cart = this.cart.filter(i => i.id !== id);
                 },
                 clearCart() {
                     if (!this.cart.length) return;
-                    this.showPopup('Keranjang dikosongkan.');
                     this.cart = [];
+                    this.clearDraft();
+                    this.showPopup('Keranjang dikosongkan.');
                 },
 
-                // 🔹 Popup Warning Modern
                 showPopup(msg) {
                     this.warningMessage = msg;
                     this.showWarning = true;
-
-                    // kalau bukan mode konfirmasi → auto close
-                    if (!this.confirmMode) {
-                        setTimeout(() => this.showWarning = false, 3500);
-                    }
+                    setTimeout(() => this.showWarning = false, 3500);
                 },
 
                 saveDraft() {
-                    localStorage.setItem(this.draftKey, JSON.stringify({
-                        cart: this.cart
-                    }));
+                    try {
+                        localStorage.setItem(this.draftKey, JSON.stringify({
+                            cart: this.cart
+                        }));
+                    } catch (e) {
+                        console.error('Gagal menyimpan draft barcode', e);
+                    }
                 },
 
                 loadDraft() {
-                    const raw = localStorage.getItem(this.draftKey);
-                    if (!raw) return;
-
                     try {
+                        const raw = localStorage.getItem(this.draftKey);
+                        if (!raw) return;
                         const data = JSON.parse(raw);
                         if (Array.isArray(data.cart)) {
                             this.cart = data.cart;
-                            this.isDirty = this.cart.length > 0;
                         }
                     } catch (e) {
                         console.error('Draft barcode rusak, diabaikan');
+                        this.clearDraft();
                     }
                 },
 
                 clearDraft() {
-                    localStorage.removeItem(this.draftKey);
+                    try {
+                        localStorage.removeItem(this.draftKey);
+                    } catch (e) {}
                 },
 
                 // 🔹 Cetak Barcode dengan validasi stok
@@ -498,54 +756,52 @@
         .code {
             font-size: 5.5px;
             line-height: 1;
-            margin-top: 1px;
         }
         .price {
-            font-weight: 700;
-            font-size: 6.5px;
-            color: #000;
+            font-size: 5.5px;
+            font-weight: 600;
+            line-height: 1;
             margin-top: 1px;
         }
-        @media print {
-            header, footer { display: none !important; }
-        }
-    </style>
-</head>
+    <\/style>
+<\/head>
 <body>
-    <div class="sheet" id="barcode-container"></div>
-</body>
-</html>
-    `);
+    <div class="sheet" id="barcode-container"><\/div>
+<\/body>
+<\/html>
+                    `);
                     w.document.close();
 
-                    // 🔹 Render barcode setelah window siap
-                    w.onload = function() {
-                        const container = w.document.getElementById('barcode-container');
-                        labels.forEach((it, i) => {
-                            const label = w.document.createElement('div');
-                            label.className = 'label';
-                            const productName = it.variant ? `${it.name} (${it.variant})` : it.name;
+                    w.onload = () => {
+                        // 🔹 Render barcode setelah window siap
+                        setTimeout(() => {
+                            const container = w.document.getElementById('barcode-container');
+                            labels.forEach((it, i) => {
+                                const label = w.document.createElement('div');
+                                label.className = 'label';
+                                const productName = it.variant ? `${it.name} (${it.variant})` : it.name;
 
-                            label.innerHTML = `
+                                label.innerHTML = `
                 <svg id="barcode-${i}" class="barcode"></svg>
                 <div class="name">${productName}</div>
                 <div class="code">${it.barcode ?? '-'}</div>
                 <div class="price">Rp ${parseInt(it.jual || 0).toLocaleString('id-ID')}</div>
             `;
-                            container.appendChild(label);
+                                container.appendChild(label);
 
-                            // generate barcode
-                            w.JsBarcode(`#barcode-${i}`, it.barcode, {
-                                format: 'CODE128',
-                                lineColor: '#000',
-                                width: 1.1,
-                                height: 18, // Tinggi barcode diatur agar muat
-                                displayValue: false
+                                // generate barcode
+                                w.JsBarcode(`#barcode-${i}`, it.barcode, {
+                                    format: 'CODE128',
+                                    lineColor: '#000',
+                                    width: 1.1,
+                                    height: 18,
+                                    displayValue: false
+                                });
                             });
-                        });
 
-                        // print otomatis setelah render
-                        setTimeout(() => w.print(), 600);
+                            // print otomatis setelah render
+                            setTimeout(() => w.print(), 600);
+                        }, 50);
                     };
                 },
 
@@ -563,6 +819,9 @@
                     this.cart = [...this.cart];
                 },
                 submitForPrint() {
+                    // pastikan draft tersimpan sebelum buka print
+                    this.saveDraft();
+
                     if (confirm('Lihat preview dulu sebelum cetak?')) {
                         document.getElementById('printForm').action =
                             "{{ route('cetakbarcode.print', ['preview' => true]) }}";

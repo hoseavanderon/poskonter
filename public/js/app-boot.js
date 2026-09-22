@@ -44,6 +44,9 @@
     revealed = true;
     html.classList.add('alpine-ready');
     html.classList.remove('is-boot');
+    try {
+      window.dispatchEvent(new CustomEvent('app-boot:reveal'));
+    } catch (e) {}
     var boot = document.getElementById('appBoot');
     if (!boot) return;
     boot.classList.add('is-leaving');

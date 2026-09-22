@@ -57,7 +57,7 @@
     <div x-data="customerPage()" class="p-6 space-y-6 relative">
 
         <!-- HEADER -->
-        <div class="cust-hero">
+        <div class="cust-hero page-enter" style="--d:0">
             <div>
                 <h1 class="cust-hero-title">
                     <x-heroicon-o-users class="w-6 h-6 cust-hero-icon" />
@@ -69,7 +69,8 @@
 
         <!-- SEARCH BAR -->
         <div
-            class="flex items-center gap-2 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition duration-300">
+            class="page-enter flex items-center gap-2 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition duration-300"
+            style="--d:80">
             <x-heroicon-o-magnifying-glass class="w-5 h-5 text-gray-500 dark:text-gray-400" />
             <input type="text" x-model="search" placeholder="Cari customer berdasarkan nama..."
                 class="w-full bg-transparent focus:outline-none text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 transition-all duration-300 focus:ring-0">
@@ -79,7 +80,8 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             <template x-for="(item, index) in filteredCustomers" :key="item.id">
                 <div @click="openCustomer(item)"
-                    class="group bg-gray-800 border border-gray-700 rounded-xl shadow-md hover:shadow-blue-900/30 hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer p-5 flex flex-col items-start justify-between">
+                    class="page-enter-item group bg-gray-800 border border-gray-700 rounded-xl shadow-md hover:shadow-blue-900/30 hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer p-5 flex flex-col items-start justify-between"
+                    :style="'--i:' + index">
                     <div class="flex items-center gap-3 mb-3">
                         <div
                             class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white font-bold shadow-md">
