@@ -58,22 +58,23 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 34px;
-            width: 34px;
+            height: 32px;
+            width: 32px;
             padding: 0;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-            background: var(--surface-secondary);
-            color: var(--icon);
+            border: none;
+            border-radius: 50%;
+            background: rgba(120, 120, 128, 0.12);
+            color: #8E8E93;
             flex-shrink: 0;
             z-index: 2;
             cursor: pointer;
-            transition:
-                background 0.3s ease,
-                border-color 0.3s ease,
-                color 0.3s ease,
-                box-shadow 0.35s ease,
-                transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        html.dark .copy-chip {
+            background: rgba(120, 120, 128, 0.28);
+            color: #AEAEB2;
         }
 
         .copy-chip--card {
@@ -83,35 +84,36 @@
         }
 
         .copy-chip:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-            background: var(--accent-soft);
+            background: rgba(120, 120, 128, 0.2);
+        }
+
+        html.dark .copy-chip:hover {
+            background: rgba(120, 120, 128, 0.38);
         }
 
         .copy-chip:active {
-            transform: scale(0.94);
+            transform: scale(0.86);
         }
 
         .copy-chip.is-copied {
-            color: #30D158;
-            border-color: rgba(48, 209, 88, 0.7);
-            background: rgba(48, 209, 88, 0.16);
-            box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.12);
+            background: rgba(0, 122, 255, 0.12);
+            color: #007AFF;
+            animation: iosCopyPop 0.46s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
-        .copy-chip-inner {
+        html.dark .copy-chip.is-copied {
+            background: rgba(10, 132, 255, 0.22);
+            color: #0A84FF;
+        }
+
+        .copy-chip-inner,
+        .copy-icons {
+            position: relative;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 16px;
             height: 16px;
-        }
-
-        .copy-icons {
-            position: relative;
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
         }
 
         .copy-icons svg {
@@ -121,57 +123,43 @@
             height: 16px;
         }
 
-        .icon-copy,
-        .icon-check {
-            transition: opacity 0.22s ease, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .icon-copy {
+            transition: opacity 0.16s ease, transform 0.16s ease;
         }
 
         .icon-check {
             opacity: 0;
-            transform: scale(0.3) rotate(-25deg);
+            transform: scale(0.6);
         }
 
         .copy-chip.is-copied .icon-copy {
             opacity: 0;
-            transform: scale(0.3) rotate(20deg);
+            transform: scale(0.6);
         }
 
         .copy-chip.is-copied .icon-check {
             opacity: 1;
-            transform: scale(1) rotate(0deg);
+            animation: iosCheckIn 0.42s cubic-bezier(0.2, 0.9, 0.2, 1.05) forwards;
         }
 
-        .check-path {
-            stroke-dasharray: 24;
-            stroke-dashoffset: 24;
+        @keyframes iosCopyPop {
+            0% { transform: scale(0.86); }
+            55% { transform: scale(1.06); }
+            100% { transform: scale(1); }
         }
 
-        .copy-chip.is-copied .check-path {
-            animation: drawCheck 0.42s 0.05s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        @keyframes iosCheckIn {
+            0% { opacity: 0; transform: scale(0.55); }
+            70% { opacity: 1; transform: scale(1.08); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        .copy-chip.is-copied::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            animation: copyPulse 0.65s ease-out;
-            pointer-events: none;
-        }
-
-        @keyframes drawCheck {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        @keyframes copyPulse {
-            0% {
-                box-shadow: inset 0 0 0 0 rgba(48, 209, 88, 0.0), 0 0 0 0 rgba(48, 209, 88, 0.45);
-            }
-
-            100% {
-                box-shadow: inset 0 0 0 0 rgba(48, 209, 88, 0), 0 0 0 14px rgba(48, 209, 88, 0);
+        @media (prefers-reduced-motion: reduce) {
+            .copy-chip,
+            .copy-chip.is-copied,
+            .copy-chip.is-copied .icon-check {
+                animation: none;
+                transition: none;
             }
         }
     </style>
@@ -215,7 +203,7 @@
                                     <rect x="9" y="9" width="11" height="11" rx="2"></rect>
                                     <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
                                 </svg>
-                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
                                     <path class="check-path" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </span>
@@ -287,7 +275,7 @@
                                     <rect x="9" y="9" width="11" height="11" rx="2"></rect>
                                     <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
                                 </svg>
-                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
                                     <path class="check-path" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </span>
