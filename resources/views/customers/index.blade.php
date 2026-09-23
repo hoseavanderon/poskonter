@@ -57,7 +57,7 @@
             position: relative;
             display: inline-flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             height: 34px;
             width: 34px;
             padding: 0;
@@ -65,16 +65,15 @@
             border: 1px solid var(--border);
             background: var(--surface-secondary);
             color: var(--icon);
-            overflow: hidden;
             flex-shrink: 0;
             z-index: 2;
             cursor: pointer;
             transition:
-                width 0.42s cubic-bezier(0.34, 1.4, 0.64, 1),
                 background 0.3s ease,
                 border-color 0.3s ease,
                 color 0.3s ease,
-                box-shadow 0.35s ease;
+                box-shadow 0.35s ease,
+                transform 0.2s ease;
         }
 
         .copy-chip--card {
@@ -94,7 +93,6 @@
         }
 
         .copy-chip.is-copied {
-            width: 112px;
             color: #30D158;
             border-color: rgba(48, 209, 88, 0.7);
             background: rgba(48, 209, 88, 0.16);
@@ -104,13 +102,9 @@
         .copy-chip-inner {
             display: inline-flex;
             align-items: center;
-            gap: 0;
-            height: 100%;
-            padding: 0 9px;
-        }
-
-        .copy-chip.is-copied .copy-chip-inner {
-            gap: 6px;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
         }
 
         .copy-icons {
@@ -154,22 +148,6 @@
 
         .copy-chip.is-copied .check-path {
             animation: drawCheck 0.42s 0.05s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .copy-label {
-            max-width: 0;
-            opacity: 0;
-            overflow: hidden;
-            font-size: 12px;
-            font-weight: 650;
-            letter-spacing: -0.01em;
-            white-space: nowrap;
-            transition: max-width 0.42s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.25s ease;
-        }
-
-        .copy-chip.is-copied .copy-label {
-            max-width: 72px;
-            opacity: 1;
         }
 
         .copy-chip.is-copied::after {
@@ -241,7 +219,6 @@
                                     <path class="check-path" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </span>
-                            <span class="copy-label">Tersalin</span>
                         </span>
                     </button>
                     <div class="flex items-center gap-3 mb-3 w-full pr-10">
@@ -314,7 +291,6 @@
                                     <path class="check-path" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </span>
-                            <span class="copy-label">Tersalin</span>
                         </span>
                     </button>
                 </div>
@@ -453,14 +429,13 @@
                     return 'Rp ' + Number(amount || 0).toLocaleString('id-ID');
                 },
 
-                formatShortDate(dateString) {
-                    if (!dateString) return '';
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
+                shortName(name) {
+                    const clean = String(name || '').replace(/\s+/g, ' ').trim();
+                    if (clean.length <= 24) return clean;
+                    const cut = clean.slice(0, 24);
+                    const lastSpace = cut.lastIndexOf(' ');
+                    const base = lastSpace > 12 ? cut.slice(0, lastSpace) : cut;
+                    return base.trim() + '…';
                 },
 
                 debtItemName(debt) {
@@ -476,31 +451,16 @@
                 },
 
                 buildDebtMessage(item) {
-                    const lines = [`*${item.name}*`, ''];
                     const debts = item.debts || [];
+                    if (!debts.length) return `*${item.name}*\nLunas`;
 
-                    if (!debts.length) {
-                        lines.push('Tidak ada utang.');
-                        lines.push('');
-                        lines.push('*Total: Rp 0*');
-                        return lines.join('\n');
-                    }
-
-                    lines.push('*Daftar Utang*');
-                    debts.forEach((debt, index) => {
-                        const meta = [
-                            debt.nomor_nota ? `Nota ${debt.nomor_nota}` : '',
-                            this.formatShortDate(debt.created_at)
-                        ].filter(Boolean).join(' · ');
-
-                        lines.push(`${index + 1}. ${this.debtItemName(debt)}`);
-                        if (meta) lines.push(`   ${meta}`);
-                        lines.push(`   ${this.formatRupiah(debt.subtotal)}`);
+                    const lines = [`*${item.name}*`];
+                    debts.forEach((debt) => {
+                        lines.push(`${this.shortName(this.debtItemName(debt))} — ${this.formatRupiah(debt.subtotal)}`);
                     });
 
                     const total = debts.reduce((sum, debt) => sum + Number(debt.subtotal || 0), 0);
-                    lines.push('');
-                    lines.push(`*Total: ${this.formatRupiah(total)}*`);
+                    lines.push(`*Total ${this.formatRupiah(total)}*`);
                     return lines.join('\n');
                 },
 
