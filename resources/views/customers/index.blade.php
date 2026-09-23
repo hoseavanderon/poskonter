@@ -52,6 +52,150 @@
         html.dark .cust-hero-sub {
             color: #AEAEB2;
         }
+
+        .copy-chip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 34px;
+            width: 34px;
+            padding: 0;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--surface-secondary);
+            color: var(--icon);
+            overflow: hidden;
+            flex-shrink: 0;
+            z-index: 2;
+            cursor: pointer;
+            transition:
+                width 0.42s cubic-bezier(0.34, 1.4, 0.64, 1),
+                background 0.3s ease,
+                border-color 0.3s ease,
+                color 0.3s ease,
+                box-shadow 0.35s ease;
+        }
+
+        .copy-chip--card {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+        }
+
+        .copy-chip:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .copy-chip:active {
+            transform: scale(0.94);
+        }
+
+        .copy-chip.is-copied {
+            width: 112px;
+            color: #30D158;
+            border-color: rgba(48, 209, 88, 0.7);
+            background: rgba(48, 209, 88, 0.16);
+            box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.12);
+        }
+
+        .copy-chip-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            height: 100%;
+            padding: 0 9px;
+        }
+
+        .copy-chip.is-copied .copy-chip-inner {
+            gap: 6px;
+        }
+
+        .copy-icons {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .copy-icons svg {
+            position: absolute;
+            inset: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        .icon-copy,
+        .icon-check {
+            transition: opacity 0.22s ease, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .icon-check {
+            opacity: 0;
+            transform: scale(0.3) rotate(-25deg);
+        }
+
+        .copy-chip.is-copied .icon-copy {
+            opacity: 0;
+            transform: scale(0.3) rotate(20deg);
+        }
+
+        .copy-chip.is-copied .icon-check {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .check-path {
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+        }
+
+        .copy-chip.is-copied .check-path {
+            animation: drawCheck 0.42s 0.05s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .copy-label {
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            font-size: 12px;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            transition: max-width 0.42s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.25s ease;
+        }
+
+        .copy-chip.is-copied .copy-label {
+            max-width: 72px;
+            opacity: 1;
+        }
+
+        .copy-chip.is-copied::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            animation: copyPulse 0.65s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes drawCheck {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes copyPulse {
+            0% {
+                box-shadow: inset 0 0 0 0 rgba(48, 209, 88, 0.0), 0 0 0 0 rgba(48, 209, 88, 0.45);
+            }
+
+            100% {
+                box-shadow: inset 0 0 0 0 rgba(48, 209, 88, 0), 0 0 0 14px rgba(48, 209, 88, 0);
+            }
+        }
     </style>
 
     <div x-data="customerPage()" class="p-6 space-y-6 relative">
@@ -80,15 +224,33 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             <template x-for="(item, index) in filteredCustomers" :key="item.id">
                 <div @click="openCustomer(item)"
-                    class="page-enter-item group bg-gray-800 border border-gray-700 rounded-xl shadow-md hover:shadow-blue-900/30 hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer p-5 flex flex-col items-start justify-between"
+                    class="page-enter-item group relative bg-gray-800 border border-gray-700 rounded-xl shadow-md hover:shadow-blue-900/30 hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 cursor-pointer p-5 flex flex-col items-start justify-between"
                     :style="'--i:' + index">
-                    <div class="flex items-center gap-3 mb-3">
+                    <button type="button" @click.stop="copyCustomer(item)"
+                        class="copy-chip copy-chip--card"
+                        :class="{ 'is-copied': copiedId === item.id }"
+                        :aria-label="'Salin utang ' + item.name + ' untuk WhatsApp'"
+                        title="Salin untuk WhatsApp">
+                        <span class="copy-chip-inner">
+                            <span class="copy-icons" aria-hidden="true">
+                                <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                    <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+                                </svg>
+                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path class="check-path" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <span class="copy-label">Tersalin</span>
+                        </span>
+                    </button>
+                    <div class="flex items-center gap-3 mb-3 w-full pr-10">
                         <div
                             class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white font-bold shadow-md">
                             <span x-text="item.name.charAt(0).toUpperCase()"></span>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-gray-100 group-hover:text-blue-400 transition"
+                        <div class="min-w-0">
+                            <h2 class="text-base font-semibold text-gray-100 group-hover:text-blue-400 transition truncate"
                                 x-text="item.name"></h2>
                             <p class="text-xs text-gray-400 italic" x-text="item.attributes.length + ' nomor'"></p>
                         </div>
@@ -132,11 +294,29 @@
                         class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white font-bold shadow-md">
                         <span x-text="selectedCustomer.name.charAt(0).toUpperCase()"></span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <h2 class="text-2xl font-bold text-blue-400" x-text="selectedCustomer.name"></h2>
                         <p class="text-gray-400 text-sm" x-text="selectedCustomer.attributes.length + ' nomor terdaftar'">
                         </p>
                     </div>
+                    <button type="button" @click.stop="copyCustomer(selectedCustomer)"
+                        class="copy-chip ml-auto mr-8"
+                        :class="{ 'is-copied': selectedCustomer && copiedId === selectedCustomer.id }"
+                        aria-label="Salin utang untuk WhatsApp"
+                        title="Salin untuk WhatsApp">
+                        <span class="copy-chip-inner">
+                            <span class="copy-icons" aria-hidden="true">
+                                <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                                    <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+                                </svg>
+                                <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path class="check-path" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <span class="copy-label">Tersalin</span>
+                        </span>
+                    </button>
                 </div>
 
                 <!-- Detail Grid -->
@@ -177,7 +357,7 @@
                                         </div>
                                         <p class="text-sm text-gray-300 mt-1">
                                             Produk: <span class="font-semibold text-gray-100"
-                                                x-text="debt.details?.[0]?.product?.name || '—'"></span>
+                                                x-text="debtItemName(debt)"></span>
                                         </p>
                                         <p class="text-sm font-bold text-yellow-400 mt-1">Rp <span
                                                 x-text="Number(debt.subtotal).toLocaleString('id-ID')"></span></p>
@@ -255,6 +435,8 @@
                     message: ''
                 },
                 isPaying: false,
+                copiedId: null,
+                copyTimer: null,
 
                 get filteredCustomers() {
                     if (!this.search) return this.customers;
@@ -265,6 +447,97 @@
 
                 openCustomer(cust) {
                     this.selectedCustomer = cust;
+                },
+
+                formatRupiah(amount) {
+                    return 'Rp ' + Number(amount || 0).toLocaleString('id-ID');
+                },
+
+                formatShortDate(dateString) {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                },
+
+                debtItemName(debt) {
+                    const names = (debt.details || [])
+                        .map(detail => detail.product?.name)
+                        .filter(Boolean);
+                    if (names.length) return names.join(', ');
+
+                    const digital = [debt.brand?.name, debt.product?.name].filter(Boolean).join(' ');
+                    if (digital) return digital;
+
+                    return '—';
+                },
+
+                buildDebtMessage(item) {
+                    const lines = [`*${item.name}*`, ''];
+                    const debts = item.debts || [];
+
+                    if (!debts.length) {
+                        lines.push('Tidak ada utang.');
+                        lines.push('');
+                        lines.push('*Total: Rp 0*');
+                        return lines.join('\n');
+                    }
+
+                    lines.push('*Daftar Utang*');
+                    debts.forEach((debt, index) => {
+                        const meta = [
+                            debt.nomor_nota ? `Nota ${debt.nomor_nota}` : '',
+                            this.formatShortDate(debt.created_at)
+                        ].filter(Boolean).join(' · ');
+
+                        lines.push(`${index + 1}. ${this.debtItemName(debt)}`);
+                        if (meta) lines.push(`   ${meta}`);
+                        lines.push(`   ${this.formatRupiah(debt.subtotal)}`);
+                    });
+
+                    const total = debts.reduce((sum, debt) => sum + Number(debt.subtotal || 0), 0);
+                    lines.push('');
+                    lines.push(`*Total: ${this.formatRupiah(total)}*`);
+                    return lines.join('\n');
+                },
+
+                copyText(text) {
+                    const fallback = () => {
+                        const area = document.createElement('textarea');
+                        area.value = text;
+                        area.setAttribute('readonly', '');
+                        area.style.position = 'fixed';
+                        area.style.left = '-9999px';
+                        document.body.appendChild(area);
+                        area.select();
+                        const ok = document.execCommand('copy');
+                        document.body.removeChild(area);
+                        if (!ok) throw new Error('copy failed');
+                    };
+
+                    if (navigator.clipboard && window.isSecureContext) {
+                        return navigator.clipboard.writeText(text).catch(() => fallback());
+                    }
+
+                    fallback();
+                    return Promise.resolve();
+                },
+
+                copyCustomer(item) {
+                    this.copyText(this.buildDebtMessage(item))
+                        .then(() => {
+                            this.copiedId = item.id;
+                            clearTimeout(this.copyTimer);
+                            this.copyTimer = setTimeout(() => {
+                                if (this.copiedId === item.id) this.copiedId = null;
+                            }, 1600);
+                        })
+                        .catch(() => {
+                            this.showToast('Gagal menyalin teks');
+                        });
                 },
 
                 openPayConfirm(debt, customer) {

@@ -42,8 +42,8 @@ class CustomerController extends Controller
         $digitalDebt = DigitalTransaction::whereNull('paid_at')
             ->whereNotNull('customer_id')
             ->where('outlet_id', $outlet->id)
-            ->with(['product.category:id,name'])
-            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at'])
+            ->with(['product:id,name', 'brand:id,name'])
+            ->get(['id', 'customer_id', 'nomor_nota', 'subtotal', 'created_at', 'digital_product_id', 'digital_brand_id'])
             ->map(function ($d) {
                 $d->type = 'digital';
                 return $d;
