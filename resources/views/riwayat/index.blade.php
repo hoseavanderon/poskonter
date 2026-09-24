@@ -78,6 +78,41 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35) !important;
         }
 
+        @media (max-width: 767px) {
+            .hist-cat-card {
+                padding: 16px 12px !important;
+            }
+
+            .hist-cat-count {
+                margin-top: 4px;
+                font-size: 22px !important;
+                font-weight: 700 !important;
+                letter-spacing: -0.03em;
+                line-height: 1.1;
+            }
+
+            .hist-product-card {
+                padding: 18px 16px !important;
+            }
+
+            .hist-product-name {
+                font-size: 17px !important;
+                line-height: 1.3;
+            }
+
+            .hist-product-qty {
+                margin-top: 2px;
+                font-size: 15px !important;
+            }
+
+            .hist-product-amount {
+                font-size: 22px !important;
+                font-weight: 700 !important;
+                letter-spacing: -0.03em;
+                line-height: 1.15;
+            }
+        }
+
         html.dark .hist-item:hover {
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
             border-color: rgba(255, 255, 255, 0.12) !important;
@@ -1093,9 +1128,9 @@
                         <template x-if="categories.length > 0">
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                                 <template x-for="(c, index) in categories" :key="c.name + index">
-                                    <div class="hist-inset py-3 px-1">
+                                    <div class="hist-inset hist-cat-card py-3 px-1">
                                         <p class="text-[15px] font-semibold hist-title" x-text="c.name"></p>
-                                        <p class="text-[13px] hist-muted" x-text="c.total_pcs + ' pcs'"></p>
+                                        <p class="hist-cat-count text-[13px] hist-muted" x-text="c.total_pcs + ' pcs'"></p>
                                     </div>
                                 </template>
                             </div>
@@ -1118,7 +1153,7 @@
                                 <template x-for="(t, idx) in productTransactions" :key="t.transaction_id">
 
                                     <div x-data="{ openMenu: false, confirmDelete: false }"
-                                        class="hist-item p-4 space-y-3"
+                                        class="hist-item hist-product-card p-4 space-y-3"
                                         :style="'--i:' + idx"
                                         @keydown.escape.window="confirmDelete = false">
 
@@ -1215,15 +1250,15 @@
 
                                                 <!-- NAMA PRODUK -->
                                                 <div class="flex flex-col leading-tight">
-                                                    <span class="hist-title font-semibold text-[15px]"
+                                                    <span class="hist-product-name hist-title font-semibold text-[15px]"
                                                         x-text="d.name"></span>
-                                                    <span class="text-[13px] hist-muted"
+                                                    <span class="hist-product-qty text-[13px] hist-muted"
                                                         x-text="d.qty + ' pcs'"></span>
                                                 </div>
 
                                                 <!-- HARGA -->
                                                 <div class="flex flex-col text-right">
-                                                    <span class="hist-accent font-semibold text-[15px]"
+                                                    <span class="hist-product-amount hist-accent font-semibold text-[15px]"
                                                         x-text="formatCurrency(d.amount)">
                                                     </span>
                                                 </div>
