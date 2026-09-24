@@ -940,7 +940,7 @@
 
             /* ✅ Scroll hanya pada konten utama (main) */
             main {
-                height: calc(100vh - 64px);
+                height: calc(100vh - var(--app-header-h));
                 overflow-y: auto;
             }
 

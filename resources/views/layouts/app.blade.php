@@ -81,6 +81,7 @@ document.addEventListener('fullscreenchange', () => {
             --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.12);
             --shadow-focus: 0 0 0 3px rgba(0, 122, 255, 0.12);
             --icon: #3A3A3C;
+            --app-header-h: calc(4rem + env(safe-area-inset-top, 0px));
         }
 
         html.dark {
@@ -183,6 +184,19 @@ document.addEventListener('fullscreenchange', () => {
             border-color: var(--border-hairline) !important;
             box-shadow: 0 1px 0 var(--border-hairline) !important;
             color: var(--text-primary) !important;
+            box-sizing: border-box;
+            height: var(--app-header-h) !important;
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .app-shell {
+            height: calc(100vh - var(--app-header-h)) !important;
+            height: calc(100dvh - var(--app-header-h)) !important;
+        }
+
+        .app-sidebar,
+        .app-sidebar-overlay {
+            top: var(--app-header-h) !important;
         }
 
         aside {
@@ -294,7 +308,7 @@ document.addEventListener('fullscreenchange', () => {
     @include('partials.app-boot')
     {{-- NAVBAR --}}
     <header
-        class="flex items-center justify-between h-16 px-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-40 relative">
+        class="app-topbar flex items-center justify-between px-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm z-40 relative">
 
         <div class="flex items-center gap-2">
             {{-- Sidebar toggle (mobile & desktop) --}}
@@ -389,7 +403,7 @@ document.addEventListener('fullscreenchange', () => {
     </header>
 
     {{-- LAYOUT --}}
-    <div class="app-shell flex h-[calc(100vh-64px)] overflow-hidden relative z-0">
+    <div class="app-shell flex overflow-hidden relative z-0">
         {{-- Konten utama --}}
         <main class="flex-1 p-4 overflow-y-auto relative z-0 min-w-0">
             @yield('content')
@@ -398,7 +412,7 @@ document.addEventListener('fullscreenchange', () => {
 
     {{-- Sidebar di luar shell supaya tidak terpotong --}}
     <aside
-        class="app-sidebar fixed top-16 left-0 bottom-0 w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl z-30"
+        class="app-sidebar fixed left-0 bottom-0 w-60 bg-gray-50 dark:bg-gray-800 border-r dark:border-gray-700 shadow-xl z-30"
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
         <nav class="space-y-2 p-4 h-full overflow-y-auto">
@@ -464,7 +478,7 @@ document.addEventListener('fullscreenchange', () => {
     </aside>
 
     <div x-show="sidebarOpen" x-cloak @click="toggleSidebar"
-        class="app-sidebar-overlay fixed top-16 inset-x-0 bottom-0 bg-black/50 z-20"
+        class="app-sidebar-overlay fixed inset-x-0 bottom-0 bg-black/50 z-20"
         x-transition.opacity></div>
 
 </body>

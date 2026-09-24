@@ -668,7 +668,7 @@
             }
 
             body.is-pos .app-sidebar {
-                top: 64px;
+                top: var(--app-header-h);
                 bottom: calc(64px + env(safe-area-inset-bottom, 0px));
                 height: auto !important;
                 transform: none !important;
@@ -689,7 +689,7 @@
             }
 
             body.is-pos .app-sidebar-overlay {
-                top: 64px;
+                top: var(--app-header-h);
                 right: 0;
                 bottom: calc(64px + env(safe-area-inset-bottom, 0px));
                 left: 0;
@@ -738,8 +738,8 @@
 
         @media (min-width: 768px) {
             body.is-pos .app-shell {
-                height: calc(100svh - 64px) !important;
-                max-height: calc(100svh - 64px) !important;
+                height: calc(100svh - var(--app-header-h)) !important;
+                max-height: calc(100svh - var(--app-header-h)) !important;
                 min-height: 0 !important;
                 overflow: hidden !important;
             }
@@ -2382,8 +2382,8 @@
             }
 
             .pos-digital {
-                height: calc(100vh - 64px - 16px - 3.25rem);
-                max-height: calc(100vh - 64px - 16px - 3.25rem);
+                height: calc(100vh - var(--app-header-h) - 16px - 3.25rem);
+                max-height: calc(100vh - var(--app-header-h) - 16px - 3.25rem);
                 overflow: hidden;
             }
 
@@ -2495,7 +2495,7 @@
 
         .pos-modal-overlay {
             position: fixed;
-            top: 64px;
+            top: var(--app-header-h);
             left: 0;
             right: 0;
             bottom: 0;
@@ -2665,7 +2665,7 @@
 
         .pos-ok-overlay {
             position: fixed;
-            top: 64px;
+            top: var(--app-header-h);
             left: 0;
             right: 0;
             bottom: 0;
@@ -3136,7 +3136,7 @@
                 min-width: 0 !important;
                 max-width: 0 !important;
                 height: 0 !important;
-                top: 64px !important;
+                top: var(--app-header-h) !important;
                 bottom: auto !important;
                 overflow: hidden !important;
                 border: 0 !important;
@@ -3148,7 +3148,7 @@
                 visibility: visible !important;
                 width: 15rem !important;
                 max-width: 15rem !important;
-                top: 64px !important;
+                top: var(--app-header-h) !important;
                 bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
                 height: auto !important;
             }
@@ -3710,7 +3710,7 @@
                         x-transition:leave="transition ease-in duration-200"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 -translate-y-2"
-                        class="fixed right-6 z-[9999] pointer-events-auto" style="top: calc(64px + 0.75rem);">
+                        class="fixed right-6 z-[9999] pointer-events-auto" style="top: calc(var(--app-header-h) + 0.75rem);">
                         <div
                             class="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-4 py-2 rounded-lg text-sm font-semibold">
                             <span x-text="toastMsg"></span>
