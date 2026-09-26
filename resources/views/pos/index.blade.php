@@ -2976,50 +2976,47 @@
 
         @media (max-width: 767px) {
             .pos-hist-stats {
-                display: flex;
-                flex-direction: column;
-                gap: 0;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
                 margin-bottom: 18px;
-                padding: 8px 20px;
-                border-radius: 24px;
-                background: #ffffff;
+                padding: 0;
+                border-radius: 0;
+                background: transparent;
             }
 
             html.dark .pos-hist-stats {
-                background: #1C1C1E;
+                background: transparent;
             }
 
             .pos-hist-stat {
-                flex-direction: row;
+                flex-direction: column;
                 align-items: center;
-                justify-content: space-between;
-                gap: 16px;
+                justify-content: center;
+                gap: 0;
                 width: 100%;
-                min-height: 0;
-                padding: 22px 0 !important;
-                border-radius: 0;
-                background: transparent !important;
-                text-align: left;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+                min-height: 132px;
+                padding: 28px 18px 24px;
+                border-radius: 24px;
+                background: #ffffff !important;
+                text-align: center;
+                border-bottom: 0 !important;
             }
 
             html.dark .pos-hist-stat {
-                border-bottom-color: rgba(255, 255, 255, 0.08) !important;
-            }
-
-            .pos-hist-stat:last-child {
+                background: #1C1C1E !important;
                 border-bottom: 0 !important;
             }
 
             .pos-hist-stat-label {
-                font-size: 17px !important;
-                text-align: left;
+                font-size: 15px !important;
+                text-align: center;
             }
 
             .pos-hist-stat-value {
-                margin-top: 0;
-                font-size: 26px !important;
-                text-align: right;
+                margin-top: 10px;
+                font-size: 32px !important;
+                text-align: center;
             }
         }
 
