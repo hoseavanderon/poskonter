@@ -459,20 +459,21 @@
             }
 
             .pos-hist-stats {
-                gap: 8px;
-                margin-bottom: 16px;
+                gap: 12px;
+                margin-bottom: 18px;
             }
 
             .pos-hist-stat {
-                padding: 16px 8px 14px;
+                padding: 26px 14px 24px;
+                min-height: 118px;
             }
 
             .pos-hist-stat-label {
-                font-size: 11px !important;
+                font-size: 14px !important;
             }
 
             .pos-hist-stat-value {
-                font-size: 17px !important;
+                font-size: 24px !important;
             }
 
             .pos-hist-cat {
@@ -2920,8 +2921,8 @@
         .pos-hist-stats {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
-            margin-bottom: 18px;
+            gap: 14px;
+            margin-bottom: 22px;
         }
 
         .pos-hist-stat {
@@ -2931,8 +2932,9 @@
             justify-content: center;
             text-align: center;
             min-width: 0;
-            padding: 16px 8px 14px;
-            border-radius: 20px;
+            min-height: 148px;
+            padding: 32px 18px 28px;
+            border-radius: 24px;
             background: #ffffff;
             border: none !important;
             box-shadow: none !important;
@@ -2944,9 +2946,9 @@
         }
 
         .pos-hist-stat-label {
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 500;
-            line-height: 1.2;
+            line-height: 1.25;
             color: #6E6E73;
         }
 
@@ -2955,8 +2957,8 @@
         }
 
         .pos-hist-stat-value {
-            margin-top: 6px;
-            font-size: 20px;
+            margin-top: 10px;
+            font-size: 32px;
             font-weight: 700;
             letter-spacing: -0.03em;
             line-height: 1.15;
@@ -2970,6 +2972,55 @@
 
         .pos-hist-stat.is-accent .pos-hist-stat-value {
             color: var(--accent);
+        }
+
+        @media (max-width: 767px) {
+            .pos-hist-stats {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                margin-bottom: 18px;
+                padding: 8px 20px;
+                border-radius: 24px;
+                background: #ffffff;
+            }
+
+            html.dark .pos-hist-stats {
+                background: #1C1C1E;
+            }
+
+            .pos-hist-stat {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                width: 100%;
+                min-height: 0;
+                padding: 22px 0 !important;
+                border-radius: 0;
+                background: transparent !important;
+                text-align: left;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+            }
+
+            html.dark .pos-hist-stat {
+                border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+            }
+
+            .pos-hist-stat:last-child {
+                border-bottom: 0 !important;
+            }
+
+            .pos-hist-stat-label {
+                font-size: 17px !important;
+                text-align: left;
+            }
+
+            .pos-hist-stat-value {
+                margin-top: 0;
+                font-size: 26px !important;
+                text-align: right;
+            }
         }
 
         .pos-hist-cats {
