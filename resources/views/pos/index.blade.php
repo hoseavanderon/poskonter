@@ -2527,6 +2527,23 @@
             background: rgba(0, 0, 0, 0.55) !important;
         }
 
+        .pos-confirm-overlay {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            margin: 0 !important;
+            z-index: 140 !important;
+            transform: none !important;
+            filter: none !important;
+            background: rgba(0, 0, 0, 0.55) !important;
+        }
+
         .pos-modal-shell {
             position: relative;
             height: auto;
@@ -3263,6 +3280,10 @@
             touch-action: auto;
             overflow: auto !important;
             z-index: 100 !important;
+        }
+
+        html.pos-hist-open .pos-confirm-overlay {
+            z-index: 140 !important;
         }
 
         html.pos-hist-open .pos-hist-overlay .pos-modal-shell {
@@ -4989,9 +5010,10 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </template>
 
             <!-- Modal Konfirmasi Hapus -->
-            <div x-show="showDeleteConfirm" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
+            <template x-teleport="body">
+            <div x-show="showDeleteConfirm" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay pos-confirm-overlay">
                 <div x-show="showDeleteConfirm" x-transition.scale.duration.300ms
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-[90%] max-w-sm text-center">
+                    class="pos-modal-confirm rounded-xl shadow-2xl p-6 w-[90%] max-w-sm text-center">
 
                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
                         Hapus Transaksi?
@@ -5018,6 +5040,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             {{-- Modal Detail Transaksi --}}
             <div x-show="showDetailModal" class="pos-modal-overlay" x-cloak x-transition>
@@ -5355,9 +5378,10 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
             </template>
 
             <!-- Modal Konfirmasi Hapus Digital -->
-            <div x-show="showDeleteConfirmDigital" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay">
+            <template x-teleport="body">
+            <div x-show="showDeleteConfirmDigital" x-cloak x-transition.opacity.duration.300ms class="pos-modal-overlay pos-confirm-overlay">
                 <div x-show="showDeleteConfirmDigital" x-transition.scale.duration.300ms
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-[90%] max-w-sm text-center">
+                    class="pos-modal-confirm rounded-xl shadow-xl p-6 w-[90%] max-w-sm text-center">
                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
                         Hapus Transaksi Digital?
                     </h3>
@@ -5380,6 +5404,7 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                     </div>
                 </div>
             </div>
+            </template>
 
             <template x-teleport="body">
             <nav class="pos-bottom-nav" aria-label="Menu POS">
