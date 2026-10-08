@@ -7140,9 +7140,9 @@ text-white py-3 rounded-lg font-semibold text-sm transition">
                                 deskripsi: `Penjualan Tanggal ${this.closeBookData?.tanggal}`,
                                 type: 'IN',
                                 nominal: totalFinal,
-                                outlet_id: {{ Auth::user()->outlet_id ?? 1 }},
+                                outlet_id: {{ (int) (Auth::user()->outlet_id ?? 0) }},
                                 cashbook_category_id: 3,
-                                cashbook_wallet_id: 1,
+                                cashbook_wallet_id: {{ (int) ($bookWalletId ?? 0) }},
                             }),
                         });
 

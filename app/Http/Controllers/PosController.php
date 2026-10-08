@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Cashbook;
+use App\Models\CashbookWallet;
 
 class PosController extends Controller
 {
@@ -76,6 +77,7 @@ class PosController extends Controller
             'products' => $products,
             'categories' => $categories,
             'customers' => $customers,
+            'bookWalletId' => CashbookWallet::primaryIdForOutlet($outletId),
         ]);
     }
 
@@ -883,6 +885,8 @@ class PosController extends Controller
                 'merged_request' => $request->all(),
             ]);
 
+            $outletId = Auth::user()->outlet_id;
+
             // 🧾 Validasi data
             $validated = $request->validate([
                 'deskripsi' => 'required|string|max:255',
@@ -890,8 +894,24 @@ class PosController extends Controller
                 'nominal' => 'required|numeric|min:0',
                 'cashbook_category_id' => 'required|integer',
                 'cashbook_wallet_id' => 'required|integer',
-                'outlet_id' => 'required|integer',
             ]);
+
+            $walletBelongsToOutlet = CashbookWallet::where('id', $validated['cashbook_wallet_id'])
+                ->where('outlet_id', $outletId)
+                ->exists();
+
+            if (!$walletBelongsToOutlet) {
+                $validated['cashbook_wallet_id'] = CashbookWallet::primaryIdForOutlet($outletId);
+            }
+
+            if (!$validated['cashbook_wallet_id']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Wallet untuk outlet ini belum ada.',
+                ], 422);
+            }
+
+            $validated['outlet_id'] = $outletId;
 
             \Log::info('📘 [PembukuanStore] Data validasi berhasil', $validated);
 

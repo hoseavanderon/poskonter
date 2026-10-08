@@ -16,4 +16,13 @@ class CashbookWallet extends Model
     {
         return $this->hasMany(Cashbook::class, 'cashbook_wallet_id');
     }
+
+    public static function primaryIdForOutlet(?int $outletId): ?int
+    {
+        if (!$outletId) {
+            return null;
+        }
+
+        return static::where('outlet_id', $outletId)->orderBy('id')->value('id');
+    }
 }

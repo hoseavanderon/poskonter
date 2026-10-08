@@ -30,21 +30,22 @@ class PembukuanController extends Controller
                     ')
                     ->value('saldo') ?? 0;
 
+                $wallet->balance = (int) $wallet->balance;
                 $wallet->type = 'Dompet';
                 $wallet->note = $wallet->balance == 0 ? 'Belum ada transaksi' : 'Aktif';
                 return $wallet;
             });
 
-        // === Hitung total seluruh wallet outlet ===
-        $totalBalance = Cashbook::where('outlet_id', $outletId)
-            ->selectRaw('
-                SUM(CASE 
-                    WHEN type = "IN" THEN CAST(nominal AS SIGNED)
-                    WHEN type = "OUT" THEN -CAST(nominal AS SIGNED)
-                    ELSE 0 END
-                ) as total_balance
-            ')
-            ->value('total_balance') ?? 0;
+        $walletIds = $wallets->pluck('id');
+
+        // Hanya transaksi yang wallet-nya milik outlet ini.
+        // Baris lama dari tutup buku / barang masuk sering tersimpan di wallet id 1
+        // (akun pertama) sambil membawa outlet_id akun lain, jadi tidak boleh ikut dijumlahkan.
+        $ledger = Cashbook::query()
+            ->where('outlet_id', $outletId)
+            ->whereIn('cashbook_wallet_id', $walletIds);
+
+        $totalBalance = (int) $wallets->sum('balance');
 
         // Tambahkan “Semua Wallet” di atas
         $wallets->prepend((object) [
@@ -56,14 +57,14 @@ class PembukuanController extends Controller
         ]);
 
         // === Ambil tahun unik dari transaksi outlet ini ===
-        $years = Cashbook::where('outlet_id', $outletId)
+        $years = (clone $ledger)
             ->selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderByDesc('year')
             ->pluck('year');
 
         // === Ambil semua transaksi outlet ini ===
-        $transactions = Cashbook::where('outlet_id', $outletId)
+        $transactions = (clone $ledger)
             ->select('id', 'cashbook_wallet_id', 'deskripsi', 'type', 'nominal', 'created_at')
             ->orderBy('created_at', 'asc')
             ->get()
@@ -76,18 +77,10 @@ class PembukuanController extends Controller
                 'created_at' => $t->created_at->format('Y-m-d H:i:s'),
             ]);
 
-        // === Total saldo outlet
-        $totalSaldo = Cashbook::where('outlet_id', $outletId)
-            ->selectRaw("
-                SUM(CASE 
-                    WHEN type = 'IN' THEN CAST(nominal AS SIGNED) 
-                    ELSE -CAST(nominal AS SIGNED) 
-                END) AS total
-            ")
-            ->value('total') ?? 0;
+        $totalSaldo = $totalBalance;
 
         // === Tanggal terakhir update
-        $lastUpdate = Cashbook::where('outlet_id', $outletId)
+        $lastUpdate = (clone $ledger)
             ->latest('updated_at')
             ->first()?->updated_at;
 
@@ -103,11 +96,24 @@ class PembukuanController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->getContent(), true);
+        $outletId = Auth::user()->outlet_id;
 
         $validated = validator($data, [
             'deskripsi' => 'required|string|max:255',
             'nominal' => 'required|numeric|min:1',
-            'cashbook_wallet_id' => 'required|exists:cashbook_wallets,id',
+            'cashbook_wallet_id' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) use ($outletId) {
+                    $belongsToOutlet = CashbookWallet::where('id', $value)
+                        ->where('outlet_id', $outletId)
+                        ->exists();
+
+                    if (!$belongsToOutlet) {
+                        $fail('Wallet tidak termasuk outlet ini.');
+                    }
+                },
+            ],
             'type' => 'required|in:IN,OUT',
         ])->validate();
 

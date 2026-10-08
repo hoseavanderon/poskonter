@@ -70,15 +70,19 @@ class BarangMasukController extends Controller
             // 🔹 3. Jika dicentang, masukkan ke pembukuan
             if (!empty($data['addToBookkeeping'])) {
                 $supplierName = $data['supplier']['name'] ?? 'Tanpa Supplier';
+                $outletId = Auth::user()->outlet_id;
+                $walletId = \App\Models\CashbookWallet::primaryIdForOutlet($outletId);
 
-                \App\Models\Cashbook::create([
-                    'outlet_id' => \Illuminate\Support\Facades\Auth::user()->outlet_id ?? null,
-                    'type' => 'OUT',
-                    'nominal' => $data['subtotal'],
-                    'deskripsi' => "Nota dari {$supplierName}", // ✅ FIX: gunakan kolom deskripsi
-                    'cashbook_category_id' => 2,
-                    'cashbook_wallet_id' => 1,
-                ]);
+                if ($walletId) {
+                    \App\Models\Cashbook::create([
+                        'outlet_id' => $outletId,
+                        'type' => 'OUT',
+                        'nominal' => $data['subtotal'],
+                        'deskripsi' => "Nota dari {$supplierName}",
+                        'cashbook_category_id' => 2,
+                        'cashbook_wallet_id' => $walletId,
+                    ]);
+                }
             }
 
             DB::commit();
