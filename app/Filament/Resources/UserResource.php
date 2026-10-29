@@ -47,6 +47,7 @@ class UserResource extends Resource
             Forms\Components\Select::make('role')
                 ->label('Role')
                 ->options([
+                    'Owner' => 'Owner',
                     'Admin' => 'Admin',
                     'Kasir' => 'Kasir',
                 ])
@@ -79,6 +80,7 @@ class UserResource extends Resource
                 Tables\Columns\BadgeColumn::make('role')
                     ->colors([
                         'success' => 'Admin',
+                        'info' => 'Owner',
                         'warning' => 'Kasir',
                     ])
                     ->label('Role'),
@@ -112,28 +114,28 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canCreate(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     // Tambahkan ini supaya menu hanya muncul untuk admin
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function getPages(): array

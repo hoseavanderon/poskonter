@@ -75,7 +75,7 @@
             <div class="login-header">
                 <p class="login-kicker">Selamat datang</p>
                 <h2>Masuk ke akun</h2>
-                <p>Gunakan email dan kata sandi kasir atau admin.</p>
+                <p>Gunakan email dan kata sandi kasir atau owner.</p>
             </div>
 
             @if (session('status'))

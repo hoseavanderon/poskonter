@@ -16,7 +16,7 @@ class KasirMiddleware
             return redirect()->route('login');
         }
 
-        if ($user->role !== 'kasir') {
+        if (! $user->isKasir()) {
             abort(403);
         }
 

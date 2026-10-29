@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use App\Http\Responses\LoginResponse;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -51,10 +53,7 @@ class FortifyServiceProvider extends ServiceProvider
             return null;
         });
 
-        /**
-         * Redirect user ke halaman POS setelah login sukses
-         */
-        Fortify::redirects('login', '/pos');
+        $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
 
         /**
          * Rate limiter bawaan Fortify

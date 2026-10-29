@@ -53,13 +53,18 @@ class User extends Authenticatable
     }
 
     // ✅ Helper Role
+    public function isOwner(): bool
+    {
+        return in_array(strtolower((string) $this->role), ['admin', 'owner'], true);
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'Admin';
+        return $this->isOwner();
     }
 
     public function isKasir(): bool
     {
-        return $this->role === 'Kasir';
+        return strtolower((string) $this->role) === 'kasir';
     }
 }

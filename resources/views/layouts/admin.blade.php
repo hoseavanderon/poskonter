@@ -251,31 +251,44 @@
     </main>
 
     <script>
-        window.addEventListener('error', function(e) {
-            console.log('🔥 GLOBAL ERROR:', e.message)
-            console.log(e)
-        })
+        function blankDashboard() {
+            const chart = { label: '', transactions: 0, revenue: 0, bars: [] }
+            const profit = { total: 0, transactions: 0, avg: 0, bars: [] }
+            const busy = { peak: '-', bars: [] }
+            return {
+                sales: 0, profit: 0, transactions: 0, items: 0,
+                digitalSales: 0, barangSales: 0, monthSales: 0, growth: 0,
+                transfer: 0, tarik: 0, debt: 0,
+                periodLabel: 'Hari ini', compareLabel: 'kemarin',
+                outlets: [], activity: [], lowStock: [], bestSellers: [], bestDigital: [],
+                stockCategories: [], assetTotal: 0, stockSell: 0, stockModal: 0, walletTotal: 0,
+                charts: { year: chart, month: { ...chart }, week: { ...chart } },
+                busy: { today: busy, month: { ...busy }, year: { ...busy } },
+                profitSeries: { today: profit, week: { ...profit }, month: { ...profit }, year: { ...profit } },
+                insights: [], categorySales: [], digitalApps: [], recent: [], assets: [],
+                assetName: 'Semua outlet',
+            }
+        }
 
         function tabNav() {
             return {
                 data: [],
                 tabs: [{
-                        key: 'all',
-                        name: 'All'
-                    },
-                    @foreach ($outlets as $outlet)
-                        {
-                            key: '{{ $outlet->id }}',
-                            name: '{{ $outlet->name }}'
-                        },
-                    @endforeach
-                ],
+                    key: 'all',
+                    name: 'Semua'
+                }].concat(@json($outlets->map(fn ($outlet) => ['key' => (string) $outlet->id, 'name' => $outlet->name])->values())),
 
-                // 🔥 default selected (no URL lagi, pure state)
                 selected: 'all',
                 period: 'day',
+                loading: false,
+                loadError: '',
+                stockFilter: 'Semua',
+                sellerFilter: 'Semua',
+                sellerType: 'barang',
+                chartTab: 'year',
+                busyTab: 'today',
+                profitTab: 'month',
 
-                // 🔥 data dari backend
                 stats: {
                     todaySales: 0,
                     totalTransactions: 0,
@@ -283,82 +296,103 @@
                     todayProfit: 0,
                     growth: 0,
                 },
+                dash: blankDashboard(),
 
                 width: 0,
                 left: 0,
                 page: 'home',
 
-                // 🚀 INIT
                 init() {
-                    console.log('🚀 INIT START')
+                    this.$watch('page', (val) => {
+                        if (val === 'home' || val === 'product') {
+                            this.$nextTick(() => this.syncPeriodIndicators())
+                        }
+                    })
 
                     this.$nextTick(() => {
                         setTimeout(() => {
-
-                            console.log('👉 selected:', this.selected)
-
                             let index = this.tabs.findIndex(t => t.key == this.selected)
                             let buttons = this.$el.querySelectorAll('.tab-button')
-
-                            console.log('👉 buttons:', buttons)
-
                             if (buttons[index]) {
                                 this.setIndicator(buttons[index])
                             }
-
-                            if (this.$refs.day) {
-                                this.updateIndicator(this.$refs.day)
-                            } else {
-                                console.warn('⚠️ day ref tidak ditemukan')
-                            }
-
+                            this.syncPeriodIndicators()
                             this.loadData(this.selected)
-
                         }, 50)
                     })
                 },
 
-                // 🚀 CLICK TAB
                 async select(tab, event) {
                     this.selected = tab.key
                     this.setIndicator(event.currentTarget)
-
                     await this.loadData(tab.key)
                 },
 
-                // 🚀 FETCH DATA
                 async loadData(outlet, period = this.period) {
-                    console.log('📡 FETCH START:', {
-                        outlet,
-                        period
-                    })
-
+                    this.loading = true
+                    this.loadError = ''
                     try {
-                        let res = await fetch(`/admin/dashboard-data?outlet=${outlet}&period=${period}`)
-                        console.log('📡 RESPONSE STATUS:', res.status)
-
+                        let res = await fetch(`/admin/dashboard-data?outlet=${encodeURIComponent(outlet)}&period=${encodeURIComponent(period)}`)
                         let data = await res.json()
-                        console.log('📦 DATA:', data)
+                        if (!res.ok) {
+                            this.loadError = data.message || 'Data penjualan tidak bisa dimuat.'
+                            return
+                        }
 
-                        this.stats.todaySales = data.todaySales
-                        this.stats.totalTransactions = data.totalTransactions
-                        this.stats.monthlySales = data.monthlySales
-                        this.stats.todayProfit = data.todayProfit
-                        this.stats.growth = data.growth
-
-                        console.log('✅ STATS UPDATED')
-
+                        const dash = Object.assign(blankDashboard(), data.dashboard || {})
+                        this.dash = dash
+                        this.stats.todaySales = Number(data.todaySales || 0)
+                        this.stats.totalTransactions = Number(data.totalTransactions || 0)
+                        this.stats.monthlySales = Number(data.monthlySales || 0)
+                        this.stats.todayProfit = Number(data.todayProfit || 0)
+                        this.stats.growth = Number(data.growth || 0)
+                        this.stockFilter = 'Semua'
+                        this.sellerFilter = 'Semua'
+                        window.dispatchEvent(new CustomEvent('owner-assets', {
+                            detail: {
+                                items: dash.assets || [],
+                                name: dash.assetName || 'Semua outlet'
+                            }
+                        }))
                     } catch (e) {
-                        console.error('❌ FETCH ERROR:', e)
+                        this.loadError = 'Data penjualan tidak bisa dimuat.'
+                    } finally {
+                        this.loading = false
                     }
                 },
 
                 get activeOutletName() {
                     let found = this.tabs.find(t => t.key == this.selected)
-                    return found ? found.name : 'All'
+                    return found ? found.name : 'Semua'
                 },
 
-                // 🎯 INDICATOR
+                get stockCategoryOptions() {
+                    const names = [...new Set((this.dash.lowStock || []).map(item => item.category).filter(Boolean))]
+                    return ['Semua', ...names]
+                },
+
+                get visibleStock() {
+                    const list = this.dash.lowStock || []
+                    if (this.stockFilter === 'Semua') return list
+                    return list.filter(item => item.category === this.stockFilter)
+                },
+
+                get sellerCategoryOptions() {
+                    const list = this.sellerType === 'digital' ? (this.dash.bestDigital || []) : (this.dash.bestSellers || [])
+                    const names = [...new Set(list.map(item => item.category).filter(Boolean))]
+                    return ['Semua', ...names]
+                },
+
+                get visibleSellers() {
+                    const list = this.sellerType === 'digital' ? (this.dash.bestDigital || []) : (this.dash.bestSellers || [])
+                    if (this.sellerFilter === 'Semua') return list
+                    return list.filter(item => item.category === this.sellerFilter)
+                },
+
+                get categoryTotal() {
+                    return (this.dash.categorySales || []).reduce((sum, item) => sum + Number(item.value || 0), 0)
+                },
+
                 setIndicator(el) {
                     this.width = el.offsetWidth
                     this.left = el.offsetLeft
@@ -366,23 +400,64 @@
 
                 changePeriod(p, el) {
                     this.period = p
-
-                    this.$nextTick(() => {
-                        this.updateIndicator(el)
-                    })
-
+                    this.$nextTick(() => this.movePeriodIndicator(el))
                     this.loadData(this.selected, p)
                 },
-                updateIndicator(el) {
-                    const indicator = this.$refs.mainPeriodIndicator
 
-                    if (!indicator || !el) {
-                        console.warn('❌ indicator not ready', indicator)
-                        return
-                    }
-
+                movePeriodIndicator(el) {
+                    if (!el) return
+                    const group = el.closest('[data-period-group]')
+                    const indicator = group ? group.querySelector('[data-period-indicator]') : null
+                    if (!indicator) return
                     indicator.style.width = el.offsetWidth + 'px'
                     indicator.style.left = el.offsetLeft + 'px'
+                },
+
+                syncPeriodIndicators() {
+                    this.$el.querySelectorAll('[data-period-group]').forEach(group => {
+                        const button = group.querySelector(`[data-period="${this.period}"]`)
+                        this.movePeriodIndicator(button)
+                    })
+                },
+
+                formatRp(value) {
+                    return 'Rp ' + Number(value || 0).toLocaleString('id-ID')
+                },
+
+                formatGrowth(value) {
+                    const number = Number(value || 0)
+                    const sign = number > 0 ? '+' : ''
+                    return sign + number.toLocaleString('id-ID') + '%'
+                },
+
+                barPct(value, bars) {
+                    const max = Math.max(0, ...(bars || []).map(bar => Number(bar.value) || 0))
+                    const number = Number(value) || 0
+                    if (number <= 0 || max <= 0) return 4
+                    return Math.max(12, Math.round((number / max) * 100))
+                },
+
+                barPx(value, bars, maxPx = 80) {
+                    const max = Math.max(0, ...(bars || []).map(bar => Number(bar.value) || 0))
+                    const number = Number(value) || 0
+                    if (number <= 0 || max <= 0) return 4
+                    return Math.max(8, Math.round((number / max) * maxPx))
+                },
+
+                donut(index) {
+                    const items = this.dash.categorySales || []
+                    const total = items.reduce((sum, item) => sum + Number(item.value || 0), 0) || 1
+                    const circ = 2 * Math.PI * 70
+                    let offset = 0
+                    for (let i = 0; i < index; i++) {
+                        offset += (Number(items[i].value || 0) / total) * circ
+                    }
+                    const dash = (Number(items[index].value || 0) / total) * circ
+                    return {
+                        dash: dash + ' ' + circ,
+                        offset: -offset,
+                        opacity: Math.min(0.9, 0.28 + (index % 6) * 0.1)
+                    }
                 },
             }
         }

@@ -29,7 +29,7 @@ class ProductResource extends Resource
     // Hanya user selain admin yang bisa akses
     public static function canViewAny(): bool
     {
-        return Auth::user()->role !== 'Admin';
+        return Auth::check() && ! Auth::user()->isOwner();
     }
 
     public static function form(Form $form): Form

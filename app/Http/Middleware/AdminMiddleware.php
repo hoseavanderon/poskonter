@@ -19,7 +19,7 @@ class AdminMiddleware
         }
 
         // Jika bukan admin
-        if ($user->role !== 'admin') {
+        if (! $user->isOwner()) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

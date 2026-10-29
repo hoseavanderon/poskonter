@@ -71,27 +71,27 @@ class OutletResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canCreate(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canEdit($record): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function canDelete($record): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::check() && Auth::user()->role === 'Admin';
+        return Auth::check() && Auth::user()->isOwner();
     }
 
     public static function getPages(): array

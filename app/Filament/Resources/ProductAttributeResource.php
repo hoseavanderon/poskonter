@@ -22,7 +22,7 @@ class ProductAttributeResource extends Resource
     // 🔒 Hanya user non-admin yang bisa akses
     public static function canViewAny(): bool
     {
-        return Auth::user()->role !== 'Admin';
+        return Auth::check() && ! Auth::user()->isOwner();
     }
 
     public static function form(Form $form): Form

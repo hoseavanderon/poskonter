@@ -4,7 +4,7 @@
     $user = Auth::user();
 
     // Jika user login dan role-nya Admin → redirect ke halaman Admin
-    if ($user && strtolower($user->role) === 'admin') {
+    if ($user && $user->isOwner()) {
         header('Location: ' . route('admin-pos'));
         exit();
     }
