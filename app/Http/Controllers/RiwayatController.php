@@ -416,14 +416,18 @@ class RiwayatController extends Controller
 
         /**
          * ========== DIGITAL TRANSACTIONS GROUPED ==========
+         * Struktur sama dengan filter satu tanggal: perangkat -> aplikasi -> transaksi.
          */
         $digitalTransactions = DB::table('digital_transactions')
             ->where('digital_transactions.outlet_id', $outletId)
             ->join('digital_products', 'digital_products.id', '=', 'digital_transactions.digital_product_id')
             ->join('apps', 'apps.id', '=', 'digital_transactions.app_id')
+            ->join('devices', 'devices.id', '=', 'digital_transactions.device_id')
             ->whereNull('digital_transactions.deleted_at')
             ->whereBetween('digital_transactions.created_at', [$from, $to])
             ->select([
+                'devices.id as device_id',
+                'devices.name as device_name',
                 'apps.id as app_id',
                 'apps.name as app_name',
                 'digital_products.name as product_name',
@@ -432,28 +436,33 @@ class RiwayatController extends Controller
                 'digital_transactions.subtotal as amount',
                 DB::raw("DATE_FORMAT(digital_transactions.created_at, '%Y-%m-%d %H:%i') as datetime"),
             ])
+            ->orderBy('devices.name')
             ->orderBy('apps.name')
             ->orderByDesc('digital_transactions.created_at')
             ->get()
-            ->groupBy('app_name')
-            ->map(function ($transactions, $appName) {
-                $appId = $transactions->first()->app_id ?? null;
-                return [
-                    'name' => $appName,
-                    'app_id' => $appId,
-                    'transactions' => $transactions->map(function ($t) {
+            ->groupBy('device_name')
+            ->map(function ($appsGroup) {
+                return $appsGroup
+                    ->groupBy('app_name')
+                    ->map(function ($transactions, $appName) {
+                        $appId = $transactions->first()->app_id ?? null;
                         return [
-                            'name' => $t->product_name,
-                            'qty' => $t->qty,
-                            'amount' => $t->amount,
-                            'datetime' => $t->datetime,
-                            'category_id' => $t->digital_category_id,
+                            'name' => $appName,
+                            'app_id' => $appId,
+                            'open' => false,
+                            'transactions' => $transactions->map(function ($t) {
+                                return [
+                                    'name' => $t->product_name,
+                                    'qty' => $t->qty,
+                                    'amount' => $t->amount,
+                                    'datetime' => $t->datetime,
+                                    'category_id' => $t->digital_category_id,
+                                ];
+                            })->values(),
+                            'total' => $transactions->sum('amount'),
                         ];
-                    })->values(),
-                    'total' => $transactions->sum('amount'),
-                ];
-            })
-            ->values();
+                    });
+            });
 
         /**
          * ========== TOTAL BARANG ==========
